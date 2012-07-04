@@ -507,7 +507,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'showMood':'<!--header开始-->\
-    <div id="header" class="uh"> \
+    <div id="header" class="uh">\
         <div class="kxjy-hd">\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">秀心情</h1>\
             <div _click="UserAction.showMood($(\'.showMoodPlus\'),$(\'.showMoodList\'),$(\'#mood\'))" class="btn btn-r kxjy-btn ub ub-ac ">\
@@ -1088,6 +1088,9 @@ var contentTmpl={
 'users':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
+            <div _click="ViewMgr.back();" class="btn btn-l kxjy-btn ub ub-ac ">\
+                <div class="ulim">返回</div>\
+            </div>\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">用户注册</h1>\
         </div>\
     </div>\
@@ -1324,21 +1327,24 @@ var pageConfig={
     Comment.init('.enter');
 }],
 'showMood':['mainFooter',3,true,true,function(){
-    //登陆就弹出的话小周手机会出现奇怪的情况
-    setTimeout(
-        function(){
-        actionSheet.show('photo');      
-    },500);
+    //计算TextArea的高度
+    var fs=parseInt(getComputedStyle(BODY).fontSize);
+    function setMoodH(){
+        var h=$('#content').offsetHeight-10.5*fs-$('.showMoodList').offsetHeight;
+        h=(h<10*fs)?10*fs:h;
+        $('.showMoodTextarea').style.height=h+"px";
+    }
+    setTimeout(function(){
+        //登陆就弹出的话小周手机会出现奇怪的情况
+        actionSheet.show('photo');
+        setMoodH();
+    },100);
     //取得上次的心情图标
     Tools.setIconId(null,StorageMgr.myInfo['mood_icon_id']||3);
     WIN['myScroll']=new iScroll('wrapper');
     DOM.addEvent($("#mood"),"keypress",function(e){e.event.stopPropagation();
     });
-    //计算TextArea的高度
-    var fs=parseInt(getComputedStyle(BODY).fontSize),
-        h=$('#content').offsetHeight-10.5*fs-$('.showMoodList').offsetHeight;
-    h=(h<10*fs)?10*fs:h;
-    $('.showMoodTextarea').style.height=h+"px";
+    
 }],
 'infoCenter':['mainFooter',4,true,true,function(){
     new iScroll('wrapper');

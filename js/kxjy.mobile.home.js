@@ -86,7 +86,8 @@ var ViewMgr={
             Tools.storage.set("kxjy_view_history",ViewMgr.views,"session");
             this.setUrl(backPage);
         }else{
-            toast('没有记录那么更多的历史页面');
+            toast('没有记录多的历史页面,将自动返回交友广场',2);
+            setTimeout(function(){ViewMgr.goto('mainPhoto')},2000);
         }
     },
     checkLast:function(page){//判断上一个页面是否因记录为同一个历史(e.g:mainPhoto和mainList不因重复记入历史)或者同一个页面
@@ -355,11 +356,14 @@ Page={
         this.userData=null;
         this.name="";
         this.dataUrl="";
+        this.loadedMore=false;
+        this.editedValues=[];
+        this.editedErrors=[];
     },
     fullFillInfo:function(){
 
         if(!Page.name||!Page.dataUrl||!Page.userData){
-            toast("页面信息不充分，无法载入资料");
+            toast("页面信息不充分，无法载入资料",2);
         }else{
 
 
@@ -568,6 +572,7 @@ Page={
                     
                 }
                 Page.editedErrors=[];
+                Page.editedValues=[];
             }
         }
 
@@ -761,7 +766,7 @@ var UserAction={
             params;
 
         if(!hasImg&&title==""){
-            toast('你还没有编辑心情');
+            toast('你还没有编辑心情',2);
             return;
         }
         
@@ -775,14 +780,14 @@ var UserAction={
 
         title=title.trim();
         if(title.chineseLen()>139){
-            toast('心情内容过长');
+            toast('心情内容过长',2);
             return;
         }
 
         params+="&title="+title+"&iconid="+iconid;
 
         secCb=function(){
-            toast('发布成功!');
+            toast('发布成功!',2);
             imgDom.innerHTML="";
             moodDom.value="";
             // Tools.setIconId(null,true);
@@ -850,7 +855,7 @@ var UserAction={
             params="sid="+Tools.getParamVal('sid')+"&action=report&wid="+(wid||Tools.getParamVal('wid')),
             reportDom=node.lastChild,
             secCb=function(){
-                toast('举报心情操作成功!');
+                toast('举报心情操作成功!',2);
                 var repNum=/举报\((\d+)\)/.exec(reportDom.wholeText)[1];
                 reportDom.replaceWholeText("举报("+(parseInt(repNum)+1)+")");
             },
@@ -872,7 +877,7 @@ var UserAction={
         if(type=='mood'){//心心情
             var loveIcon=node.firstElementChild;
             if(DOM.hasClass(loveIcon,"active")){
-                toast('你已经心过这条心情!');
+                toast('你已经心过这条心情!',2);
             }else{
                 actionUrl=Tools.getSiteUrl()+"weibo.php?action=love&sid="+Tools.getParamVal('sid')+"&wid="+(wid||Tools.getParamVal('wid'));
                 loveDom=node.lastChild;
@@ -943,7 +948,7 @@ var UserAction={
     },
     /*送鲜花*/
     sendFlower:function(){
-        toast('暂未提供送鲜花功能');
+        toast('暂未提供送鲜花功能',2);
     },
     /*屏蔽,取消屏蔽*/
     shieldPerson:function(type,node,user_id){
@@ -997,15 +1002,15 @@ var UserAction={
             mailReg=/^.+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
         
         if(mailVal.length==0){
-            toast("请输入您的邮箱地址！");
+            toast("请输入您的邮箱地址！",2);
             return;
         }
         if(!mailReg.test(mailVal)){
-            toast("邮箱地址有误！");
+            toast("邮箱地址有误！",2);
             return;
         }
         if(passVal.length==0){
-            toast("请输入您的密码！");
+            toast("请输入您的密码！",2);
             return;
         }
 
@@ -1065,11 +1070,11 @@ var UserAction={
             cVal=$(cSel).value;
 
         if(oVal.length==0||nVal.length==0||cVal.length==0){
-            toast("请填完所有输入框！");
+            toast("请填完所有输入框！",2);
             return;
         }
         if(nVal!=cVal){
-            toast("两次新密码不相同！");
+            toast("两次新密码不相同！",2);
             return;
         }
 
@@ -1086,11 +1091,14 @@ var UserAction={
 
         /*修改成功*/
         function reset(){
-            toast('密码已经修改！');
+            toast('密码已经修改！',2);
             $(oSel).value="";
             $(nSel).value="";
             $(cSel).value="";
-            ViewMgr.back();//返回
+            setTimeout(function(){
+                    ViewMgr.back();//返回
+                },2000);
+            
         }
 
         /*发送修改请求*/
