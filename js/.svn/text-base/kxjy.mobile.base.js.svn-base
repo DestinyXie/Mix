@@ -76,6 +76,12 @@ extend($,{
             callback(obj[i], i);
         }
     },
+    isFunc: function(obj){
+        return DOC.toString.call(obj)==="[object Function]";
+    },
+    isStr:function(obj){
+        return toString.call(obj)==="[object String]";
+    },
     isArray:function(obj){
         return toString.call(obj)==="[object Array]";
     },
@@ -228,6 +234,14 @@ var DOM = {
         }
     } : function(el, event, fn) {
         el.attachEvent('on' + event, fn);
+    },
+    loadJs:function(src,cb){
+        var sc=DOC.createElement("script");
+        sc.src=src;
+        HEAD.appendChild(sc);
+        sc.onload=function(){
+            cb&&cb();
+        }
     }
 };
 
@@ -361,21 +375,45 @@ var Tools={
     },
     /*取sid和uid参数字符串*/
     getSidUidParams:function(gotoUrl,setParams){
-        var paramStr="sid="+this.getUrlParamVal('sid')+"&uid="+this.getUrlParamVal('uid')+"&userKey="+this.getUrlParamVal('userKey');
-        if(/his/.test(gotoUrl)&&!(/user_id/.test(setParams))&&this.getUrlParamVal('user_id'))
-            paramStr+="&user_id="+this.getUrlParamVal('user_id');
+        var uid=StorageMgr.uid,
+            userKey=StorageMgr.userKey,
+            sid=StorageMgr.sid;
+
+        var paramStr="sid="+sid+"&uid="+uid+"&userKey="+userKey;
+
+        if(/his/.test(gotoUrl)&&!(/user_id/.test(setParams))&&this.getParamVal('user_id'))
+            paramStr+="&user_id="+this.getParamVal('user_id');
+
         return paramStr;
     },
     /*从url取参数值*/
-    getUrlParamVal:function(paramKey,url){
-        var oHreg=url||location.href;
-        if(!/\?.*$/.test(oHreg)){
-            return "";
-        }
-        var param=/\?.*$/.exec(oHreg)[0];
-        oHreg=oHreg.replace(param,"");
-        var params=param.split('&');
+    getParamVal:function(paramKey,Params){
+        // var oHreg=url||location.href;
+        // if(!/\?.*$/.test(oHreg)){
+        //     return "";
+        // }
+        // var param=/\?.*$/.exec(oHreg)[0];
+        // oHreg=oHreg.replace(param,"");
+        // var params=param.split('&');
         var value="";
+        try{
+        var storValue={
+            uid:StorageMgr.uid,
+            userKey:StorageMgr.userKey,
+            sid:StorageMgr.sid
+        }
+
+        if(['uid','sid','userKey'].has(paramKey)){
+            return storValue[paramKey];
+        }
+        }catch(e){
+        }
+
+        var params=(!!Params)?Params.split('&'):ViewMgr.tmpParams.split('&');
+
+        if(!params)
+            return "";
+
         $.each(params,function(pa){
             var rg=new RegExp("[^\\w]"+paramKey+"=(.*)|\\b"+paramKey+"=(.*)");
             if(rg.test(pa)){
@@ -388,13 +426,13 @@ var Tools={
     insertAtCaret:function(ipt,textFeildValue){
         var textObj = (ipt.nodeType==1)?ipt:$(ipt);
         if(textObj.setSelectionRange){
-           var rangeStart=textObj.selectionStart;
-           var rangeEnd=textObj.selectionEnd;
-           var tempStr1=textObj.value.substring(0,rangeStart);
-           var tempStr2=textObj.value.substring(rangeEnd);
+            var rangeStart=textObj.selectionStart,
+                rangeEnd=textObj.selectionEnd,
+                tempStr1=textObj.value.substring(0,rangeStart),
+                tempStr2=textObj.value.substring(rangeEnd);
             textObj.value=tempStr1+textFeildValue+tempStr2;
             textObj.focus();
-           var len=textFeildValue.length;
+            var len=textFeildValue.length;
             textObj.setSelectionRange(rangeStart+len,rangeStart+len);
             textObj.focus();
         } else if (document.all && textObj.createTextRange && textObj.caretPos){      

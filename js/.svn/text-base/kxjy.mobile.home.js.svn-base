@@ -1,46 +1,48 @@
 /*执行页面初始化代码队列*/
 function executeLoad(){
+    if(!Load)
+        return;
 
     HEAD = $('head');
     BODY = DOC.body;
     ViewMgr.init();
 
-    if(!Load)
-        return;
+    //加载weinre debug工具
+    // DOM.loadJs("http://192.168.30.78:8081/target/target-script.js",function(){alert('weinre test ok!')});
+
     for(var i=0,l=Load.length;i<l;i++){
         Load[i]();
     }
     Load=null;
 }
 
-window.uexOnload=isTouch?executeLoad:null;
-
-//PC test
-window.onload=isTouch?function(){
-    if(Load){
-        executeLoad();
-    }
-}:executeLoad;
+Device.onLoad(executeLoad);
 
 
 /*页面历史管理类,控制历史记录,页面跳转*/
 var ViewMgr={
-    recordLen:5,//记录历史页面最大长度
+    tmpParams:"",//临时记录参数值
+    recordLen:10,//记录历史页面最大长度
     pairPages:['mainPhoto','mainList','myPhoto','myList','hisPhoto','hisList'],//成双的页面
+    getMsg:true,
     getDataInter:null,//轮询信息中心数据及Tips
-    getDataTime:5000,//轮询信息中心数据及Tips时间间隔
+    getDataTime:10000,//轮询信息中心数据及Tips时间间隔 10秒
     init:function(){//取得历史页面
-        if(!/login/.test(location.href)){
-            this.views=Tools.storage.get("kxjy_view_history","session")||['mainPhoto'];
-            StorageMgr.initStor();//初始化缓存数据
-            ViewMgr.getMsgTips();
-        }else{
-            Tools.storage.remove("kxjy_view_history","session");
-        }
+        WIN['pageEngine']=new PageEngine();
+        pageEngine.initPage('login');
+        Tools.storage.remove("kxjy_view_history","session");
+        this.views=['login'];
     },
-    getData:function(){//轮询信息中心数据及Tips
+    getData:function(init){//轮询信息中心数据及Tips
         this.stopGetData();
-        ViewMgr.getDataInter=setTimeout(ViewMgr.getMsgTips,ViewMgr.getDataTime);
+        if(init){
+            ViewMgr.getMsgTips(init);
+        }else{
+            ViewMgr.getDataInter=setTimeout(
+            function(){
+                ViewMgr.getMsgTips();
+            },ViewMgr.getDataTime);
+        }
     },
     stopGetData:function(){
         clearTimeout(ViewMgr.getDataInter);
@@ -61,14 +63,22 @@ var ViewMgr={
     },
     /*切换页面*/
     setUrl:function(url,params){
-        var oHreg=/^[^\?]*/.exec(location.href)[0];
-        var rUrl=oHreg.replace(/[^\/]\w*\.\w*$/,url+".html")+"?"+Tools.getSidUidParams(url,params)+(params?"&"+params:"");
+        if(!!params)
+            ViewMgr.tmpParams=params;
 
-        location.href=rUrl;
+        // var oHreg=/^[^\?]*/.exec(location.href)[0],
+        //     rUrl=oHreg.replace(/[^\/]\w*\.\w*$/,url+".html");
+        // if(!['login','users'].has(url)){
+        //     rUrl+="?"+Tools.getSidUidParams(url,params)+(params?"&"+params:"");
+        // }
+
+        pageEngine.initPage(url);
+
+        // location.href=rUrl;
     },
     back:function(){//返回上一个历史页面
         this.stopGetData();
-        if(new RegExp(this.views[this.views.length-1]).test(location.href)){
+        if(new RegExp(this.views[this.views.length-1]).test(pageEngine.curPage)){
             this.views.pop(1);
         }
         var backPage=this.views[this.views.length-1];
@@ -93,14 +103,22 @@ var ViewMgr={
             return false;
         }
     },
-    getMsgTips:function(){
+    getMsgTips:function(init){
         /*infoCenter*/
-        if(StorageMgr.infoCenter){
-            ViewMgr.showMsg(StorageMgr.infoCenter);
+        if(ViewMgr.getMsg){
+            if(init&&StorageMgr.infoCenter){
+                ViewMgr.noInfoNumDom=false;
+                ViewMgr.infoNumDom=null;
+                ViewMgr.hasFilledInfoCen=false;
+                ViewMgr.showMsg(StorageMgr.infoCenter);
+
+            }
+
+            StorageMgr.getInfoCenter(function(a){
+                    ViewMgr.showMsg(a);
+            },true);    
         }
-        StorageMgr.getInfoCenter(function(a){
-                ViewMgr.showMsg(a);
-        },true);
+
         /*tips*/
         var dataUrl=Tools.getSiteUrl()+'feed_flow.php?'+Tools.getSidUidParams(),
             secCb=function(a){
@@ -110,20 +128,16 @@ var ViewMgr={
             errCb=function(m){
                 ViewMgr.getData();
             };
-        UserAction.sendAction(dataUrl,"","get",secCb,errCb);
+
+        setTimeout(function(){//和infoCenter请求发起时刻错开，提升性能
+            UserAction.sendAction(dataUrl,"","get",secCb,errCb);
+        },ViewMgr.getDataTime/2);
     },
     showMsg:function(data){
-        if(StorageMgr.infoCenter&&JSON.stringify(StorageMgr.infoCenter)==JSON.stringify(data)){
-            if(/infoCenter/.test(location.href)&&!this.hasFilledInfoCen){
-                InfoCenter.fill(data);
-                this.hasFilledInfoCen=true;
-            }
-        }else{
-            StorageMgr.setInfoCenter(data);
-            if(/infoCenter/.test(location.href)){
-                InfoCenter.fill(data);
-                this.hasFilledInfoCen=true;
-            }
+        // StorageMgr.setInfoCenter(data);
+        if('infoCenter'==pageEngine.curPage&&(!this.hasFilledInfoCen||StorageMgr.infoCenterChange)){
+            InfoCenter.fill(data);
+            this.hasFilledInfoCen=true;
         }
 
         if(this.noInfoNumDom)
@@ -194,7 +208,7 @@ var StorageMgr={
     getMyInfo:function(cb,force){//取得我的信息并保存
         var stor=Tools.storage.get("kxjy_my_myInfo","session");
         if(force||!stor){
-            var getUrl=Tools.getSiteUrl()+'do.php?action=getUserInfo&sid='+Tools.getUrlParamVal("sid")+"&user_id="+Tools.getUrlParamVal("uid"),
+            var getUrl=Tools.getSiteUrl()+'do.php?action=getUserInfo&sid='+Tools.getParamVal("sid")+"&user_id="+Tools.getParamVal("uid"),
                 secCb=function(a){
                     StorageMgr.setMyInfo(a.myInfo);
                     cb&&cb(a);
@@ -202,11 +216,14 @@ var StorageMgr={
             UserAction.sendAction(getUrl,"","get",secCb);
         }else{
             this.myInfo=stor;
+            cb&&cb(stor);
         }
     },
     setMyInfo:function(o){
+        if(JSON.stringify(StorageMgr.myInfo)==JSON.stringify(o))
+            return;
         Tools.storage.set("kxjy_my_myInfo",o,"session");
-        StorageMgr.myInfo=o;
+        this.myInfo=o;
     },
     getInfoCenter:function(cb,force){
         var stor=Tools.storage.get("kxjy_my_infoCenter","session");
@@ -219,11 +236,17 @@ var StorageMgr={
             UserAction.sendAction(getUrl,"","get",secCb);
         }else{
             this.infoCenter=stor;
+            cb&&cb(stor);
         }
     },
     setInfoCenter:function(o){
+        if(JSON.stringify(StorageMgr.infoCenter)==JSON.stringify(o)){
+            this.infoCenterChange=false;
+            return;
+        }
+        this.infoCenterChange=true;
         stor=Tools.storage.set("kxjy_my_infoCenter",o,"session");
-        StorageMgr.infoCenter=o;
+        this.infoCenter=o;
     }
 }
 
@@ -263,68 +286,60 @@ var InfoCenter={
         }
     },
     clearUrl:{//清除信息中心的相关数据
-        myList:'allMood.php?ajax=1&'+Tools.getSidUidParams(),
-        attract:'crush.php?ajax=1&'+Tools.getSidUidParams(),
-        commentMe:'meComment.php?ajax=1&'+Tools.getSidUidParams(),
-        rank:'chart.php?ajax=1&'+Tools.getSidUidParams(),
-        flowersList:'flowersList.php?ajax=1&'+Tools.getSidUidParams()
+        myList:'allMood.php?ajax=1&${siduid}',
+        attract:'crush.php?ajax=1&${siduid}',
+        commentMe:'meComment.php?ajax=1&${siduid}',
+        rank:'chart.php?ajax=1&${siduid}',
+        flowersList:'flowersList.php?ajax=1&${siduid}'
     },
     clear:function(page,cb,ecb){
         if(!this.clearUrl[page])
             return;
-        var url=Tools.getSiteUrl()+InfoCenter.clearUrl[page];
+
+        var clearUrl=InfoCenter.clearUrl[page].replace(/\$\{siduid\}/,Tools.getSidUidParams()),
+            url=Tools.getSiteUrl()+clearUrl;
+
         UserAction.sendAction(url,null,'get',cb,ecb);
     }
 }
 
 /*他人信息记录缓存*/
 var hisInfo={
-    maxLength:3,//缓存人数
+    maxLength:5,//最多缓存人数
     storIDs:[],
     storInfos:{},
-    inited:false,
+    // inited:false,
     init:function(cb){
-        if(this.inited)
-            return;
+        // if(this.inited)
+        //     return;
         var storId=Tools.storage.get("kxjy_his_storId");
         this.storIDs=storId?storId:[];
-        this.curId=Tools.getUrlParamVal("user_id")||this.storIDs[0];
+        this.curId=Tools.getParamVal("user_id")||this.storIDs[0];
 
-        $.each(hisInfo.storIDs,function(id){
-            hisInfo.storInfos[id]=Tools.storage.get("kxjy_his_info_"+id);
-        });
-        this.inited=true;
+        //只取当前的,提升效率
+        hisInfo.storInfos[hisInfo.curId]=Tools.storage.get("kxjy_his_info_"+hisInfo.curId);
+
+        // this.inited=true;
         cb&&cb();
     },
     get:function(id){
-        if(this.storIDs.has(id)&&this.storInfos[id])
-            return this.storInfos[id];
-        return false;
+        var retObj=this.storInfos[id]||Tools.storage.get("kxjy_his_info_"+id);
+        return retObj;
     },
-    set:function(id,data,force){
+    set:function(id,data){
         this.init();
-        if(JSON.stringify(hisInfo.storInfos[id])==JSON.stringify(data)){
-            this.storIDs.remove(id);
-            this.storIDs.unshift(id);
-            Tools.storage.set("kxjy_his_storId",this.storIDs);
-            return;
-        }else
-
-        if(!this.storIDs.has(id)||force){
+        if(JSON.stringify(hisInfo.storInfos[id])!=JSON.stringify(data)){
             Tools.storage.set("kxjy_his_info_"+id,data);
         }
 
-        if(!this.storIDs.has(id)){
-            this.storIDs.unshift(id);
-            if(this.storIDs.length>this.maxLength){
-                this.storIDs.pop(1);
-                Tools.storage.remove("kxjy_his_info_"+id);
-            }
-        }else{
-            this.storIDs.remove(id);
-            this.storIDs.unshift(id);
+        var popId=this.storIDs[this.storIDs.length-1];
+        if(this.storIDs.length>this.maxLength&&popId!=id){
+            this.storIDs.pop(1);
+            Tools.storage.remove("kxjy_his_info_"+popId);
         }
 
+        this.storIDs.remove(id);
+        this.storIDs.unshift(id);
         Tools.storage.set("kxjy_his_storId",this.storIDs);
     }
 }
@@ -332,8 +347,14 @@ var hisInfo={
 /*页面内容管理*/
 Page={
     init:function(options){
+        this.destory();
         extend(Page,options);
         this.getUserData();
+    },
+    destory:function(){
+        this.userData=null;
+        this.name="";
+        this.dataUrl="";
     },
     fullFillInfo:function(){
 
@@ -347,9 +368,6 @@ Page={
             //昵称
             $('#header h1').innerHTML=/动态详情/.test($('#header h1').innerHTML)?data.nickname+"的动态详情":data.nickname;
             $('.DynamicName').innerHTML=data.nickname;
-
-            //本地存储nickname
-            Tools.storage.set("kxjy_his_nickname",data.nickname);
 
             //达人
             if(data.colorPng&&data.colorPng!=""){
@@ -388,7 +406,7 @@ Page={
             if(["myDetail","hisDetail"].has(Page.name)){
                 $('.DynamicNav .time').nextSibling.replaceWholeText(data.create_time||"不详");
                 $('.DynamicNav .place').nextSibling.replaceWholeText(data.area||"不详");
-                $('.DynamicText p').innerHTML=Tools.htmlEncode(data.mood)||"";
+                $('.DynamicText p').innerHTML=data.mood||"";
                 if(data.iconid&&data.iconid!=0){
                     $('.DynamicMood').innerHTML='<img src="css/images/f_'+data.iconid+'.png" alt="xx" />';
                 }
@@ -541,7 +559,7 @@ Page={
         function check(){//检查是否保存完成
             if(Page.editedValues.length<=0){
                 if(Page.editedErrors.length>0){
-                    toast(Page.editedErrors.join(","));
+                    toast(Page.editedErrors.join("\n"));
                 }else{
                     toast('保存成功!');
                     setTimeout(function(){
@@ -555,7 +573,7 @@ Page={
 
         var ipt=$("#"+id),
             dataUrl=Tools.getSiteUrl()+"do.php",
-            param="action=setting&sid="+Tools.getUrlParamVal('sid')+"&"+params,
+            param="action=setting&sid="+Tools.getParamVal('sid')+"&"+params,
             secCb=function(a){
                 Page.editedValues.remove(id);
                 if(a.error){
@@ -647,64 +665,63 @@ Page={
 
                 InfoCenter.clear(Page.name);
 
-                if(Page.name=="rank"){
-                    Page.userData=a.myInfo;
-                    Page.fullFillRank();
-                    return;
-                }
-
-                if(['myPhoto','myList','editInfo'].has(Page.name)){
-                    if(storMyInfo&&JSON.stringify(storMyInfo)==JSON.stringify(a.myInfo)){
-                        return;
-                    }else{
-                        StorageMgr.setMyInfo(a.myInfo);
-                        storMyInfo=a.myInfo;
-                    }
-                }
-
-                if(['hisPhoto','hisList'].has(Page.name)){
-                    hisInfo.set(hisInfo.curId,a.userInfo,true);
-                }
-
-                if(Page.name=="editInfo"){
-                    Page.userData=a.myInfo;
-                    Page.fullFillEditInfo();
-                    return;
-                }
-                    
                 Page.userData=a.myInfo||a.userInfo;
-
                 if(a.moodContent){//动态详情加入心情信息
                     extend(Page.userData,a.moodContent);
                 }
 
+                for(var k in Page.userData){//html,js转义
+                    if(Page.userData.hasOwnProperty(k)&&$.isStr(Page.userData[k]))
+                        Page.userData[k]=Tools.htmlEncode(Page.userData[k]);
+                }
+
+                switch(Page.name){
+                    case 'myPhoto':
+                    case 'myList':
+                        StorageMgr.setMyInfo(Page.userData);
+                        break;
+                    case 'hisPhoto':
+                    case 'hisList':
+                        hisInfo.set(hisInfo.curId,Page.userData);
+                        break;
+                    case 'rank':
+                        Page.fullFillRank();
+                        return;
+                        break;
+                    case 'editInfo':
+                        StorageMgr.setMyInfo(Page.userData);
+                        Page.fullFillEditInfo();
+                        return;
+                        break;
+                }
                 Page.fullFillInfo();
             },
             errCb=function(){
                 toast('connect error');
-            },
-            storMyInfo=StorageMgr.myInfo;
+            };
 
         this.userData=null;
 
         //取缓存数据
-        if(['myPhoto','myList','editInfo'].has(Page.name)&&storMyInfo){
-            Page.userData=storMyInfo;
-            switch(Page.name){
-                case 'myPhoto':
-                case 'myList':
-                    Page.fullFillInfo();
-                    break;
-                case 'editInfo':
-                    Page.fullFillEditInfo();
-                    break;
+        if(['myPhoto','myList','editInfo'].has(Page.name)){
+            Page.userData=StorageMgr.myInfo;
+            if(!!Page.userData){
+                switch(Page.name){
+                    case 'myPhoto':
+                    case 'myList':
+                    // case 'myDetail':
+                        Page.fullFillInfo();
+                        break;
+                    case 'editInfo':
+                        Page.fullFillEditInfo();
+                        break;
+                }
             }
         }
 
         if(['hisPhoto','hisList'].has(Page.name)){
-            if(hisInfo.storIDs.has(hisInfo.curId)){
-
-                Page.userData=hisInfo.get(hisInfo.curId);
+            Page.userData=hisInfo.get(hisInfo.curId);
+            if(!!Page.userData){
                 Page.fullFillInfo();
             }
         }
@@ -712,19 +729,11 @@ Page={
         UserAction.sendAction(dataUrl,params|"","get",secCb,errCb);
     },
     setDataNum:function(){
-        switch(Page.name){
-            case "myPhoto":
-            case "hisPhoto":
-                if($('.myTitleMenu')==null)
-                    return;
-                $('#titleMenu-pic span').innerHTML=Feed.dataCount+"<br />照片";
-                break;
-            case "myList":
-            case "hisList":
-                if($('.myTitleMenu')==null)
-                    return;
-                $('#titleMenu-mood span').innerHTML=Feed.dataCount+"<br />心情";
-                break;
+        if(['myList','hisList'].has(Page.name)&&$('.myTitleMenu')!=null){
+            $('#titleMenu-mood span').innerHTML=Feed.dataCount+"<br />心情";
+        }
+        if(['myDetail','hisDetail'].has(Page.name)){
+            $('.DynamicMenu .comment').nextSibling.replaceWholeText(Feed.dataCount);
         }
     }
 }
@@ -757,10 +766,10 @@ var UserAction={
         }
         
         if(hasImg){
-            actionUrl+="do.php?sid="+Tools.getUrlParamVal('sid')+"&uploadFlag=1&";
+            actionUrl+="do.php?sid="+Tools.getParamVal('sid')+"&uploadFlag=1&";
             params="action=addweibo&type=1";
         }else{
-            actionUrl+="weibo.php?sid="+Tools.getUrlParamVal('sid')+"&";
+            actionUrl+="weibo.php?sid="+Tools.getParamVal('sid')+"&";
             params="action=addweibo&type=2";
         }
 
@@ -777,8 +786,9 @@ var UserAction={
             imgDom.innerHTML="";
             moodDom.value="";
             // Tools.setIconId(null,true);
-            Tools.storage.set("kxjy_my_lastMoodIconId",iconid);
-            ViewMgr.goto('myList.html');//秀心情成功后返回个人主页
+            setTimeout(function(){
+                ViewMgr.goto('myList.html');//秀心情成功后返回个人主页-心情
+            },2000);
         }
 
         errCb=function(m){
@@ -804,7 +814,7 @@ var UserAction={
                 paraLi=DOM.findParent(node,'.DynamicMoodBox',true);
                 params="action=del&type=2&wid="+wid;
             }else{
-                params="action=del&type=2&wid="+Tools.getUrlParamVal('wid');
+                params="action=del&type=2&wid="+Tools.getParamVal('wid');
             }
         }else if(type=="comment"){
             msg='确定删除该评论么?';
@@ -822,7 +832,7 @@ var UserAction={
                 Feed.removeFeed(paraLi);
                 Page.setDataNum();
             }else{
-                history.back();
+                ViewMgr.back();
             }
         }
 
@@ -837,7 +847,7 @@ var UserAction={
     /*举报*/
     reportData:function(type,node,wid){
         var actionUrl=Tools.getSiteUrl()+"weibo.php",
-            params="sid="+Tools.getUrlParamVal('sid')+"&action=report&wid="+(wid||Tools.getUrlParamVal('wid')),
+            params="sid="+Tools.getParamVal('sid')+"&action=report&wid="+(wid||Tools.getParamVal('wid')),
             reportDom=node.lastChild,
             secCb=function(){
                 toast('举报心情操作成功!');
@@ -864,7 +874,7 @@ var UserAction={
             if(DOM.hasClass(loveIcon,"active")){
                 toast('你已经心过这条心情!');
             }else{
-                actionUrl=Tools.getSiteUrl()+"weibo.php?action=love&sid="+Tools.getUrlParamVal('sid')+"&wid="+(wid||Tools.getUrlParamVal('wid'));
+                actionUrl=Tools.getSiteUrl()+"weibo.php?action=love&sid="+Tools.getParamVal('sid')+"&wid="+(wid||Tools.getParamVal('wid'));
                 loveDom=node.lastChild;
                 secCb=function(){
                     var loveNum=loveDom.wholeText;
@@ -880,7 +890,7 @@ var UserAction={
 
         if(type=='people'){//心人
             actionUrl=Tools.getSiteUrl()+"do.php";
-            params="sid="+Tools.getUrlParamVal('sid')+"&user_id="+Tools.getUrlParamVal('user_id');
+            params="sid="+Tools.getParamVal('sid')+"&user_id="+Tools.getParamVal('user_id');
             loveRadio=node.previousElementSibling,
             loveDom=$("#footer-love .ulev-2");
 
@@ -919,7 +929,7 @@ var UserAction={
     disadmire:function(type,node,user_id){
         if(type=="people"){
             var actionUrl=Tools.getSiteUrl()+"do.php",
-                params="action=disadmire&sid="+Tools.getUrlParamVal('sid')+"&user_id="+user_id;
+                params="action=disadmire&sid="+Tools.getParamVal('sid')+"&user_id="+user_id;
             secCb=function(m){
                 Feed.removeFeed(node.parentNode);
             }
@@ -938,7 +948,7 @@ var UserAction={
     /*屏蔽,取消屏蔽*/
     shieldPerson:function(type,node,user_id){
         var actionUrl=Tools.getSiteUrl()+"do.php",
-            params="sid="+Tools.getUrlParamVal('sid'),
+            params="sid="+Tools.getParamVal('sid'),
             secCb,
             errCb,
             msg='你确定要屏蔽TA吗?',
@@ -962,13 +972,18 @@ var UserAction={
 
         if(type=="del"){//取消屏蔽
             params+="&user_id="+user_id+"&type=del&action=block_user&id="+user_id;
-            UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
+            Device.confirm('确认取消屏蔽?',function(){
+                UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
+            });
         }else{
             if(shieldDom.getAttribute("checked")=="checked"){
-                params+="&user_id="+Tools.getUrlParamVal('user_id')+"&type=del&action=block_user&id="+Tools.getUrlParamVal('user_id');
-                UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
+                params+="&user_id="+Tools.getParamVal('user_id')+"&type=del&action=block_user&id="+Tools.getParamVal('user_id');
+                Device.confirm('确认取消屏蔽?',function(){
+                    UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
+                });
+                
             }else{
-                params+="&user_id="+Tools.getUrlParamVal('user_id')+"&action=block_user";
+                params+="&user_id="+Tools.getParamVal('user_id')+"&action=block_user";
                 Device.confirm(msg,function(){
                     UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
                 });
@@ -1008,12 +1023,13 @@ var UserAction={
                 Tools.storage.set('kxjy_my_email',mailVal);
                 Tools.storage.set('kxjy_my_pwd',passVal);
 
-                //小周手机BUG
-                // $('.logo').style.display="none";
-                // $('.loginBox').style.display="none";
-                // $('.qqLogin').style.display="none";
+                StorageMgr.uid=a.uid;
+                StorageMgr.userKey=a.userKey;
+                StorageMgr.sid=/\?sid=(.+)\b/.exec(a.redirect)[1];
 
-                location.href = Tools.getSiteUrl()+"template/mobile/mainPhoto.html?sid="+Tools.getUrlParamVal('sid',a.redirect)+"&uid="+(a.uid||"")+"&userKey="+(a.userKey||"");//check 使用ViewMgr
+                ViewMgr.goto('mainPhoto');
+
+                // location.href = Tools.getSiteUrl()+"template/mobile/mainPhoto.html?sid="+Tools.getParamVal('sid',a.redirect)+"&uid="+(a.uid||"")+"&userKey="+(a.userKey||"");//check 使用ViewMgr
             },
             errCb=function(e){
                 toast(e.msg);
@@ -1021,6 +1037,9 @@ var UserAction={
             };
 
         UserAction.sendAction(checkUrl,params,"get",secCb,errCb);
+    },
+    userRegist:function(){
+
     },
     /*验证密码*/
     checkPassword:function(psw,ok,err){
@@ -1049,12 +1068,12 @@ var UserAction={
             toast("请填完所有输入框！");
             return;
         }
-        if(nVal.length!=cVal.length){
+        if(nVal!=cVal){
             toast("两次新密码不相同！");
             return;
         }
 
-        var setUrl=Tools.getSiteUrl()+"do.php?action=account_setting&sid="+Tools.getUrlParamVal('sid'),
+        var setUrl=Tools.getSiteUrl()+"do.php?action=account_setting&sid="+Tools.getParamVal('sid'),
             params='password='+nVal,
             secCb=function(a){
                 if(a.error)
@@ -1096,7 +1115,7 @@ var UserAction={
     },
     /*执行ajax请求*/
     sendAction:function(url,data,method,secCb,errCb){
-        zy_$.ajax({url:url,
+        var xhr=zy_$.ajax({url:url,
            data:data,
            type:method||'get',
            dataType:'json',
@@ -1111,5 +1130,6 @@ var UserAction={
                 errCb?errCb(e):toast('connect error');
             }
         });
+        return xhr;
     }
 }

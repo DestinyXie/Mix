@@ -5,7 +5,7 @@ var feedTemplate={
     hisPhoto:'<div _click="ViewMgr.goto(\'hisDetail.html\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
     mood:'<div class="DynamicList clearfix">\
         <div class="DynamicInfo">\
-            <div _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="DynamicAvatar"><img src="${smallpic}" alt="" /></div>\
+            <div _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="DynamicAvatar"><img src="${avatarPicUrlx}" alt="" /></div>\
             <div class="DynamicAvatar-r">\
                 <strong _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="DynamicName">${nickname}</strong>\
                 <span class="DynamicTrank">${cb:colorPng}</span>\
@@ -116,10 +116,10 @@ var feedTemplate={
             <p class="chatListName">${name}</p>\
             <p class=" ut-s">&nbsp;</p>\
         </div>\
-        <strong class="DynamicMore" _click="ViewMgr.goto(\'chat.html\',\'fid=${fid}&user_id=${fid}&nickname=${name}\')">></strong>\
+        <strong class="DynamicMore" _click="ViewMgr.goto(\'chat.html\',\'fid=${fid}&user_id=${fid}\')">></strong>\
     </div>',
     chat:'<div class="chatContent ub ${cb:who} clearfix">\
-        <div class="chatAvatar"><img src="${cb:avatar}" alt="" /></div>\
+        ${cb:avatar}\
         <div class="chatTextBox ub-f1">\
             <div class="chatTime">${datetime}</div>\
             <div class="chatText">${cb:content}</div>\
@@ -186,36 +186,37 @@ var pageFeedTmpl={
 
 /*列表数据接口*/
 var pageFeedUrl={
-    mainPhoto:"main.php?uid="+Tools.getUrlParamVal('uid'),
-    mainList:"main.php?uid="+Tools.getUrlParamVal('uid'),
-    myPhoto:"weibo.php?action=weibolist&type=1&pagecount=8&uid="+Tools.getUrlParamVal('uid'),
-    myList:"weibo.php?action=weibolist&type=2&pagecount=8&uid="+Tools.getUrlParamVal('uid'),
-    myDetail:"weibo.php?action=weibolist&type=4&parentid="+Tools.getUrlParamVal('wid'),
+    mainPhoto:"main.php?uid=${uid}",
+    mainList:"main.php?uid=${uid}",
+    myPhoto:"weibo.php?action=weibolist&type=1&pagecount=8&uid=${uid}",
+    myList:"weibo.php?action=weibolist&type=2&pagecount=8&uid=${uid}",
+    myDetail:"weibo.php?action=weibolist&type=4&parentid=${wid}",
     hisPhoto:"weibo.php?action=weibolist&type=1&pagecount=8&uid=",
     hisList:"weibo.php?action=weibolist&type=2&pagecount=8&uid=",
-    hisDetail:"weibo.php?action=weibolist&type=4&parentid="+Tools.getUrlParamVal('wid'),
-    chatList:"get_sess_list.php?callback=?&t=1&i="+Tools.getUrlParamVal('uid')+"&k="+Tools.getUrlParamVal('userKey'),
-    chat:"get_msg.php?callback=?&st=3m&i="+Tools.getUrlParamVal('uid')+"&fid="+Tools.getUrlParamVal('fid')+"&tid="+Tools.getUrlParamVal('uid')+"&k="+Tools.getUrlParamVal('userKey'),
-    sysNotice:"get_msg.php?callback=?&st=&i="+Tools.getUrlParamVal('uid')+"&fid=1&tid="+Tools.getUrlParamVal('uid')+"&k="+Tools.getUrlParamVal('userKey'),
-    newGuest:"see.php?type=1&uid="+Tools.getUrlParamVal('uid'),
-    likeMe:"admire.php?type=0&uid="+Tools.getUrlParamVal('uid'),
-    attract:"admire.php?type=2&uid="+Tools.getUrlParamVal('uid'),
-    commentMe:"weibo.php?action=commentme&uid="+Tools.getUrlParamVal('uid'),
-    myView:"see.php?type=0&uid="+Tools.getUrlParamVal('uid'),
-    sendComment:"weibo.php?action=mycomment&uid="+Tools.getUrlParamVal('uid'),
-    blackList:"Blacklist.php?uid="+Tools.getUrlParamVal('uid'),
+    hisDetail:"weibo.php?action=weibolist&type=4&parentid=${wid}",
+    chatList:"get_sess_list.php?callback=?&t=1&i=${uid}&k=${userKey}",
+    chat:"get_msg.php?callback=?&st=3m&i=${uid}&fid=${fid}&tid=${uid}&k=${userKey}",
+    sysNotice:"get_msg.php?callback=?&st=&i=${uid}&fid=1&tid=${uid}&k=${userKey}",
+    newGuest:"see.php?type=1&uid=${uid}",
+    likeMe:"admire.php?type=0&uid=${uid}",
+    attract:"admire.php?type=2&uid=${uid}",
+    commentMe:"weibo.php?action=commentme&uid=${uid}",
+    myView:"see.php?type=0&uid=${uid}",
+    sendComment:"weibo.php?action=mycomment&uid=${uid}",
+    blackList:"Blacklist.php?uid=${uid}",
     likeMood:"moodlist.php?action=love",
     likePerson:"admire.php?type=1",
-    rank:"rank.php?type=0&page=1&rank=1&sex=2&user_id="
+    rank:"rank.php?type=0&page=1&rank=1&sex=2&user_id=0"
 }
-
 
 /*列表类*/
 var Feed={
-    index:1,
+    index:0,
     cont:null,
     more:null,
     onePageNum:null,
+    loadXhr:null,
+    isLoading:false,
     loadingTxt:"正在加载...",
     moreTxt:"查看更多",
     noMoreTxt:"没有更多了",
@@ -229,14 +230,37 @@ var Feed={
         * cb   数据加载完成回调函数;
         * lastPos 数据插入位置;
         */
+        this.destory();
         extend(this,options);
         this.refresh();
 	},
     reset:function(){
         this.isRefresh=false;
+        this.isLoading=false;
         if(typeof this.cb=="function"){
             this.cb();
         }
+    },
+    destory:function(){
+        this.index=0;
+        this.cont=null;
+        this.more=null;
+        this.onePageNum=null;
+        this.loadXhr&&this.loadXhr.abort();
+        this.loadXhr=null;
+        this.isLoading=false;
+        this.lastPos=null;
+        this.addParams="";
+    },
+    refresh:function(setParam){
+        if(this.noMoreBtn&&this.more.innerHTML!=this.noDataTxt){
+            this.more.style.display="none";
+        }
+        this.index=0;
+        this.isRefresh=true;
+        this.isLoading=false;
+        this.loadXhr&&this.loadXhr.abort();
+        this.loadMore(setParam);
     },
     loadMoreSecc:function(a){
         this.index++;
@@ -302,7 +326,11 @@ var Feed={
     },
     loadMore:function(setParam){
         var that=this;
-        if(!that.isRefresh&&(typeof that.totalPage==number)&&that.index>that.totalPage){
+        if(that.isLoading)
+            return;
+        that.isLoading=true;
+
+        if(!that.isRefresh&&(typeof that.totalPage=="number")&&that.index>=that.totalPage){
             that.reset();
             return false;
         }
@@ -329,13 +357,20 @@ var Feed={
                 that.reset();
                 toast('connect error');
             };
-        UserAction.sendAction(dataUrl,params,"get",secCb,errCb);
+        that.loadXhr=UserAction.sendAction(dataUrl,params,"get",secCb,errCb);
     },
     getUrl:function(){
-        return Tools.getSiteUrl()+pageFeedUrl[this.page]+"&sid="+Tools.getUrlParamVal('sid');
+        var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
+            function(m,c){
+                return Tools.getParamVal(c);
+            });
+        if(['hisPhoto','hisList'].has(this.page)){
+            feedUrl=pageFeedUrl[this.page].replace(/uid=[\d+]?$/,'uid='+hisInfo.curId);
+        }
+        return Tools.getSiteUrl()+feedUrl+"&sid="+Tools.getParamVal('sid');
     },
     setParams:function(setParam){
-        var params="page="+this.index+"&ajax=1";
+        var params="page="+(this.index+1)+"&ajax=1";
         if(setParam){
             params+="&"+setParam;
         }
@@ -343,14 +378,6 @@ var Feed={
             params+="&"+this.addParams;
         }
         return params;
-    },
-    refresh:function(setParam){
-        if(this.noMoreBtn&&this.more.innerHTML!=this.noDataTxt){
-            this.more.style.display="none";
-        }
-        this.index=1;
-        this.isRefresh=true;
-        this.loadMore(setParam);
     },
     fullFillFeed:function(data){
         var that=this;
@@ -420,6 +447,11 @@ var Feed={
             tmplStr="";
         switch(that.page){
             case "mainPhoto":
+                /*自己不显示*/
+                if(data.uid==Tools.getParamVal('uid'))
+                    return;
+                tmplStr=zy_tmpl_s(tmpl,data,null,idx);
+                break;
             case "myPhoto":
             case "hisPhoto":
                 if(data.havemood*1!=0&&(!data.filetype||data.filetype=="img"))
@@ -429,8 +461,13 @@ var Feed={
             case "myList":
             case "hisList":
             case "likeMood":
-                if(!data.filetype||data.filetype=="img")
+                /*自己不显示*/
+                if(that.page=="mainList"&&data.uid==Tools.getParamVal('uid')){
+                    return;
+                }
+                if(data.havemood*1!=0&&(!data.filetype||data.filetype=="img")){
                     tmplStr=that.compileMood(tmpl,data,idx);
+                }
                 break;
             case "myDetail":
             case "hisDetail":
@@ -452,7 +489,7 @@ var Feed={
                         return chiNodeStr;
                     }
                     if(t[1]=="isself"){
-                        if(o.uid==Tools.getUrlParamVal('uid'))
+                        if(o.uid==Tools.getParamVal('uid'))
                             return true;
                         return false
                     }
@@ -468,37 +505,35 @@ var Feed={
                 },idx);
                 break;
             case "chat":
-            case "sysNotice":
                 tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
-                    if(t[1]=="who"&&o.fid==Tools.getUrlParamVal('uid')){return " chatContent-r ub-rev"}
+                    if(t[1]=="who"&&o.fid==Tools.getParamVal('uid')){return " chatContent-r ub-rev"}
                     if(t[1]=="content"){
                         return Tools.filterMsgFace(o.content);
                     }
                     if(t[1]=="avatar"){
-                        var cl=Tools.storage.get("kxjy_my_chatList","session"),
-                            myInfo=StorageMgr.myInfo,
+                        var myInfo=StorageMgr.myInfo,
                             hisImg="x";
-                        $.each(cl,function(item){
-                            if(item.fid==Tools.getUrlParamVal('user_id')&&o.fid==Tools.getUrlParamVal('user_id'))
-                                hisImg=item.img;
-                        });
-
-                        if(o.fid==Tools.getUrlParamVal('uid')){
-                            if(myInfo&&myInfo.avatar_file){
-                                hisImg=myInfo.avatar_file;    
-                            }else{
-                                hisImg="myImg";
-                                StorageMgr.getMyInfo(function(info){
-                                        imgs=$$("img[src='myImg']");
-                                        $.each(
-                                            function(img){
-                                                img.src=info.avatar_file;
-                                            });
-                                    }
-                                );
-                            }
+                        if(ViewMgr.views[ViewMgr.views.length-2]=="chatList"){
+                            hisImg=hisInfo.heOfChatList.img;
+                        }else{
+                            hisImg=hisInfo.storInfos[hisInfo.curId].avatar_file;
                         }
-                        return hisImg;
+
+                        if(o.fid==Tools.getParamVal('uid')){
+                            hisImg=myInfo.avatar_file;
+                        }
+                        return "<div class='chatAvatar'><img src='"+hisImg+"' alt='' /></div>";
+                    }
+                    return "";
+                },idx);
+                break;
+            case "sysNotice":
+                tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
+                    if(t[1]=="content"){
+                        return Tools.filterMsgFace(o.content);
+                    }
+                    if(t[1]=="avatar"){
+                        return "";
                     }
                     return "";
                 },idx);
@@ -534,7 +569,7 @@ var Feed={
                 tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
                     switch(t[1]){
                         case "isself":
-                            if(o.uid==Tools.getUrlParamVal('uid')){
+                            if(o.uid==Tools.getParamVal('uid')){
                                 return "_click=\"ViewMgr.goto('myPhoto.html')\"";
                             }else{
                                 return "_click=\"ViewMgr.goto('hisPhoto.html','user_id="+o.uid+"')\"";
@@ -643,27 +678,40 @@ extend(ChatFeed,Feed);
 extend(ChatFeed,{
     onePageNum:10,
     ingterCount:0,
+    getMsgInter:2000,//取新消息时间间隔 2秒
     reset:function(){
         this.isRefresh=false;
+        this.isLoading=false;
         clearTimeout(ChatFeed.getDataInter);
         ChatFeed.getDataInter=setTimeout(function(){
             ChatFeed.ingterCount++;
-            ChatFeed.loadMore();},1000);
-        if(typeof this.cb=="function"&&this.hasData){
+            ChatFeed.loadMore();},ChatFeed.getMsgInter||2000);
+
+        if($.isFunc(ChatFeed.cb)){
             this.cb();
         }
+
         this.hasData=false;
     },
     getUrl:function(mine){
-        var url=Tools.getSiteUrl()+pageFeedUrl[this.page]+"&sid="+Tools.getUrlParamVal('sid');
+        var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
+            function(m,c){
+                return Tools.getParamVal(c);
+            });
+
+        var url=Tools.getSiteUrl()+feedUrl+"&sid="+Tools.getParamVal('sid');
 
         if(mine)
-            url=url.replace(/&fid=\d+/,"&fid="+Tools.getUrlParamVal('uid')).replace(/&tid=\d+/,"&tid="+Tools.getUrlParamVal('fid')).replace("st=3m","st=");
+            url=url.replace(/&fid=\d+/,"&fid="+Tools.getParamVal('uid')).replace(/&tid=\d+/,"&tid="+Tools.getParamVal('fid')).replace("st=3m","st=");
         if(!this.isRefresh)
             url=url.replace("st=3m","st=");
         return url;
     },
     loadMore:function(setParam,mine){
+        if(this.isLoading)
+            return;
+        this.isLoading=true;
+
         clearTimeout(ChatFeed.getDataInter);
 
         var dataUrl=this.getUrl(mine),
@@ -686,33 +734,30 @@ extend(ChatFeed,{
             that.more&&(that.more.innerHTML=that.moreTxt);    
         }
         
-        if(that.isRefresh){
+        if(that.isRefresh&&(!data||data.length==0)){
             that.reset();
-            if(!data||data.length==0){
-                that.more.style.display="block"
-                that.more.innerHTML=that.noDataTxt;
-                return;
-            }
-        }else{
-            that.reset();
+            that.more.style.display="block"
+            that.more.innerHTML=that.noDataTxt;
+            return;
         }
 
         var len=data.length;
         that.hasData=(len>0);
-        if(that.ingterCount==1){
-            return;
+
+        if(that.ingterCount!=1){//st=3m和st=""会同时把最后一次私信内容取出来
+            for (var i=0; i<len; i++) {
+                var item=DOM.create("div");
+                
+                item.innerHTML=that.compileTmpl(data[i],i);
+                
+                for(var j=0,chiLen=item.children.length;j<chiLen;j++){
+                    that.cont.appendChild(item.firstElementChild);
+                }
+                delete item;
+            }
         }
 
-        for (var i=0; i<len; i++) {
-            var item=DOM.create("div");
-            
-            item.innerHTML=that.compileTmpl(data[i],i);
-            
-            for(var j=0,chiLen=item.childNodes.length;j<chiLen;j++){
-                that.cont.appendChild(item.firstElementChild);
-            }
-            delete item;
-        }
+        that.reset();
     }
 })
 
@@ -756,7 +801,7 @@ var Comment={
             Comment.reset();
         node&&node.event.event.stopPropagation();
     },
-    sendComment:function(pid,cb,type){
+    sendComment:function(cb,type){
         Comment.hideMoodBox();
 
         if(!Comment.checkComment()){
@@ -777,11 +822,11 @@ var Comment={
 
         if(type&&type=="chat"){
             Comment.type="私信";
-            sendUrl=Tools.getSiteUrl()+"send_msg.php?callback=?&sid="+Tools.getUrlParamVal('sid')+"&fid="+Tools.getUrlParamVal('uid')+"&tid="+Tools.getUrlParamVal('fid')+"&msg="+Comment.transMotion(Comment.commTxt)+"&i="+Tools.getUrlParamVal('uid')+"&k="+Tools.getUrlParamVal('userKey');
+            sendUrl=Tools.getSiteUrl()+"send_msg.php?callback=?&sid="+Tools.getParamVal('sid')+"&fid="+Tools.getParamVal('uid')+"&tid="+Tools.getParamVal('fid')+"&msg="+Comment.transMotion(Comment.commTxt)+"&i="+Tools.getParamVal('uid')+"&k="+Tools.getParamVal('userKey');
 
             sendUrl=Tools.getChatUrl(sendUrl);
         }else{
-            sendUrl=Tools.getSiteUrl()+"weibo.php?action=comment&type=4&sid="+Tools.getUrlParamVal('sid')+"&parentid="+Tools.getUrlParamVal('wid');
+            sendUrl=Tools.getSiteUrl()+"weibo.php?action=comment&type=4&sid="+Tools.getParamVal('sid')+"&parentid="+Tools.getParamVal('wid');
 
             params="title="+Comment.transMotion(Comment.commTxt);
             if(Comment.parenNode){
@@ -888,31 +933,55 @@ var Comment={
         },250);
     },
     popOperation:function(node,paraId,enwid,self){
-        if(!self){
-            Device.actionThree('执行操作','对这条评论:',['回复','删除','取消'],
-            function(){
-                /*添加父节点,在Comment.sendComment方法中捕获*/
-                Comment.parenNode=enwid;
-                Comment.focusInput();
-            },
-            function(){
-                Comment.parenNode=null;
-                UserAction.deleteData('comment',node,enwid);
-            },
-            function(){
-                Comment.parenNode=null;
+        if(Page.name=="myDetail"){
+            if(!self){
+                Device.actionThree('执行操作','对这条评论:',['回复','删除','取消'],
+                function(){
+                    /*添加父节点,在Comment.sendComment方法中捕获*/
+                    Comment.parenNode=enwid;
+                    Comment.focusInput();
+                },
+                function(){
+                    Comment.parenNode=null;
+                    UserAction.deleteData('comment',node,enwid);
+                },
+                function(){
+                    Comment.parenNode=null;
+                }
+                );
+            }else{
+                Device.confirm('对你的评论:',
+                function(){
+                    Comment.parenNode=null;
+                    UserAction.deleteData('comment',node,enwid);
+                },
+                function(){
+                    Comment.parenNode=null;
+                },['删除','取消'],'执行操作'
+                );
             }
-            );
         }else{
-            Device.confirm('对你的评论:',
-            function(){
-                Comment.parenNode=null;
-                UserAction.deleteData('comment',node,enwid);
-            },
-            function(){
-                Comment.parenNode=null;
-            },['删除','取消'],'执行操作'
-            );
+            if(!self){
+                Device.confirm('对这条评论:',
+                function(){
+                    Comment.parenNode=enwid;
+                    Comment.focusInput();
+                },
+                function(){
+                    Comment.parenNode=null;
+                },['回复','取消'],'执行操作'
+                );
+            }else{
+                Device.confirm('对你的评论:',
+                function(){
+                    Comment.parenNode=null;
+                    UserAction.deleteData('comment',node,enwid);
+                },
+                function(){
+                    Comment.parenNode=null;
+                },['删除','取消'],'执行操作'
+                );
+            }
         }
     }
 };

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+<title>
+</title>
+<meta charset="utf-8">
+<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<link rel="stylesheet" href="css/ui-base.css"/>
+<link rel="stylesheet" href="css/ui-apple.css"/>
+<link rel="stylesheet" href="css/ui-input.css"/>
+<link rel="stylesheet" href="css/ui-tab.css">
+<link rel="stylesheet" href="css/ui-btn.css">
+<link rel="stylesheet" href="css/ui-box.css">
+<link rel="stylesheet" href="css/ui-color.css">
+<link rel="stylesheet" href="css/ui-res.css">
+<link rel="stylesheet" href="css/kxjy.css"/>
+<script src="js/zy_tmpl.js"></script>
+<script src="js/zy_json.js"></script>
+<script src="js/iscroll.js"></script>
+<!-- <script src="js/json2.js"></script> -->
+<script src="../default/js/validate.js"></script>
+<script src="js/kxjy.mobile.base.js"></script>
+<script src="js/kxjy.mobile.bridge.js"></script>
+<script src="js/kxjy.mobile.home.js"></script>
+<script src="js/kxjy.mobile.feed.js"></script>
+<script src="js/kxjy.mobile.ui.js"></script>
+<script src="js/spinningwheel-min.js"></script>
+</head>
+<body class="um-vp bg">
+<div id="page_0" class="up ub ub-ver" tabindex="0">
+
+<!--header开始-->
+<div id="header" class="uh t-wh">
+	<div class="kxjy-hd">
+	    <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">       
+	    <div class="ulim">返回</div>      
+	    </div>
+	    <h1 class="ut ulev0 ut-s tx-c" tabindex="0">动态详情</h1>
+	</div>
+</div>
+<!--header结束-->
+    
+    
+<!--content开始-->
+<div id="content" class="ub-f1 tx-l t-bla ub-img6 ub ub-ver">
+<div class="ub-f1">
+<div id="wrapper" class="fixWrapperLeft bg">
+<div>
+<!--网格开始-->
+<div class="ui-grid-c ui-content ui-body-c" id="thelist">
+<!-- 心情 -->
+    <div class="DynamicList clearfix">
+        <div class="DynamicInfo">
+            <div class="DynamicAvatar"></div>
+            <div class="DynamicAvatar-r">
+                <strong class="DynamicName">&nbsp;</strong>
+				<span class="DynamicTrank"></span>
+                <ul class="DynamicNav clearfix">
+                    <li><span class="DynamicIco ub-img1 time"></span>时间</li>
+                    <li><span class="DynamicIco ub-img1 place"></span>地点</li>
+                </ul>
+            </div>
+        </div>
+        <div class="ub">
+            <div class="DynamicMood ub ub-ver">
+                <img src="css/images/f_3.png" alt="" />
+            </div>
+            <div class="DynamicMoodTextBox ub-f1">
+                <div class="ub-f1 DynamicMoodText">
+                    <span>&diams;</span>
+                    <div class="DynamicText ub">
+                        <p class="ub-f1"></p>
+                    </div>
+                    <div class="DynamicImg"></div>
+					<ul class="DynamicMenu clearfix">
+						<li class="ub ub-ac" _click="Comment.focusInput()"><span class="DynamicMenuIco comment"></span>0</li>
+					    <li class="ub ub-ac" _click="UserAction.loveData('mood',this)"><span class="DynamicMenuIco love"></span>0</li>
+					</ul>
+                </div>
+					
+            </div>
+        </div>
+    </div>
+<!-- 心情结束 -->
+<!-- 留言 -->
+<div class="comment">
+</div>
+<!-- 留言 结束-->
+</div>
+<!--网格结束-->
+<div _click="Feed.loadMore();" class="moreFeed">
+    查看更多
+</div>
+
+</div>
+</div>
+</div>
+<!-- 输入 -->
+<div class="enter ub ub-ac">
+    <div class="enterMood" _click="Comment.switchMoodBox(this)"><img src="css/images/f_1.png" alt="心情" /></div>
+    <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="评论内容..." _click="Comment.focusInput(this)"></div>
+    <div class="enterButton btnBg" _click="Comment.sendComment(function(){Feed.refresh();toast(Feed.datacount)});">发表评论</div>
+</div>
+<!-- 输入结束-->
+
+</div>
+<!--content结束-->
+
+</div>
+<script>
+Load.push(function(){
+    var myScroll=new iScroll('wrapper');
+    
+    Page.init({
+        name:'hisDetail',
+        dataUrl:'moodHe.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+Tools.getParamVal("sid")
+    });
+
+    Feed.init({
+        page:'hisDetail',
+        cont:$('div.comment'),
+        more:$('.moreFeed'),
+        cb:function(){myScroll.refresh();}
+    });
+
+    Comment.init('.enter');
+});
+</script>
+</body>
+</html>

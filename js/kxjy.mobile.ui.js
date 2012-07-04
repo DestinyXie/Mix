@@ -151,7 +151,7 @@ var actionSheet={
             var imgurl,
                 uopCode=2,
                 uploadUrl=Tools.getSiteUrl()+"photo.php",
-                isMyPhoto=/myPhoto/.test(location.href);
+                isMyPhoto=/myPhoto/.test(pageEngine.curPage);
 
             function xmlHttpPost(){
                 uexXmlHttpMgr.onPostProgress=function(uopCode,p){
@@ -183,8 +183,8 @@ var actionSheet={
                 uexXmlHttpMgr.onData = httpSuccess;
                 uexXmlHttpMgr.open(uopCode, "POST", uploadUrl, "");
                 uexXmlHttpMgr.setPostData(uopCode, "0", "upload", "1");
-                uexXmlHttpMgr.setPostData(uopCode, "0", "sid", Tools.getUrlParamVal('sid'));
-                uexXmlHttpMgr.setPostData(uopCode, "0", "uid", Tools.getUrlParamVal('uid'));
+                uexXmlHttpMgr.setPostData(uopCode, "0", "sid", Tools.getParamVal('sid'));
+                uexXmlHttpMgr.setPostData(uopCode, "0", "uid", Tools.getParamVal('uid'));
                 if(!isMyPhoto){
                     uexXmlHttpMgr.setPostData(uopCode, "0", "type", "1");
                 }
@@ -223,7 +223,7 @@ var actionSheet={
 
 /*原生提示信息，默认5秒消失*/
 function toast(s,t){
-    if(isTouch){
+    if(Device.isAppcan()){
         uexWindow.toast(0,5,s,t*1000||5000);
     }else{
         Tips.show(s,null,t*1000||5000);
@@ -239,7 +239,7 @@ var Tips={
     show:function(s,cont,hideT){
         if(!Tips.hasTip){
             Tips.tipD=DOM.create('div');
-            var contain=$(cont||Tips.container);
+            var contain=$(cont||Tips.container)||$("#pageWraper");
             contain=contain?contain:BODY;
             contain.appendChild(Tips.tipD);
             DOM.addClass(Tips.tipD,'tipsShow');

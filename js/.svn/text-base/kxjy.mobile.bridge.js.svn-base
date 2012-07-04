@@ -1,8 +1,43 @@
 /*手机接口调用*/
 var Device={
+    getBridgeName:function(){
+        if(WIN["uexWindow"]){
+            return 'appCan';
+        }
+        return 'PC-window';
+    },
+    isAppcan:function(){
+        return (this.getBridgeName()=="appCan");
+    },
+    isLoaded:false,
+    loadEventBinded:false,
+    loadQueue:[],
+    onLoad:function(loadFn){
+        function load(){
+            if(Device.isLoaded){
+                return;
+            }
+            for(var i=0,dl=Device.loadQueue,len=dl.length;i<len;i++){
+                dl[i].call(null);
+            }
+            Device.isLoaded=true;
+        }
+        this.loadQueue.push(loadFn);
+
+        if(Device.loadEventBinded)
+            return;
+
+        // if(this.isAppcan()) appCan对象初始化比window.onload慢
+        window.uexOnload=load;
+
+        //PC test
+        window.onload=load;
+
+        Device.loadEventBinded=true;
+    },
     /*uexWindow接口*/
     confirm:function(msg,ok,cancel,labs,title){
-        if(WIN["uexWindow"]){
+        if(Device.isAppcan()){
             uexWindow.cbConfirm=function(opId,dataType,data){
                 switch(data*1){
                     case 0:
@@ -22,7 +57,7 @@ var Device={
         }
     },
     actionThree:function(title,msg,labArr,first,second,third){
-        if(WIN["uexWindow"]){
+        if(Device.isAppcan()){
             uexWindow.cbConfirm=function(opId,dataType,data){
                 switch(data*1){
                     case 0:
@@ -44,7 +79,7 @@ var Device={
         }
     },
     prompt:function(msg,ok,cancel,labs,def){
-        if(WIN["uexWindow"]){
+        if(Device.isAppcan()){
             uexWindow.cbPrompt=function(opId, dataType, data){
                 var obj = eval('('+data+')');
                 var num=obj.num,

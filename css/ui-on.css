@@ -1,0 +1,25 @@
+.swi
+{	
+	 width:5em;
+	 position:relative;
+	 height:1.625em;
+	 overflow:hidden;
+	 -webkit-transition: all 200ms linear;
+	 transition: all 200ms linear;
+}
+.swi-bg {
+	background-image:url('switch/on-off.png');
+	background-size:auto 100%;
+	background-repeat:no-repeat;
+	background-origin:border-box;
+	
+}
+
+input[type=checkbox]:checked + div.swi{
+ 	background-position:-0.3em;
+}
+
+input[type=checkbox] + div.swi
+{
+	background-position:-4.01em
+}

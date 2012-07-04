@@ -1,19 +1,31 @@
 K 25
 svn:wc:ra_dav:version-url
 V 46
-/svn/v3/!svn/ver/3926/trunk/template/mobile/js
+/svn/v3/!svn/ver/3959/trunk/template/mobile/js
 END
 kxjy.mobile.base.js
 K 25
 svn:wc:ra_dav:version-url
 V 66
-/svn/v3/!svn/ver/3927/trunk/template/mobile/js/kxjy.mobile.base.js
+/svn/v3/!svn/ver/4023/trunk/template/mobile/js/kxjy.mobile.base.js
 END
-zy_anim.js
+kxjy.mobile.bridge.js
 K 25
 svn:wc:ra_dav:version-url
-V 57
-/svn/v3/!svn/ver/3279/trunk/template/mobile/js/zy_anim.js
+V 68
+/svn/v3/!svn/ver/4023/trunk/template/mobile/js/kxjy.mobile.bridge.js
+END
+kxjy.mobile.page.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/v3/!svn/ver/4023/trunk/template/mobile/js/kxjy.mobile.page.js
+END
+kxjy.mobile.ui.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/v3/!svn/ver/4023/trunk/template/mobile/js/kxjy.mobile.ui.js
 END
 iscroll.js
 K 25
@@ -21,47 +33,11 @@ svn:wc:ra_dav:version-url
 V 57
 /svn/v3/!svn/ver/3918/trunk/template/mobile/js/iscroll.js
 END
-kxjy.mobile.ui.js
+spinningwheel-min.js
 K 25
 svn:wc:ra_dav:version-url
-V 64
-/svn/v3/!svn/ver/3904/trunk/template/mobile/js/kxjy.mobile.ui.js
-END
-zy_click.js
-K 25
-svn:wc:ra_dav:version-url
-V 58
-/svn/v3/!svn/ver/3357/trunk/template/mobile/js/zy_click.js
-END
-zy_flip.js
-K 25
-svn:wc:ra_dav:version-url
-V 57
-/svn/v3/!svn/ver/3357/trunk/template/mobile/js/zy_flip.js
-END
-kxjy.mobile.min.js
-K 25
-svn:wc:ra_dav:version-url
-V 65
-/svn/v3/!svn/ver/3444/trunk/template/mobile/js/kxjy.mobile.min.js
-END
-kxjy.mobile.home.js
-K 25
-svn:wc:ra_dav:version-url
-V 66
-/svn/v3/!svn/ver/3927/trunk/template/mobile/js/kxjy.mobile.home.js
-END
-kxjy.mobile.bridge.js
-K 25
-svn:wc:ra_dav:version-url
-V 68
-/svn/v3/!svn/ver/3904/trunk/template/mobile/js/kxjy.mobile.bridge.js
-END
-json2.js
-K 25
-svn:wc:ra_dav:version-url
-V 55
-/svn/v3/!svn/ver/3888/trunk/template/mobile/js/json2.js
+V 67
+/svn/v3/!svn/ver/3926/trunk/template/mobile/js/spinningwheel-min.js
 END
 zy_json.js
 K 25
@@ -69,17 +45,17 @@ svn:wc:ra_dav:version-url
 V 57
 /svn/v3/!svn/ver/3406/trunk/template/mobile/js/zy_json.js
 END
-spinningwheel-min.js
+json2.js
 K 25
 svn:wc:ra_dav:version-url
-V 67
-/svn/v3/!svn/ver/3926/trunk/template/mobile/js/spinningwheel-min.js
+V 55
+/svn/v3/!svn/ver/3888/trunk/template/mobile/js/json2.js
 END
 kxjy.mobile.feed.js
 K 25
 svn:wc:ra_dav:version-url
 V 66
-/svn/v3/!svn/ver/3927/trunk/template/mobile/js/kxjy.mobile.feed.js
+/svn/v3/!svn/ver/4023/trunk/template/mobile/js/kxjy.mobile.feed.js
 END
 zy_tmpl.js
 K 25
@@ -87,15 +63,9 @@ svn:wc:ra_dav:version-url
 V 57
 /svn/v3/!svn/ver/3823/trunk/template/mobile/js/zy_tmpl.js
 END
-zy_control.js
+kxjy.mobile.home.js
 K 25
 svn:wc:ra_dav:version-url
-V 60
-/svn/v3/!svn/ver/3357/trunk/template/mobile/js/zy_control.js
-END
-zy_event.js
-K 25
-svn:wc:ra_dav:version-url
-V 58
-/svn/v3/!svn/ver/3357/trunk/template/mobile/js/zy_event.js
+V 66
+/svn/v3/!svn/ver/4023/trunk/template/mobile/js/kxjy.mobile.home.js
 END
