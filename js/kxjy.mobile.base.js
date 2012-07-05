@@ -447,7 +447,7 @@ var Tools={
     cookie: function(name,value,expiredays) {
         var dc=document.cookie,cs,ce;
         if(value===null||value=="") {
-            var exdate=new Date(),cv=xlib.cookie(name);
+            var exdate=new Date(),cv=Tools.cookie(name);
             exdate.setTime(exdate.getTime()-1);
             if(cv)
                 document.cookie=name+"="+cv+";expires="+exdate.toGMTString();
@@ -485,7 +485,8 @@ var Tools={
         },
         removeItem: function(name) {
             Tools.cookie(name,null);
-        }
+        },
+        clear:function(){}//待实现
     },
     /*本地存储*/
     storage:(function(){
@@ -506,6 +507,9 @@ var Tools={
             },
             remove:function(key,scope){
                 getStorScope(scope).removeItem(key);
+            },
+            clear:function(scope){
+                getStorScope(scope).clear();
             }
         };
     })(),

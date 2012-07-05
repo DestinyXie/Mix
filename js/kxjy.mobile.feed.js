@@ -231,6 +231,7 @@ var Feed={
         * lastPos 数据插入位置;
         */
         this.destory();
+        this.isDestoryed=false;
         extend(this,options);
         this.refresh();
 	},
@@ -242,6 +243,10 @@ var Feed={
         }
     },
     destory:function(){
+        if(this.beforeDestory){
+            this.beforeDestory();
+        }
+        this.isDestoryed=true;
         this.index=0;
         this.cont=null;
         this.more=null;
@@ -565,6 +570,12 @@ var Feed={
                     }
                 },idx);
                 break;
+            case "blackList":
+                if(!StorageMgr.myShieldUid.has(data.uid)){
+                    StorageMgr.myShieldUid.push(data.uid);
+                }
+                tmplStr=zy_tmpl_s(tmpl,data,null,idx);
+                break;
             case "rank":
                 tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
                     switch(t[1]){
@@ -667,6 +678,10 @@ var Feed={
     removeFeed:function(node){
          this.cont.removeChild(node);
          this.dataCount--;
+         if(0==this.dataCount){
+            this.more.innerHTML=this.noDataTxt;
+            this.more.style.display="block";
+         }
          this.reset();
     }
 };
@@ -683,6 +698,8 @@ extend(ChatFeed,{
         this.isRefresh=false;
         this.isLoading=false;
         clearTimeout(ChatFeed.getDataInter);
+        if('chat'!=pageEngine.curPage)
+            return;
         ChatFeed.getDataInter=setTimeout(function(){
             ChatFeed.ingterCount++;
             ChatFeed.loadMore();},ChatFeed.getMsgInter||2000);
@@ -692,6 +709,10 @@ extend(ChatFeed,{
         }
 
         this.hasData=false;
+    },
+    beforeDestory:function(){
+        this.hasData=false;
+        this.ingterCount=0;
     },
     getUrl:function(mine){
         var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
@@ -708,7 +729,7 @@ extend(ChatFeed,{
         return url;
     },
     loadMore:function(setParam,mine){
-        if(this.isLoading)
+        if(this.isLoading||this.isDestoryed)
             return;
         this.isLoading=true;
 

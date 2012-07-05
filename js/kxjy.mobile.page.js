@@ -1,5 +1,65 @@
 /*单页面模式*/
 (function(){
+//公共tmpl,减少代码量
+var photoContTmpl='<!--content开始-->\
+    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
+    <div id="wrapper" class="bg">\
+    <div>\
+    <div class="pullDown">\
+    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
+    </div>\
+    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
+        <div class="mainListBox clearfix">\
+        </div>\
+    </div>\
+    <div _click="Feed.loadMore();" class="moreFeed">\
+        查看更多\
+    </div>\
+    </div>\
+    </div>\
+    </div>\
+    <!--content结束-->',
+    moodContTmpl='<!--content开始-->\
+    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
+    <div id="wrapper" class="bg">\
+    <div>\
+    <div class="pullDown">\
+    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
+    </div>\
+    <!--网格开始-->\
+    <div class="ui-grid-c ui-content ui-body-c" id="thelist">\
+    </div>\
+    <!--网格结束-->\
+    <div _click="Feed.loadMore();" class="moreFeed">\
+        查看更多\
+    </div>\
+    </div>\
+    </div>\
+    </div>\
+    <!--content结束-->',
+    commentTmpl='<!-- 输入 -->\
+    <div class="enter ub ub-ac">\
+        <div class="enterMood" _click="Comment.switchMoodBox(this)"><img src="css/images/f_1.png" alt="心情" /></div>\
+        <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="评论内容..." _click="Comment.focusInput(this)"></div>\
+        <div class="enterButton btnBg" _click="Comment.sendComment(function(){Feed.refresh();});">发表评论</div>\
+    </div>\
+    <!-- 输入结束-->',
+    commentListTmpl='<!--content开始-->\
+    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
+    <div id="wrapper" class="fixWrapperLeft bg">\
+    <div>\
+    <!--列表开始-->\
+    <div class="chatList">\
+    </div>\
+    <!--列表结束-->\
+    <div _click="Feed.loadMore();" class="moreFeed">\
+        查看更多\
+    </div>\
+    </div>\
+    </div>\
+    </div>\
+    <!--content结束-->'
+
 var contentTmpl={
 'login':'<div class="logo"><img src="css/images/login_logo.png" alt="开心交友" /></div>\
     <div class="loginBox">\
@@ -33,24 +93,7 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
-        <div class="mainListBox clearfix">\
-        </div>\
-    </div>\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${photoContTmpl}',
 'mainList':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
@@ -64,24 +107,7 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c" id="thelist">\
-    </div>\
-    <!--网格结束-->\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${moodContTmpl}',
 'myPhoto':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
@@ -322,13 +348,7 @@ var contentTmpl={
     </div>\
     </div>\
     </div>\
-    <!-- 输入 -->\
-    <div class="enter ub ub-ac">\
-        <div class="enterMood" _click="Comment.switchMoodBox(this);"><img src="css/images/f_1.png" alt="心情" /></div>\
-        <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="评论内容..." _click="Comment.focusInput(this)"></div>\
-        <div class="enterButton btnBg" _click="Comment.sendComment(function(){Feed.refresh();});">发表评论</div>\
-    </div>\
-    <!-- 输入结束-->\
+    ${commentTmpl}\
     </div>\
     <!--content结束-->',
 'hisPhoto':'<!--header开始-->\
@@ -497,13 +517,7 @@ var contentTmpl={
     </div>\
     </div>\
     </div>\
-    <!-- 输入 -->\
-    <div class="enter ub ub-ac">\
-        <div class="enterMood" _click="Comment.switchMoodBox(this)"><img src="css/images/f_1.png" alt="心情" /></div>\
-        <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="评论内容..." _click="Comment.focusInput(this)"></div>\
-        <div class="enterButton btnBg" _click="Comment.sendComment(function(){Feed.refresh();toast(Feed.datacount)});">发表评论</div>\
-    </div>\
-    <!-- 输入结束-->\
+    ${commentTmpl}\
     </div>\
     <!--content结束-->',
 'showMood':'<!--header开始-->\
@@ -595,7 +609,7 @@ var contentTmpl={
             <div class="ub-f1 ut-s">发出的评论</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'blacklist.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'blackList.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我屏蔽的人</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
@@ -671,7 +685,7 @@ var contentTmpl={
     <!-- 输入 -->\
     <div class="enter ub ub-ac">\
         <div class="enterMood" _click="Comment.switchMoodBox(this);"><img src="css/images/f_1.png" alt="心情" /></div>\
-        <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="评论内容..." _click="Comment.focusInput(this)"></div>\
+        <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="私信内容..." _click="Comment.focusInput(this)"></div>\
         <div class="enterButton btnBg" _click="Comment.sendComment(function(){ChatFeed.loadMore(null,true)},\'chat\');">发送私信</div>\
     </div>\
     <!-- 输入结束-->\
@@ -715,24 +729,7 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
-        <div class="mainListBox clearfix">\
-        </div>\
-    </div>\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${photoContTmpl}',
 'likeMe':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
@@ -743,52 +740,18 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6 bg">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
-        <div class="mainListBox clearfix">\
-        </div>\
-    </div>\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${photoContTmpl}',
 'attract':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
-        <div _click="ViewMgr.goto(\'infoCenter.html\')" class="btn btn-l kxjy-btn ub ub-ac ">\
+        <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
         <div class="ulim">返回</div>\
         </div>\
         <h1 class="ut ulev0 ut-s tx-c" tabindex="0">相互吸引</h1>\
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
-        <div class="mainListBox clearfix">\
-        </div>\
-    </div>\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${photoContTmpl}',
 'commentMe':'<!--header开始-->\
     <div id="header" class="uh t-wh">\
         <div class="kxjy-hd">\
@@ -801,21 +764,7 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="fixWrapperLeft bg">\
-    <div>\
-    <!--列表开始-->\
-    <div class="chatList">\
-    </div>\
-    <!--列表结束-->\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${commentListTmpl}',
 'myView':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
@@ -826,24 +775,7 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
-        <div class="mainListBox clearfix">\
-        </div>\
-    </div>\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${photoContTmpl}',
 'sendComment':'<!--header开始-->\
     <div id="header" class="uh t-wh">\
         <div class="kxjy-hd">\
@@ -856,49 +788,18 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6 bg">\
-    <div id="wrapper" class="fixWrapperLeft bg">\
-    <div>\
-    <!--列表开始-->\
-    <div class="chatList">\
-    </div>\
-    <!--列表结束-->\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${commentListTmpl}',
 'blackList':'<!--header开始-->\
     <div id="header" class="uh t-wh">\
         <div class="kxjy-hd">\
-            <div _click="ViewMgr.goto(\'infoCenter.html\')" class="btn btn-l kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
             <div class="ulim">返回</div>\
             </div>\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我屏蔽的人</h1>\
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
-        <div class="mainListBox clearfix">\
-        </div>\
-    </div>\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${photoContTmpl}',
 'likeMood':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
@@ -909,24 +810,7 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c" id="thelist">\
-    </div>\
-    <!--网格结束-->\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${moodContTmpl}',
 'likePerson':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
@@ -937,24 +821,7 @@ var contentTmpl={
         </div>\
     </div>\
     <!--header结束-->\
-    <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
-    <div>\
-    <div class="pullDown">\
-    <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
-    </div>\
-    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
-        <div class="mainListBox clearfix">\
-        </div>\
-    </div>\
-    <div _click="Feed.loadMore();" class="moreFeed">\
-        查看更多\
-    </div>\
-    </div>\
-    </div>\
-    </div>\
-    <!--content结束-->',
+    ${photoContTmpl}',
 'more':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
@@ -1001,7 +868,7 @@ var contentTmpl={
         <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">关于</div>\
         </div>\
-        <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="Device.confirm(\'确定退出？\',function(){Tools.storage.remove(\'kxjy_my_email\');Tools.storage.remove(\'kxjy_my_pwd\');ViewMgr.goto(\'login.html\');})">\
+        <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="Device.confirm(\'确定退出？\',function(){Tools.storage.clear();Tools.storage.clear(\'session\');ViewMgr.setUrl(\'login\');})">\
             <div class="ub-f1 ut-s">退出当前账号</div>\
         </div>\
     </div>\
@@ -1161,7 +1028,7 @@ var footerTmple={
         <input class="uhide" type="radio" name="tabSwitch">\
         <div _click=\'UserAction.sendFlower("people",this);\' class="ub-f1 ub ub-ver disable"><div class="ub-f1 ub-img5 tp-flower"></div><div class="uinn ulev-2 tx-c">送鲜花</div></div>\
         <input class="uhide" ${shield} type="radio" name="tabSwitch">\
-        <div _click=\'UserAction.shieldPerson("people",this);\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-blacklist"></div><div class="uinn ulev-2 tx-c">屏蔽</div></div>\
+        <div id="footer-shield" _click=\'UserAction.shieldPerson("people",this);\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-blacklist"></div><div class="uinn ulev-2 tx-c">屏蔽</div></div>\
         </div>\
         <!--iPhone导航条结束-->\
     </div>\
@@ -1558,6 +1425,11 @@ PageEngine.prototype={
             that.hasUser=true;
         }
     },
+    replacePubTmpl:function(tmplStr){//替换公共tmpl
+        var retStr=tmplStr;
+        retStr=retStr.replace(/\$\{photoContTmpl\}/,photoContTmpl).replace(/\$\{moodContTmpl\}/,moodContTmpl).replace(/\$\{commentTmpl\}/,commentTmpl).replace(/\$\{commentListTmpl\}/,commentListTmpl);
+        return retStr;
+    },
     compileTmpl:function(){
         var page=this.curPage,
             pcofig=pageConfig[page],
@@ -1565,6 +1437,9 @@ PageEngine.prototype={
             ftFocus=pcofig[1],
             htmlStr=contentTmpl[page],
             ftStr=ftTmpl?ftTmpl:"";
+
+        //替换公共tmpl
+        htmlStr=this.replacePubTmpl(htmlStr);
 
         if(ftFocus){
             var fReg=new RegExp('\\$\\{'+ftFocus+'\\}','g'),
@@ -1575,7 +1450,16 @@ PageEngine.prototype={
 
         return htmlStr+ftStr;
     },
+    cancelPrePage:function(){//撤销前一个页面相关
+        if('chat'==this.curPage){//撤销私信轮询
+            ChatFeed.destory();
+        }
+        Page.destory();//撤销页面载入
+        UserAction.stop();//撤销用户动作
+    },
     initPage:function(page){
+        this.cancelPrePage();
+
         if(page!=this.curPage){
             this.prePage=this.curPage;
             this.curPage=page;

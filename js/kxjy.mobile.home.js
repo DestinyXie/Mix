@@ -114,19 +114,26 @@ var ViewMgr={
                 ViewMgr.showMsg(StorageMgr.infoCenter);
 
             }
-
+            if(ViewMgr.isIniting){//防止过快切换页面发起重复请求
+                return;
+            }
             StorageMgr.getInfoCenter(function(a){
                     ViewMgr.showMsg(a);
             },true);    
         }
-
+        if(ViewMgr.isIniting){//防止过快切换页面发起重复请求
+            return;
+        }
+        ViewMgr.isIniting=true;
         /*tips*/
         var dataUrl=Tools.getSiteUrl()+'feed_flow.php?'+Tools.getSidUidParams(),
             secCb=function(a){
                 ViewMgr.addTips(a);
+                ViewMgr.isIniting=false;
                 ViewMgr.getData();
             },
             errCb=function(m){
+                ViewMgr.isIniting=false;
                 ViewMgr.getData();
             };
 
@@ -196,6 +203,7 @@ var ViewMgr={
 
 /*缓存资料管理*/
 var StorageMgr={
+    myShieldUid:[],//记住那些我屏蔽了的uid
     myInfo:null,
     infoCenter:null,
     initStor:function(){//初始化需要的缓存资料
@@ -280,6 +288,10 @@ var InfoCenter={
                 numDoms[i].innerHTML='<img style="width:1em;" src="css/images/'+(isUp?'Rise':'Decline')+'.png" alt="排名"/> '+val;
                 continue;
             }
+            if('notice'==key&&val*1==0){
+                numDoms[i].className="tx-r t-blu ulev-1";
+                numDoms[i].innerHTML=0;
+            }
             if(val*1>0&&key!='current_rank'){
                 numDoms[i].innerHTML="+"+val;
                 numDoms[i].className="us uinl b-wh uba1 c-m1 c-red uc-a2 t-wh ulev-1 uinn1";
@@ -290,7 +302,7 @@ var InfoCenter={
         myList:'allMood.php?ajax=1&${siduid}',
         attract:'crush.php?ajax=1&${siduid}',
         commentMe:'meComment.php?ajax=1&${siduid}',
-        rank:'chart.php?ajax=1&${siduid}',
+        // rank:'chart.php?ajax=1&${siduid}',//rank不清除
         flowersList:'flowersList.php?ajax=1&${siduid}'
     },
     clear:function(page,cb,ecb){
@@ -359,15 +371,16 @@ Page={
         this.loadedMore=false;
         this.editedValues=[];
         this.editedErrors=[];
+        this.dataXhr&&this.dataXhr.abort();
     },
     fullFillInfo:function(){
-
-        if(!Page.name||!Page.dataUrl||!Page.userData){
+        var that=this;
+        if(!that.name||!that.dataUrl||!that.userData){
             toast("页面信息不充分，无法载入资料",2);
         }else{
 
 
-            var data=Page.userData;
+            var data=that.userData;
 
             //昵称
             $('#header h1').innerHTML=/动态详情/.test($('#header h1').innerHTML)?data.nickname+"的动态详情":data.nickname;
@@ -390,24 +403,30 @@ Page={
                 $('#titleMenu-pic span').innerHTML=(data.picnum||0)+"<br />照片";
 
                 //排名
-                var myRank=StorageMgr.infoCenter['current_rank'];
-                if(myRank&&myRank*1!=0){
-                    $('#titleMenu-rank span').innerHTML=myRank+"<br />排名";
+                var rankStr="<br />无排名";
+                if(["myPhoto","myList"].has(that.name)){
+                    var myRank=StorageMgr.infoCenter['current_rank'];
+                    if(myRank&&myRank*1!=0){
+                        rankStr=myRank+"<br />排名";
+                    }
                 }else{
-                    $('#titleMenu-rank span').innerHTML="<br />无排名";
+                    rankStr="<br />排名不详";
                 }
+                $('#titleMenu-rank span').innerHTML=rankStr;
             }
-            
 
             //加心
-            if(["hisPhoto","hisList"].has(Page.name)){
+            if(["hisPhoto","hisList"].has(that.name)){
                 if(data.islove==1)
                     $("#footer-love").previousElementSibling.setAttribute("checked","checked");
                 if(data.friendnum&&data.friendnum>0)
                     $("#footer-love .ulev-2").innerHTML="喜欢("+data.friendnum+")";
+                if(StorageMgr.myShieldUid.has(hisInfo.curId)){
+                    $("#footer-shield").previousElementSibling.setAttribute("checked","checked");
+                }
             }
 
-            if(["myDetail","hisDetail"].has(Page.name)){
+            if(["myDetail","hisDetail"].has(that.name)){
                 $('.DynamicNav .time').nextSibling.replaceWholeText(data.create_time||"不详");
                 $('.DynamicNav .place').nextSibling.replaceWholeText(data.area||"不详");
                 $('.DynamicText p').innerHTML=data.mood||"";
@@ -424,7 +443,7 @@ Page={
                 $('.DynamicMenu .comment').nextSibling.replaceWholeText(data.commentcount||0);
             }
 
-            if(["myList","hisList","myDetail","hisDetail"].has(Page.name)){
+            if(["myList","hisList","myDetail","hisDetail"].has(that.name)){
                 return;
             }
 
@@ -445,39 +464,40 @@ Page={
     },
     /*填充编辑资料内容*/
     fullFillEditInfo:function(){
-        var data=Page.userData;
+        var data=this.userData;
 
-        Page.editedValues=[];
-        Page.editedErrors=[];
+        this.editedValues=[];
+        this.editedErrors=[];
 
-        Page.setEditVal("nickname",data.nickname||"",true);
-        Page.setEditVal("sex",dataArray.sex[data.sex
+        this.setEditVal("nickname",data.nickname||"",true);
+        this.setEditVal("sex",dataArray.sex[data.sex
             ]||"",true);
-        Page.setEditVal("area",[data.reside_province,data.reside_city].join(" ")||"",true);
-        Page.setEditVal("birthDay",(data.birthyear&&data.birthmonth&&data.birthday)?[data.birthyear,data.birthmonth,data.birthday].join('-'):"",true);
-        Page.setEditVal("marry",dataArray.marry[data.marry-1]||"单身",true);
-        Page.setEditVal("target",dataArray.target[data.target-1]||"",true);
-        Page.setEditVal("note",data.note||"",true);
-        Page.setEditVal("qq",data.qq||"",true);
-        Page.setEditVal("mobile",data.mobile||"",true);
+        this.setEditVal("area",[data.reside_province,data.reside_city].join(" ")||"",true);
+        this.setEditVal("birthDay",(data.birthyear&&data.birthmonth&&data.birthday)?[data.birthyear,data.birthmonth,data.birthday].join('-'):"",true);
+        this.setEditVal("marry",dataArray.marry[data.marry-1]||"单身",true);
+        this.setEditVal("target",dataArray.target[data.target-1]||"",true);
+        this.setEditVal("note",data.note||"",true);
+        this.setEditVal("qq",data.qq||"",true);
+        this.setEditVal("mobile",data.mobile||"",true);
 
         var interestArr=data.interest?data.interest.sort(function(a,b){return a-b;}):[],
             interestStr=[];
         $.each(interestArr,function(num){
             interestStr.unshift(dataArray.interest[num-1]);
         });
-        Page.setEditVal("interest",interestStr.join(" "),true);
+        this.setEditVal("interest",interestStr.join(" "),true);
     },
     setEditVal:function(id,value,init){
-        var ipt=$("#"+id);
+        var that=this,
+            ipt=$("#"+id);
         if(init){
             ipt.setAttribute('default',value);
         }else{
             if(ipt.getAttribute('default')!=value){
-                if(!Page.editedValues.has(id))
-                    Page.editedValues.push(id);
+                if(!that.editedValues.has(id))
+                    that.editedValues.push(id);
             }else{
-                Page.editedValues.remove(id);
+                that.editedValues.remove(id);
             }
         }
 
@@ -508,22 +528,24 @@ Page={
 
     },
     submitEditInfo:function(){
-        Page.editedErrors=[];
-        var editedIds=Page.editedValues;
+        var that=this,
+            editedIds=that.editedValues;
+        that.editedErrors=[];
+
         if(editedIds.length<=0){
             alert('你没有改变资料');
             return;
         }
 
         for(var len=editedIds.length;len--;){
-            var id=editedIds[len];
-            var ipt=$("#"+id);
+            var id=editedIds[len],
+                ipt=$("#"+id);
             switch(id){
                 case 'nickname':
                 case 'note':
                 case 'qq':
                 case 'mobile':
-                    Page.sendEditVal(id+"="+ipt.innerHTML,id);
+                    that.sendEditVal(id+"="+ipt.innerHTML,id);
                     break;
                 case 'sex':
                 case 'marry':
@@ -531,7 +553,7 @@ Page={
                     var idx=dataArray[id].indexOf(ipt.innerHTML);
                     if('sex'!=id)
                         idx++;
-                    Page.sendEditVal(id+"="+idx,id);
+                    that.sendEditVal(id+"="+idx,id);
                     break;
                 case 'interest':
                     var sel=$("#interestSel"),
@@ -543,27 +565,28 @@ Page={
                         sels.unshift(idx+1);
                     });
                     if(sels.length>0){
-                        Page.sendEditVal(id+"="+sels.join(','),'interest');
+                        that.sendEditVal(id+"="+sels.join(','),'interest');
                     }
                     break;
                 case 'birthDay':
                     var datas=ipt.innerHTML.split("-");
                     if(datas.length==3)
-                        Page.sendEditVal("birthyear="+datas[0]+"&birthmonth="+datas[1]+"&birthday="+datas[2],'birthDay');
+                        that.sendEditVal("birthyear="+datas[0]+"&birthmonth="+datas[1]+"&birthday="+datas[2],'birthDay');
                     break;
                 case 'area':
                     var datas=ipt.innerHTML.split(" ");
                     if(datas.length==2)
-                        Page.sendEditVal("reside_province="+datas[0]+"&reside_city="+datas[1],'area');
+                        that.sendEditVal("reside_province="+datas[0]+"&reside_city="+datas[1],'area');
                     break;
             }
         }
     },
     sendEditVal:function(params,id){
+        var that=this;
         function check(){//检查是否保存完成
-            if(Page.editedValues.length<=0){
-                if(Page.editedErrors.length>0){
-                    toast(Page.editedErrors.join("\n"));
+            if(that.editedValues.length<=0){
+                if(that.editedErrors.length>0){
+                    toast(that.editedErrors.join("\n"));
                 }else{
                     toast('保存成功!');
                     setTimeout(function(){
@@ -571,8 +594,8 @@ Page={
                     },1500);
                     
                 }
-                Page.editedErrors=[];
-                Page.editedValues=[];
+                that.editedErrors=[];
+                that.editedValues=[];
             }
         }
 
@@ -580,25 +603,25 @@ Page={
             dataUrl=Tools.getSiteUrl()+"do.php",
             param="action=setting&sid="+Tools.getParamVal('sid')+"&"+params,
             secCb=function(a){
-                Page.editedValues.remove(id);
+                that.editedValues.remove(id);
                 if(a.error){
                     ipt.innerHTML=ipt.getAttribute("default");
-                    Page.editedErrors.push(a.error);
+                    that.editedErrors.push(a.error);
                 }else{
                     ipt.setAttribute("default",ipt.innerHTML);    
                 }
                 check();
             },
             errCb=function(m){
-                Page.editedValues.remove(id);
+                that.editedValues.remove(id);
                 ipt.innerHTML=ipt.getAttribute("default");
-                Page.editedErrors.push(m.error);
+                that.editedErrors.push(m.error);
                 check();
             };
-        UserAction.sendAction(dataUrl,param,"post",secCb,errCb);
+        that.dataXhr=UserAction.sendAction(dataUrl,param,"post",secCb,errCb);
     },
     fullFillRank:function(){
-        var data=Page.userData,
+        var data=this.userData,
             addre=[data.reside_province?data.reside_province:"",data.reside_city?data.reside_city:""].join(" ");
         
         $(".rankAddress span").innerHTML=addre?addre:"不详";
@@ -614,7 +637,8 @@ Page={
         });
     },
     showMore:function(){
-        var infoUl=$('ul.myInfo'),
+        var that=this,
+            infoUl=$('ul.myInfo'),
             moreBtn=$("#titleMenu_more span");
         
         function insertLi(info){
@@ -624,10 +648,10 @@ Page={
             infoUl.appendChild(li);
         }
 
-        if(!Page.name||!Page.dataUrl||!Page.userData){
+        if(!that.name||!that.dataUrl||!that.userData){
             toast("页面信息不充分，无法载入资料");
         }else{
-            if(Page.loadedMore){
+            if(that.loadedMore){
                 if(DOM.hasClass(infoUl,'showMore')){
                     DOM.dropClass(infoUl,'showMore')
                     moreBtn.innerHTML="更多资料";
@@ -638,7 +662,7 @@ Page={
                 return;
             }
 
-            var data=Page.userData;
+            var data=that.userData;
 
             dataArray.blood[data.blood-1]&&insertLi("血型:"+dataArray.blood[data.blood-1]);
             dataArray.ethnic[data.ethnic-1]&&insertLi("民族:"+dataArray.ethnic[data.ethnic-1]);
@@ -656,88 +680,90 @@ Page={
             }
             DOM.addClass(infoUl,'showMore');
             moreBtn.innerHTML="收起更多";
-            Page.loadedMore=true;
+            that.loadedMore=true;
         }
     },
     getUserData:function(){
 
-        var dataUrl=Tools.getSiteUrl()+Page.dataUrl,
-            params=Page.params,
+        var that=this;
+            dataUrl=Tools.getSiteUrl()+that.dataUrl,
+            params=that.params,
             secCb=function(a){
                 if(a.error){toast(a.error,3);
                     return;
                 }
 
-                InfoCenter.clear(Page.name);
+                InfoCenter.clear(that.name);
 
-                Page.userData=a.myInfo||a.userInfo;
+                that.userData=a.myInfo||a.userInfo;
                 if(a.moodContent){//动态详情加入心情信息
-                    extend(Page.userData,a.moodContent);
+                    extend(that.userData,a.moodContent);
                 }
 
-                for(var k in Page.userData){//html,js转义
-                    if(Page.userData.hasOwnProperty(k)&&$.isStr(Page.userData[k]))
-                        Page.userData[k]=Tools.htmlEncode(Page.userData[k]);
+                for(var k in that.userData){//html,js转义
+                    if(that.userData.hasOwnProperty(k)&&$.isStr(that.userData[k]))
+                        that.userData[k]=Tools.htmlEncode(that.userData[k]);
                 }
 
-                switch(Page.name){
+                switch(that.name){
                     case 'myPhoto':
                     case 'myList':
-                        StorageMgr.setMyInfo(Page.userData);
+                        StorageMgr.setMyInfo(that.userData);
                         break;
                     case 'hisPhoto':
                     case 'hisList':
-                        hisInfo.set(hisInfo.curId,Page.userData);
+                        hisInfo.set(hisInfo.curId,that.userData);
                         break;
                     case 'rank':
-                        Page.fullFillRank();
+                        that.fullFillRank();
                         return;
                         break;
                     case 'editInfo':
-                        StorageMgr.setMyInfo(Page.userData);
-                        Page.fullFillEditInfo();
+                        StorageMgr.setMyInfo(that.userData);
+                        that.fullFillEditInfo();
                         return;
                         break;
                 }
-                Page.fullFillInfo();
+                that.fullFillInfo();
             },
             errCb=function(){
                 toast('connect error');
             };
 
-        this.userData=null;
+        that.userData=null;
 
         //取缓存数据
-        if(['myPhoto','myList','editInfo'].has(Page.name)){
-            Page.userData=StorageMgr.myInfo;
-            if(!!Page.userData){
-                switch(Page.name){
+        if(['myPhoto','myList','editInfo'].has(that.name)){
+            that.userData=StorageMgr.myInfo;
+            if(!!that.userData){
+                switch(that.name){
                     case 'myPhoto':
                     case 'myList':
                     // case 'myDetail':
-                        Page.fullFillInfo();
+                        that.fullFillInfo();
                         break;
                     case 'editInfo':
-                        Page.fullFillEditInfo();
+                        that.fullFillEditInfo();
                         break;
                 }
             }
         }
 
-        if(['hisPhoto','hisList'].has(Page.name)){
-            Page.userData=hisInfo.get(hisInfo.curId);
-            if(!!Page.userData){
-                Page.fullFillInfo();
+        if(['hisPhoto','hisList'].has(that.name)){
+            that.userData=hisInfo.get(hisInfo.curId);
+            if(!!that.userData){
+                that.fullFillInfo();
             }
         }
 
-        UserAction.sendAction(dataUrl,params|"","get",secCb,errCb);
+        that.dataXhr=UserAction.sendAction(dataUrl,params|"","get",secCb,errCb);
     },
     setDataNum:function(){
-        if(['myList','hisList'].has(Page.name)&&$('.myTitleMenu')!=null){
+        var that=this;
+        if(['myList','hisList'].has(that.name)&&$('.myTitleMenu')!=null){
             $('#titleMenu-mood span').innerHTML=Feed.dataCount+"<br />心情";
         }
-        if(['myDetail','hisDetail'].has(Page.name)){
+        if(['myDetail','hisDetail'].has(that.name)){
             $('.DynamicMenu .comment').nextSibling.replaceWholeText(Feed.dataCount);
         }
     }
@@ -757,6 +783,10 @@ var dataArray={
 
 /*用户执行动作*/
 var UserAction={
+    xhr:null,
+    stop:function(){
+        this.xhr&&this.xhr.abort();
+    },
     /*秀心情*/
     showMood:function(imgDom,iconDom,moodDom){
         var hasImg=(imgDom.childNodes.length>0),
@@ -834,8 +864,10 @@ var UserAction={
             cb&&cb();
 
             if(!!wid){
-                Feed.removeFeed(paraLi);
-                Page.setDataNum();
+                //子评论未消失
+                // Feed.removeFeed(paraLi);
+                // Page.setDataNum();
+                Feed.refresh();
             }else{
                 ViewMgr.back();
             }
@@ -962,11 +994,16 @@ var UserAction={
         secCb=function(m){
             if(type=="del"){
                 Feed.removeFeed(node);
+                StorageMgr.myShieldUid.remove(user_id);
                 toast('已取消屏蔽',2);
             }else{
                 if(shieldDom.getAttribute("checked")=="checked"){
+                    StorageMgr.myShieldUid.remove(hisInfo.curId);
                     shieldDom.removeAttribute("checked");
                 }else{
+                    if(!StorageMgr.myShieldUid.has(hisInfo.curId)){
+                        StorageMgr.myShieldUid.push(hisInfo.curId);
+                    }
                     shieldDom.setAttribute("checked","checked");    
                 }
             }
@@ -1138,6 +1175,7 @@ var UserAction={
                 errCb?errCb(e):toast('connect error');
             }
         });
+        this.xhr=xhr;
         return xhr;
     }
 }

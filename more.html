@@ -79,8 +79,8 @@
 	<div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">   
 		<div class="ub-f1 ut-s">关于</div>       
 	</div>
-	<div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="Device.confirm('确定退出？',function(){Tools.storage.remove('kxjy_my_email');Tools.storage.remove('kxjy_my_pwd');ViewMgr.goto('login.html');})">
-		<div class="ub-f1 ut-s">退出当前账号</div>       
+	<div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="Device.confirm('确定退出？',function(){Tools.storage.clear();Tools.storage.clear('session');ViewMgr.setUrl('login');})">
+		<div class="ub-f1 ut-s">退出当前账号</div>
 	</div> 
 </div>
 <!--列表结束-->
