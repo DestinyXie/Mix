@@ -386,9 +386,6 @@ Page={
 
 
             if($('.myTitleMenu')!=null){
-                //照片数
-                $('#titleMenu-pic span').innerHTML=(data.picnum||0)+"<br />照片";
-
                 //排名
                 var myRank,
                     rankStr="<br />无排名";
@@ -729,6 +726,9 @@ Page={
     },
     setDataNum:function(){
         var that=this;
+        if(['myPhoto','hisPhoto'].has(that.name)&&$('.myTitleMenu')!=null){
+            $('#titleMenu-pic span').innerHTML=Feed.dataCount+"<br />照片";
+        }
         if(['myList','hisList'].has(that.name)&&$('.myTitleMenu')!=null){
             $('#titleMenu-mood span').innerHTML=Feed.dataCount+"<br />心情";
         }

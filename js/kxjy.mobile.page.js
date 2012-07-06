@@ -974,8 +974,8 @@ var pageConfig={
         lastPos:1
     });
     //取得心情总数
-    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&type=2&pagecount=1&uid="+StorageMgr.uid+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
-        try{$("#titleMenu-mood").innerHTML="<span>"+num+"<br/>心情</span>";}catch(e){}
+    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+StorageMgr.uid+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
+        try{$("#titleMenu-mood span").innerHTML=num+"<br/>心情";}catch(e){}
         
     });
 }],
@@ -992,6 +992,11 @@ var pageConfig={
         more:$('.moreFeed'),
         cb:function(){myScroll.refresh();},
         lastPos:-1
+    });
+    //取得照片总数
+    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+StorageMgr.uid+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
+        try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
+        
     });
 }],
 'editInfo':['mainFooter',2,true,true,function(){
@@ -1040,7 +1045,7 @@ var pageConfig={
         });
         //取得心情总数
         UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+hisInfo.curId+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
-            $("#titleMenu-mood").innerHTML="<span>"+num+"<br/>心情</span>";
+            $("#titleMenu-mood span").innerHTML=num+"<br/>心情";
         });
     });
 }],
@@ -1058,6 +1063,11 @@ var pageConfig={
         Page.init({
             name:'hisList',
             dataUrl:'profile.php?ajax=1&sid='+StorageMgr.sid+"&user_id="+hisInfo.curId
+        });
+        //取得照片总数
+        UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+hisInfo.curId+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
+            try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
+            
         });
     });
 }],
