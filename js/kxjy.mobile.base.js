@@ -508,7 +508,7 @@ var Tools={
     filterMsgFace:function(str){
         if(str){return str = str.replace(/\[(face(\d+))\]/g, "<img src='"+Tools.getSiteUrl()+"images/face/$1.gif' />");}
     },
-    //转换js中的HTML特殊字符串
+    /*转换字符串中的html特殊字符串*/
     htmlEncode:function(str){
         if(str){
             return str.replace(/"/g,'&#039;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -516,12 +516,22 @@ var Tools={
             return str;
         }
     },
+    /*转换对象中字符串属性的html特殊字符串*/
+    htmlEncodeObj:function(obj){
+        for(key in obj){
+            if(obj.hasOwnProperty(key)&&(typeof obj[key]=="string")){
+                obj[key]=Tools.htmlEncode(obj[key]);//转换js中的HTML特殊字符串
+            }
+        }
+        return obj;
+    },
     /*选择表情Icon*/
     setIconId:function(node,setNum){
         var node=node||$('.showMoodList'),
             imgs=$$("img",node);
 
         if(setNum){//设置
+            setNum=("0"==setNum)?3:setNum;
             node.setAttribute('iconid',setNum);
             imgs[setNum-1].parentNode.appendChild($('.MoodSelect',node));
             return;
@@ -542,6 +552,22 @@ var Tools={
 
         tarImg.parentNode.appendChild($('.MoodSelect',node));
         node.setAttribute('iconid',idx+1);
+    },
+    /*将数据加入模板生成html*/
+    compiTpl:function(tpl,data,cb,idx){
+        if('sysNotice'!=Feed.page){//通知里面是需要html标签的
+            data=Tools.htmlEncodeObj(data);
+        }
+        /*简易模板实现(改自zy_tmpl.js)*/
+        return tpl.replace( /\$\{([^\}]*)\}/g,function(m,c){
+            if(c.match(/index:/)){
+                return idx;
+            }
+            if(c.match(/cb:/) && cb){
+                return cb(data,c.match(/cb:(.*)/));
+            }
+            return data[c]||"";
+        });
     },
     /*initArea*/
     initArea:function(type){

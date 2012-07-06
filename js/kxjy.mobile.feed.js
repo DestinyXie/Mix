@@ -356,7 +356,7 @@ var Feed={
             },
             errCb=function(m){
                 that.reset();
-                toast('connect error');
+                // toast('connect error');
             };
         that.loadXhr=UserAction.sendAction(dataUrl,params,"get",secCb,errCb);
     },
@@ -455,12 +455,12 @@ var Feed={
                 /*自己不显示*/
                 if(data.uid==StorageMgr.uid)
                     return;
-                tmplStr=zy_tmpl_s(tmpl,data,null,idx);
+                tmplStr=Tools.compiTpl(tmpl,data,null,idx);
                 break;
             case "myPhoto":
             case "hisPhoto":
                 if(data.havemood*1!=0&&(!data.filetype||data.filetype=="img"))
-                    tmplStr=zy_tmpl_s(tmpl,data,null,idx);
+                    tmplStr=Tools.compiTpl(tmpl,data,null,idx);
                 break;
             case "mainList":
             case "myList":
@@ -476,7 +476,7 @@ var Feed={
                 break;
             case "myDetail":
             case "hisDetail":
-                tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
+                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="commentMood"){
                         return Tools.filterMsgFace(o.mood);
                     }
@@ -502,7 +502,7 @@ var Feed={
                 },idx);
                 break;
             case "chatList":
-                tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
+                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="hasMsg"&&o.hasMsg*1==1){
                         return "<span class='amount'></span>";
                     }
@@ -513,7 +513,7 @@ var Feed={
                 if(""==data.content){
                     return "";
                 }
-                tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
+                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="who"&&o.fid==StorageMgr.uid){return " chatContent-r ub-rev"}
                     if(t[1]=="content"){
                         return Tools.filterMsgFace(o.content)||"";
@@ -536,7 +536,7 @@ var Feed={
                 },idx);
                 break;
             case "sysNotice":
-                tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
+                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="content"){
                         return Tools.filterMsgFace(o.content);
                     }
@@ -548,7 +548,7 @@ var Feed={
                 break;
             case "commentMe":
             case "sendComment":
-                tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
+                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="urlType"){
                         switch(o.urlType){
                             case "2":
@@ -574,7 +574,7 @@ var Feed={
                 },idx);
                 break;
             case "rank":
-                tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
+                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     switch(t[1]){
                         case "isself":
                             if(o.uid==StorageMgr.uid){
@@ -623,13 +623,13 @@ var Feed={
                 },idx);
                 break;
             default:
-                tmplStr=zy_tmpl_s(tmpl,data,null,idx);
+                tmplStr=Tools.compiTpl(tmpl,data,null,idx);
         }
         return tmplStr;
     },
     compileMood:function(tmpl,data,idx){//拼装心情列表
         var pageName=this.page;
-        var moodLiStr=zy_tmpl_s(tmpl,data,function(o,t){//模板回调函数
+        var moodLiStr=Tools.compiTpl(tmpl,data,function(o,t){//模板回调函数
                     switch(t[1]){
                         case 'mood':
                             if(o.havemood*1==0){

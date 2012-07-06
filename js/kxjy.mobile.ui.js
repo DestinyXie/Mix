@@ -281,11 +281,13 @@ var Tips={
         }
     },
     hide:function(){
-        var tipsDiv=Tips.tipD;
-        tipsDiv.style.bottom="-"+Tips.tipH+"px";
-        Tips.timer=setTimeout(function(){
-            Tips.timer=null;
-            tipsDiv.style.display="none";
-        },600);
+        try{
+            var tipsDiv=Tips.tipD;
+            tipsDiv.style.bottom="-"+Tips.tipH+"px";
+            Tips.timer=setTimeout(function(){
+                Tips.timer=null;
+                tipsDiv.style.display="none";
+            },600);
+        }catch(e){}
     }
 }

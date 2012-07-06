@@ -34,7 +34,7 @@ var headerBack='<!--header开始-->\
     <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
     </div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c" id="feedCont">\
+    <div id="feedCont">\
     </div>\
     <!--网格结束-->\
     <div _click="Feed.loadMore();" class="moreFeed">\
@@ -93,7 +93,7 @@ var contentTmpl={
             <div _click="actionSheet.show(\'search\')" class="btn btn-l kxjy-btn ub ub-ac ">\
                 <span class="header-ico hd-search"></span>\
             </div>\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">附近的人</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">附近的人</h1>\
             <div _click="ViewMgr.goto(\'mainList.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">动态<span class="header-ico hd-list"></span></div>\
         </div>\
@@ -107,7 +107,7 @@ var contentTmpl={
             <div _click="actionSheet.show(\'search\')" class="btn btn-l kxjy-btn ub ub-ac ">\
                 <span class="header-ico hd-search"></span>\
             </div>\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">附近动态</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">附近动态</h1>\
             <div _click="ViewMgr.goto(\'mainPhoto.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">头像<span class="header-ico hd-photo"></span></div>\
             </div>\
@@ -121,7 +121,7 @@ var contentTmpl={
             <div _click="ViewMgr.goto(\'myList.html\')" class="btn btn-l kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac"><span class="header-ico hd-list"></span>心情</div>\
             </div>\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">&nbsp;</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
             <div _click="ViewMgr.goto(\'editInfo.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim">编辑资料</div>\
             </div>\
@@ -178,7 +178,7 @@ var contentTmpl={
             <div _click="ViewMgr.goto(\'myPhoto.html\')" class="btn btn-l kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac"><span class="header-ico hd-photo"></span>照片</div>\
             </div>\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">\&nbsp;</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">\&nbsp;</h1>\
             <div _click="ViewMgr.goto(\'editInfo.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim">编辑资料</div>\
             </div>\
@@ -190,7 +190,7 @@ var contentTmpl={
     <div id="wrapper" class="bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c dockScroll" id="feedCont">\
+    <div class="dockScroll" id="feedCont">\
         <div class="myTitle clearfix">\
             <div class="myTitleAvatar fl"></div>\
             <div class="myTitle-r">\
@@ -219,7 +219,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'editInfo':'${headerCancel}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">编辑资料</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">编辑资料</h1>\
             <!--按钮开始-->\
              <div class="btn btn-r kxjy-btn ub ub-ac" _click="Page.submitEditInfo()">\
                   <div class="ulim">保存</div>\
@@ -285,7 +285,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'myDetail':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">动态详情</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">动态详情</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -295,7 +295,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c">\
+    <div>\
     <!-- 心情 -->\
         <div class="DynamicList clearfix">\
             <div class="DynamicInfo">\
@@ -346,7 +346,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'hisPhoto':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">&nbsp;</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
             <div _click="ViewMgr.goto(\'hisList.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">心情<span class="header-ico hd-list"></span></div>\
         </div>\
@@ -358,7 +358,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c">\
+    <div>\
         <div class="myTitle clearfix">\
             <div class="myTitleAvatar fl"></div>\
             <div class="myTitle-r">\
@@ -396,7 +396,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'hisList':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">&nbsp;</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
             <div _click="ViewMgr.goto(\'hisPhoto.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">照片<span class="header-ico hd-photo"></span></div>\
         </div>\
@@ -408,7 +408,7 @@ var contentTmpl={
     <div id="wrapper" class="bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c dockScroll" id="feedCont">\
+    <div class="dockScroll" id="feedCont">\
         <div class="myTitle clearfix">\
             <div class="myTitleAvatar fl"></div>\
             <div class="myTitle-r">\
@@ -437,7 +437,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'hisDetail':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">动态详情</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">动态详情</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -447,7 +447,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c">\
+    <div>\
     <!-- 心情 -->\
         <div class="DynamicList clearfix">\
             <div class="DynamicInfo">\
@@ -499,7 +499,7 @@ var contentTmpl={
 'showMood':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">秀心情</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">秀心情</h1>\
             <div _click="UserAction.showMood($(\'.showMoodPlus\'),$(\'.showMoodList\'),$(\'#mood\'))" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim">发布</div>\
             </div>\
@@ -531,7 +531,7 @@ var contentTmpl={
 'infoCenter':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">信息中心</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">信息中心</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -543,7 +543,7 @@ var contentTmpl={
     <div class="uba b-gra us listBg">\
         <div  _click="ViewMgr.goto(\'chatList.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">私信</div>\
-            <div class="tx-r t-blu ulev-1" >0</div>\
+            <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
         <div _click="ViewMgr.goto(\'sysNotice.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">通知</div>\
@@ -605,7 +605,7 @@ var contentTmpl={
     <!--content结束-->',
 'chatList':'${headerBack}\
             <!--按钮结束-->\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">私信</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">私信</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -625,7 +625,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'chat':'${headerBack}\
-        <h1 class="ut ulev0 ut-s tx-c" tabindex="0" id="nickName">&nbsp;</h1>\
+        <h1 class="ut ulev0 ut-s tx-c"  id="nickName">&nbsp;</h1>\
         <div _click="ViewMgr.goto(\'hisPhoto.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
         <div class="ulim">TA的主页</div>\
         </div>\
@@ -657,7 +657,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'sysNotice':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">通知</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">通知</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -680,55 +680,55 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'newGuest':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">最近访客(0)</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">最近访客(0)</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
 'likeMe':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">谁在&hearts;我</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">谁在&hearts;我</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
 'attract':'${headerBack}\
-        <h1 class="ut ulev0 ut-s tx-c" tabindex="0">相互吸引</h1>\
+        <h1 class="ut ulev0 ut-s tx-c">相互吸引</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
 'commentMe':'${headerBack}\
-              <h1 class="ut ulev0 ut-s tx-c" tabindex="0">收到的评论</h1>\
+              <h1 class="ut ulev0 ut-s tx-c">收到的评论</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${commentListTmpl}',
 'myView':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我看过谁</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">我看过谁</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
 'sendComment':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">发出的评论</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">发出的评论</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${commentListTmpl}',
 'blackList':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我屏蔽的人</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">我屏蔽的人</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
 'likeMood':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我&hearts;过的心情</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">我&hearts;过的心情</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${moodContTmpl}',
 'likePerson':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我&hearts;过的人</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">我&hearts;过的人</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -736,7 +736,7 @@ var contentTmpl={
 'more':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">更多</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">更多</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -745,7 +745,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c">\
+    <div>\
     <!--列表开始-->\
     <div class="uba  b-gra listBg us">\
         <div _click="ViewMgr.goto(\'rank.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
@@ -755,14 +755,14 @@ var contentTmpl={
         <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">提醒</div>\
             <!--开关按钮开始-->\
-            <input id="cBtn" class="uhide" type="checkbox" checked="true" >\
+            <input id="cBtn" class="uhide" type="checkbox" checked="true">\
             <div class="uba b-gra swi swi-bg uc-a1"  _click="$(\'#cBtn\').checked=!$(\'#cBtn\').checked;"></div>\
             <!--开关按钮结束-->\
         </div>\
             <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">声音</div>\
             <!--开关按钮开始-->\
-            <input id="dBtn" class="uhide" type="checkbox" checked="true" >\
+            <input id="dBtn" class="uhide" type="checkbox" checked="true">\
             <div class="uba b-gra swi swi-bg uc-a1"  _click="$(\'#dBtn\').checked=!$(\'#dBtn\').checked;"></div>\
             <!--开关按钮结束-->\
         </div>\
@@ -791,7 +791,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'rank':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">人气达人榜</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">人气达人榜</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -820,7 +820,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'password':'${headerCancel}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">修改密码</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">修改密码</h1>\
             <!--按钮开始-->\
              <div class="btn btn-r kxjy-btn ub ub-ac" _click="UserAction.changePassword(\'#oPwd\',\'#nPwd\',\'#cPwd\')">\
                 <div class="ulim">保存</div>\
@@ -850,7 +850,7 @@ var contentTmpl={
     </div>\
     <!--content结束-->',
 'users':'${headerBack}\
-            <h1 class="ut ulev0 ut-s tx-c" tabindex="0">用户注册</h1>\
+            <h1 class="ut ulev0 ut-s tx-c">用户注册</h1>\
         </div>\
     </div>\
     <!--header结束-->\
@@ -859,32 +859,41 @@ var contentTmpl={
     <!--列表开始-->\
     <div class="passwordBox">\
     <!--复选框开始-->\
-    <input type="hidden" id="sex" value="1"/>\
+    <input type="hidden" id="regSex" value="0"/>\
     <div class="t-bla">\
      <div class="ub uc-a1 t-bla   c-m7 uba tx-c gender">\
-      <div class=" uinn5 ubr b-grp uc-l1 ub-f1 che usersActive" _click="setSex(this)">\
+      <div class=" uinn5 ubr b-grp uc-l1 ub-f1 che usersActive" _click="setSex(this,0)">\
         男\
       </div>\
-      <div class=" uinn5 ubr b-grp uc-r1 ub-f1 che btnBg" _click="setSex(this)">\
+      <div class=" uinn5 ubr b-grp uc-r1 ub-f1 che btnBg" _click="setSex(this,1)">\
         女\
       </div>\
      </div>\
     </div>\
     <!--复选框结束-->\
         <div class="ub-ac ub loginList">\
+            <label class="uinn">电子邮箱:</label>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="text" id="regEmail" value="@qq.com"/></div>\
+        </div>\
+        <div class="ub-ac ub loginList">\
             <label class="uinn">　用户名:</label>\
-            <div class="loginInput ub-f1"><input class="btnBg" type="text" /></div>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="text" id="regNickName" /></div>\
         </div>\
         <div class="ub-ac ub loginList">\
             <label class="uinn">　　密码:</label>\
-            <div class="loginInput ub-f1"><input class="btnBg" type="password" /></div>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="password" id="regPwd" /></div>\
         </div>\
         <div class="ub-ac ub loginList">\
             <label class="uinn">确认密码:</label>\
-            <div class="loginInput ub-f1"><input class="btnBg" type="password" /></div>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="password" id="regPwdR" /></div>\
+        </div>\
+        <div class="ub-ac ub loginList">\
+            <label class="uinn">　验证码:</label>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="text" placeholder="点击右边图片,刷新验证码" id="regVeri"/></div>\
+            <div id="verify" _click="UserAction.getVerify(this)"></div>\
         </div>\
     </div>\
-    <div class="users">注册</div>\
+    <div class="users" _click="UserAction.userRegist()">注册</div>\
     <!--列表结束-->\
     </div>\
     <!--content结束-->'
@@ -948,26 +957,8 @@ var pageConfig={
         $('#password').value=storPwd;
     }
 }],
-'mainPhoto':['mainFooter',1,true,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        page:'mainPhoto',
-        cont:$('#feedCont'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
-'mainList':['mainFooter',1,true,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        page:'mainList',
-        cont:$('#feedCont'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
+'mainPhoto':['mainFooter',1,true,true],
+'mainList':['mainFooter',1,true,true],
 'myPhoto':['mainFooter',2,true,true,function(){
     delete WIN['myScroll'];
     WIN['myScroll']=new iScroll('wrapper');
@@ -1028,19 +1019,10 @@ var pageConfig={
     });
 }],
 'myDetail':[false,false,false,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=new iScroll('wrapper');
     Page.init({
         name:'myDetail',
         dataUrl:'mood.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorageMgr.sid
     });
-    Feed.init({
-        page:'myDetail',
-        cont:$('div.comment'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-    Comment.init('.enter');
 }],
 'hisPhoto':['hisFooter',false,false,true,function(){
     delete WIN['myScroll'];
@@ -1080,18 +1062,10 @@ var pageConfig={
     });
 }],
 'hisDetail':[false,false,false,true,function(){
-    WIN['myScroll']=new iScroll('wrapper');
     Page.init({
         name:'hisDetail',
         dataUrl:'moodHe.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorageMgr.sid
     });
-    Feed.init({
-        page:'hisDetail',
-        cont:$('div.comment'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-    Comment.init('.enter');
 }],
 'showMood':['mainFooter',3,true,true,function(){
     //计算TextArea的高度
@@ -1182,7 +1156,7 @@ var pageConfig={
     var myInfo=StorageMgr.myInfo,
         addre=[myInfo.reside_province?myInfo.reside_province:"",myInfo.reside_city?myInfo.reside_city:""].join(" ");
 
-    $(".rankAddress span").innerHTML=addre?addre:"不详";
+    $(".rankAddress span").innerHTML=(" "!=addre)?addre:"地区不详";
     if(!["无排名","0",0].has(StorageMgr.infoCenter.current_rank)){
         $('#curPos').innerHTML="排在第"+StorageMgr.infoCenter.current_rank+"位";
     }else{
@@ -1214,7 +1188,13 @@ var pageConfig={
 }],
 'password':[false,false,false,true],
 'users':[false,false,false,false,function(){
-    WIN['setSex']=function(node){
+    var url=Tools.getSiteUrl()+"verify.php?sid="+StorageMgr.sid,
+        img=DOM.create('img');
+    img.src=url;
+    $('#verify').appendChild(img);
+
+    delete WIN['setSex'];
+    WIN['setSex']=function(node,val){
         if(DOM.hasClass(node,'usersActive'))
             return;
         DOM.dropClass(node,'btnBg');
@@ -1222,6 +1202,7 @@ var pageConfig={
         var sibling=node.previousElementSibling||node.nextElementSibling;
         DOM.dropClass(sibling,'usersActive');
         DOM.addClass(sibling,'btnBg');
+        $('#regSex').value=val;
     }
 }]
 }
@@ -1325,6 +1306,29 @@ PageEngine.prototype={
             initFn.call(null);
         }
         switch(that.curPage){
+            case "mainPhoto":
+            case "mainList":
+                delete WIN['myScroll'];
+                WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
+                Feed.init({
+                    page:that.curPage,
+                    cont:$('#feedCont'),
+                    more:$('.moreFeed'),
+                    cb:function(){myScroll.refresh();}
+                });
+                break;
+            case "myDetail":
+            case "hisDetail":
+                delete WIN['myScroll'];
+                WIN['myScroll']=new iScroll('wrapper');
+                Feed.init({
+                    page:that.curPage,
+                    cont:$('div.comment'),
+                    more:$('.moreFeed'),
+                    cb:function(){myScroll.refresh();}
+                });
+                Comment.init('.enter');
+                break;
             case "chatList":
             case "commentMe":
             case "sendComment":

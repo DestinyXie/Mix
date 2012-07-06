@@ -210,7 +210,8 @@ var StorageMgr={
         if(force||!stor){
             var getUrl=Tools.getSiteUrl()+'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid,
                 secCb=function(a){
-                    StorageMgr.setMyInfo(a.myInfo);
+                    var encodeInfo=Tools.htmlEncodeObj(a.myInfo);
+                    StorageMgr.setMyInfo(encodeInfo);
                     cb&&cb(a);
                 };
             UserAction.sendAction(getUrl,"","get",secCb);
@@ -674,10 +675,7 @@ Page={
                     extend(that.userData,a.moodContent);
                 }
 
-                for(var k in that.userData){//html,js转义
-                    if(that.userData.hasOwnProperty(k)&&$.isStr(that.userData[k]))
-                        that.userData[k]=Tools.htmlEncode(that.userData[k]);
-                }
+                that.userData=Tools.htmlEncodeObj(that.userData);//html,js转义
 
                 switch(that.name){
                     case 'myPhoto':
@@ -698,7 +696,7 @@ Page={
                 that.fullFillInfo();
             },
             errCb=function(){
-                toast('connect error');
+                // toast('connect error');
             };
 
         that.userData=null;
@@ -1020,19 +1018,20 @@ var UserAction={
             return;
         }
 
-
         node.innerHTML="登陆中...";
-
+        UserAction.sendLogin(mailVal,passVal,node);
+    },
+    sendLogin:function(mail,pwd,btn){
         var checkUrl=Tools.getSiteUrl()+"userLogin.php",
-            params='email='+mailVal+'&password='+passVal,
+            params='email='+mail+'&password='+pwd,
             secCb=function(a) {
                 if(a.msg){
                     toast(a.msg);
-                    node.innerHTML="登陆";
+                    btn&&btn.innerHTML="登陆";
                     return;
                 }
-                Tools.storage.set('kxjy_my_email',mailVal);
-                Tools.storage.set('kxjy_my_pwd',passVal);
+                Tools.storage.set('kxjy_my_email',mail);
+                Tools.storage.set('kxjy_my_pwd',pwd);
 
                 StorageMgr.uid=a.uid;
                 StorageMgr.userKey=a.userKey;
@@ -1042,12 +1041,79 @@ var UserAction={
             },
             errCb=function(e){
                 toast(e.msg);
-                node.innerHTML="登陆";
+                btn&&btn.innerHTML="登陆";
             };
 
         UserAction.sendAction(checkUrl,params,"get",secCb,errCb);
     },
+    getVerify:function(node){//获得验证码
+        var img=$("img",node),
+            url=Tools.getSiteUrl()+"verify.php?sid="+StorageMgr.sid;
+        if(!img){
+            img=DOM.create('img');
+            img.src=url;
+            node.appendChild(img);
+        }
+        img.src=url;
+    },
     userRegist:function(){
+        var sex=$("#regSex").value,
+            email=$("#regEmail"),
+            nickname=$("#regNickName"),
+            password=$("#regPwd"),
+            passwordR=$("#regPwdR"),
+            imgcode=$("#regVeri"),
+            url=Tools.getSiteUrl()+"/register.php?sid="+StorageMgr.sid,
+            secCb=function(a){
+                if(1==a.error){
+                    toast(a.msg);
+                    return;
+                }
+                toast('注册成功,将自动登陆');
+                setTimeout(function(){
+                    UserAction.sendLogin(email.value,password.value);
+                },2000);
+            },errCb=function(a){
+                if(1==a.error){
+                    toast(a.msg);
+                    return;
+                }
+            };
+
+        if(0==email.value.length){
+            toast("请输入您的邮箱地址！");
+            return;
+        }
+        if(!/^.+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/.test(email.value)){
+            toast('邮箱地址有误！');
+            return;
+        }
+        if(0==nickname.value.length){
+            toast('请输入您的昵称！');
+            return;
+        }
+        if(nickname.value.chineseLen()>12){
+            toast('昵称过长！');
+            return;
+        }
+        if(0==password.value.length){
+            toast('请输入您的密码！');
+            return;
+        }
+        if(password.value!=passwordR.value){
+            toast('两次密码不一致！');
+            return;
+        }
+        if(0==imgcode.value){
+            toast('请输入验证码！');
+            return;
+        }
+        if(4!=imgcode.value.length){
+            toast('验证码有误！');
+            return;
+        }
+        url+="&sex="+sex+"&email="+email.value+"&nickname="+nickname.value+"&password="+password.value+"&imgcode="+imgcode.value;
+        UserAction.sendAction(url,"","get",secCb,errCb);
 
     },
     /*验证密码*/
@@ -1139,7 +1205,7 @@ var UserAction={
                 secCb&&secCb(a);
             },
             error:function(e){
-                errCb?errCb(e):toast('connect error',2);
+                errCb&&errCb(e);
             }
         });
         this.xhr=xhr;

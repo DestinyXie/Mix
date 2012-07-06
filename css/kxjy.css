@@ -68,16 +68,6 @@ body {
 	-webkit-text-size-adjust:none;
 	font-family:helvetica;
 }
-.ui-page.loading>div {
-	display: none;
-}
-.ui-page.loading:before {
-	content:"页面载入中...";
-	position: absolute;
-	top:5em;
-	left:50%;
-	margin-left:-3.5em;
-}
 /*tips*/
 .tipsShow {
 	position:absolute;
@@ -117,9 +107,6 @@ body {
 }
 #wrapper.fixWrapperLeft {
 	left:0;
-}
-#wrapper .ui-content {
-	padding:0;
 }
 #myFrame {
 	position:absolute;
@@ -285,7 +272,7 @@ to {
 	-webkit-box-shadow:3px 3px 15px #000 inset;
 	color:#FFF;
 }
-
+#verify{padding:0 .5em;}
 .gender{
 	border-color:#300f40;
 	margin-bottom:.8em;
