@@ -362,19 +362,20 @@ Delegate.init();
 var Tools={
     /*调整站点URL*/
     getSiteUrl:function(){
-        if(this.siteUrl)
-            return this.siteUrl;
+        if(Tools.siteUrl)
+            return Tools.siteUrl;
 
         var siteUrl="http://m.kxjy.com/";
         if(!/m.kxjy.com/.test(location.href)){
             siteUrl="http://192.168.30.78/friend/v3/";
         }
-        this.siteUrl=siteUrl;
+        
+        Tools.siteUrl=siteUrl;
         return siteUrl;
     },
     /*设置Chat服务器*/
     getChatUrl:function(url){
-        if("http://m.kxjy.com/"==this.getSiteUrl())
+        if("http://m.kxjy.com/"==Tools.getSiteUrl())
             return url.replace('m.kxjy.com/','yunchat.kxjy.com/')
         return url.replace('friend/v3/','chat/');
     },
@@ -384,12 +385,12 @@ var Tools={
     },
     /*取sid和uid参数字符串*/
     getSidUidParams:function(gotoUrl,setParams){
-        if(this.sidUidParam){
-            return this.sidUidParam;
+        if(Tools.sidUidParam){
+            return Tools.sidUidParam;
         }
 
         var paramStr="sid="+StorageMgr.sid+"&uid="+StorageMgr.uid+"&userKey="+StorageMgr.userKey;
-        this.sidUidParam=paramStr;
+        Tools.sidUidParam=paramStr;
         return paramStr;
     },
     /*从临时变量ViewMgr.tmpParams取参数值*/

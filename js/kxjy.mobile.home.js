@@ -18,7 +18,6 @@ function executeLoad(){
 
 Device.onLoad(executeLoad);
 
-
 /*页面历史管理类,控制历史记录,页面跳转*/
 var ViewMgr={
     tmpParams:"",//临时记录参数值
@@ -1027,7 +1026,9 @@ var UserAction={
             secCb=function(a) {
                 if(a.msg){
                     toast(a.msg);
-                    btn&&btn.innerHTML="登陆";
+                    if(btn){
+                        btn.innerHTML="登陆"
+                    }
                     return;
                 }
                 Tools.storage.set('kxjy_my_email',mail);
@@ -1041,9 +1042,10 @@ var UserAction={
             },
             errCb=function(e){
                 toast(e.msg);
-                btn&&btn.innerHTML="登陆";
+                if(btn){
+                    btn.innerHTML="登陆"
+                }
             };
-
         UserAction.sendAction(checkUrl,params,"get",secCb,errCb);
     },
     getVerify:function(node){//获得验证码
@@ -1114,7 +1116,6 @@ var UserAction={
         }
         url+="&sex="+sex+"&email="+email.value+"&nickname="+nickname.value+"&password="+password.value+"&imgcode="+imgcode.value;
         UserAction.sendAction(url,"","get",secCb,errCb);
-
     },
     /*验证密码*/
     checkPassword:function(psw,ok,err){

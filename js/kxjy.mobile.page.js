@@ -1374,9 +1374,7 @@ PageEngine.prototype={
                 break;
         }
     },
-    display:function(dirc){
-
-    },
+    display:function(dirc){},
     destory:function(){
         this.domCaches={};
         this.curPage='login';
