@@ -140,7 +140,7 @@ var feedTemplate={
         <div class="commentListAvatar" _click="ViewMgr.goto(${cb:isself})"><img src="${avatar_url}" alt="" /></div>\
         <div class="commentListText ub-f1">\
             <p>评论内容 ${cb:title} <span class="t-gra">(${create_time})</span></p>\
-            <p>评论<span class="t-pur"_click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${touid}\')">${nickname}</span>的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
+            <p>评论<span class="t-pur"_click="ViewMgr.goto(${cb:isself})">${nickname}</span>的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
             <div class="chatDelete" _click="UserAction.deleteData(\'comment\',DOM.findParent(this,\'.commentList\',true),\'${enwid}\');">删除</div>\
         </div>\
         <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail.html\',\'user_id=${uid}&wid=${parentid}\')">></strong>\
@@ -188,11 +188,11 @@ var pageFeedTmpl={
 var pageFeedUrl={
     mainPhoto:"main.php?uid=${uid}",
     mainList:"main.php?uid=${uid}",
-    myPhoto:"weibo.php?action=weibolist&type=1&pagecount=8&uid=${uid}",
-    myList:"weibo.php?action=weibolist&type=2&pagecount=8&uid=${uid}",
+    myPhoto:"weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=${uid}",
+    myList:"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=${uid}",
     myDetail:"weibo.php?action=weibolist&type=4&parentid=${wid}",
-    hisPhoto:"weibo.php?action=weibolist&type=1&pagecount=8&uid=",
-    hisList:"weibo.php?action=weibolist&type=2&pagecount=8&uid=",
+    hisPhoto:"weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=",
+    hisList:"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=",
     hisDetail:"weibo.php?action=weibolist&type=4&parentid=${wid}",
     chatList:"get_sess_list.php?callback=?&t=1&i=${uid}&k=${userKey}",
     chat:"get_msg.php?callback=?&st=3m&i=${uid}&fid=${fid}&tid=${uid}&k=${userKey}",
@@ -211,17 +211,19 @@ var pageFeedUrl={
 
 /*列表类*/
 var Feed={
-    index:0,
-    cont:null,
-    more:null,
-    onePageNum:null,
-    loadXhr:null,
-    isLoading:false,
-    loadingTxt:"正在加载...",
-    moreTxt:"查看更多",
-    noMoreTxt:"没有更多了",
-    noDataTxt:"暂时没有数据",
-    noMoreBtn:false,//是否显示加载按钮
+    defOptions:{
+            index:0,
+            cont:null,
+            more:null,
+            onePageNum:null,
+            loadXhr:null,
+            isLoading:false,
+            loadingTxt:"正在加载...",
+            moreTxt:"查看更多",
+            noMoreTxt:"没有更多了",
+            noDataTxt:"暂时没有数据",
+            noMoreBtn:false,//是否显示加载按钮
+    },
 	init:function(options){
         /*options项
         * page 页面名;
@@ -230,10 +232,11 @@ var Feed={
         * cb   数据加载完成回调函数;
         * lastPos 数据插入位置;
         */
-        this.destory();
-        this.isDestoryed=false;
-        extend(this,options);
-        this.refresh();
+        var that=this;
+        that.destory();
+        that.isDestoryed=false;
+        extend(that,that.defOptions,options);
+        that.refresh();
 	},
     reset:function(){
         this.isRefresh=false;
@@ -243,17 +246,12 @@ var Feed={
         }
     },
     destory:function(){
-        if(this.beforeDestory){
+        if(this.beforeDestory){//供继承类使用
             this.beforeDestory();
         }
         this.isDestoryed=true;
-        this.index=0;
-        this.cont=null;
-        this.more=null;
-        this.onePageNum=null;
+
         this.loadXhr&&this.loadXhr.abort();
-        this.loadXhr=null;
-        this.isLoading=false;
         this.lastPos=null;
         this.addParams="";
     },
@@ -313,8 +311,6 @@ var Feed={
 
         if(['rank'].has(this.page)){
             var data=a.data;
-            if(data.rank!="无排名")
-                $('#curPos').innerHTML="排在"+data.rank+"位";
             this.dataCount=data.rank_info.length;
             this.totalPage=data.allNum;
             this.fullFillFeed(data.rank_info);
@@ -340,7 +336,7 @@ var Feed={
             return false;
         }
 
-        if(!that.isRefresh&&that.more&&!that.noMoreBtn){
+        if(that.more&&!that.noMoreBtn){
             that.more.innerHTML=that.loadingTxt;
         }
 
@@ -367,12 +363,16 @@ var Feed={
     getUrl:function(){
         var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
             function(m,c){
+                if(['uid','sid','userKey'].has(c))
+                    return StorageMgr[c];
                 return Tools.getParamVal(c);
             });
+
         if(['hisPhoto','hisList'].has(this.page)){
             feedUrl=pageFeedUrl[this.page].replace(/uid=[\d+]?$/,'uid='+hisInfo.curId);
         }
-        return Tools.getSiteUrl()+feedUrl+"&sid="+Tools.getParamVal('sid');
+
+        return Tools.getSiteUrl()+feedUrl+"&sid="+StorageMgr.sid;
     },
     setParams:function(setParam){
         var params="page="+(this.index+1)+"&ajax=1";
@@ -453,7 +453,7 @@ var Feed={
         switch(that.page){
             case "mainPhoto":
                 /*自己不显示*/
-                if(data.uid==Tools.getParamVal('uid'))
+                if(data.uid==StorageMgr.uid)
                     return;
                 tmplStr=zy_tmpl_s(tmpl,data,null,idx);
                 break;
@@ -467,7 +467,7 @@ var Feed={
             case "hisList":
             case "likeMood":
                 /*自己不显示*/
-                if(that.page=="mainList"&&data.uid==Tools.getParamVal('uid')){
+                if(that.page=="mainList"&&data.uid==StorageMgr.uid){
                     return;
                 }
                 if(data.havemood*1!=0&&(!data.filetype||data.filetype=="img")){
@@ -494,7 +494,7 @@ var Feed={
                         return chiNodeStr;
                     }
                     if(t[1]=="isself"){
-                        if(o.uid==Tools.getParamVal('uid'))
+                        if(o.uid==StorageMgr.uid)
                             return true;
                         return false
                     }
@@ -510,10 +510,13 @@ var Feed={
                 },idx);
                 break;
             case "chat":
+                if(""==data.content){
+                    return "";
+                }
                 tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
-                    if(t[1]=="who"&&o.fid==Tools.getParamVal('uid')){return " chatContent-r ub-rev"}
+                    if(t[1]=="who"&&o.fid==StorageMgr.uid){return " chatContent-r ub-rev"}
                     if(t[1]=="content"){
-                        return Tools.filterMsgFace(o.content);
+                        return Tools.filterMsgFace(o.content)||"";
                     }
                     if(t[1]=="avatar"){
                         var myInfo=StorageMgr.myInfo,
@@ -524,7 +527,7 @@ var Feed={
                             hisImg=hisInfo.storInfos[hisInfo.curId].avatar_file;
                         }
 
-                        if(o.fid==Tools.getParamVal('uid')){
+                        if(o.fid==StorageMgr.uid){
                             hisImg=myInfo.avatar_file;
                         }
                         return "<div class='chatAvatar'><img src='"+hisImg+"' alt='' /></div>";
@@ -570,17 +573,11 @@ var Feed={
                     }
                 },idx);
                 break;
-            case "blackList":
-                if(!StorageMgr.myShieldUid.has(data.uid)){
-                    StorageMgr.myShieldUid.push(data.uid);
-                }
-                tmplStr=zy_tmpl_s(tmpl,data,null,idx);
-                break;
             case "rank":
                 tmplStr=zy_tmpl_s(tmpl,data,function(o,t){
                     switch(t[1]){
                         case "isself":
-                            if(o.uid==Tools.getParamVal('uid')){
+                            if(o.uid==StorageMgr.uid){
                                 return "_click=\"ViewMgr.goto('myPhoto.html')\"";
                             }else{
                                 return "_click=\"ViewMgr.goto('hisPhoto.html','user_id="+o.uid+"')\"";
@@ -688,27 +685,26 @@ var Feed={
 
 
 //私信类,继承Feed
-var ChatFeed={};
-extend(ChatFeed,Feed);
-extend(ChatFeed,{
+var ChatFeed=extend({},Feed,{
     onePageNum:10,
     ingterCount:0,
     getMsgInter:2000,//取新消息时间间隔 2秒
     reset:function(){
-        this.isRefresh=false;
-        this.isLoading=false;
-        clearTimeout(ChatFeed.getDataInter);
+        var that=this;
+        that.isRefresh=false;
+        that.isLoading=false;
+        clearTimeout(that.getDataInter);
         if('chat'!=pageEngine.curPage)
             return;
-        ChatFeed.getDataInter=setTimeout(function(){
-            ChatFeed.ingterCount++;
-            ChatFeed.loadMore();},ChatFeed.getMsgInter||2000);
+        that.getDataInter=setTimeout(function(){
+            that.ingterCount++;
+            that.loadMore();},that.getMsgInter||2000);
 
-        if($.isFunc(ChatFeed.cb)){
-            this.cb();
+        if($.isFunc(that.cb)){
+            that.cb();
         }
 
-        this.hasData=false;
+        that.hasData=false;
     },
     beforeDestory:function(){
         this.hasData=false;
@@ -717,30 +713,33 @@ extend(ChatFeed,{
     getUrl:function(mine){
         var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
             function(m,c){
+                if(['uid','sid','userKey'].has(c))
+                    return StorageMgr[c];
                 return Tools.getParamVal(c);
             });
 
-        var url=Tools.getSiteUrl()+feedUrl+"&sid="+Tools.getParamVal('sid');
+        var url=Tools.getSiteUrl()+feedUrl+"&sid="+StorageMgr.sid;
 
         if(mine)
-            url=url.replace(/&fid=\d+/,"&fid="+Tools.getParamVal('uid')).replace(/&tid=\d+/,"&tid="+Tools.getParamVal('fid')).replace("st=3m","st=");
+            url=url.replace(/&fid=\d+/,"&fid="+StorageMgr.uid).replace(/&tid=\d+/,"&tid="+Tools.getParamVal('fid')).replace("st=3m","st=");
         if(!this.isRefresh)
             url=url.replace("st=3m","st=");
         return url;
     },
     loadMore:function(setParam,mine){
-        if(this.isLoading||this.isDestoryed)
+        var that=this;
+        if(that.isLoading||that.isDestoryed)
             return;
-        this.isLoading=true;
+        that.isLoading=true;
 
-        clearTimeout(ChatFeed.getDataInter);
+        clearTimeout(that.getDataInter);
 
-        var dataUrl=this.getUrl(mine),
-            params=this.setParams(setParam);
+        var dataUrl=that.getUrl(mine),
+            params=that.setParams(setParam);
 
         dataUrl=Tools.getChatUrl(dataUrl);
 
-        this.sendRequest(dataUrl,params);
+        that.sendRequest(dataUrl,params);
     },
     fullFillFeed:function(data){
         var that=this;
@@ -789,8 +788,8 @@ var Comment={
     moodInter:null,
     motions:["[龇牙]","[吐舌头]","[流汗]","[捂嘴]","[挥手]","[敲打]","[擦汗]","[玫瑰]","[大哭]","[流泪]","[嘘]","[抓狂]","[委屈]","[微笑]","[色]","[脸红]","[得瑟]","[笑]","[惊恐]","[尴尬]","[吻]","[无语]","[不开心]","[惊讶]","[疑问]","[睡觉]","[亲]","[憨笑]","[吐]","[阴险]","[坏笑]","[鄙视]","[晕]","[可怜]","[好]","[坏]","[握手]","[耶]","[承让]","[勾手指]","[OK]","[折磨]","[挖鼻屎]","[拍手]","[糗]","[打哈欠]","[要哭了]","[闭嘴]"],
     transMotion:function(){
-        var faces=Comment.motions,
-            msg=Comment.commTxt;
+        var faces=this.motions,
+            msg=this.commTxt;
         for(var i=0,len=faces.length;i<=len;i++){
            var reg = new RegExp("\\"+faces[i],"g");
            msg = msg.replace(reg,"[face"+(i*1+1)+"]");
@@ -798,34 +797,53 @@ var Comment={
         return msg;
     },
 	init:function(commBox,opt){
-        this.commBox=$(commBox);
-        this.moodImg=$('.enterMood',Comment.commBox);
-        this.moodBox=$('.chatMood',Comment.commBox);
+        var comBox=$(commBox);
+        this.commBox=comBox;
+        this.moodImg=$('.enterMood',comBox);
+        this.moodBox=$('.chatMood',comBox);
         if(!this.moodBox){
             this.createMoodBox();
         }
-        this.input=$('.enterInput input',Comment.commBox);
-        this.sentBtn=$('.enterButton',Comment.commBox);
-        this.bindEvent();
+        this.input=$('.enterInput input',comBox);
+        this.sentBtn=$('.enterButton',comBox);
+        this._bindEvent();
     },
-    bindEvent:function(){
-        DOM.addEvent(DOC,CLICK_EVENT,function(e){
-            if(Comment.stopHideBox)
-                return;
-            Comment.hideMoodBox();
-        });
+    destory:function(){
+        var that=this;
+        if(!this.commBox)
+            return;
+        
+        clearTimeout(that.moodInter);
+        that.type="评论";
+        that.moodInter=null;
+
+        delete this.commBox;
+        this.commBox=null;
+        this.moodImg=null;
+        this.moodBox=null;
+        this.input=null;
+        this.sentBtn=null;
+        this._unBindEvent();
+    },
+    _bindEvent:function(){
+        DOC.addEventListener(CLICK_EVENT,Comment.hideMoodBox,false);
+    },
+    _unBindEvent:function(){
+        DOC.removeEventListener(CLICK_EVENT,Comment.hideMoodBox,false);
     },
     focusInput:function(node){
-        Comment.hideMoodBox();
-        Comment.input.focus();
-        if(DOM.hasClass(Comment.input.parentNode,"wrong"))
-            Comment.reset();
+        var that=this;
+        that.hideMoodBox();
+        that.input.focus();
+        if(DOM.hasClass(that.input.parentNode,"wrong"))
+            that.reset();
         node&&node.event.event.stopPropagation();
     },
     sendComment:function(cb,type){
-        Comment.hideMoodBox();
+        var that=this;
+        that.hideMoodBox();
 
-        if(!Comment.checkComment()){
+        if(!that.checkComment()){
             return;
         }
 
@@ -837,54 +855,57 @@ var Comment={
                     return;
                 }
                 cb&&cb();
-                Comment.reset();
+                that.reset();
                 toast('发送成功！',2);
             };
 
         if(type&&type=="chat"){
-            Comment.type="私信";
-            sendUrl=Tools.getSiteUrl()+"send_msg.php?callback=?&sid="+Tools.getParamVal('sid')+"&fid="+Tools.getParamVal('uid')+"&tid="+Tools.getParamVal('fid')+"&msg="+Comment.transMotion(Comment.commTxt)+"&i="+Tools.getParamVal('uid')+"&k="+Tools.getParamVal('userKey');
+            that.type="私信";
+            sendUrl=Tools.getSiteUrl()+"send_msg.php?callback=?&sid="+StorageMgr.sid+"&fid="+StorageMgr.uid+"&tid="+Tools.getParamVal('fid')+"&msg="+that.transMotion(that.commTxt)+"&i="+StorageMgr.uid+"&k="+StorageMgr.userKey;
 
             sendUrl=Tools.getChatUrl(sendUrl);
         }else{
-            sendUrl=Tools.getSiteUrl()+"weibo.php?action=comment&type=4&sid="+Tools.getParamVal('sid')+"&parentid="+Tools.getParamVal('wid');
+            sendUrl=Tools.getSiteUrl()+"weibo.php?action=comment&type=4&sid="+StorageMgr.sid+"&parentid="+Tools.getParamVal('wid');
 
-            params="title="+Comment.transMotion(Comment.commTxt);
-            if(Comment.parenNode){
-                params+="&parentNode="+Comment.parenNode
-                Comment.parenNode=null;
+            params="title="+that.transMotion(that.commTxt);
+            if(that.parenNode){
+                params+="&parentNode="+that.parenNode
+                that._unSetParenComm();
             }
         }
         
         UserAction.sendAction(sendUrl,params,"get",secCb);
     },
     checkComment:function(){
-        if(DOM.hasClass(Comment.input.parentNode,"wrong")){
+        var that=this;
+        if(DOM.hasClass(that.input.parentNode,"wrong")){
             return false;
         }
-        Comment.commTxt=Comment.input.value.trim();
+        that.commTxt=that.input.value.trim();
 
         var errTxt="";
-        if(Comment.commTxt==""){
-            errTxt=Comment.type+"内容不能为空！";
+        if(that.commTxt==""){
+            errTxt=that.type+"内容不能为空！";
         }
-        if(Comment.commTxt.chineseLen()>139){
-            errTxt=Comment.type+"过长！";
+        if(that.commTxt.chineseLen()>139){
+            errTxt=that.type+"过长！";
         }
 
         if(errTxt!=""){
-            Comment.setErr(errTxt);
+            that.setErr(errTxt);
             return false;
         }
         return true;
     },
     setErr:function(txt){
-        Comment.input.value=txt;
-        DOM.addClass(Comment.input.parentNode,"wrong");
+        var that=this;
+        that.input.value=txt;
+        DOM.addClass(that.input.parentNode,"wrong");
     },
     reset:function(){
-        Comment.input.value="";
-        DOM.dropClass(Comment.input.parentNode,"wrong");
+        var that=this;
+        that.input.value="";
+        DOM.dropClass(that.input.parentNode,"wrong");
     },
     createMoodBox:function(){
         var mb=DOM.create('div'),
@@ -893,7 +914,7 @@ var Comment={
             li;
         mb.className="chatMood";
         ul.className="clearfix";
-        for(var i=0;i<40;i++){
+        for(var i=0;i<36;i++){
             li=DOM.create('li');
             ul.appendChild(li);
         }
@@ -901,13 +922,14 @@ var Comment={
         ul.appendChild(arrow);
         mb.appendChild(ul);
         mb.setAttribute('_click','Comment.selectMood(this)');
-        Comment.commBox.appendChild(mb);
-        Comment.moodBox=mb;
+        this.commBox.appendChild(mb);
+        this.moodBox=mb;
     },
     selectMood:function(node){
-        var evt=node.event,
+        var that=this,
+            evt=node.event,
             li=evt.getTargets('li')[0],
-            lis=$$('li',Comment.moodBox),
+            lis=$$('li',that.moodBox),
             len=lis.length,
             liArr=[];
         for(var i=0;i<len;i++){
@@ -915,69 +937,81 @@ var Comment={
         }
         var idx=liArr.indexOf(li);
         if(typeof idx=="number"&&idx>=0){
-            if(DOM.hasClass(Comment.input.parentNode,"wrong"))
-                Comment.reset();
-            Tools.insertAtCaret(Comment.input,Comment.motions[idx]);
+            if(DOM.hasClass(that.input.parentNode,"wrong"))
+                that.reset();
+            Tools.insertAtCaret(that.input,that.motions[idx]);
         }
-        Comment.stopHideBox=true;
+        that.stopHideBox=true;
         evt.stop();
-        setTimeout(function(){Comment.stopHideBox=false;},200);
+        setTimeout(function(){that.stopHideBox=false;},200);
     },
     switchMoodBox:function(node){
-        if(getComputedStyle(Comment.moodBox).display!="block"){
-            Comment.showMoodBox();
-            Comment.stopHideBox=true;
+        var that=this;
+        if(getComputedStyle(that.moodBox).display!="block"){
+            that.showMoodBox();
+            that.stopHideBox=true;
         }else{
-            Comment.hideMoodBox();
+            that.hideMoodBox();
         }
         node.event.stop();
-        setTimeout(function(){Comment.stopHideBox=false;},200);
+        setTimeout(function(){that.stopHideBox=false;},200);
     },
     showMoodBox:function(){
-        if(Comment.moodBox.style.display=="block"){
+        var that=this;
+        if(that.moodBox.style.display=="block"){
             return;
         }
-        clearTimeout(Comment.moodInter);
-        Comment.moodBox.style.display="block";
-        Comment.moodInter=setTimeout(function(){
-            DOM.addClass(Comment.moodBox,'display');
+        clearTimeout(that.moodInter);
+        that.moodBox.style.display="block";
+        that.moodInter=setTimeout(function(){
+            DOM.addClass(that.moodBox,'display');
         },0);
     },
     hideMoodBox:function(){
-        if(Comment.moodBox.style.display=="none"){
+        var that=Comment;
+        if(that.stopHideBox||that.moodBox.style.display=="none"){
             return;
         }
-        clearTimeout(Comment.moodInter);
-        DOM.dropClass(Comment.moodBox,'display');
-        Comment.moodInter=setTimeout(function(){
-            Comment.moodBox.style.display="none";
+        clearTimeout(that.moodInter);
+        DOM.dropClass(that.moodBox,'display');
+        that.moodInter=setTimeout(function(){
+            that.moodBox.style.display="none";
         },250);
     },
+    _setParenComm:function(pid){
+        /*添加父节点,在Comment.sendComment方法中捕获*/
+        this.parenNode=pid;
+        this.sentBtn.innerHTML="回复评论";
+    },
+    _unSetParenComm:function(){
+        this.parenNode=null;
+        this.sentBtn.innerHTML="发表评论";
+    },
     popOperation:function(node,paraId,enwid,self){
+        var that=this;
         if(Page.name=="myDetail"){
             if(!self){
                 Device.actionThree('执行操作','对这条评论:',['回复','删除','取消'],
                 function(){
-                    /*添加父节点,在Comment.sendComment方法中捕获*/
-                    Comment.parenNode=enwid;
-                    Comment.focusInput();
+                    that._setParenComm(enwid);
+                    that.focusInput();
                 },
                 function(){
-                    Comment.parenNode=null;
+                    that._unSetParenComm();
                     UserAction.deleteData('comment',node,enwid);
                 },
                 function(){
-                    Comment.parenNode=null;
+                    that._unSetParenComm()
                 }
                 );
             }else{
                 Device.confirm('对你的评论:',
                 function(){
-                    Comment.parenNode=null;
+                    that._unSetParenComm()
                     UserAction.deleteData('comment',node,enwid);
                 },
                 function(){
-                    Comment.parenNode=null;
+                    that._unSetParenComm()
                 },['删除','取消'],'执行操作'
                 );
             }
@@ -985,21 +1019,21 @@ var Comment={
             if(!self){
                 Device.confirm('对这条评论:',
                 function(){
-                    Comment.parenNode=enwid;
-                    Comment.focusInput();
+                    that._setParenComm(enwid);
+                    that.focusInput();
                 },
                 function(){
-                    Comment.parenNode=null;
+                    that._unSetParenComm()
                 },['回复','取消'],'执行操作'
                 );
             }else{
                 Device.confirm('对你的评论:',
                 function(){
-                    Comment.parenNode=null;
+                    that._unSetParenComm()
                     UserAction.deleteData('comment',node,enwid);
                 },
                 function(){
-                    Comment.parenNode=null;
+                    that._unSetParenComm()
                 },['删除','取消'],'执行操作'
                 );
             }

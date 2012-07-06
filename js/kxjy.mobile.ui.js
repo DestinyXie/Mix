@@ -15,18 +15,26 @@ function initIScroll(pullDownEl,wrapperID,downAction) {
         },
         onScrollMove: function () {
             if (this.y > 5) {
-                DOM.addClass(pullDownEl,'flip');
+                $('.pullDownIcon')&&($('.pullDownIcon').style.webkitTransform='rotate(-180deg)');
                 $('.pullDownLabel',pullDownEl).innerHTML = '释放刷新页面...';
                 this.minScrollY = 0;
-            } else if (this.y < 5 && DOM.hasClass(pullDownEl,'flip')) {
+            } else if (this.y < 5) {
+                if($('.pullDownIcon')){
+                    if((this.y>-pullDownOffset/2)&&this.y<=0){
+                        var roVal=-180*(2*this.y/pullDownOffset-1);
+                        $('.pullDownIcon').style.webkitTransform='rotate('+roVal+'deg)';
+                    }else if(this.y<-pullDownOffset/2){
+                        $('.pullDownIcon').style.webkitTransform='rotate(0deg)';
+                    }
+                }
+
                 DOM.dropClass(pullDownEl,'flip');
                 $('.pullDownLabel',pullDownEl).innerHTML = '下拉刷新页面...';
                 this.minScrollY = -pullDownOffset;
             }
         },
         onScrollEnd: function () {
-            if (DOM.hasClass(pullDownEl,'flip')) {
-                DOM.dropClass(pullDownEl,'flip')
+            if ($('.pullDownLabel',pullDownEl).innerHTML == '释放刷新页面...') {
                 DOM.addClass(pullDownEl,'loading');
                 pullDownEl.querySelector('.pullDownLabel').innerHTML = '载入中...';                
                 if(typeof downAction=="function"){
@@ -49,9 +57,12 @@ function initDockScroll(dockSel,wrapperID,listEl){
     DOM.addClass(fackDock,"fackDock");
     wrapper.appendChild(fackDock);
 
-    var dockList,calculTime=0,calculInter;
+    var dockList,calculTime=0,calculInter,calculing=false;
 
     function calculPos(){
+        if(calculing)
+            return;
+        calculing=true;
         if(calculTime>10){
             clearInterval(calculInter);
             calculTime=0;
@@ -84,6 +95,7 @@ function initDockScroll(dockSel,wrapperID,listEl){
             });
             calculTime++;
         }
+        calculing=false;
     }
 
     myScroll = new iScroll(wrapperID, {
@@ -183,8 +195,8 @@ var actionSheet={
                 uexXmlHttpMgr.onData = httpSuccess;
                 uexXmlHttpMgr.open(uopCode, "POST", uploadUrl, "");
                 uexXmlHttpMgr.setPostData(uopCode, "0", "upload", "1");
-                uexXmlHttpMgr.setPostData(uopCode, "0", "sid", Tools.getParamVal('sid'));
-                uexXmlHttpMgr.setPostData(uopCode, "0", "uid", Tools.getParamVal('uid'));
+                uexXmlHttpMgr.setPostData(uopCode, "0", "sid", StorageMgr.sid);
+                uexXmlHttpMgr.setPostData(uopCode, "0", "uid", StorageMgr.uid);
                 if(!isMyPhoto){
                     uexXmlHttpMgr.setPostData(uopCode, "0", "type", "1");
                 }
@@ -236,6 +248,16 @@ var Tips={
     container:'#content',
     tipH:0,
     timer:null,
+    destory:function(){
+        var that=this;
+        if(that.hasTip){
+            that.hasTip=false;
+            that.tipD.parentNode.removeChild(that.tipD);
+            delete that.tipD;
+        }
+        clearTimeout(that.timer);
+        Tips.timer=null;
+    },
     show:function(s,cont,hideT){
         if(!Tips.hasTip){
             Tips.tipD=DOM.create('div');

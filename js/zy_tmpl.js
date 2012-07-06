@@ -26,11 +26,14 @@ var _f = function(d,c,k1,k2,l){
 		return "";
 }
 var t_f = function(t,d,i,l,cb,idx){
-		for(key in d){
-			if(d.hasOwnProperty(key)&&(typeof d[key]=="string")){
-				d[key]=Tools.htmlEncode(d[key]);//转换js中的HTML特殊字符串
+		if('sysNotice'!=Feed.page){//通知里面是需要html标签的
+			for(key in d){
+				if(d.hasOwnProperty(key)&&(typeof d[key]=="string")){
+					d[key]=Tools.htmlEncode(d[key]);//转换js中的HTML特殊字符串
+				}
 			}
 		}
+
 		return t.replace( /\$\{([^\}]*)\}/g,function(m,c){
 		if(c.match(/index:/)){
 			return idx;

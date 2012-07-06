@@ -66,15 +66,7 @@ var ViewMgr={
         if(!!params)
             ViewMgr.tmpParams=params;
 
-        // var oHreg=/^[^\?]*/.exec(location.href)[0],
-        //     rUrl=oHreg.replace(/[^\/]\w*\.\w*$/,url+".html");
-        // if(!['login','users'].has(url)){
-        //     rUrl+="?"+Tools.getSidUidParams(url,params)+(params?"&"+params:"");
-        // }
-
         pageEngine.initPage(url);
-
-        // location.href=rUrl;
     },
     back:function(){//返回上一个历史页面
         this.stopGetData();
@@ -203,7 +195,6 @@ var ViewMgr={
 
 /*缓存资料管理*/
 var StorageMgr={
-    myShieldUid:[],//记住那些我屏蔽了的uid
     myInfo:null,
     infoCenter:null,
     initStor:function(){//初始化需要的缓存资料
@@ -217,7 +208,7 @@ var StorageMgr={
     getMyInfo:function(cb,force){//取得我的信息并保存
         var stor=Tools.storage.get("kxjy_my_myInfo","session");
         if(force||!stor){
-            var getUrl=Tools.getSiteUrl()+'do.php?action=getUserInfo&sid='+Tools.getParamVal("sid")+"&user_id="+Tools.getParamVal("uid"),
+            var getUrl=Tools.getSiteUrl()+'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid,
                 secCb=function(a){
                     StorageMgr.setMyInfo(a.myInfo);
                     cb&&cb(a);
@@ -321,18 +312,15 @@ var hisInfo={
     maxLength:5,//最多缓存人数
     storIDs:[],
     storInfos:{},
-    // inited:false,
     init:function(cb){
-        // if(this.inited)
-        //     return;
-        var storId=Tools.storage.get("kxjy_his_storId");
-        this.storIDs=storId?storId:[];
-        this.curId=Tools.getParamVal("user_id")||this.storIDs[0];
+        var that=this,
+            storId=Tools.storage.get("kxjy_his_storId");
+        that.storIDs=storId?storId:[];
+        that.curId=Tools.getParamVal("user_id")||that.storIDs[0];
 
         //只取当前的,提升效率
-        hisInfo.storInfos[hisInfo.curId]=Tools.storage.get("kxjy_his_info_"+hisInfo.curId);
+        that.storInfos[that.curId]=that.get(that.curId);
 
-        // this.inited=true;
         cb&&cb();
     },
     get:function(id){
@@ -343,6 +331,7 @@ var hisInfo={
         this.init();
         if(JSON.stringify(hisInfo.storInfos[id])!=JSON.stringify(data)){
             Tools.storage.set("kxjy_his_info_"+id,data);
+            this.storInfos[id]=data;
         }
 
         var popId=this.storIDs[this.storIDs.length-1];
@@ -378,13 +367,10 @@ Page={
         if(!that.name||!that.dataUrl||!that.userData){
             toast("页面信息不充分，无法载入资料",2);
         }else{
-
-
             var data=that.userData;
 
             //昵称
             $('#header h1').innerHTML=/动态详情/.test($('#header h1').innerHTML)?data.nickname+"的动态详情":data.nickname;
-            $('.DynamicName').innerHTML=data.nickname;
 
             //达人
             if(data.colorPng&&data.colorPng!=""){
@@ -403,14 +389,15 @@ Page={
                 $('#titleMenu-pic span').innerHTML=(data.picnum||0)+"<br />照片";
 
                 //排名
-                var rankStr="<br />无排名";
+                var myRank,
+                    rankStr="<br />无排名";
                 if(["myPhoto","myList"].has(that.name)){
-                    var myRank=StorageMgr.infoCenter['current_rank'];
-                    if(myRank&&myRank*1!=0){
-                        rankStr=myRank+"<br />排名";
-                    }
+                    myRank=StorageMgr.infoCenter['current_rank'];
                 }else{
-                    rankStr="<br />排名不详";
+                    myRank=data.myRank;
+                }
+                if(myRank&&"无排名"!=myRank&&myRank*1!=0){
+                        rankStr=myRank+"<br />排名";
                 }
                 $('#titleMenu-rank span').innerHTML=rankStr;
             }
@@ -421,12 +408,13 @@ Page={
                     $("#footer-love").previousElementSibling.setAttribute("checked","checked");
                 if(data.friendnum&&data.friendnum>0)
                     $("#footer-love .ulev-2").innerHTML="喜欢("+data.friendnum+")";
-                if(StorageMgr.myShieldUid.has(hisInfo.curId)){
+                if(data.isBlocked){
                     $("#footer-shield").previousElementSibling.setAttribute("checked","checked");
                 }
             }
 
             if(["myDetail","hisDetail"].has(that.name)){
+                $('.DynamicName').innerHTML=data.nickname;
                 $('.DynamicNav .time').nextSibling.replaceWholeText(data.create_time||"不详");
                 $('.DynamicNav .place').nextSibling.replaceWholeText(data.area||"不详");
                 $('.DynamicText p').innerHTML=data.mood||"";
@@ -441,6 +429,8 @@ Page={
 
                 $('.DynamicMenu .love').nextSibling.replaceWholeText(data.lovecount||0);
                 $('.DynamicMenu .comment').nextSibling.replaceWholeText(data.commentcount||0);
+            }else{
+                $('.DynamicName').innerHTML=data.level?("&nbsp;LV&nbsp;"+data.level):"没有等级";
             }
 
             if(["myList","hisList","myDetail","hisDetail"].has(that.name)){
@@ -601,7 +591,7 @@ Page={
 
         var ipt=$("#"+id),
             dataUrl=Tools.getSiteUrl()+"do.php",
-            param="action=setting&sid="+Tools.getParamVal('sid')+"&"+params,
+            param="action=setting&sid="+StorageMgr.sid+"&"+params,
             secCb=function(a){
                 that.editedValues.remove(id);
                 if(a.error){
@@ -619,22 +609,6 @@ Page={
                 check();
             };
         that.dataXhr=UserAction.sendAction(dataUrl,param,"post",secCb,errCb);
-    },
-    fullFillRank:function(){
-        var data=this.userData,
-            addre=[data.reside_province?data.reside_province:"",data.reside_city?data.reside_city:""].join(" ");
-        
-        $(".rankAddress span").innerHTML=addre?addre:"不详";
-        $("#expToday").innerHTML=data.exp_add?data.exp_add:"";
-
-        /*取得地区信息后再载入列表*/
-        Feed.addParams="reside_province="+data.reside_province+"&reside_city="+data.reside_city;
-        Feed.init({
-            page:'rank',
-            cont:$('.rankBox .listBg'),
-            more:$('.moreFeed'),
-            cb:function(){myScroll.refresh();}
-        });
     },
     showMore:function(){
         var that=this,
@@ -712,11 +686,8 @@ Page={
                         break;
                     case 'hisPhoto':
                     case 'hisList':
+                        extend(that.userData,{myRank:a.myRank,isBlocked:a.isBlocked});
                         hisInfo.set(hisInfo.curId,that.userData);
-                        break;
-                    case 'rank':
-                        that.fullFillRank();
-                        return;
                         break;
                     case 'editInfo':
                         StorageMgr.setMyInfo(that.userData);
@@ -801,10 +772,10 @@ var UserAction={
         }
         
         if(hasImg){
-            actionUrl+="do.php?sid="+Tools.getParamVal('sid')+"&uploadFlag=1&";
+            actionUrl+="do.php?sid="+StorageMgr.sid+"&uploadFlag=1&";
             params="action=addweibo&type=1";
         }else{
-            actionUrl+="weibo.php?sid="+Tools.getParamVal('sid')+"&";
+            actionUrl+="weibo.php?sid="+StorageMgr.sid+"&";
             params="action=addweibo&type=2";
         }
 
@@ -884,7 +855,7 @@ var UserAction={
     /*举报*/
     reportData:function(type,node,wid){
         var actionUrl=Tools.getSiteUrl()+"weibo.php",
-            params="sid="+Tools.getParamVal('sid')+"&action=report&wid="+(wid||Tools.getParamVal('wid')),
+            params="sid="+StorageMgr.sid+"&action=report&wid="+(wid||Tools.getParamVal('wid')),
             reportDom=node.lastChild,
             secCb=function(){
                 toast('举报心情操作成功!',2);
@@ -911,7 +882,7 @@ var UserAction={
             if(DOM.hasClass(loveIcon,"active")){
                 toast('你已经心过这条心情!',2);
             }else{
-                actionUrl=Tools.getSiteUrl()+"weibo.php?action=love&sid="+Tools.getParamVal('sid')+"&wid="+(wid||Tools.getParamVal('wid'));
+                actionUrl=Tools.getSiteUrl()+"weibo.php?action=love&sid="+StorageMgr.sid+"&wid="+(wid||Tools.getParamVal('wid'));
                 loveDom=node.lastChild;
                 secCb=function(){
                     var loveNum=loveDom.wholeText;
@@ -927,7 +898,7 @@ var UserAction={
 
         if(type=='people'){//心人
             actionUrl=Tools.getSiteUrl()+"do.php";
-            params="sid="+Tools.getParamVal('sid')+"&user_id="+Tools.getParamVal('user_id');
+            params="sid="+StorageMgr.sid+"&user_id="+Tools.getParamVal('user_id');
             loveRadio=node.previousElementSibling,
             loveDom=$("#footer-love .ulev-2");
 
@@ -966,7 +937,7 @@ var UserAction={
     disadmire:function(type,node,user_id){
         if(type=="people"){
             var actionUrl=Tools.getSiteUrl()+"do.php",
-                params="action=disadmire&sid="+Tools.getParamVal('sid')+"&user_id="+user_id;
+                params="action=disadmire&sid="+StorageMgr.sid+"&user_id="+user_id;
             secCb=function(m){
                 Feed.removeFeed(node.parentNode);
             }
@@ -985,7 +956,7 @@ var UserAction={
     /*屏蔽,取消屏蔽*/
     shieldPerson:function(type,node,user_id){
         var actionUrl=Tools.getSiteUrl()+"do.php",
-            params="sid="+Tools.getParamVal('sid'),
+            params="sid="+StorageMgr.sid,
             secCb,
             errCb,
             msg='你确定要屏蔽TA吗?',
@@ -994,16 +965,14 @@ var UserAction={
         secCb=function(m){
             if(type=="del"){
                 Feed.removeFeed(node);
-                StorageMgr.myShieldUid.remove(user_id);
+                hisInfo.storInfos[user_id].isBlocked=false;
                 toast('已取消屏蔽',2);
             }else{
                 if(shieldDom.getAttribute("checked")=="checked"){
-                    StorageMgr.myShieldUid.remove(hisInfo.curId);
+                    hisInfo.storInfos[hisInfo.curId].isBlocked=false;
                     shieldDom.removeAttribute("checked");
                 }else{
-                    if(!StorageMgr.myShieldUid.has(hisInfo.curId)){
-                        StorageMgr.myShieldUid.push(hisInfo.curId);
-                    }
+                    hisInfo.storInfos[hisInfo.curId].isBlocked=true;
                     shieldDom.setAttribute("checked","checked");    
                 }
             }
@@ -1070,8 +1039,6 @@ var UserAction={
                 StorageMgr.sid=/\?sid=(.+)\b/.exec(a.redirect)[1];
 
                 ViewMgr.goto('mainPhoto');
-
-                // location.href = Tools.getSiteUrl()+"template/mobile/mainPhoto.html?sid="+Tools.getParamVal('sid',a.redirect)+"&uid="+(a.uid||"")+"&userKey="+(a.userKey||"");//check 使用ViewMgr
             },
             errCb=function(e){
                 toast(e.msg);
@@ -1115,7 +1082,7 @@ var UserAction={
             return;
         }
 
-        var setUrl=Tools.getSiteUrl()+"do.php?action=account_setting&sid="+Tools.getParamVal('sid'),
+        var setUrl=Tools.getSiteUrl()+"do.php?action=account_setting&sid="+StorageMgr.sid,
             params='password='+nVal,
             secCb=function(a){
                 if(a.error)
@@ -1172,7 +1139,7 @@ var UserAction={
                 secCb&&secCb(a);
             },
             error:function(e){
-                errCb?errCb(e):toast('connect error');
+                errCb?errCb(e):toast('connect error',2);
             }
         });
         this.xhr=xhr;

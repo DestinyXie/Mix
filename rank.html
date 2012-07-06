@@ -97,7 +97,7 @@ Load.push(function(){
 
 	Page.init({
         name:'rank',
-        dataUrl:'do.php?action=getUserInfo&sid='+Tools.getParamVal("sid")+"&user_id="+Tools.getParamVal("uid")
+        dataUrl:'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid
     });
 });
 </script>

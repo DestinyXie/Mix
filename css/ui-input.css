@@ -16,7 +16,9 @@ text-decoration: none;
 font-size: 1em;
 border-image: initial;
 }
-
+.uinput textarea{
+	padding:.4em
+}
 
 input[type="radio"]:checked + div > div.rdi-icon {
 	background-color: transparent;

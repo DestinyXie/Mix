@@ -108,7 +108,7 @@ Load.push(function(){
 
 	Page.init({
         name:'hisList',
-        dataUrl:'profile.php?ajax=1&sid='+Tools.getParamVal("sid")+"&user_id="+hisInfo.curId
+        dataUrl:'profile.php?ajax=1&sid='+StorageMgr.sid+"&user_id="+hisInfo.curId
     });
 
     Feed.init({

@@ -12,10 +12,15 @@ END_EVENT = isTouch ? 'touchend' : 'mouseup',
 CLICK_EVENT = isTouch ? 'touchend' : 'click';
 
 /*扩展一个Object对象*/
-function extend(d, s) {
+function extend(d, s ,o) {
     for (p in s) {
-        if (s[p] !== null)
+        if(o&&o[p]!==undefined)continue;
+        if (s[p] !== null){
             d[p] = (typeof(s[p]) == 'object' && !(s[p].nodeType) && !(s[p] instanceof Array)) ? extend({}, s[p]) : s[p];
+        }
+    }
+    if(o){
+        d=extend(d, o);
     }
     return d;
 }
@@ -357,15 +362,19 @@ Delegate.init();
 var Tools={
     /*调整站点URL*/
     getSiteUrl:function(){
-        if(/m.kxjy.com/.test(location.href)){
-            return "http://m.kxjy.com/";
-        }else{
-            return "http://192.168.30.78/friend/v3/";
+        if(this.siteUrl)
+            return this.siteUrl;
+
+        var siteUrl="http://m.kxjy.com/";
+        if(!/m.kxjy.com/.test(location.href)){
+            siteUrl="http://192.168.30.78/friend/v3/";
         }
+        this.siteUrl=siteUrl;
+        return siteUrl;
     },
     /*设置Chat服务器*/
     getChatUrl:function(url){
-        if(/m.kxjy.com/.test(location.href))
+        if("http://m.kxjy.com/"==this.getSiteUrl())
             return url.replace('m.kxjy.com/','yunchat.kxjy.com/')
         return url.replace('friend/v3/','chat/');
     },
@@ -375,51 +384,33 @@ var Tools={
     },
     /*取sid和uid参数字符串*/
     getSidUidParams:function(gotoUrl,setParams){
-        var uid=StorageMgr.uid,
-            userKey=StorageMgr.userKey,
-            sid=StorageMgr.sid;
+        if(this.sidUidParam){
+            return this.sidUidParam;
+        }
 
-        var paramStr="sid="+sid+"&uid="+uid+"&userKey="+userKey;
-
-        if(/his/.test(gotoUrl)&&!(/user_id/.test(setParams))&&this.getParamVal('user_id'))
-            paramStr+="&user_id="+this.getParamVal('user_id');
-
+        var paramStr="sid="+StorageMgr.sid+"&uid="+StorageMgr.uid+"&userKey="+StorageMgr.userKey;
+        this.sidUidParam=paramStr;
         return paramStr;
     },
-    /*从url取参数值*/
-    getParamVal:function(paramKey,Params){
-        // var oHreg=url||location.href;
-        // if(!/\?.*$/.test(oHreg)){
-        //     return "";
-        // }
-        // var param=/\?.*$/.exec(oHreg)[0];
-        // oHreg=oHreg.replace(param,"");
-        // var params=param.split('&');
-        var value="";
-        try{
-        var storValue={
-            uid:StorageMgr.uid,
-            userKey:StorageMgr.userKey,
-            sid:StorageMgr.sid
-        }
+    /*从临时变量ViewMgr.tmpParams取参数值*/
+    getParamVal:function(paramKey){
+        var value="",
+            params=ViewMgr.tmpParams.split('&');
 
-        if(['uid','sid','userKey'].has(paramKey)){
-            return storValue[paramKey];
-        }
-        }catch(e){
-        }
-
-        var params=(!!Params)?Params.split('&'):ViewMgr.tmpParams.split('&');
-
-        if(!params)
+        if(0===params.length)
             return "";
 
         $.each(params,function(pa){
-            var rg=new RegExp("[^\\w]"+paramKey+"=(.*)|\\b"+paramKey+"=(.*)");
+            var rg=new RegExp(paramKey+"=(.*)");
             if(rg.test(pa)){
-                value=rg.exec(pa)[1]||rg.exec(pa)[2];
+                value=rg.exec(pa)[1];
             }
         });
+
+        //多次跳转页面会丢失ViewMgr.tmpParams中user_id参数
+        if('user_id'==paramKey&&""==value)
+            value=hisInfo['curId'];
+
         return value;
     },
     /*在当前对象光标处插入指定的内容*/
@@ -561,6 +552,14 @@ var Tools={
                 provVal=pros[results.keys[0]],
                 cityVal=city[results.keys[1]]
             
+            Tools.hasSpinWheel=null;
+            WIN['myScroll']&&WIN['myScroll'].enable();
+
+            if(!provVal||!cityVal){
+                toast('地区选择有误',2);
+                return;
+            }
+
             if(type&&["rank","photo"].has(type)){
                 Feed.addParams="reside_province="+provVal+"&reside_city="+cityVal;
                 Feed.refresh();
@@ -571,8 +570,7 @@ var Tools={
                 val=provVal+' '+cityVal;
                 Page.setEditVal("area",val);
             }
-            Tools.hasSpinWheel=null;
-            WIN['myScroll']&&WIN['myScroll'].enable();
+            
         }
 
         function cancel() {

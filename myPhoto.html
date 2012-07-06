@@ -114,7 +114,7 @@ Load.push(function(){
     
     Page.init({
         name:'myPhoto',
-        dataUrl:'do.php?action=getUserInfo&sid='+Tools.getParamVal("sid")+"&user_id="+Tools.getParamVal("uid")
+        dataUrl:'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+Tools.getParamVal("uid")
     });
 
     Feed.init({
@@ -126,7 +126,7 @@ Load.push(function(){
     });
 
     //取得心情总数
-    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&type=2&pagecount=1&uid="+Tools.getParamVal('uid')+"&sid="+Tools.getParamVal('sid')+"&page=1&ajax=1",function(num){
+    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&type=2&pagecount=1&uid="+StorageMgr.uid+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
         $("#titleMenu-mood").innerHTML="<span>"+num+"<br/>心情</span>";
     });
 });

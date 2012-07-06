@@ -138,20 +138,14 @@ body {
 .pullDown .pullDownIcon {
 	vertical-align:middle;
 	display:inline-block;
-	width:2.5em;
-	height:2.5em;
+	width:2em;
+	height:2em;
 	background:url(images/pull-icon@2x.png) 0 0 no-repeat;
-	-webkit-background-size:2.5em 5em;
-	-webkit-transition-property:-webkit-transform;
-	-webkit-transition-duration:250ms;
-	-webkit-transform:rotate(0deg) translateZ(0);
+	-webkit-background-size:2em 4em;
 }
 .pullDown .pullDownLabel{
 	display:inline-block;
 	height:2.5em;
-}
-.pullDown.flip .pullDownIcon {
-	-webkit-transform:rotate(-180deg) translateZ(0);
 }
 .pullDown.loading .pullDownIcon {
 	background-position:0 100%;
@@ -355,8 +349,7 @@ to {
 	margin-left:0.3em;
 }
 .DynamicTrank img {
-	width:2.875em;
-	height:0.8125em;
+	width:1.5em;
 	vertical-align:middle;
 }
 .DynamicName {
@@ -850,7 +843,8 @@ li .comment{
 	font-size:1.5em;
 	left:.7em;
 	bottom:-.5em;
-	position:absolute;;
+	position:absolute;
+	z-index: -1;
 }
 .chatMood ul{
 	background:url(images/mood.png) no-repeat;

@@ -1,7 +1,14 @@
 /*单页面模式*/
 (function(){
 //公共tmpl,减少代码量
-var photoContTmpl='<!--content开始-->\
+var headerBack='<!--header开始-->\
+    <div id="header" class="uh">\
+        <div class="kxjy-hd">\
+            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
+            <div class="ulim">返回</div>\
+            </div>',
+    headerCancel=headerBack.replace('返回','取消'),
+    photoContTmpl='<!--content开始-->\
     <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
     <div id="wrapper" class="bg">\
     <div>\
@@ -9,7 +16,7 @@ var photoContTmpl='<!--content开始-->\
     <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
     </div>\
     <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
-        <div class="mainListBox clearfix">\
+        <div id="feedCont" class="mainListBox clearfix">\
         </div>\
     </div>\
     <div _click="Feed.loadMore();" class="moreFeed">\
@@ -27,7 +34,7 @@ var photoContTmpl='<!--content开始-->\
     <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
     </div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c" id="thelist">\
+    <div class="ui-grid-c ui-content ui-body-c" id="feedCont">\
     </div>\
     <!--网格结束-->\
     <div _click="Feed.loadMore();" class="moreFeed">\
@@ -152,7 +159,7 @@ var contentTmpl={
             <li id="myInfo-2"></li>\
             <li id="myInfo-3"></li>\
         </ul>\
-        <div class="mainListBox clearfix">\
+        <div id="feedCont" class="mainListBox clearfix">\
             <div class="myPhotoBox myPhotoBox-last fl" _click="actionSheet.show(\'photo\')">\
                 <img src="css/images/plus.gif" alt="添加" />\
             </div>\
@@ -183,7 +190,7 @@ var contentTmpl={
     <div id="wrapper" class="bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c dockScroll" id="thelist">\
+    <div class="ui-grid-c dockScroll" id="feedCont">\
         <div class="myTitle clearfix">\
             <div class="myTitleAvatar fl"></div>\
             <div class="myTitle-r">\
@@ -199,9 +206,6 @@ var contentTmpl={
                     <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank.html\')">\
                         <span><br />无排名</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu_more">\
-                        <span>更多资料</span>\
-                    </li>\
                 </ul>\
             </div>\
         </div>\
@@ -214,12 +218,7 @@ var contentTmpl={
     </div>\
     </div>\
     <!--content结束-->',
-'editInfo':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-                <div class="ulim">取消</div>\
-            </div>\
+'editInfo':'${headerCancel}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">编辑资料</h1>\
             <!--按钮开始-->\
              <div class="btn btn-r kxjy-btn ub ub-ac" _click="Page.submitEditInfo()">\
@@ -285,12 +284,7 @@ var contentTmpl={
     </div>\
     </div>\
     <!--content结束-->',
-'myDetail':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'myDetail':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">动态详情</h1>\
         </div>\
     </div>\
@@ -301,7 +295,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c" id="thelist">\
+    <div class="ui-grid-c ui-content ui-body-c">\
     <!-- 心情 -->\
         <div class="DynamicList clearfix">\
             <div class="DynamicInfo">\
@@ -351,12 +345,7 @@ var contentTmpl={
     ${commentTmpl}\
     </div>\
     <!--content结束-->',
-'hisPhoto':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'hisPhoto':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">&nbsp;</h1>\
             <div _click="ViewMgr.goto(\'hisList.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">心情<span class="header-ico hd-list"></span></div>\
@@ -369,7 +358,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c" id="thelist">\
+    <div class="ui-grid-c ui-content ui-body-c">\
         <div class="myTitle clearfix">\
             <div class="myTitleAvatar fl"></div>\
             <div class="myTitle-r">\
@@ -396,7 +385,7 @@ var contentTmpl={
             <li id="myInfo-2"></li>\
             <li id="myInfo-3"></li>\
         </ul>\
-        <div class="mainListBox clearfix">\
+        <div id="feedCont" class="mainListBox clearfix">\
         </div>\
     </div>\
     <div _click="Feed.loadMore();" class="moreFeed">\
@@ -406,12 +395,7 @@ var contentTmpl={
     </div>\
     </div>\
     <!--content结束-->',
-'hisList':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back();" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'hisList':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">&nbsp;</h1>\
             <div _click="ViewMgr.goto(\'hisPhoto.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">照片<span class="header-ico hd-photo"></span></div>\
@@ -424,7 +408,7 @@ var contentTmpl={
     <div id="wrapper" class="bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c dockScroll" id="thelist">\
+    <div class="ui-grid-c dockScroll" id="feedCont">\
         <div class="myTitle clearfix">\
             <div class="myTitleAvatar fl"></div>\
             <div class="myTitle-r">\
@@ -440,9 +424,6 @@ var contentTmpl={
                     <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank.html\')">\
                         <span><br />无排名</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu_more">\
-                        <span>更多资料</span>\
-                    </li>\
                 </ul>\
             </div>\
         </div>\
@@ -455,12 +436,7 @@ var contentTmpl={
     </div>\
     </div>\
     <!--content结束-->',
-'hisDetail':'<!--header开始-->\
-    <div id="header" class="uh t-wh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'hisDetail':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">动态详情</h1>\
         </div>\
     </div>\
@@ -471,7 +447,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c" id="thelist">\
+    <div class="ui-grid-c ui-content ui-body-c">\
     <!-- 心情 -->\
         <div class="DynamicList clearfix">\
             <div class="DynamicInfo">\
@@ -627,13 +603,7 @@ var contentTmpl={
     </div>\
     </div>\
     <!--content结束-->',
-'chatList':'<!--header开始-->\
-    <div id="header" class="uh t-wh">\
-        <div class="kxjy-hd">\
-            <!--按钮开始-->\
-             <div class="btn btn-l kxjy-btn ub ub-ac " _click="ViewMgr.back();">\
-                  <div class="ulim">返回</div>\
-              </div>\
+'chatList':'${headerBack}\
             <!--按钮结束-->\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">私信</h1>\
         </div>\
@@ -654,12 +624,7 @@ var contentTmpl={
     </div>\
     </div>\
     <!--content结束-->',
-'chat':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-        <div _click="ViewMgr.back();" class="btn btn-l kxjy-btn ub ub-ac ">\
-        <div class="ulim">返回</div>\
-        </div>\
+'chat':'${headerBack}\
         <h1 class="ut ulev0 ut-s tx-c" tabindex="0" id="nickName">&nbsp;</h1>\
         <div _click="ViewMgr.goto(\'hisPhoto.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
         <div class="ulim">TA的主页</div>\
@@ -691,12 +656,7 @@ var contentTmpl={
     <!-- 输入结束-->\
     </div>\
     <!--content结束-->',
-'sysNotice':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back();" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'sysNotice':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">通知</h1>\
         </div>\
     </div>\
@@ -709,7 +669,7 @@ var contentTmpl={
             <div class="pullDown">\
             <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
             </div>\
-            <div id="noticeContent">\
+            <div id="feedCont">\
             </div>\
             <div class="moreFeed" _click="Feed.loadMore();">\
                 查看更多\
@@ -719,104 +679,55 @@ var contentTmpl={
         </div>\
     </div>\
     <!--content结束-->',
-'newGuest':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'newGuest':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">最近访客(0)</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
-'likeMe':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back();" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'likeMe':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">谁在&hearts;我</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
-'attract':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-        <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-        <div class="ulim">返回</div>\
-        </div>\
+'attract':'${headerBack}\
         <h1 class="ut ulev0 ut-s tx-c" tabindex="0">相互吸引</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
-'commentMe':'<!--header开始-->\
-    <div id="header" class="uh t-wh">\
-        <div class="kxjy-hd">\
-            <!--按钮开始-->\
-             <div class="btn btn-l kxjy-btn ub ub-ac " _click="ViewMgr.back()">\
-                  <div class="ulim">返回</div>\
-              </div>\
-            <!--按钮结束-->\
+'commentMe':'${headerBack}\
               <h1 class="ut ulev0 ut-s tx-c" tabindex="0">收到的评论</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${commentListTmpl}',
-'myView':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'myView':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我看过谁</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
-'sendComment':'<!--header开始-->\
-    <div id="header" class="uh t-wh">\
-        <div class="kxjy-hd">\
-            <!--按钮开始-->\
-            <div class="btn btn-l kxjy-btn ub ub-ac " _click="ViewMgr.back()">\
-              <div class="ulim">返回</div>\
-            </div>\
-            <!--按钮结束-->\
+'sendComment':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">发出的评论</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${commentListTmpl}',
-'blackList':'<!--header开始-->\
-    <div id="header" class="uh t-wh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'blackList':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我屏蔽的人</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
-'likeMood':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back()" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'likeMood':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我&hearts;过的心情</h1>\
         </div>\
     </div>\
     <!--header结束-->\
     ${moodContTmpl}',
-'likePerson':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back();" class="btn btn-l kxjy-btn ub ub-ac ">\
-            <div class="ulim">返回</div>\
-            </div>\
+'likePerson':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">我&hearts;过的人</h1>\
         </div>\
     </div>\
@@ -834,7 +745,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
-    <div class="ui-grid-c ui-content ui-body-c" id="thelist">\
+    <div class="ui-grid-c ui-content ui-body-c">\
     <!--列表开始-->\
     <div class="uba  b-gra listBg us">\
         <div _click="ViewMgr.goto(\'rank.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
@@ -879,14 +790,7 @@ var contentTmpl={
     </div>\
     </div>\
     <!--content结束-->',
-'rank':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <!--按钮开始-->\
-            <div class="btn btn-l kxjy-btn ub ub-ac " _click="ViewMgr.back();">\
-              <div class="ulim">返回</div>\
-            </div>\
-            <!--按钮结束-->\
+'rank':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">人气达人榜</h1>\
         </div>\
     </div>\
@@ -915,14 +819,7 @@ var contentTmpl={
     </div>\
     </div>\
     <!--content结束-->',
-'password':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <!--按钮开始-->\
-            <div class="btn btn-l kxjy-btn ub ub-ac " _click="ViewMgr.back()">\
-                <div class="ulim">取消</div>\
-            </div>\
-            <!--按钮结束-->\
+'password':'${headerCancel}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">修改密码</h1>\
             <!--按钮开始-->\
              <div class="btn btn-r kxjy-btn ub ub-ac" _click="UserAction.changePassword(\'#oPwd\',\'#nPwd\',\'#cPwd\')">\
@@ -952,12 +849,7 @@ var contentTmpl={
     <!--列表结束-->\
     </div>\
     <!--content结束-->',
-'users':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="ViewMgr.back();" class="btn btn-l kxjy-btn ub ub-ac ">\
-                <div class="ulim">返回</div>\
-            </div>\
+'users':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c" tabindex="0">用户注册</h1>\
         </div>\
     </div>\
@@ -1057,57 +949,62 @@ var pageConfig={
     }
 }],
 'mainPhoto':['mainFooter',1,true,true,function(){
+    delete WIN['myScroll'];
     WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
     Feed.init({
         page:'mainPhoto',
-        cont:$('.mainListBox'),
+        cont:$('#feedCont'),
         more:$('.moreFeed'),
         cb:function(){myScroll.refresh();}
     });
 }],
 'mainList':['mainFooter',1,true,true,function(){
+    delete WIN['myScroll'];
     WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
     Feed.init({
         page:'mainList',
-        cont:$('#thelist'),
+        cont:$('#feedCont'),
         more:$('.moreFeed'),
         cb:function(){myScroll.refresh();}
     });
 }],
 'myPhoto':['mainFooter',2,true,true,function(){
+    delete WIN['myScroll'];
     WIN['myScroll']=new iScroll('wrapper');
     Page.init({
         name:'myPhoto',
-        dataUrl:'do.php?action=getUserInfo&sid='+Tools.getParamVal("sid")+"&user_id="+Tools.getParamVal("uid")
+        dataUrl:'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid
     });
     Feed.init({
         page:'myPhoto',
-        cont:$('.mainListBox'),
+        cont:$('#feedCont'),
         more:$('.moreFeed'),
         cb:function(){myScroll.refresh();},
         lastPos:1
     });
     //取得心情总数
-    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&type=2&pagecount=1&uid="+Tools.getParamVal('uid')+"&sid="+Tools.getParamVal('sid')+"&page=1&ajax=1",function(num){
+    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&type=2&pagecount=1&uid="+StorageMgr.uid+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
         try{$("#titleMenu-mood").innerHTML="<span>"+num+"<br/>心情</span>";}catch(e){}
         
     });
 }],
 'myList':['mainFooter',2,true,true,function(){
-    WIN['myScroll']=new initDockScroll('.DynamicMoodTtile','wrapper','#thelist');
+    delete WIN['myScroll'];
+    WIN['myScroll']=new initDockScroll('.DynamicMoodTtile','wrapper','#feedCont');
     Page.init({
         name:'myList',
-        dataUrl:'do.php?action=getUserInfo&sid='+Tools.getParamVal("sid")+"&user_id="+Tools.getParamVal("uid")
+        dataUrl:'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid
     });
     Feed.init({
         page:'myList',
-        cont:$('#thelist'),
+        cont:$('#feedCont'),
         more:$('.moreFeed'),
         cb:function(){myScroll.refresh();},
         lastPos:-1
     });
 }],
 'editInfo':['mainFooter',2,true,true,function(){
+    delete WIN['myScroll'];
     WIN['myScroll']=new iScroll('wrapper',{
         useTransform: false,
         onBeforeScrollStart: function (e) {
@@ -1127,14 +1024,15 @@ var pageConfig={
     Tools.initSelect('#interestSel','interest',true);
     Page.init({
         name:'editInfo',
-        dataUrl:'do.php?action=getUserInfo&sid='+Tools.getParamVal("sid")+"&user_id="+Tools.getParamVal("uid")
+        dataUrl:'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid
     });
 }],
 'myDetail':[false,false,false,true,function(){
+    delete WIN['myScroll'];
     WIN['myScroll']=new iScroll('wrapper');
     Page.init({
         name:'myDetail',
-        dataUrl:'mood.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+Tools.getParamVal("sid")
+        dataUrl:'mood.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorageMgr.sid
     });
     Feed.init({
         page:'myDetail',
@@ -1145,37 +1043,39 @@ var pageConfig={
     Comment.init('.enter');
 }],
 'hisPhoto':['hisFooter',false,false,true,function(){
+    delete WIN['myScroll'];
     WIN['myScroll']=new iScroll('wrapper');
     hisInfo.init(function(){
         Page.init({
             name:'hisPhoto',
-            dataUrl:'profile.php?ajax=1&sid='+Tools.getParamVal("sid")+"&user_id="+hisInfo.curId
+            dataUrl:'profile.php?ajax=1&sid='+StorageMgr.sid+"&user_id="+hisInfo.curId
         });
         Feed.init({
             page:'hisPhoto',
-            cont:$('.mainListBox'),
+            cont:$('#feedCont'),
             more:$('.moreFeed'),
             cb:function(){myScroll.refresh();}
         });
         //取得心情总数
-        UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&type=2&pagecount=1&uid="+hisInfo.curId+"&sid="+Tools.getParamVal('sid')+"&page=1&ajax=1",function(num){
+        UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+hisInfo.curId+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
             $("#titleMenu-mood").innerHTML="<span>"+num+"<br/>心情</span>";
         });
     });
 }],
 'hisList':['hisFooter',false,false,true,function(){
-    WIN['myScroll']=new initDockScroll('.DynamicMoodTtile','wrapper','#thelist');
+    delete WIN['myScroll'];
+    WIN['myScroll']=new initDockScroll('.DynamicMoodTtile','wrapper','#feedCont');
     hisInfo.init(function(){
         Feed.init({
             page:'hisList',
-            cont:$('#thelist'),
+            cont:$('#feedCont'),
             more:$('.moreFeed'),
             cb:function(){myScroll.refresh();},
             lastPos:-1
         });
         Page.init({
             name:'hisList',
-            dataUrl:'profile.php?ajax=1&sid='+Tools.getParamVal("sid")+"&user_id="+hisInfo.curId
+            dataUrl:'profile.php?ajax=1&sid='+StorageMgr.sid+"&user_id="+hisInfo.curId
         });
     });
 }],
@@ -1183,7 +1083,7 @@ var pageConfig={
     WIN['myScroll']=new iScroll('wrapper');
     Page.init({
         name:'hisDetail',
-        dataUrl:'moodHe.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+Tools.getParamVal("sid")
+        dataUrl:'moodHe.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorageMgr.sid
     });
     Feed.init({
         page:'hisDetail',
@@ -1208,24 +1108,15 @@ var pageConfig={
     },100);
     //取得上次的心情图标
     Tools.setIconId(null,StorageMgr.myInfo['mood_icon_id']||3);
+    delete WIN['myScroll'];
     WIN['myScroll']=new iScroll('wrapper');
     DOM.addEvent($("#mood"),"keypress",function(e){e.event.stopPropagation();
     });
-    
 }],
 'infoCenter':['mainFooter',4,true,true,function(){
     new iScroll('wrapper');
 }],
-'chatList':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=new iScroll('wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'chatList',
-        cont:$('.chatList'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
+'chatList':['mainFooter',4,true,true],
 'chat':[false,false,false,true,function(){
     hisInfo.init(function(){
         //check 从他们主页过来还是聊天列表过来
@@ -1269,117 +1160,56 @@ var pageConfig={
         e.event.stopPropagation();
     });
 }],
-'sysNotice':[false,false,false,true,function(){
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'sysNotice',
-        cont:$('#noticeContent'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
+'sysNotice':[false,false,false,true],
 'newGuest':['mainFooter',4,true,true,function(){
     var totalView=StorageMgr.infoCenter['visitor_total']||'总数不详';
     $('.kxjy-hd h1').innerHTML="最近访客("+totalView+")";
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'newGuest',
-        cont:$('.mainListBox'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
 }],
-'likeMe':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'likeMe',
-        cont:$('.mainListBox'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
-'attract':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'attract',
-        cont:$('.mainListBox'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
-'commentMe':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=new iScroll('wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'commentMe',
-        cont:$('.chatList'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-    InfoCenter.clear('commentMe');
-}],
-'myView':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'myView',
-        cont:$('.mainListBox'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
-'sendComment':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=new iScroll('wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'sendComment',
-        cont:$('.chatList'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
-'blackList':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'blackList',
-        cont:$('.mainListBox'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
-'likeMood':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'likeMood',
-        cont:$('#thelist'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
-'likePerson':['mainFooter',4,true,true,function(){
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Feed.init({
-        noDataTxt:"暂无数据,请返回",
-        page:'likePerson',
-        cont:$('.mainListBox'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
-}],
+'likeMe':['mainFooter',4,true,true],
+'attract':['mainFooter',4,true,true],
+'commentMe':['mainFooter',4,true,true],
+'myView':['mainFooter',4,true,true],
+'sendComment':['mainFooter',4,true,true],
+'blackList':['mainFooter',4,true,true],
+'likeMood':['mainFooter',4,true,true],
+'likePerson':['mainFooter',4,true,true],
 'more':['mainFooter',5,true,true,function(){
     new iScroll('wrapper');
 }],
 'rank':['mainFooter',5,true,true,function(){
+    delete WIN['myScroll'];
     WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    Page.init({
-        name:'rank',
-        dataUrl:'do.php?action=getUserInfo&sid='+Tools.getParamVal("sid")+"&user_id="+Tools.getParamVal("uid")
+    var myInfo=StorageMgr.myInfo,
+        addre=[myInfo.reside_province?myInfo.reside_province:"",myInfo.reside_city?myInfo.reside_city:""].join(" ");
+
+    $(".rankAddress span").innerHTML=addre?addre:"不详";
+    if(!["无排名","0",0].has(StorageMgr.infoCenter.current_rank)){
+        $('#curPos').innerHTML="排在第"+StorageMgr.infoCenter.current_rank+"位";
+    }else{
+        $('#curPos').innerHTML="无排名";
+    }
+
+    //取今日人气值
+    var todayExp=StorageMgr.myTodayExp;
+    if(!todayExp){
+        var url=Tools.getSiteUrl()+"starPromotion.php?"+Tools.getSidUidParams()+"&ajax=1"
+        function secCb(a){
+            $("#expToday").innerHTML=a.today_pop;
+            StorageMgr.myTodayExp=a.today_pop;
+        }
+        UserAction.sendAction(url,"","get",secCb,null);    
+    }else{
+        $("#expToday").innerHTML=todayExp;
+    }
+    
+
+    /*取得地区信息后再载入列表*/
+    Feed.addParams="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;
+    Feed.init({
+        page:'rank',
+        cont:$('.rankBox .listBg'),
+        more:$('.moreFeed'),
+        cb:function(){myScroll.refresh();}
     });
 }],
 'password':[false,false,false,true],
@@ -1398,13 +1228,9 @@ var pageConfig={
 
 var PageEngine=function(options){
     var that=this;
+    that.destory();
 
-    that.domCaches={};
-    that.curPage='login';
-    that.prePage=null;
-    that.hasUser=false;
-
-    that.options={
+    that.options={//缓存DOM节点 待实现
         pageWrap:$('#pageWraper'),
         cacheDomPage:['mainPhoto','myPhoto','showMood','editInfo','more']
     }
@@ -1427,7 +1253,12 @@ PageEngine.prototype={
     },
     replacePubTmpl:function(tmplStr){//替换公共tmpl
         var retStr=tmplStr;
-        retStr=retStr.replace(/\$\{photoContTmpl\}/,photoContTmpl).replace(/\$\{moodContTmpl\}/,moodContTmpl).replace(/\$\{commentTmpl\}/,commentTmpl).replace(/\$\{commentListTmpl\}/,commentListTmpl);
+        retStr=retStr.replace(/\$\{headerCancel\}/,headerCancel);
+        retStr=retStr.replace(/\$\{headerBack\}/,headerBack);
+        retStr=retStr.replace(/\$\{photoContTmpl\}/,photoContTmpl);
+        retStr=retStr.replace(/\$\{moodContTmpl\}/,moodContTmpl);
+        retStr=retStr.replace(/\$\{commentTmpl\}/,commentTmpl);
+        retStr=retStr.replace(/\$\{commentListTmpl\}/,commentListTmpl);
         return retStr;
     },
     compileTmpl:function(){
@@ -1456,6 +1287,8 @@ PageEngine.prototype={
         }
         Page.destory();//撤销页面载入
         UserAction.stop();//撤销用户动作
+        Tips.destory();//Tips
+        Comment.destory();//撤销评论对象
     },
     initPage:function(page){
         this.cancelPrePage();
@@ -1479,6 +1312,7 @@ PageEngine.prototype={
             reqTips=pcofig[3],
             initFn=pageConfig[that.curPage][4];
 
+
         if(reqTips){//信息中心更新
             ViewMgr.getMsg=(reqInfo)?true:false;//tips更新
             ViewMgr.getData(true);
@@ -1486,15 +1320,54 @@ PageEngine.prototype={
             ViewMgr.stopGetData();
         }
 
-        if($.isFunc(initFn)){//执行页面初始化代码
+        //执行页面初始化代码
+        if($.isFunc(initFn)){
             initFn.call(null);
+        }
+        switch(that.curPage){
+            case "chatList":
+            case "commentMe":
+            case "sendComment":
+                delete WIN['myScroll'];
+                WIN['myScroll']=new iScroll('wrapper');
+                Feed.init({
+                    noDataTxt:"暂无数据,请返回",
+                    page:that.curPage,
+                    cont:$('.chatList'),
+                    more:$('.moreFeed'),
+                    cb:function(){myScroll.refresh();}
+                });
+                InfoCenter.clear(that.curPage);
+                break;
+            case "sysNotice":
+            case "newGuest":
+            case "likeMe":
+            case "attract":
+            case "myView":
+            case "blackList":
+            case "likeMood":
+            case "likePerson":
+            case "likePerson":
+                delete WIN['myScroll'];
+                WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
+                Feed.init({
+                    noDataTxt:"暂无数据,请返回",
+                    page:that.curPage,
+                    cont:$('#feedCont'),
+                    more:$('.moreFeed'),
+                    cb:function(){myScroll.refresh();}
+                });
+                break;
         }
     },
     display:function(dirc){
 
     },
     destory:function(){
-        that.hasUser=false;
+        this.domCaches={};
+        this.curPage='login';
+        this.prePage=null;
+        this.hasUser=false;
     }
 }
 window.PageEngine=PageEngine;
