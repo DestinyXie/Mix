@@ -80,7 +80,7 @@
 </div>
 <script>
 Load.push(function(){
-	var totalView=StorageMgr.infoCenter['visitor_total']||'总数不详';
+	var totalView=StorMgr.infoCenter['visitor_total']||'总数不详';
 	$('.kxjy-hd h1').innerHTML="最近访客("+totalView+")";
 	var myScroll=initIScroll($('.pullDown'),'wrapper');
 	Feed.init({

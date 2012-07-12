@@ -1,5 +1,6 @@
 /*列表模板*/
 var feedTemplate={
+    mainPhoto:'<div _click="ViewMgr.goto(${cb:isself})" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
 	photo:'<div _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
     myPhoto:'<div _click="ViewMgr.goto(\'myDetail.html\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
     hisPhoto:'<div _click="ViewMgr.goto(\'hisDetail.html\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
@@ -18,7 +19,7 @@ var feedTemplate={
         <div class="">\
             <div class="ub">\
                 <div class="DynamicMood ub ub-ver">\
-                    <img src="css/images/f_${cb:mood_icon_id}.png" alt="" />\
+                    <img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />\
                 </div>\
                 <div class="DynamicMoodTextBox ub-f1">\
                     <div class="ub-f1 DynamicMoodText">\
@@ -50,7 +51,7 @@ var feedTemplate={
         </div>\
         <div class="ub">\
             <div class="DynamicMood ub ub-ver">\
-                <img src="css/images/f_${cb:mood_icon_id}.png" alt="" />\
+                <img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />\
                 <div class="DynamicMoodLine ub-f1"></div>\
             </div>\
             <div class="DynamicMoodTextBox ub-f1">\
@@ -83,7 +84,7 @@ var feedTemplate={
         </div>\
         <div class="ub">\
             <div class="DynamicMood ub ub-ver">\
-                <img src="css/images/f_${cb:mood_icon_id}.png" alt="" />\
+                <img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />\
                 <div class="DynamicMoodLine ub-f1"></div>\
             </div>\
             <div class="DynamicMoodTextBox ub-f1">\
@@ -107,7 +108,7 @@ var feedTemplate={
         <div class="commentListAvatar"><img src="${avatarPicUrl}" alt="头像" /></div>\
         <div class="commentListText ub-f1">${cb:commentMood}</div>\
     </div>${cb:child}',
-    chatList:'<div class="commentList ub ub-ac clearfix">\
+    chatList:'<div class="commentList ub ub-ac clearfix" _click="ViewMgr.goto(\'chat.html\',\'fid=${fid}&user_id=${fid}\')">\
         <div class="commentListAvatar">\
 			<img src="${img}" alt="" />\
             ${cb:hasMsg}\
@@ -116,7 +117,7 @@ var feedTemplate={
             <p class="chatListName">${name}</p>\
             <p class=" ut-s">&nbsp;</p>\
         </div>\
-        <strong class="DynamicMore" _click="ViewMgr.goto(\'chat.html\',\'fid=${fid}&user_id=${fid}\')">></strong>\
+        <strong class="DynamicMore">></strong>\
     </div>',
     chat:'<div class="chatContent ub ${cb:who} clearfix">\
         ${cb:avatar}\
@@ -161,7 +162,7 @@ var feedTemplate={
 
 /*页面列表对应的模板*/
 var pageFeedTmpl={
-    mainPhoto:"photo",
+    mainPhoto:"mainPhoto",
     mainList:"mood",
     myPhoto:"myPhoto",
     myList:"myMood",
@@ -186,27 +187,27 @@ var pageFeedTmpl={
 
 /*列表数据接口*/
 var pageFeedUrl={
-    mainPhoto:"main.php?uid=${uid}",
-    mainList:"main.php?uid=${uid}",
-    myPhoto:"weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=${uid}",
-    myList:"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=${uid}",
-    myDetail:"weibo.php?action=weibolist&type=4&parentid=${wid}",
-    hisPhoto:"weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=",
-    hisList:"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=",
-    hisDetail:"weibo.php?action=weibolist&type=4&parentid=${wid}",
-    chatList:"get_sess_list.php?callback=?&t=1&i=${uid}&k=${userKey}",
-    chat:"get_msg.php?callback=?&st=3m&i=${uid}&fid=${fid}&tid=${uid}&k=${userKey}",
-    sysNotice:"get_msg.php?callback=?&st=&i=${uid}&fid=1&tid=${uid}&k=${userKey}",
-    newGuest:"see.php?type=1&uid=${uid}",
-    likeMe:"admire.php?type=0&uid=${uid}",
-    attract:"admire.php?type=2&uid=${uid}",
-    commentMe:"weibo.php?action=commentme&uid=${uid}",
-    myView:"see.php?type=0&uid=${uid}",
-    sendComment:"weibo.php?action=mycomment&uid=${uid}",
-    blackList:"Blacklist.php?uid=${uid}",
-    likeMood:"moodlist.php?action=love",
-    likePerson:"admire.php?type=1",
-    rank:"rank.php?type=0&page=1&rank=1&sex=2&user_id=0"
+    mainPhoto:"/main.php?uid=${uid}",
+    mainList:"/main.php?uid=${uid}",
+    myPhoto:"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=${uid}",
+    myList:"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=${uid}",
+    myDetail:"/weibo.php?action=weibolist&type=4&parentid=${wid}",
+    hisPhoto:"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=",
+    hisList:"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=",
+    hisDetail:"/weibo.php?action=weibolist&type=4&parentid=${wid}",
+    chatList:"/get_sess_list.php?callback=?&t=1&i=${uid}&k=${userKey}",
+    chat:"/get_msg.php?callback=?&st=3m&i=${uid}&fid=${fid}&tid=${uid}&k=${userKey}",
+    sysNotice:"/get_msg.php?callback=?&st=&i=${uid}&fid=1&tid=${uid}&k=${userKey}",
+    newGuest:"/see.php?type=1&uid=${uid}",
+    likeMe:"/admire.php?type=0&uid=${uid}",
+    attract:"/admire.php?type=2&uid=${uid}",
+    commentMe:"/weibo.php?action=commentme&uid=${uid}",
+    myView:"/see.php?type=0&uid=${uid}",
+    sendComment:"/weibo.php?action=mycomment&uid=${uid}",
+    blackList:"/Blacklist.php?uid=${uid}",
+    likeMood:"/moodlist.php?action=love",
+    likePerson:"/admire.php?type=1",
+    rank:"/rank.php?type=0&page=1&rank=1&sex=2&user_id=0"
 }
 
 /*列表类*/
@@ -250,19 +251,22 @@ var Feed={
             this.beforeDestory();
         }
         this.isDestoryed=true;
-
-        this.loadXhr&&this.loadXhr.abort();
+        if(this.loadXhr){
+            this.loadXhr.abort();
+        }
         this.lastPos=null;
         this.addParams="";
     },
     refresh:function(setParam){
-        if(this.noMoreBtn&&this.more.innerHTML!=this.noDataTxt){
+        if(this.noMoreBtn&&this.more.innerHTML!=this.noDataTxt&&this.more){
             this.more.style.display="none";
         }
         this.index=0;
         this.isRefresh=true;
         this.isLoading=false;
-        this.loadXhr&&this.loadXhr.abort();
+        if(this.loadXhr){
+            this.loadXhr.abort();
+        }
         this.loadMore(setParam);
     },
     loadMoreSecc:function(a){
@@ -344,7 +348,9 @@ var Feed={
             params=that.setParams(setParam);
 
         if(['chatList','chat','sysNotice'].has(that.page)){
-            dataUrl=Tools.getChatUrl(dataUrl);
+            dataUrl=StorMgr.chatPath+dataUrl;
+        }else{
+            dataUrl=StorMgr.siteUrl+dataUrl;
         }
 
         that.sendRequest(dataUrl,params);
@@ -356,7 +362,6 @@ var Feed={
             },
             errCb=function(m){
                 that.reset();
-                // toast('connect error');
             };
         that.loadXhr=UserAction.sendAction(dataUrl,params,"get",secCb,errCb);
     },
@@ -364,7 +369,7 @@ var Feed={
         var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
             function(m,c){
                 if(['uid','sid','userKey'].has(c))
-                    return StorageMgr[c];
+                    return StorMgr[c];
                 return Tools.getParamVal(c);
             });
 
@@ -372,7 +377,7 @@ var Feed={
             feedUrl=pageFeedUrl[this.page].replace(/uid=[\d+]?$/,'uid='+hisInfo.curId);
         }
 
-        return Tools.getSiteUrl()+feedUrl+"&sid="+StorageMgr.sid;
+        return feedUrl+"&sid="+StorMgr.sid;
     },
     setParams:function(setParam){
         var params="page="+(this.index+1)+"&ajax=1";
@@ -386,11 +391,13 @@ var Feed={
     },
     fullFillFeed:function(data){
         var that=this;
-        if(that.noMoreBtn){
-            if(that.more&&that.more.innerHTML!=that.noDataTxt)
-                that.more.style.display="none";
-        }else{
-            that.more&&(that.more.innerHTML=that.moreTxt);    
+        if(that.more){
+            if(that.noMoreBtn){
+                if(that.more.innerHTML!=that.noDataTxt)
+                    that.more.style.display="none";
+            }else{
+                that.more.innerHTML=that.moreTxt;
+            }    
         }
         
         if(that.isRefresh&&(!data||data.length==0)){
@@ -427,8 +434,8 @@ var Feed={
             delete item;
         }
         
-        if(!that.noMoreBtn&&that.totalPage&&that.index>=that.totalPage){
-            that.more&&(that.more.innerHTML=that.noMoreTxt);
+        if(!that.noMoreBtn&&that.totalPage&&that.index>=that.totalPage&&that.more){
+            that.more.innerHTML=that.noMoreTxt;
         }
 
         if(['mainPhoto','myPhoto','hisPhoto','newGuest','likeMe','attract','myView','blackList','likePerson'].has(that.page)){
@@ -452,10 +459,15 @@ var Feed={
             tmplStr="";
         switch(that.page){
             case "mainPhoto":
-                /*自己不显示*/
-                if(data.uid==StorageMgr.uid)
-                    return;
-                tmplStr=Tools.compiTpl(tmpl,data,null,idx);
+                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
+                    if(t[1]=="isself"){
+                        if(o.uid==StorMgr.uid){
+                            return "'myPhoto.html'";
+                        }else{
+                            return "'hisPhoto.html','user_id="+o.uid+"'";  
+                        }
+                    }
+                },idx);
                 break;
             case "myPhoto":
             case "hisPhoto":
@@ -466,9 +478,10 @@ var Feed={
             case "myList":
             case "hisList":
             case "likeMood":
-                /*自己不显示*/
-                if(that.page=="mainList"&&data.uid==StorageMgr.uid){
-                    return;
+                /*处理点击自己时的跳转*/
+                if(that.page=="mainList"&&data.uid==StorMgr.uid){
+                    tmpl=tmpl.replace(/'hisPhoto.html','user_id=\$\{uid\}'/g,"'myPhoto.html'");
+                    tmpl=tmpl.replace(/'hisDetail.html'/g,"'myDetail.html'");
                 }
                 if(data.havemood*1!=0&&(!data.filetype||data.filetype=="img")){
                     tmplStr=that.compileMood(tmpl,data,idx);
@@ -494,7 +507,7 @@ var Feed={
                         return chiNodeStr;
                     }
                     if(t[1]=="isself"){
-                        if(o.uid==StorageMgr.uid)
+                        if(o.uid==StorMgr.uid)
                             return true;
                         return false
                     }
@@ -514,20 +527,20 @@ var Feed={
                     return "";
                 }
                 tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
-                    if(t[1]=="who"&&o.fid==StorageMgr.uid){return " chatContent-r ub-rev"}
+                    if(t[1]=="who"&&o.fid==StorMgr.uid){return " chatContent-r ub-rev"}
                     if(t[1]=="content"){
                         return Tools.filterMsgFace(o.content)||"";
                     }
                     if(t[1]=="avatar"){
-                        var myInfo=StorageMgr.myInfo,
+                        var myInfo=StorMgr.myInfo,
                             hisImg="x";
-                        if(ViewMgr.views[ViewMgr.views.length-2]=="chatList"){
+                        if("chatList"==pageEngine.prePage){
                             hisImg=hisInfo.heOfChatList.img;
                         }else{
                             hisImg=hisInfo.storInfos[hisInfo.curId].avatar_file;
                         }
 
-                        if(o.fid==StorageMgr.uid){
+                        if(o.fid==StorMgr.uid){
                             hisImg=myInfo.avatar_file;
                         }
                         return "<div class='chatAvatar'><img src='"+hisImg+"' alt='' /></div>";
@@ -577,7 +590,7 @@ var Feed={
                 tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     switch(t[1]){
                         case "isself":
-                            if(o.uid==StorageMgr.uid){
+                            if(o.uid==StorMgr.uid){
                                 return "_click=\"ViewMgr.goto('myPhoto.html')\"";
                             }else{
                                 return "_click=\"ViewMgr.goto('hisPhoto.html','user_id="+o.uid+"')\"";
@@ -631,6 +644,9 @@ var Feed={
         var pageName=this.page;
         var moodLiStr=Tools.compiTpl(tmpl,data,function(o,t){//模板回调函数
                     switch(t[1]){
+                        case 'siteurl':
+                            return StorMgr.siteUrl;
+                            break;
                         case 'mood':
                             if(o.havemood*1==0){
                                 var str=(o.sex||'性别不详')+"|"+(o.age||'年龄不详');
@@ -714,14 +730,14 @@ var ChatFeed=extend({},Feed,{
         var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
             function(m,c){
                 if(['uid','sid','userKey'].has(c))
-                    return StorageMgr[c];
+                    return StorMgr[c];
                 return Tools.getParamVal(c);
             });
 
-        var url=Tools.getSiteUrl()+feedUrl+"&sid="+StorageMgr.sid;
+        var url=feedUrl+"&sid="+StorMgr.sid;
 
         if(mine)
-            url=url.replace(/&fid=\d+/,"&fid="+StorageMgr.uid).replace(/&tid=\d+/,"&tid="+Tools.getParamVal('fid')).replace("st=3m","st=");
+            url=url.replace(/&fid=\d+/,"&fid="+StorMgr.uid).replace(/&tid=\d+/,"&tid="+Tools.getParamVal('fid')).replace("st=3m","st=");
         if(!this.isRefresh)
             url=url.replace("st=3m","st=");
         return url;
@@ -737,7 +753,7 @@ var ChatFeed=extend({},Feed,{
         var dataUrl=that.getUrl(mine),
             params=that.setParams(setParam);
 
-        dataUrl=Tools.getChatUrl(dataUrl);
+        dataUrl=StorMgr.chatPath+dataUrl;
 
         that.sendRequest(dataUrl,params);
     },
@@ -810,9 +826,9 @@ var Comment={
     },
     destory:function(){
         var that=this;
-        if(!this.commBox)
+        if(!this.commBox){
             return;
-        
+        }
         clearTimeout(that.moodInter);
         that.type="评论";
         that.moodInter=null;
@@ -835,9 +851,12 @@ var Comment={
         var that=this;
         that.hideMoodBox();
         that.input.focus();
-        if(DOM.hasClass(that.input.parentNode,"wrong"))
+        if(DOM.hasClass(that.input.parentNode,"wrong")){
             that.reset();
-        node&&node.event.event.stopPropagation();
+        }
+        if(node){
+            node.event.event.stopPropagation();
+        }
     },
     sendComment:function(cb,type){
         var that=this;
@@ -861,11 +880,11 @@ var Comment={
 
         if(type&&type=="chat"){
             that.type="私信";
-            sendUrl=Tools.getSiteUrl()+"send_msg.php?callback=?&sid="+StorageMgr.sid+"&fid="+StorageMgr.uid+"&tid="+Tools.getParamVal('fid')+"&msg="+that.transMotion(that.commTxt)+"&i="+StorageMgr.uid+"&k="+StorageMgr.userKey;
+            sendUrl="/send_msg.php?callback=?&sid="+StorMgr.sid+"&fid="+StorMgr.uid+"&tid="+Tools.getParamVal('fid')+"&msg="+that.transMotion(that.commTxt)+"&i="+StorMgr.uid+"&k="+StorMgr.userKey;
 
-            sendUrl=Tools.getChatUrl(sendUrl);
+            sendUrl=StorMgr.chatPath+sendUrl;
         }else{
-            sendUrl=Tools.getSiteUrl()+"weibo.php?action=comment&type=4&sid="+StorageMgr.sid+"&parentid="+Tools.getParamVal('wid');
+            sendUrl=StorMgr.siteUrl+"/weibo.php?action=comment&type=4&sid="+StorMgr.sid+"&parentid="+Tools.getParamVal('wid');
 
             params="title="+that.transMotion(that.commTxt);
             if(that.parenNode){
@@ -989,6 +1008,17 @@ var Comment={
     },
     popOperation:function(node,paraId,enwid,self){
         var that=this;
+        function myComm(){
+            Device.confirm('对你的评论:',
+            function(){
+                that._unSetParenComm();
+                UserAction.deleteData('comment',node,enwid);
+            },
+            function(){
+                that._unSetParenComm();
+            },['删除','取消'],'执行操作'
+            );
+        }
         if(Page.name=="myDetail"){
             if(!self){
                 Device.actionThree('执行操作','对这条评论:',['回复','删除','取消'],
@@ -1005,15 +1035,7 @@ var Comment={
                 }
                 );
             }else{
-                Device.confirm('对你的评论:',
-                function(){
-                    that._unSetParenComm()
-                    UserAction.deleteData('comment',node,enwid);
-                },
-                function(){
-                    that._unSetParenComm()
-                },['删除','取消'],'执行操作'
-                );
+                myComm();
             }
         }else{
             if(!self){
@@ -1027,15 +1049,7 @@ var Comment={
                 },['回复','取消'],'执行操作'
                 );
             }else{
-                Device.confirm('对你的评论:',
-                function(){
-                    that._unSetParenComm()
-                    UserAction.deleteData('comment',node,enwid);
-                },
-                function(){
-                    that._unSetParenComm()
-                },['删除','取消'],'执行操作'
-                );
+                myComm();
             }
         }
     }

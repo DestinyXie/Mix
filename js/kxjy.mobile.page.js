@@ -46,7 +46,7 @@ var headerBack='<!--header开始-->\
     <!--content结束-->',
     commentTmpl='<!-- 输入 -->\
     <div class="enter ub ub-ac">\
-        <div class="enterMood" _click="Comment.switchMoodBox(this)"><img src="css/images/f_1.png" alt="心情" /></div>\
+        <div class="enterMood" _click="Comment.switchMoodBox(this)"><img src="${siteurl}/template/mobile/css/images/f_1.png" alt="心情" /></div>\
         <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="评论内容..." _click="Comment.focusInput(this)"></div>\
         <div class="enterButton btnBg" _click="Comment.sendComment(function(){Feed.refresh();});">发表评论</div>\
     </div>\
@@ -68,7 +68,7 @@ var headerBack='<!--header开始-->\
     <!--content结束-->'
 
 var contentTmpl={
-'login':'<div class="logo"><img src="css/images/login_logo.png" alt="开心交友" /></div>\
+'login':'<div class="logo"><img src="${siteurl}/template/mobile/css/images/login_logo.png" alt="开心交友" /></div>\
     <div class="loginBox">\
         <div class="ub-ac ub loginList">\
             <label class="uinn">邮箱</label>\
@@ -161,7 +161,7 @@ var contentTmpl={
         </ul>\
         <div id="feedCont" class="mainListBox clearfix">\
             <div class="myPhotoBox myPhotoBox-last fl" _click="actionSheet.show(\'photo\')">\
-                <img src="css/images/plus.gif" alt="添加" />\
+                <img src="${siteurl}/template/mobile/css/images/plus.gif" alt="添加" />\
             </div>\
         </div>\
     </div>\
@@ -311,7 +311,7 @@ var contentTmpl={
             </div>\
             <div class="ub">\
                 <div class="DynamicMood ub ub-ver">\
-                    <img src="css/images/f_3.png" alt="" />\
+                    <img src="${siteurl}/template/mobile/css/images/f_3.png" alt="" />\
                 </div>\
                 <div class="DynamicMoodTextBox ub-f1">\
                     <div class="ub-f1 DynamicMoodText">\
@@ -463,7 +463,7 @@ var contentTmpl={
             </div>\
             <div class="ub">\
                 <div class="DynamicMood ub ub-ver">\
-                    <img src="css/images/f_3.png" alt="" />\
+                    <img src="${siteurl}/template/mobile/css/images/f_3.png" alt="" />\
                 </div>\
                 <div class="DynamicMoodTextBox ub-f1">\
                     <div class="ub-f1 DynamicMoodText">\
@@ -512,14 +512,14 @@ var contentTmpl={
     <div>\
         <div class="showMoodPlus" _click="actionSheet.show(\'photo\');"></div>\
         <div class="showMoodList ub" _click="Tools.setIconId(this);" iconid="3">\
-            <div class="showMoodImg ub-f1"><img src="css/images/f_1.png" alt="表情" /></div>\
-            <div class="showMoodImg ub-f1"><img src="css/images/f_2.png" alt="表情" /></div>\
+            <div class="showMoodImg ub-f1"><img src="${siteurl}/template/mobile/css/images/f_1.png" alt="表情" /></div>\
+            <div class="showMoodImg ub-f1"><img src="${siteurl}/template/mobile/css/images/f_2.png" alt="表情" /></div>\
             <div class="showMoodImg ub-f1">\
-                <img src="css/images/f_3.png" alt="表情" />\
+                <img src="${siteurl}/template/mobile/css/images/f_3.png" alt="表情" />\
                 <span class="MoodSelect"></span>\
             </div>\
-            <div class="showMoodImg ub-f1"><img src="css/images/f_4.png" alt="表情" /></div>\
-            <div class="showMoodImg ub-f1"><img src="css/images/f_5.png" alt="表情" /></div>\
+            <div class="showMoodImg ub-f1"><img src="${siteurl}/template/mobile/css/images/f_4.png" alt="表情" /></div>\
+            <div class="showMoodImg ub-f1"><img src="${siteurl}/template/mobile/css/images/f_5.png" alt="表情" /></div>\
         </div>\
         <div class="showMoodTextarea uinput ub-f1">\
             <textarea id="mood" placeholder="请输入内容..." name="textarea-0" class="uc-a1"></textarea>\
@@ -649,7 +649,7 @@ var contentTmpl={
     </div>\
     <!-- 输入 -->\
     <div class="enter ub ub-ac">\
-        <div class="enterMood" _click="Comment.switchMoodBox(this);"><img src="css/images/f_1.png" alt="心情" /></div>\
+        <div class="enterMood" _click="Comment.switchMoodBox(this);"><img src="${siteurl}/template/mobile/css/images/f_1.png" alt="心情" /></div>\
         <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="私信内容..." _click="Comment.focusInput(this)"></div>\
         <div class="enterButton btnBg" _click="Comment.sendComment(function(){ChatFeed.loadMore(null,true)},\'chat\');">发送私信</div>\
     </div>\
@@ -779,7 +779,7 @@ var contentTmpl={
         <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">关于</div>\
         </div>\
-        <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="Device.confirm(\'确定退出？\',function(){Tools.storage.clear();Tools.storage.clear(\'session\');ViewMgr.setUrl(\'login\');})">\
+        <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="Device.confirm(\'确定退出？\',function(){Tools.storage.clear();Tools.storage.clear(\'session\');ViewMgr.init();})">\
             <div class="ub-f1 ut-s">退出当前账号</div>\
         </div>\
     </div>\
@@ -877,20 +877,20 @@ var contentTmpl={
         </div>\
         <div class="ub-ac ub loginList">\
             <label class="uinn">　用户名:</label>\
-            <div class="loginInput ub-f1"><input class="btnBg" type="text" id="regNickName" /></div>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="text" id="regNickName"/></div>\
         </div>\
         <div class="ub-ac ub loginList">\
             <label class="uinn">　　密码:</label>\
-            <div class="loginInput ub-f1"><input class="btnBg" type="password" id="regPwd" /></div>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="password" id="regPwd"/></div>\
         </div>\
         <div class="ub-ac ub loginList">\
             <label class="uinn">确认密码:</label>\
-            <div class="loginInput ub-f1"><input class="btnBg" type="password" id="regPwdR" /></div>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="password" id="regPwdR"/></div>\
         </div>\
         <div class="ub-ac ub loginList">\
             <label class="uinn">　验证码:</label>\
             <div class="loginInput ub-f1"><input class="btnBg" type="text" placeholder="点击右边图片,刷新验证码" id="regVeri"/></div>\
-            <div id="verify" _click="UserAction.getVerify(this)"></div>\
+            <div id="verify" _click="UserAction.getVerify()"></div>\
         </div>\
     </div>\
     <div class="users" _click="UserAction.userRegist()">注册</div>\
@@ -960,141 +960,116 @@ var pageConfig={
 'mainPhoto':['mainFooter',1,true,true],
 'mainList':['mainFooter',1,true,true],
 'myPhoto':['mainFooter',2,true,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=new iScroll('wrapper');
     Page.init({
         name:'myPhoto',
-        dataUrl:'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid
-    });
-    Feed.init({
-        page:'myPhoto',
-        cont:$('#feedCont'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();},
-        lastPos:1
+        dataUrl:'/do.php?action=getUserInfo&sid='+StorMgr.sid+"&user_id="+StorMgr.uid
     });
     //取得心情总数
-    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+StorageMgr.uid+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
+    UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+StorMgr.uid+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
         try{$("#titleMenu-mood span").innerHTML=num+"<br/>心情";}catch(e){}
         
     });
 }],
 'myList':['mainFooter',2,true,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=new initDockScroll('.DynamicMoodTtile','wrapper','#feedCont');
     Page.init({
         name:'myList',
-        dataUrl:'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid
-    });
-    Feed.init({
-        page:'myList',
-        cont:$('#feedCont'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();},
-        lastPos:-1
+        dataUrl:'/do.php?action=getUserInfo&sid='+StorMgr.sid+"&user_id="+StorMgr.uid
     });
     //取得照片总数
-    UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+StorageMgr.uid+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
+    UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+StorMgr.uid+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
         try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
         
     });
 }],
 'editInfo':['mainFooter',2,true,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=new iScroll('wrapper',{
-        useTransform: false,
-        onBeforeScrollStart: function (e) {
-            var target = e.target;
-            while (target.nodeType != 1) target = target.parentNode;
-
-            if(!['INPUT','SELECT','OPTION'].has(e.target.tagName)){
-                e.preventDefault();
-            }
-        },
-        onScrollEnd:function(){
-            myScroll.refresh();
-        }
-    });
     Tools.initSelect('#marrySel','marry');
     Tools.initSelect('#targetSel','target');
     Tools.initSelect('#interestSel','interest',true);
     Page.init({
         name:'editInfo',
-        dataUrl:'do.php?action=getUserInfo&sid='+StorageMgr.sid+"&user_id="+StorageMgr.uid
+        dataUrl:'/do.php?action=getUserInfo&sid='+StorMgr.sid+"&user_id="+StorMgr.uid
     });
 }],
 'myDetail':[false,false,false,true,function(){
     Page.init({
         name:'myDetail',
-        dataUrl:'mood.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorageMgr.sid
+        dataUrl:'/mood.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorMgr.sid
     });
 }],
 'hisPhoto':['hisFooter',false,false,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=new iScroll('wrapper');
-    hisInfo.init(function(){
-        Page.init({
-            name:'hisPhoto',
-            dataUrl:'profile.php?ajax=1&sid='+StorageMgr.sid+"&user_id="+hisInfo.curId
-        });
-        Feed.init({
-            page:'hisPhoto',
-            cont:$('#feedCont'),
-            more:$('.moreFeed'),
-            cb:function(){myScroll.refresh();}
-        });
-        //取得心情总数
-        UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+hisInfo.curId+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
-            $("#titleMenu-mood span").innerHTML=num+"<br/>心情";
-        });
+    hisInfo.init();
+    Page.init({
+        name:'hisPhoto',
+        dataUrl:'/profile.php?ajax=1&sid='+StorMgr.sid+"&user_id="+hisInfo.curId
+    });
+    //取得心情总数
+    UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+hisInfo.curId+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
+        $("#titleMenu-mood span").innerHTML=num+"<br/>心情";
     });
 }],
 'hisList':['hisFooter',false,false,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=new initDockScroll('.DynamicMoodTtile','wrapper','#feedCont');
-    hisInfo.init(function(){
-        Feed.init({
-            page:'hisList',
-            cont:$('#feedCont'),
-            more:$('.moreFeed'),
-            cb:function(){myScroll.refresh();},
-            lastPos:-1
-        });
-        Page.init({
-            name:'hisList',
-            dataUrl:'profile.php?ajax=1&sid='+StorageMgr.sid+"&user_id="+hisInfo.curId
-        });
-        //取得照片总数
-        UserAction.getMoodNum(Tools.getSiteUrl()+"weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+hisInfo.curId+"&sid="+StorageMgr.sid+"&page=1&ajax=1",function(num){
-            try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
-            
-        });
+    hisInfo.init();
+    Page.init({
+        name:'hisList',
+        dataUrl:'/profile.php?ajax=1&sid='+StorMgr.sid+"&user_id="+hisInfo.curId
+    });
+    //取得照片总数
+    UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+hisInfo.curId+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
+        try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
+        
     });
 }],
 'hisDetail':[false,false,false,true,function(){
     Page.init({
         name:'hisDetail',
-        dataUrl:'moodHe.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorageMgr.sid
+        dataUrl:'/moodHe.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorMgr.sid
     });
 }],
 'showMood':['mainFooter',3,true,true,function(){
     //计算TextArea的高度
-    var fs=parseInt(getComputedStyle(BODY).fontSize);
+    var moodIpt=$('.showMoodTextarea'),
+        cont=$('#content'),
+        foot=$('#footer'),
+        moodPlus=$('.showMoodPlus'),
+        moodIcon=$('.showMoodList');
     function setMoodH(){
-        var h=$('#content').offsetHeight-10.5*fs-$('.showMoodList').offsetHeight;
-        h=(h<10*fs)?10*fs:h;
-        $('.showMoodTextarea').style.height=h+"px";
+        var h=moodIpt.style.height=cont.offsetHeight-0.6*BODYFS;
+        if(moodPlus.style.display!="none"){
+            h=cont.offsetHeight-10*BODYFS-$('.showMoodList').offsetHeight;
+        }
+        moodIpt.style.height=h+"px";
     }
+
     setTimeout(function(){
-        //登陆就弹出的话小周手机会出现奇怪的情况
         actionSheet.show('photo');
         setMoodH();
     },100);
+
     //取得上次的心情图标
-    Tools.setIconId(null,StorageMgr.myInfo['mood_icon_id']||3);
-    delete WIN['myScroll'];
-    WIN['myScroll']=new iScroll('wrapper');
-    DOM.addEvent($("#mood"),"keypress",function(e){e.event.stopPropagation();
+    Tools.setIconId(null,StorMgr.myInfo['mood_icon_id']||3);
+
+    var wrapEl=$('#pageWraper'),//输入框设置
+        oriHeight=wrapEl.offsetHeight;
+    window.onresize=function(){
+        if('showMood'!=pageEngine.curPage){
+            return;
+        }
+        if(oriHeight==wrapEl.offsetHeight){
+            foot.style.display="block";
+            moodPlus.style.display="block";
+            moodIcon.style.position="relative";
+            moodIcon.style.top="0";
+        }else{
+            foot.style.display="none";
+            moodPlus.style.display="none";
+            moodIcon.style.position="absolute";
+            moodIcon.style.top="-1000em";
+        }
+        setMoodH();
+    }
+
+    DOM.addEvent($("#mood"),"keypress",function(e){
+        e.event.stopPropagation();
     });
 }],
 'infoCenter':['mainFooter',4,true,true,function(){
@@ -1102,25 +1077,22 @@ var pageConfig={
 }],
 'chatList':['mainFooter',4,true,true],
 'chat':[false,false,false,true,function(){
-    hisInfo.init(function(){
-        //check 从他们主页过来还是聊天列表过来
-        var cl=Tools.storage.get("kxjy_my_chatList","session"),
-            nickname="TA";
-        if(ViewMgr.views[ViewMgr.views.length-2]=="chatList"&&!!cl){
-            var hisId=hisInfo.curId;
-            $.each(cl,function(item){
-                if(item.fid==hisId){
-                    hisInfo.heOfChatList=item;
-                }
-            });
-            nickname=hisInfo.heOfChatList.name;
-        }else{
-            nickname=hisInfo.get(hisInfo.curId).nickname;
-        }
-        $('#nickName').innerHTML=nickname;
-    });
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper',function(){ChatFeed.refresh();
-    });
+    hisInfo.init();
+    //判断从他们主页过来还是聊天列表过来
+    var cl=Tools.storage.get("kxjy_my_chatList","session"),
+        nickname="TA";
+    if(pageEngine.prePage=="chatList"&&!!cl){
+        var hisId=hisInfo.curId;
+        $.each(cl,function(item){
+            if(item.fid==hisId){
+                hisInfo.heOfChatList=item;
+            }
+        });
+        nickname=hisInfo.heOfChatList.name;
+    }else{
+        nickname=hisInfo.get(hisInfo.curId).nickname;
+    }
+    $('#nickName').innerHTML=nickname;
     ChatFeed.init({
         noDataTxt:"暂无数据,请返回",
         noMoreBtn:true,
@@ -1131,7 +1103,6 @@ var pageConfig={
             if(ChatFeed.hasData){
                 ChatFeed.more.style.display="none";
             }
-
             myScroll.refresh();
 
             if(myScroll.maxScrollY<0&&ChatFeed.hasData){
@@ -1146,7 +1117,7 @@ var pageConfig={
 }],
 'sysNotice':[false,false,false,true],
 'newGuest':['mainFooter',4,true,true,function(){
-    var totalView=StorageMgr.infoCenter['visitor_total']||'总数不详';
+    var totalView=StorMgr.infoCenter['visitor_total']||'总数不详';
     $('.kxjy-hd h1').innerHTML="最近访客("+totalView+")";
 }],
 'likeMe':['mainFooter',4,true,true],
@@ -1161,47 +1132,37 @@ var pageConfig={
     new iScroll('wrapper');
 }],
 'rank':['mainFooter',5,true,true,function(){
-    delete WIN['myScroll'];
-    WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-    var myInfo=StorageMgr.myInfo,
-        addre=[myInfo.reside_province?myInfo.reside_province:"",myInfo.reside_city?myInfo.reside_city:""].join(" ");
-
+    var myInfo=StorMgr.myInfo,
+        infoCent=StorMgr.infoCenter,
+        myPro=myInfo.reside_province,
+        myCity=myInfo.reside_city,
+        addre=[myPro?myPro:"",myCity?myCity:""].join(" ");
+    if(StorMgr.gpsInfo){
+        addre=StorMgr.gpsInfo['prov']+" "+StorMgr.gpsInfo['city'];
+    }
     $(".rankAddress span").innerHTML=(" "!=addre)?addre:"地区不详";
-    if(!["无排名","0",0].has(StorageMgr.infoCenter.current_rank)){
-        $('#curPos').innerHTML="排在第"+StorageMgr.infoCenter.current_rank+"位";
+    if(!["无排名","0",0].has(infoCent.current_rank)){
+        $('#curPos').innerHTML="排在第"+infoCent.current_rank+"位";
     }else{
         $('#curPos').innerHTML="无排名";
     }
 
     //取今日人气值
-    var todayExp=StorageMgr.myTodayExp;
+    var todayExp=StorMgr.myTodayExp;
     if(!todayExp){
-        var url=Tools.getSiteUrl()+"starPromotion.php?"+Tools.getSidUidParams()+"&ajax=1"
+        var url=StorMgr.siteUrl+"/starPromotion.php?"+Tools.getSidUidParams()+"&ajax=1";
         function secCb(a){
             $("#expToday").innerHTML=a.today_pop;
-            StorageMgr.myTodayExp=a.today_pop;
+            StorMgr.myTodayExp=a.today_pop;
         }
         UserAction.sendAction(url,"","get",secCb,null);    
     }else{
         $("#expToday").innerHTML=todayExp;
     }
-    
-
-    /*取得地区信息后再载入列表*/
-    Feed.addParams="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;
-    Feed.init({
-        page:'rank',
-        cont:$('.rankBox .listBg'),
-        more:$('.moreFeed'),
-        cb:function(){myScroll.refresh();}
-    });
 }],
 'password':[false,false,false,true],
 'users':[false,false,false,false,function(){
-    var url=Tools.getSiteUrl()+"verify.php?sid="+StorageMgr.sid,
-        img=DOM.create('img');
-    img.src=url;
-    $('#verify').appendChild(img);
+    UserAction.getVerify();
 
     delete WIN['setSex'];
     WIN['setSex']=function(node,val){
@@ -1232,14 +1193,15 @@ var PageEngine=function(options){
 PageEngine.prototype={
     initUser:function(){//用户信息初始化
         var that=this;
-        if(that.hasUser){
-            return;
-        }
 
         if(!/login|users/.test(that.curPage)){
-            //初始化缓存数据
-            StorageMgr.initStor();
+            if(that.hasUser){
+                return;
+            }
+            StorMgr.initStor();//初始化用户缓存数据
             that.hasUser=true;
+        }else{
+            that.hasUser=false;
         }
     },
     replacePubTmpl:function(tmplStr){//替换公共tmpl
@@ -1250,6 +1212,7 @@ PageEngine.prototype={
         retStr=retStr.replace(/\$\{moodContTmpl\}/,moodContTmpl);
         retStr=retStr.replace(/\$\{commentTmpl\}/,commentTmpl);
         retStr=retStr.replace(/\$\{commentListTmpl\}/,commentListTmpl);
+        retStr=retStr.replace(/\$\{siteurl\}/g,StorMgr.siteUrl);
         return retStr;
     },
     compileTmpl:function(){
@@ -1311,47 +1274,90 @@ PageEngine.prototype={
             ViewMgr.stopGetData();
         }
 
-        //执行页面初始化代码
+        /*执行页面配置项中页面初始化代码*/
         if($.isFunc(initFn)){
             initFn.call(null);
         }
+
+        that.initIScrollAndFeed();
+    },
+    /*执行iScroll和feed相关代码*/
+    initIScrollAndFeed:function(){
+        var that=this,
+            feedOption={
+                page:that.curPage,
+                cont:$('#feedCont'),
+                more:$('.moreFeed'),
+                cb:function(){myScroll.refresh();},
+            }
+        delete WIN['myScroll'];
         switch(that.curPage){
             case "mainPhoto":
             case "mainList":
-                delete WIN['myScroll'];
+            case "rank":
                 WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-                Feed.init({
-                    page:that.curPage,
-                    cont:$('#feedCont'),
-                    more:$('.moreFeed'),
-                    cb:function(){myScroll.refresh();}
+                var myInfo=StorMgr.myInfo;
+                /*如果有GPS地址则取出*/
+                if(StorMgr.gpsInfo){
+                    feedOption['addParams']="reside_province="+StorMgr.gpsInfo['prov']+"&reside_city="+StorMgr.gpsInfo['city'];
+                }else if(myInfo){
+                    feedOption['addParams']="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;    
+                }
+                if("rank"==that.curPage){
+                    feedOption['cont']=$('.rankBox .listBg');
+                }
+                Feed.init(feedOption);
+                break;
+            case "myPhoto":
+            case "hisPhoto":
+                WIN['myScroll']=new iScroll('wrapper');
+                if("myPhoto"==that.curPage){
+                    feedOption['lastPos']=1;
+                }
+                Feed.init(feedOption);
+                break;
+            case "myList":
+            case "hisList":
+                WIN['myScroll']=new initDockScroll('.DynamicMoodTtile','wrapper','#feedCont');
+                feedOption['lastPos']=-1;
+                Feed.init(feedOption);
+                break;
+            case "editInfo":
+                WIN['myScroll']=new iScroll('wrapper',{
+                    useTransform: false,
+                    onBeforeScrollStart: function (e) {
+                        var target = e.target;
+                        while (target.nodeType != 1) target = target.parentNode;
+
+                        if(!['INPUT','SELECT','OPTION'].has(e.target.tagName)){
+                            e.preventDefault();
+                        }
+                    },
+                    onScrollEnd:function(){
+                        myScroll.refresh();
+                    }
                 });
                 break;
             case "myDetail":
             case "hisDetail":
-                delete WIN['myScroll'];
                 WIN['myScroll']=new iScroll('wrapper');
-                Feed.init({
-                    page:that.curPage,
-                    cont:$('div.comment'),
-                    more:$('.moreFeed'),
-                    cb:function(){myScroll.refresh();}
-                });
+                feedOption['cont']=$('div.comment');
+                Feed.init(feedOption);
                 Comment.init('.enter');
                 break;
             case "chatList":
             case "commentMe":
             case "sendComment":
-                delete WIN['myScroll'];
                 WIN['myScroll']=new iScroll('wrapper');
-                Feed.init({
-                    noDataTxt:"暂无数据,请返回",
-                    page:that.curPage,
-                    cont:$('.chatList'),
-                    more:$('.moreFeed'),
-                    cb:function(){myScroll.refresh();}
-                });
+                feedOption['cont']=$('.chatList');
+                feedOption['noDataTxt']="暂无数据,请返回";
+                Feed.init(feedOption);
                 InfoCenter.clear(that.curPage);
+                break;
+            case "chat":
+                WIN['myScroll']=initIScroll($('.pullDown'),'wrapper',function(){
+                    ChatFeed.refresh();
+                });
                 break;
             case "sysNotice":
             case "newGuest":
@@ -1362,15 +1368,9 @@ PageEngine.prototype={
             case "likeMood":
             case "likePerson":
             case "likePerson":
-                delete WIN['myScroll'];
                 WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
-                Feed.init({
-                    noDataTxt:"暂无数据,请返回",
-                    page:that.curPage,
-                    cont:$('#feedCont'),
-                    more:$('.moreFeed'),
-                    cb:function(){myScroll.refresh();}
-                });
+                feedOption['noDataTxt']="暂无数据,请返回";
+                Feed.init(feedOption);
                 break;
         }
     },

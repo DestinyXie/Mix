@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="um">
+<head>
+<title>开心交友 - 手机版</title>
+<meta charset="utf-8">
+<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/zy-ui.css','static');}-->"/>
+<link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/kxjy.css','static');}-->"/>
+</head>
+<body class="um-vp bg">
+<div id="pageWraper" class="up ub ub-ver" >
+</div>
+<script src="<!--{eval echo createDomain('/template/default/js/validate.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/zy_json.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/iscroll.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.base.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.bridge.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.page.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.home.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.feed.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.ui.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/spinningwheel-min.js','static');}-->"></script>
+<script type="text/javascript">
+    //页面初始时从服务器取得的变量值
+    StorMgr.sid="$sid";
+    StorMgr.siteUrl="$_SC['siteurl']";
+    StorMgr.chatPath="$_SC['chat_system_url']";/*Chat服务器*/
+    StorMgr.siteHost="$_SERVER['HTTP_HOST']";
+    StorMgr.filesAllowed =$_SC['max_file_num']-$user_info['picnum'];/*还能上传照片的数量*/
+</script>
+</body>
+</html>

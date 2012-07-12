@@ -84,7 +84,7 @@
 </div>
 <script type="text/javascript">
 function setSex(node){
-    var url=Tools.getSiteUrl()+"verify.php?sid="+StorageMgr.sid,
+    var url=StorMgr.siteUrl+"/verify.php?sid="+StorMgr.sid,
         img=DOM.create('img');
     img.src=url;
     $('#verify').appendChild(img);

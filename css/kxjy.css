@@ -723,7 +723,6 @@ li .comment{
 }
 .showMoodTextarea{
 	position:relative;
-	min-height:10em;
 	margin:.5em;
 	font-size:0.83em;
 	background:#FFF;

@@ -1,5 +1,6 @@
 /*手机接口调用*/
 var Device={
+    /*手机初始化*/
     getBridgeName:function(){
         if(WIN["uexWindow"]){
             return 'appCan';
@@ -27,11 +28,12 @@ var Device={
         if(Device.loadEventBinded)
             return;
 
-        // if(this.isAppcan()) appCan对象初始化比window.onload慢
+        //appCan对象初始化比window.onload慢
         window.uexOnload=load;
-
-        //PC test
-        window.onload=load;
+        if(!isTouch){
+            //PC test
+            window.onload=load;    
+        }
 
         Device.loadEventBinded=true;
     },
@@ -103,7 +105,25 @@ var Device={
             }
         }
     },
+    backFunc:null,
+    setBackBtn:function(fn){//设置返回按钮android symbian
+        if(!Device.isAppcan()){return;}
+        uexWindow.onKeyPressed=function(){
+            if($.isFunc(Device.backFunc)){
+                Device.backFunc.call(null);
+            }
+            if($.isFunc(fn)){
+                fn.call(null);
+            }
+        }
+        uexWindow.setReportKey('0', '1');
+    },
+    disetBackBtn:function(){//取消设置返回按钮android symbian
+        if(!Device.isAppcan()){return;}
+        uexWindow.setReportKey('0', '0');
+    },
     datePicker:function(node,okCb,errCb){
+        if(!Device.isAppcan()){return;}
         uexControl.cbOpenDatePicker=function(opCode,dataType,data){
 　　　　　　　　if(dataType==1){
 　　　　　　　　　　var obj = eval('('+data+')');
@@ -114,7 +134,59 @@ var Device={
                 }
 　　　　}
         var defData=node.getAttribute('default').split("-");
+        if(0==defData[0]||0==defData[1]||0==defData[2]){
+            defData=['1992','12','12'];
+        }
 
-        uexControl.openDatePicker (defData[0]||'1992',defData[1]||'12',defData[2]||'12');
-    }
+        uexControl.openDatePicker (defData[0],defData[1],defData[2]);
+    },
+    /*GPS功能*/
+    getLocation:function(cb){//获取经纬度 cb(latitude,longitude)
+        if(!Device.isAppcan()){return;}
+        function locationCallback(lat,log){
+            uexLocation.closeLocation();
+            cb(lat,log);
+        }
+        uexLocation.onChange = locationCallback;
+        uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
+            toast("未能取得经纬度 errorCode:" + errorCode + "\nerrorInfo:" + errorInfo);
+        }
+        uexLocation.openLocation();
+    },
+    getAddress:function(lat,log,cb,errCb){//获取地址 cb(addr);
+        if(!Device.isAppcan()){return;}
+        function LocationSuccess(opCode,dataType,data){
+            if(dataType==0){
+                cb(data);
+            }else{
+                if(errCb){
+                    errCb();
+                }else{
+                    toast('未能获得地址信息');
+                }
+            }
+        }
+        uexLocation.cbGetAddress = LocationSuccess;
+        uexLocation.getAddress(lat,log);
+    },
+    /*取得手机操作平台ios or android*/
+    getPlatForm:function(cb){
+        function platformSuccess(opId,dataType,data){
+          var platstr="";//终端标识
+          if(dataType==2 && data == 0){platstr="ios";}
+          if(dataType==2 && data == 1){platstr="android";}
+          if(dataType==2 && data == 4){platstr="wp";}
+          if(cb){cb(platstr);}
+        }
+        uexWidgetOne.getPlatform();
+        uexWidgetOne.cbGetPlatform = platformSuccess;
+    },
+    /*安装应用*/
+    installApp:function(addr){
+        uexWidget.installApp(addr);
+    },
+    /*下载*/
+    download:function(){
+
+    },
 }

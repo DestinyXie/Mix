@@ -1,8 +1,5 @@
-﻿/*js document*/
-/*保存常用DOM的全局变量*/
-var HEAD, BODY, DOC = document, WIN = window;
-/*页面初始化代码执行队列*/
-WIN['Load'] = WIN['Load'] || [];
+﻿/*保存常用DOM及其属性值的全局变量BODYFS=BODY.style.fontSize*/
+var HEAD, BODY, BODYFS, DOC = document, WIN = window;
 
 /*常量设置*/
 var isTouch = ('ontouchstart' in WIN),
@@ -17,6 +14,8 @@ function extend(d, s ,o) {
         if(o&&o[p]!==undefined)continue;
         if (s[p] !== null){
             d[p] = (typeof(s[p]) == 'object' && !(s[p].nodeType) && !(s[p] instanceof Array)) ? extend({}, s[p]) : s[p];
+        }else{
+            d[p]=null;
         }
     }
     if(o){
@@ -360,25 +359,6 @@ Delegate.init();
 
 /*工具*/
 var Tools={
-    /*调整站点URL*/
-    getSiteUrl:function(){
-        if(Tools.siteUrl)
-            return Tools.siteUrl;
-
-        var siteUrl="http://m.kxjy.com/";
-        if(!/m.kxjy.com/.test(location.href)){
-            siteUrl="http://192.168.30.78/friend/v3/";
-        }
-        
-        Tools.siteUrl=siteUrl;
-        return siteUrl;
-    },
-    /*设置Chat服务器*/
-    getChatUrl:function(url){
-        if("http://m.kxjy.com/"==Tools.getSiteUrl())
-            return url.replace('m.kxjy.com/','yunchat.kxjy.com/')
-        return url.replace('friend/v3/','chat/');
-    },
     /*计算直角边*/
     calculPy:function(l,w){
         return Math.pow(Math.pow(l, 2) + Math.pow(w, 2), .5);
@@ -389,7 +369,7 @@ var Tools={
             return Tools.sidUidParam;
         }
 
-        var paramStr="sid="+StorageMgr.sid+"&uid="+StorageMgr.uid+"&userKey="+StorageMgr.userKey;
+        var paramStr="sid="+StorMgr.sid+"&uid="+StorMgr.uid+"&userKey="+StorMgr.userKey;
         Tools.sidUidParam=paramStr;
         return paramStr;
     },
@@ -507,7 +487,7 @@ var Tools={
     })(),
     /*表情字符串正则转换图片*/
     filterMsgFace:function(str){
-        if(str){return str = str.replace(/\[(face(\d+))\]/g, "<img src='"+Tools.getSiteUrl()+"images/face/$1.gif' />");}
+        if(str){return str = str.replace(/\[(face(\d+))\]/g, "<img src='"+StorMgr.siteUrl+"/images/face/$1.gif' />");}
     },
     /*转换字符串中的html特殊字符串*/
     htmlEncode:function(str){
@@ -556,11 +536,11 @@ var Tools={
     },
     /*将数据加入模板生成html*/
     compiTpl:function(tpl,data,cb,idx){
-        if('sysNotice'!=Feed.page){//通知里面是需要html标签的
+        if('sysNotice'!=Feed.page){//通知里面是需要显示html标签的
             data=Tools.htmlEncodeObj(data);
         }
         /*简易模板实现(改自zy_tmpl.js)*/
-        return tpl.replace( /\$\{([^\}]*)\}/g,function(m,c){
+        return tpl.replace(/\$\{([^\}]*)\}/g,function(m,c){
             if(c.match(/index:/)){
                 return idx;
             }
@@ -570,7 +550,7 @@ var Tools={
             return data[c]||"";
         });
     },
-    /*initArea*/
+    /*initArea弹出地区选择框*/
     initArea:function(type){
         if(Tools.hasSpinWheel)
             return;
@@ -630,7 +610,7 @@ var Tools={
             city[i+1]=citys[i];
         }
 
-        SpinningWheel.cellHeight=parseInt(getComputedStyle(BODY).fontSize)*1.79;
+        SpinningWheel.cellHeight=BODYFS*1.79;
 
         SpinningWheel.addSlot(pros, 'right', 0);
         SpinningWheel.addSlot(city, '', 0);
@@ -691,5 +671,47 @@ var Tools={
 
         select.innerHTML=sels;
         select.addEventListener("change",tarSet,false);
+    },
+    /*获得用户所在地址,解析地址为省,市*/
+    getGpsInfo:function(cb){
+        StorMgr.gpsInfo=Tools.storage.get("kxjy_my_gpsInfo");
+        function parseAddr(addr){
+            var prov,city,addrArr,
+                provReg=/([\u4E00-\u9FA3]{2})省/;
+                cityReg=/([\u4E00-\u9FA3]{2})市/;
+                areaReg=/([\u4E00-\u9FA3]{2})区/;
+            if(/北京|上海|重庆|天津/.test(addr)){
+                prov=cityReg.exec(addr)[1];
+                city=areaReg.exec(addr)[1];
+            }else{
+                prov=provReg.exec(addr)[1];
+                city=cityReg.exec(addr)[1];
+            }
+            addrArr=[prov||"",city||""];
+            return addrArr;
+        }
+        Device.getLocation(
+            function(lat,log){
+                var secCb=function(addr){
+                        var addrArr=parseAddr(addr),
+                            gpsInfo={
+                                lat:lat,
+                                log:log,
+                                prov:addrArr[0],
+                                city:addrArr[1]
+                            }
+                        StorMgr.gpsInfo=gpsInfo;
+                        Tools.storage.set("kxjy_my_gpsInfo",gpsInfo);
+
+                        if($.isFunc(cb)){
+                            cb();
+                        }
+                    },
+                    errCb=function(){
+                        alert("不能取得具体地址");
+                    }
+                Device.getAddress(lat,log,secCb,errCb);
+            }
+        );
     }
 }

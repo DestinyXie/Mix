@@ -135,10 +135,9 @@ var actionSheet={
             uexWindow.cbActionSheet=ao[3];
             uexWindow.actionSheet(ao[0],ao[1],ao[2]);
         }
-        
     },
     actionObj:{
-        "search":['搜索','取消',['显示全部','只显示男','只显示女','更换地区'],function(opId,dataType,data){
+        "search":['搜索','取消',['显示全部','只显示男','只显示女','取消很重要','更换地区'],function(opId,dataType,data){
             switch(data*1){
                 case 0:
                     Feed.addParams="sex=2";
@@ -152,7 +151,7 @@ var actionSheet={
                     Feed.addParams="sex=1";
                     Feed.refresh();
                     break;
-                case 3:
+                case 4:
                     Tools.initArea('photo');
                     break;
             }
@@ -161,14 +160,19 @@ var actionSheet={
         "photo":['添加照片','取消',["从相册中选择","拍照"],function(opId,dataType,data){
 
             var imgurl,
-                uopCode=2,
-                uploadUrl=Tools.getSiteUrl()+"photo.php",
+                uopCode=3,
+                uploadUrl="http://"+StorMgr.siteHost+StorMgr.siteUrl+"/photo.php",
                 isMyPhoto=/myPhoto/.test(pageEngine.curPage);
 
             function xmlHttpPost(){
+                if(StorMgr.filesAllowed<=0){
+                    alert("您上传的照片数量已经达到上限！");
+                    return;
+                }
                 uexXmlHttpMgr.onPostProgress=function(uopCode,p){
                     if(p==100){
                         toast("上传完成！",2);
+                        StorMgr.filesAllowed--;
                         return;
                     }
                     toast("已上传"+p+"%");
@@ -195,8 +199,8 @@ var actionSheet={
                 uexXmlHttpMgr.onData = httpSuccess;
                 uexXmlHttpMgr.open(uopCode, "POST", uploadUrl, "");
                 uexXmlHttpMgr.setPostData(uopCode, "0", "upload", "1");
-                uexXmlHttpMgr.setPostData(uopCode, "0", "sid", StorageMgr.sid);
-                uexXmlHttpMgr.setPostData(uopCode, "0", "uid", StorageMgr.uid);
+                uexXmlHttpMgr.setPostData(uopCode, "0", "sid", StorMgr.sid);
+                uexXmlHttpMgr.setPostData(uopCode, "0", "uid", StorMgr.uid);
                 if(!isMyPhoto){
                     uexXmlHttpMgr.setPostData(uopCode, "0", "type", "1");
                 }
