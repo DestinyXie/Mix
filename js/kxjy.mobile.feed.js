@@ -1,14 +1,14 @@
 /*列表模板*/
 var feedTemplate={
     mainPhoto:'<div _click="ViewMgr.goto(${cb:isself})" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
-	photo:'<div _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
-    myPhoto:'<div _click="ViewMgr.goto(\'myDetail.html\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
-    hisPhoto:'<div _click="ViewMgr.goto(\'hisDetail.html\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
+	photo:'<div _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
+    myPhoto:'<div _click="ViewMgr.goto(\'myDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileurl}" alt="" /></div>',
+    hisPhoto:'<div _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileurl}" alt="" /></div>',
     mood:'<div class="DynamicList clearfix">\
         <div class="DynamicInfo">\
-            <div _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="DynamicAvatar"><img src="${avatarPicUrlx}" alt="" /></div>\
+            <div _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')" class="DynamicAvatar"><img src="${avatarPicUrlx}" alt="" /></div>\
             <div class="DynamicAvatar-r">\
-                <strong _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="DynamicName">${nickname}</strong>\
+                <strong _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')" class="DynamicName">${nickname}</strong>\
                 <span class="DynamicTrank">${cb:colorPng}</span>\
                 <ul class="DynamicNav clearfix">\
                     <li><span class="DynamicIco ub-img1 time"></span>${mooddate}</li>\
@@ -26,11 +26,11 @@ var feedTemplate={
                     <span>&diams;</span>\
                         <div class="DynamicText ub ub-ac">\
                         <p class="ub-f1">${cb:mood}</p>\
-                        <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail.html\',\'wid=${enwid}\')">></strong>\
+                        <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')">></strong>\
                         </div>\
                         <div class="DynamicImg">${cb:fileurl}</div>\
 	                    <ul class="DynamicMenu clearfix">\
-							<li class="ub ub-ac" _click="ViewMgr.goto(\'hisDetail.html\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
+							<li class="ub ub-ac" _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
 	                        <li class="ub ub-ac" _click="UserAction.loveData(\'mood\',this,\'${enwid}\',${cb:lovecount})"><span class="DynamicMenuIco love ${cb:lovemood}"></span>${cb:lovecount}</li>\
 	                    </ul>\
                     </div>\
@@ -59,11 +59,11 @@ var feedTemplate={
                     <span>&diams;</span>\
                     <div class="DynamicText ub ub-ac">\
                         <p class="ub-f1">${cb:mood}</p>\
-                        <strong class="DynamicMore" _click="ViewMgr.goto(\'myDetail.html\',\'wid=${enwid}\')">></strong>\
+                        <strong class="DynamicMore" _click="ViewMgr.goto(\'myDetail\',\'wid=${enwid}\')">></strong>\
                     </div>\
                     <div class="DynamicImg">${cb:fileurl}</div>\
 					<ul class="DynamicMenu clearfix">\
-						<li class="ub ub-ac" _click="ViewMgr.goto(\'myDetail.html\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
+						<li class="ub ub-ac" _click="ViewMgr.goto(\'myDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
 					    <li class="ub ub-ac"><span class="DynamicMenuIco love"></span>${cb:lovecount}</li>\
 					</ul>\
                 </div>\
@@ -92,11 +92,11 @@ var feedTemplate={
                     <span>&diams;</span>\
                     <div class="DynamicText ub ub-ac">\
                         <p class="ub-f1">${cb:mood}</p>\
-                        <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail.html\',\'wid=${enwid}\')">></strong>\
+                        <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')">></strong>\
                     </div>\
                     <div class="DynamicImg">${cb:fileurl}</div>\
 					<ul class="DynamicMenu clearfix">\
-						<li class="ub ub-ac" _click="ViewMgr.goto(\'hisDetail.html\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
+						<li class="ub ub-ac" _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
 					    <li class="ub ub-ac" _click="UserAction.loveData(\'mood\',this,\'${enwid}\',${cb:lovecount})"><span class="DynamicMenuIco love ${cb:islove}"></span>${cb:lovecount}</li>\
 					</ul>\
                 </div>\
@@ -108,7 +108,7 @@ var feedTemplate={
         <div class="commentListAvatar"><img src="${avatarPicUrl}" alt="头像" /></div>\
         <div class="commentListText ub-f1">${cb:commentMood}</div>\
     </div>${cb:child}',
-    chatList:'<div class="commentList ub ub-ac clearfix" _click="ViewMgr.goto(\'chat.html\',\'fid=${fid}&user_id=${fid}\')">\
+    chatList:'<div class="commentList ub ub-ac clearfix" _click="ViewMgr.goto(\'chat\',\'fid=${fid}&user_id=${fid}\')">\
         <div class="commentListAvatar">\
 			<img src="${img}" alt="" />\
             ${cb:hasMsg}\
@@ -127,15 +127,15 @@ var feedTemplate={
             <span>&diams;</span>\
         </div>\
     </div>',
-    attract:'<div _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.disadmire(\'people\',this,\'${uid}\');this.event.stop();"></span></div>',
+    attract:'<div _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.disadmire(\'people\',this,\'${uid}\');this.event.stop();"></span></div>',
     commentMe:'<div class="commentList ub clearfix">\
-        <div class="commentListAvatar" _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')"><img src="${avatar_url}" alt="" /></div>\
+        <div class="commentListAvatar" _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')"><img src="${avatar_url}" alt="" /></div>\
         <div class="commentListText ub-f1">\
-            <p class="chatListName t-blue" _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')">${nickname}</p>\
+            <p class="chatListName t-blue" _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')">${nickname}</p>\
             <p>评论内容<span class="t-pur">${cb:title}</span><span class="t-gra">(${create_time})</span></p>\
             <p>评论我的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
         </div>\
-        <strong class="DynamicMore" _click="ViewMgr.goto(\'myDetail.html\',\'wid=${parentid}\')">></strong>\
+        <strong class="DynamicMore" _click="ViewMgr.goto(\'${cb:isself}\',\'wid=${parentid}\')">></strong>\
     </div>',
     sendComment:'<div class="commentList ub clearfix">\
         <div class="commentListAvatar" _click="ViewMgr.goto(${cb:isself})"><img src="${avatar_url}" alt="" /></div>\
@@ -144,9 +144,9 @@ var feedTemplate={
             <p>评论<span class="t-pur"_click="ViewMgr.goto(${cb:isself})">${nickname}</span>的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
             <div class="chatDelete" _click="UserAction.deleteData(\'comment\',DOM.findParent(this,\'.commentList\',true),\'${enwid}\');">删除</div>\
         </div>\
-        <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail.html\',\'user_id=${uid}&wid=${parentid}\')">></strong>\
+        <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail\',\'user_id=${uid}&wid=${parentid}\')">></strong>\
     </div>',
-    blackList:'<div _click="ViewMgr.goto(\'hisPhoto.html\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');this.event.stop();"></span></div>',
+    blackList:'<div _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');this.event.stop();"></span></div>',
     rank:'<div class="rankList uc-t ub b-gra ub-ac umh4 lis">\
             <div class="topRank">${index:}</div>\
             <div class="commentListAvatar" ${cb:isself}>\
@@ -224,7 +224,13 @@ var Feed={
             noMoreTxt:"没有更多了",
             noDataTxt:"暂时没有数据",
             noMoreBtn:false,//是否显示加载按钮
+            lastPos:null,
+            addParams:"",
+            dataCount:0,
+            totalPage:0,
+            isDestoryed:false
     },
+    mainParams:null,//记录mainPhoto和mainList的搜索变量
 	init:function(options){
         /*options项
         * page 页面名;
@@ -235,7 +241,6 @@ var Feed={
         */
         var that=this;
         that.destory();
-        that.isDestoryed=false;
         extend(that,that.defOptions,options);
         that.refresh();
 	},
@@ -254,8 +259,6 @@ var Feed={
         if(this.loadXhr){
             this.loadXhr.abort();
         }
-        this.lastPos=null;
-        this.addParams="";
     },
     refresh:function(setParam){
         if(this.noMoreBtn&&this.more.innerHTML!=this.noDataTxt&&this.more){
@@ -336,7 +339,11 @@ var Feed={
         that.isLoading=true;
 
         if(!that.isRefresh&&(typeof that.totalPage=="number")&&that.index>=that.totalPage){
-            that.reset();
+            if("暂无数据,请返回"==that.more.innerHTML){
+                ViewMgr.back();
+            }else{
+                that.reset();
+            }
             return false;
         }
 
@@ -361,6 +368,11 @@ var Feed={
                 that.loadMoreSecc(a);
             },
             errCb=function(m){
+                if(!that.dataCount||0==that.dataCount){
+                    that.more.innerHTML=that.noDataTxt;
+                }else{
+                    that.more.innerHTML=that.moreTxt;
+                }
                 that.reset();
             };
         that.loadXhr=UserAction.sendAction(dataUrl,params,"get",secCb,errCb);
@@ -380,12 +392,16 @@ var Feed={
         return feedUrl+"&sid="+StorMgr.sid;
     },
     setParams:function(setParam){
-        var params="page="+(this.index+1)+"&ajax=1";
+        var that=this,
+            params="page="+(that.index+1)+"&ajax=1";
         if(setParam){
             params+="&"+setParam;
         }
-        if(this.addParams){//临时增加的参数
-            params+="&"+this.addParams;
+        if(that.addParams){//临时增加的参数
+            params+="&"+that.addParams;
+            if(['mainPhoto','mainList'].has(that.page)){
+                this.mainParams=this.addParams;//mainPhoto,mainList页面记录参数
+            }
         }
         return params;
     },
@@ -462,9 +478,9 @@ var Feed={
                 tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="isself"){
                         if(o.uid==StorMgr.uid){
-                            return "'myPhoto.html'";
+                            return "'myPhoto'";
                         }else{
-                            return "'hisPhoto.html','user_id="+o.uid+"'";  
+                            return "'hisPhoto','user_id="+o.uid+"'";  
                         }
                     }
                 },idx);
@@ -480,8 +496,8 @@ var Feed={
             case "likeMood":
                 /*处理点击自己时的跳转*/
                 if(that.page=="mainList"&&data.uid==StorMgr.uid){
-                    tmpl=tmpl.replace(/'hisPhoto.html','user_id=\$\{uid\}'/g,"'myPhoto.html'");
-                    tmpl=tmpl.replace(/'hisDetail.html'/g,"'myDetail.html'");
+                    tmpl=tmpl.replace(/'hisPhoto','user_id=\$\{uid\}'/g,"'myPhoto'");
+                    tmpl=tmpl.replace(/'hisDetail'/g,"'myDetail'");
                 }
                 if(data.havemood*1!=0&&(!data.filetype||data.filetype=="img")){
                     tmplStr=that.compileMood(tmpl,data,idx);
@@ -578,10 +594,18 @@ var Feed={
                         return Tools.filterMsgFace(o.parentTitle);
                     }
                     if(t[1]=="isself"){
-                        if(o.touid==o.uid){
-                            return "'myPhoto.html'";
+                        if("sendComment"==that.page){
+                            if(o.touid==o.uid){
+                                return "'myPhoto'";
+                            }else{
+                                return "'hisPhoto','user_id="+((that.page=="sendComment")?o.touid:o.uid)+"'";
+                            }
                         }else{
-                            return "'hisPhoto.html','user_id="+((that.page=="sendComment")?o.touid:o.uid)+"'";
+                            if(o.parentUid==StorMgr.uid){
+                                return "myDetail";
+                            }else{
+                                return "hisDetail";
+                            }
                         }
                     }
                 },idx);
@@ -591,9 +615,9 @@ var Feed={
                     switch(t[1]){
                         case "isself":
                             if(o.uid==StorMgr.uid){
-                                return "_click=\"ViewMgr.goto('myPhoto.html')\"";
+                                return "_click=\"ViewMgr.goto('myPhoto')\"";
                             }else{
-                                return "_click=\"ViewMgr.goto('hisPhoto.html','user_id="+o.uid+"')\"";
+                                return "_click=\"ViewMgr.goto('hisPhoto','user_id="+o.uid+"')\"";
                             }
                             break;
                         case "age":
@@ -663,9 +687,9 @@ var Feed={
                         case 'colorPng':
                             return (!o.colorPng)?"":'<img src="'+o.colorPng+'" alt="">';
                             break;
-                        case 'fileimg':
-                            return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
-                            break;
+                        // case 'fileimg'://用不到了
+                        //     return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
+                        //     break;
                         case 'fileurl':
                             return (!o.fileurl)?"":'<img src="'+o.fileurl+'" alt="" />';
                             break;
@@ -1019,7 +1043,7 @@ var Comment={
             },['删除','取消'],'执行操作'
             );
         }
-        if(Page.name=="myDetail"){
+        if("myDetail"==pageEngine.curPage){
             if(!self){
                 Device.actionThree('执行操作','对这条评论:',['回复','删除','取消'],
                 function(){
@@ -1045,7 +1069,7 @@ var Comment={
                     that.focusInput();
                 },
                 function(){
-                    that._unSetParenComm()
+                    that._unSetParenComm();
                 },['回复','取消'],'执行操作'
                 );
             }else{

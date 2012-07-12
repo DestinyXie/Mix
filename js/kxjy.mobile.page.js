@@ -81,7 +81,7 @@ var contentTmpl={
         <div class="Forget tr">忘记密码?</div>\
         <div class="loginButton">\
             <span id="loginBtn" class="btnBg" _click="UserAction.checkLogin(\'#email\',\'#password\',this)">登陆</span>\
-            <span class="btnBg" _click="ViewMgr.goto(\'users.html\')">注册</span>\
+            <span class="btnBg" _click="setTimeout(function(){ViewMgr.goto(\'users\');},350)">注册</span>\
         </div>\
     </div>\
     <div class="qqLogin">\
@@ -94,7 +94,7 @@ var contentTmpl={
                 <span class="header-ico hd-search"></span>\
             </div>\
             <h1 class="ut ulev0 ut-s tx-c">附近的人</h1>\
-            <div _click="ViewMgr.goto(\'mainList.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.goto(\'mainList\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">动态<span class="header-ico hd-list"></span></div>\
         </div>\
         </div>\
@@ -108,7 +108,7 @@ var contentTmpl={
                 <span class="header-ico hd-search"></span>\
             </div>\
             <h1 class="ut ulev0 ut-s tx-c">附近动态</h1>\
-            <div _click="ViewMgr.goto(\'mainPhoto.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.goto(\'mainPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">头像<span class="header-ico hd-photo"></span></div>\
             </div>\
         </div>\
@@ -118,11 +118,11 @@ var contentTmpl={
 'myPhoto':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
-            <div _click="ViewMgr.goto(\'myList.html\')" class="btn btn-l kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.goto(\'myList\')" class="btn btn-l kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac"><span class="header-ico hd-list"></span>心情</div>\
             </div>\
             <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
-            <div _click="ViewMgr.goto(\'editInfo.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.goto(\'editInfo\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim">编辑资料</div>\
             </div>\
         </div>\
@@ -142,10 +142,10 @@ var contentTmpl={
                     <li class="ub-f1 active" id="titleMenu-pic">\
                         <span>0<br />照片</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.goto(\'myList.html\')">\
+                    <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.goto(\'myList\')">\
                         <span>0<br />心情</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank.html\')">\
+                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank\')">\
                         <span><br />无排名</span>\
                     </li>\
                     <li class="ub-f1" id="titleMenu_more" _click="Page.showMore()">\
@@ -175,11 +175,11 @@ var contentTmpl={
 'myList':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
-            <div _click="ViewMgr.goto(\'myPhoto.html\')" class="btn btn-l kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.goto(\'myPhoto\')" class="btn btn-l kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac"><span class="header-ico hd-photo"></span>照片</div>\
             </div>\
             <h1 class="ut ulev0 ut-s tx-c">\&nbsp;</h1>\
-            <div _click="ViewMgr.goto(\'editInfo.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.goto(\'editInfo\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim">编辑资料</div>\
             </div>\
         </div>\
@@ -197,13 +197,13 @@ var contentTmpl={
                 <strong class="DynamicName">&nbsp;</strong>\
                 <span class="DynamicTrank"></span>\
                 <ul class="myTitleMenu ub">\
-                    <li class="ub-f1" id="titleMenu-pic" _click="ViewMgr.goto(\'myPhoto.html\')">\
+                    <li class="ub-f1" id="titleMenu-pic" _click="ViewMgr.goto(\'myPhoto\')">\
                         <span>0<br />照片</span>\
                     </li>\
                     <li class="ub-f1 active" id="titleMenu-mood">\
                         <span>0<br />心情</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank.html\')">\
+                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank\')">\
                         <span><br />无排名</span>\
                     </li>\
                 </ul>\
@@ -233,7 +233,7 @@ var contentTmpl={
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <div class="uba  b-gra c-wh us listBg">\
-        <div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入昵称\',function(txt){Page.setEditVal(\'nickname\',txt);},null,[\'确定\',\'取消\'],$(\'#nickname\').innerHTML)">\
+        <div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入昵称\',function(txt){Page.setEditVal(\'nickname\',txt);},null,[\'确定\',\'取消\'],Tools.htmlDecode($(\'#nickname\').innerHTML))">\
           <div class="t-org umar-t color777 fr" id="nickname"></div>\
           <div class="umar-t">昵称</div>\
         </div>\
@@ -261,15 +261,15 @@ var contentTmpl={
           <div class="t-org umar-t color777 fr" id="target"></div>\
           <div class="umar-t">交友目的</div>\
         </div>\
-        <div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入个人描述\',function(txt){Page.setEditVal(\'note\',txt)},null,[\'确定\',\'取消\'],$(\'#note\').innerHTML)">\
+        <div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入个人描述\',function(txt){Page.setEditVal(\'note\',txt)},null,[\'确定\',\'取消\'],Tools.htmlDecode($(\'#note\').innerHTML))">\
           <div class="umar-t">个人描述</div>\
           <div class="t-org umar-t color777" id="note"></div>\
         </div>\
-        <div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入QQ号\',function(txt){Page.setEditVal(\'qq\',txt)},null,[\'确定\',\'取消\'],$(\'#qq\').innerHTML)">\
+        <div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入QQ号\',function(txt){Page.setEditVal(\'qq\',txt)},null,[\'确定\',\'取消\'],Tools.htmlDecode($(\'#qq\').innerHTML))">\
           <div class="t-org umar-t color777 fr" id="qq"></div>\
           <div class="umar-t">QQ</div>\
         </div>\
-        <div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入手机号\',function(txt){Page.setEditVal(\'mobile\',txt)},null,[\'确定\',\'取消\'],$(\'#mobile\').innerHTML)">\
+        <div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入手机号\',function(txt){Page.setEditVal(\'mobile\',txt)},null,[\'确定\',\'取消\'],Tools.htmlDecode($(\'#mobile\').innerHTML))">\
           <div class="t-org umar-t color777 fr" id="mobile"></div>\
           <div class="umar-t">手机</div>\
         </div>\
@@ -347,7 +347,7 @@ var contentTmpl={
     <!--content结束-->',
 'hisPhoto':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
-            <div _click="ViewMgr.goto(\'hisList.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.goto(\'hisList\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">心情<span class="header-ico hd-list"></span></div>\
         </div>\
         </div>\
@@ -368,10 +368,10 @@ var contentTmpl={
                     <li class="ub-f1 active" id="titleMenu-pic">\
                         <span>0<br />照片</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.goto(\'hisList.html\')">\
+                    <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.goto(\'hisList\')">\
                         <span>0<br />心情</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank.html\')">\
+                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank\')">\
                         <span><br />无排名</span>\
                     </li>\
                     <li class="ub-f1" id="titleMenu_more" _click="Page.showMore()">\
@@ -397,7 +397,7 @@ var contentTmpl={
     <!--content结束-->',
 'hisList':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
-            <div _click="ViewMgr.goto(\'hisPhoto.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.goto(\'hisPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">照片<span class="header-ico hd-photo"></span></div>\
         </div>\
         </div>\
@@ -415,13 +415,13 @@ var contentTmpl={
                 <strong class="DynamicName">&nbsp;</strong>\
                 <span class="DynamicTrank"></span>\
                 <ul class="myTitleMenu ub">\
-                    <li class="ub-f1" id="titleMenu-pic" _click="ViewMgr.goto(\'hisPhoto.html\')">\
+                    <li class="ub-f1" id="titleMenu-pic" _click="ViewMgr.goto(\'hisPhoto\')">\
                         <span>0<br />照片</span>\
                     </li>\
                     <li class="ub-f1 active" id="titleMenu-mood">\
                         <span>0<br />心情</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank.html\')">\
+                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank\')">\
                         <span><br />无排名</span>\
                     </li>\
                 </ul>\
@@ -541,35 +541,35 @@ var contentTmpl={
     <div>\
         <!--列表开始-->\
     <div class="uba b-gra us listBg">\
-        <div  _click="ViewMgr.goto(\'chatList.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div  _click="ViewMgr.goto(\'chatList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">私信</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'sysNotice.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'sysNotice\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">通知</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'newGuest.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'newGuest\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">最近访客</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'likeMe.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'likeMe\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">谁在&hearts;我</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'myList.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'myList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">&hearts;我的心情 </div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'attract.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'attract\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">相互吸引</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'commentMe.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'commentMe\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">收到的评论</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'rank.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'rank\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我的排名</div>\
             <div class="tx-r t-blu ulev-1">无排名</div>\
         </div>\
@@ -577,23 +577,23 @@ var contentTmpl={
             <div class="ub-f1 ut-s">收到的鲜花</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'myView.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'myView\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我看过谁</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'sendComment.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'sendComment\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">发出的评论</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'blackList.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'blackList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我屏蔽的人</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'likeMood.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'likeMood\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我&hearts;过的心情</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'likePerson.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'likePerson\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我&hearts;过的人</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
@@ -626,7 +626,7 @@ var contentTmpl={
     <!--content结束-->',
 'chat':'${headerBack}\
         <h1 class="ut ulev0 ut-s tx-c"  id="nickName">&nbsp;</h1>\
-        <div _click="ViewMgr.goto(\'hisPhoto.html\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+        <div _click="ViewMgr.goto(\'hisPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
         <div class="ulim">TA的主页</div>\
         </div>\
         </div>\
@@ -748,7 +748,7 @@ var contentTmpl={
     <div>\
     <!--列表开始-->\
     <div class="uba  b-gra listBg us">\
-        <div _click="ViewMgr.goto(\'rank.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'rank\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">达人榜</div>\
             <div class="res8 lis-sw ub-img"></div>\
         </div>\
@@ -766,7 +766,7 @@ var contentTmpl={
             <div class="uba b-gra swi swi-bg uc-a1"  _click="$(\'#dBtn\').checked=!$(\'#dBtn\').checked;"></div>\
             <!--开关按钮结束-->\
         </div>\
-        <div _click="ViewMgr.goto(\'password.html\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'password\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">修改密码</div>\
             <div class="res8 lis-sw ub-img"></div>\
         </div>\
@@ -905,15 +905,15 @@ var footerTmple={
         <!--iPhone导航条开始-->\
         <div class="ub c-bla c-m12 t-wh footer">\
         <input class="uhide" ${1} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("mainPhoto.html");\' class="ub-f1 ub ub-ver "><div class="ub-f1 ub-img5 tp-info"></div><div class="uinn ulev-2 tx-c">交友广场</div></div>\
+        <div _click=\'ViewMgr.goto("mainPhoto");\' class="ub-f1 ub ub-ver "><div class="ub-f1 ub-img5 tp-info"></div><div class="uinn ulev-2 tx-c">交友广场</div></div>\
         <input class="uhide" ${2} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("myPhoto.html");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-home"></div><div class="uinn ulev-2 tx-c">我的主页</div></div>\
+        <div _click=\'ViewMgr.goto("myPhoto");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-home"></div><div class="uinn ulev-2 tx-c">我的主页</div></div>\
         <input class="uhide" ${3} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("showMood.html");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-set"></div><div class="uinn ulev-2 tx-c">秀心情</div></div>\
+        <div _click=\'ViewMgr.goto("showMood");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-set"></div><div class="uinn ulev-2 tx-c">秀心情</div></div>\
         <input class="uhide" ${4} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("infoCenter.html");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-shop"></div><div class="uinn ulev-2 tx-c">信息中心</div></div>\
+        <div _click=\'ViewMgr.goto("infoCenter");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-shop"></div><div class="uinn ulev-2 tx-c">信息中心</div></div>\
         <input class="uhide" ${5} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("more.html");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-talk"></div><div class="uinn ulev-2 tx-c">更多</div></div>\
+        <div _click=\'ViewMgr.goto("more");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-talk"></div><div class="uinn ulev-2 tx-c">更多</div></div>\
         </div>\
         <!--iPhone导航条结束-->\
     </div>\
@@ -925,7 +925,7 @@ var footerTmple={
         <input class="uhide" ${love} type="radio" name="tabSwitch">\
         <div id="footer-love" _click=\'UserAction.loveData("people",this);\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-love"></div><div class="uinn ulev-2 tx-c">喜欢</div></div>\
         <input class="uhide" type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("chat.html","st=3m&fid="+Tools.getParamVal("user_id")+"&user_id="+Tools.getParamVal("user_id"));\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-commnet"></div><div class="uinn ulev-2 tx-c">发私信</div></div>\
+        <div _click=\'ViewMgr.goto("chat","st=3m&fid="+Tools.getParamVal("user_id")+"&user_id="+Tools.getParamVal("user_id"));\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-commnet"></div><div class="uinn ulev-2 tx-c">发私信</div></div>\
         <input class="uhide" type="radio" name="tabSwitch">\
         <div _click=\'UserAction.sendFlower("people",this);\' class="ub-f1 ub ub-ver disable"><div class="ub-f1 ub-img5 tp-flower"></div><div class="uinn ulev-2 tx-c">送鲜花</div></div>\
         <input class="uhide" ${shield} type="radio" name="tabSwitch">\
@@ -1004,7 +1004,7 @@ var pageConfig={
     });
     //取得心情总数
     UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+hisInfo.curId+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
-        $("#titleMenu-mood span").innerHTML=num+"<br/>心情";
+        try{$("#titleMenu-mood span").innerHTML=num+"<br/>心情";}catch(e){}
     });
 }],
 'hisList':['hisFooter',false,false,true,function(){
@@ -1016,7 +1016,6 @@ var pageConfig={
     //取得照片总数
     UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+hisInfo.curId+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
         try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
-        
     });
 }],
 'hisDetail':[false,false,false,true,function(){
@@ -1137,7 +1136,7 @@ var pageConfig={
         myPro=myInfo.reside_province,
         myCity=myInfo.reside_city,
         addre=[myPro?myPro:"",myCity?myCity:""].join(" ");
-    if(StorMgr.gpsInfo){
+    if(" "==addre&&StorMgr.gpsInfo){
         addre=StorMgr.gpsInfo['prov']+" "+StorMgr.gpsInfo['city'];
     }
     $(".rankAddress span").innerHTML=(" "!=addre)?addre:"地区不详";
@@ -1297,14 +1296,24 @@ PageEngine.prototype={
             case "rank":
                 WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
                 var myInfo=StorMgr.myInfo;
-                /*如果有GPS地址则取出*/
-                if(StorMgr.gpsInfo){
-                    feedOption['addParams']="reside_province="+StorMgr.gpsInfo['prov']+"&reside_city="+StorMgr.gpsInfo['city'];
-                }else if(myInfo){
-                    feedOption['addParams']="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;    
-                }
+                
                 if("rank"==that.curPage){
+                    if(myInfo.reside_province&&myInfo.reside_city){
+                        feedOption['addParams']="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;    
+                    }else if(StorMgr.gpsInfo){
+                        feedOption['addParams']="reside_province="+StorMgr.gpsInfo['prov']+"&reside_city="+StorMgr.gpsInfo['city'];
+                    }
                     feedOption['cont']=$('.rankBox .listBg');
+                }else{
+                    if(Feed.mainParams){//mainPhoto,mainList页面取得记录参数
+                        feedOption['addParams']=Feed.mainParams;
+                    }
+                    else if(StorMgr.gpsInfo){
+                        feedOption['addParams']="reside_province="+StorMgr.gpsInfo['prov']+"&reside_city="+StorMgr.gpsInfo['city'];
+                    }else if(myInfo){
+                        feedOption['addParams']="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;    
+                    }
+
                 }
                 Feed.init(feedOption);
                 break;

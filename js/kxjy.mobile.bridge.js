@@ -177,9 +177,16 @@ var Device={
           if(dataType==2 && data == 1){platstr="android";}
           if(dataType==2 && data == 4){platstr="wp";}
           if(cb){cb(platstr);}
+          Device.platStr=platstr;
         }
-        uexWidgetOne.getPlatform();
-        uexWidgetOne.cbGetPlatform = platformSuccess;
+        if(!Device.platstr){
+            uexWidgetOne.getPlatform();
+            uexWidgetOne.cbGetPlatform = platformSuccess;
+        }else{
+            if(cb){
+                cb(Device.platStr);
+            }
+        }
     },
     /*安装应用*/
     installApp:function(addr){

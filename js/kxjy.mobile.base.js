@@ -497,6 +497,14 @@ var Tools={
             return str;
         }
     },
+    /*反转换字符串中的html特殊字符串*/
+    htmlDecode:function(str){
+        if(str){
+            return str.replace(/&#039;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+        }else{
+            return str;
+        }
+    },
     /*转换对象中字符串属性的html特殊字符串*/
     htmlEncodeObj:function(obj){
         for(key in obj){

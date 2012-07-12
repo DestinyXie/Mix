@@ -124,9 +124,6 @@ var ViewMgr={
                 ViewMgr.showMsg(StorMgr.infoCenter);
 
             }
-            if(ViewMgr.isIniting){//防止过快切换页面发起重复请求
-                return;
-            }
             StorMgr.getInfoCenter(function(a){
                     ViewMgr.showMsg(a);
             },true);    
@@ -456,7 +453,7 @@ Page={
                 $('.DynamicMenu .love').nextSibling.replaceWholeText(data.lovecount||0);
                 $('.DynamicMenu .comment').nextSibling.replaceWholeText(data.commentcount||0);
             }else{
-                $('.DynamicName').innerHTML=data.level?("&nbsp;LV&nbsp;"+data.level):"没有等级";
+                $('.DynamicName').innerHTML=data.level?("&nbsp;LV"+data.level):"没有等级";
             }
 
             if(["myList","hisList","myDetail","hisDetail"].has(that.name)){
@@ -489,7 +486,7 @@ Page={
         this.setEditVal("sex",dataArray.sex[data.sex
             ]||"",true);
         this.setEditVal("area",[data.reside_province,data.reside_city].join(" ")||"",true);
-        this.setEditVal("birthDay",(data.birthyear&&data.birthmonth&&data.birthday)?[data.birthyear,data.birthmonth,data.birthday].join('-'):"",true);
+        this.setEditVal("birthDay",("0"!=data.birthyear&&"0"!=data.birthmonth&&"0"!=data.birthday)?[data.birthyear,data.birthmonth,data.birthday].join('-'):"",true);
         this.setEditVal("marry",dataArray.marry[data.marry-1]||"单身",true);
         this.setEditVal("target",dataArray.target[data.target-1]||"",true);
         this.setEditVal("note",data.note||"",true);
@@ -516,9 +513,7 @@ Page={
                 that.editedValues.remove(id);
             }
         }
-
-
-        ipt.innerHTML=value;
+        ipt.innerHTML=Tools.htmlEncode(value);
 
         switch(id){
             case 'marry':
@@ -555,13 +550,14 @@ Page={
 
         for(var len=editedIds.length;len--;){
             var id=editedIds[len],
-                ipt=$("#"+id);
+                ipt=$("#"+id),
+                iptVal=encodeURIComponent(Tools.htmlDecode(ipt.innerHTML));
             switch(id){
                 case 'nickname':
                 case 'note':
                 case 'qq':
                 case 'mobile':
-                    that.sendEditVal(id+"="+ipt.innerHTML,id);
+                    that.sendEditVal(id+"="+iptVal,id);
                     break;
                 case 'sex':
                 case 'marry':
@@ -606,7 +602,7 @@ Page={
                 }else{
                     toast('保存成功!');
                     setTimeout(function(){
-                        ViewMgr.goto('myPhoto.html');//编辑成功后返回个人主页
+                        ViewMgr.goto('myPhoto');//编辑成功后返回个人主页
                     },1500);
                     
                 }
@@ -819,7 +815,7 @@ var UserAction={
             moodDom.value="";
             // Tools.setIconId(null,true);
             setTimeout(function(){
-                ViewMgr.goto('myList.html');//秀心情成功后返回个人主页-心情
+                ViewMgr.goto('myList');//秀心情成功后返回个人主页-心情
             },2000);
         }
 
@@ -861,9 +857,6 @@ var UserAction={
             cb&&cb();
 
             if(!!wid){
-                //子评论未消失
-                // Feed.removeFeed(paraLi);
-                // Page.setDataNum();
                 Feed.refresh();
             }else{
                 ViewMgr.back();
@@ -936,6 +929,8 @@ var UserAction={
                     loveRadio.setAttribute("checked","checked");
                     userInfo.friendnum++;
                     userInfo.islove=1;
+                    hisInfo.storInfos[hisInfo.curId].friendnum=userInfo.friendnum;
+                    hisInfo.storInfos[hisInfo.curId].islove=1;
                     loveDom.innerHTML="喜欢("+userInfo.friendnum+")";
                 }
                 errCb=function(m){
@@ -948,6 +943,8 @@ var UserAction={
                     loveRadio.removeAttribute("checked");
                     userInfo.friendnum--;
                     userInfo.islove=0;
+                    hisInfo.storInfos[hisInfo.curId].friendnum=userInfo.friendnum;
+                    hisInfo.storInfos[hisInfo.curId].islove=0;
                     loveDom.innerHTML="喜欢("+userInfo.friendnum+")";
                 }
                 errCb=function(m){
@@ -966,6 +963,10 @@ var UserAction={
                 params="action=disadmire&sid="+StorMgr.sid+"&user_id="+user_id;
             secCb=function(m){
                 Feed.removeFeed(node.parentNode);
+                if(hisInfo.storInfos[hisInfo.curId]){
+                    hisInfo.storInfos[hisInfo.curId].islove=0;
+                    hisInfo.storInfos[hisInfo.curId].lovecount--;
+                }
             }
             errCb=function(m){
                 toast(m);
@@ -999,7 +1000,9 @@ var UserAction={
                     shieldDom.removeAttribute("checked");
                 }else{
                     hisInfo.storInfos[hisInfo.curId].isBlocked=true;
-                    shieldDom.setAttribute("checked","checked");    
+                    shieldDom.setAttribute("checked","checked");
+                    toast("屏蔽成功",1600);
+                    setTimeout(function(){ViewMgr.back();},1500);
                 }
             }
         }
@@ -1216,7 +1219,13 @@ var UserAction={
         }
         /*能取得email就验证旧密码*/
         if(StorMgr.myInfo.email){
-            UserAction.checkPassword(oVal,sendModiPwd,function(m){toast(m);});
+            UserAction.checkPassword(oVal,sendModiPwd,function(m){
+                if("密码错误"==m){
+                    toast("当前密码错误");
+                }else{
+                    toast(m);    
+                }
+            });
         }else{
             sendModiPwd();
         }
@@ -1227,6 +1236,10 @@ var UserAction={
             cb(a.datacount);
         };
         UserAction.sendAction(url,"","get",secCb,null);
+    },
+    /*检测应用是否有新版本*/
+    checkAppVersion:function(){
+        var checkUrl=StorMgr.siteUrl+"mobileVersion.php";
     },
     /*执行ajax请求*/
     sendAction:function(url,data,method,secCb,errCb){
