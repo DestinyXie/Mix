@@ -25,6 +25,9 @@ var ViewMgr={
     getMsg:true,
     getDataInter:null,//轮询信息中心数据及Tips
     getDataTime:10000,//轮询信息中心数据及Tips时间间隔 10秒
+    getTipsTimeout:null,
+    getTipsXhr:null,
+    getMsgXhr:null,
     init:function(){//取得历史页面
         delete WIN['pageEngine'];
         Device.disetBackBtn();
@@ -47,18 +50,30 @@ var ViewMgr={
         Device.backFunc=function(){ViewMgr.back();}
     },
     getData:function(init){//轮询信息中心数据及Tips
-        this.stopGetData();
+        var that=this;
+        that.stopGetData();
         if(init){
-            ViewMgr.getMsgTips(init);
+            that.getMsgTips(init);
         }else{
-            ViewMgr.getDataInter=setTimeout(
+            that.getDataInter=setTimeout(
             function(){
-                ViewMgr.getMsgTips();
-            },ViewMgr.getDataTime);
+                that.getMsgTips();
+            },that.getDataTime);
         }
     },
     stopGetData:function(){
-        clearTimeout(ViewMgr.getDataInter);
+        var that=this;
+        if(that.getTipsXhr){
+            that.getTipsXhr.abort();    
+        }
+        that.tipsArray=null;
+        if(that.getTipsTimeout){
+            clearTimeout(that.getTipsTimeout);
+        }
+        if(that.getMsgXhr){
+            that.getMsgXhr.abort();
+        }
+        clearTimeout(that.getDataInter);
     },
     goto:function(page,params){
         this.stopGetData();
@@ -145,7 +160,7 @@ var ViewMgr={
             };
 
         setTimeout(function(){//和infoCenter请求发起时刻错开，提升性能
-            UserAction.sendAction(dataUrl,"","get",secCb,errCb);
+            ViewMgr.getTipsXhr=UserAction.sendAction(dataUrl,"","get",secCb,errCb);
         },ViewMgr.getDataTime/2);
     },
     showMsg:function(data){
@@ -202,7 +217,7 @@ var ViewMgr={
         if(msg){
             this.showingTips=true;
             Tips.show('<img _click="ViewMgr.goto(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,null,5000);
-            setTimeout(function(){ViewMgr.showTips();},2000);
+            this.getTipsTimeout=setTimeout(function(){ViewMgr.showTips();},2000);
         }
     }
 }
@@ -212,6 +227,10 @@ var StorMgr={
     myInfo:null,
     infoCenter:null,
     gpsInfo:null,
+    destory:function(){
+        this.myInfo=null;
+        this.infoCenter=null;
+    },
     initStor:function(){//初始化需要的缓存资料
         if(!this.myInfo){
             this.getMyInfo();
@@ -252,7 +271,7 @@ var StorMgr={
                     StorMgr.setInfoCenter(a);
                     cb&&cb(a);
                 };
-            UserAction.sendAction(getUrl,"","get",secCb);
+            ViewMgr.getMsgXhr=UserAction.sendAction(getUrl,"","get",secCb);
         }else{
             this.infoCenter=stor;
             cb&&cb(stor);
@@ -295,7 +314,7 @@ var InfoCenter={
             val=data[arrup[i]];
             if(key=='current_rank'&&val!=data['last_rank']){
                 var isUp=(val*1<data['last_rank']*1);
-                numDoms[i].innerHTML='<img style="width:1em;" src='+StorMgr.siteUrl+'"/template/mobile/css/images/'+(isUp?'Rise':'Decline')+'.png" alt="排名"/> '+val;
+                numDoms[i].innerHTML='<img style="width:1em;" src="'+StorMgr.siteUrl+'/template/mobile/css/images/'+(isUp?'Rise':'Decline')+'.png" alt="排名"/> '+val;
                 continue;
             }
             if('notice'==key&&val*1==0){
@@ -386,7 +405,8 @@ Page={
             var data=that.userData;
 
             //昵称
-            $('#header h1').innerHTML=/动态详情/.test($('#header h1').innerHTML)?data.nickname+"的动态详情":data.nickname;
+            var nickName=data.nickname||"&nbsp;";
+            $('#header h1').innerHTML=/动态详情/.test($('#header h1').innerHTML)?nickName+"的动态详情":nickName;
 
             //达人
             if(data.colorPng&&data.colorPng!=""){
@@ -487,7 +507,7 @@ Page={
             ]||"",true);
         this.setEditVal("area",[data.reside_province,data.reside_city].join(" ")||"",true);
         this.setEditVal("birthDay",("0"!=data.birthyear&&"0"!=data.birthmonth&&"0"!=data.birthday)?[data.birthyear,data.birthmonth,data.birthday].join('-'):"",true);
-        this.setEditVal("marry",dataArray.marry[data.marry-1]||"单身",true);
+        this.setEditVal("marry",dataArray.marry[data.marry-1]||"",true);
         this.setEditVal("target",dataArray.target[data.target-1]||"",true);
         this.setEditVal("note",data.note||"",true);
         this.setEditVal("qq",data.qq||"",true);
@@ -774,6 +794,11 @@ var dataArray={
     marry:['单身','已婚','同居','分居','离婚','不想说']
 }
 
+/*记录常用正则*/
+var regExpObj={
+    email:/^.+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+}
+
 /*用户执行动作*/
 var UserAction={
     xhr:null,
@@ -1001,7 +1026,7 @@ var UserAction={
                 }else{
                     hisInfo.storInfos[hisInfo.curId].isBlocked=true;
                     shieldDom.setAttribute("checked","checked");
-                    toast("屏蔽成功",1600);
+                    toast("屏蔽成功",1.6);
                     setTimeout(function(){ViewMgr.back();},1500);
                 }
             }
@@ -1033,14 +1058,13 @@ var UserAction={
     /*登陆验证*/
     checkLogin:function(nSel,pSel,node){
         var mailVal = $(nSel).value,
-            passVal = $(pSel).value,
-            mailReg=/^.+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+            passVal = $(pSel).value;
         
         if(mailVal.length==0){
             toast("请输入您的邮箱地址！",2);
             return;
         }
-        if(!mailReg.test(mailVal)){
+        if(!regExpObj['email'].test(mailVal)){
             toast("邮箱地址有误！",2);
             return;
         }
@@ -1059,7 +1083,7 @@ var UserAction={
                 if(a.msg){
                     toast(a.msg);
                     if(btn){
-                        btn.innerHTML="登陆"
+                        btn.innerHTML="登陆";
                     }
                     if($.isFunc(fail)){
                         fail();
@@ -1100,8 +1124,8 @@ var UserAction={
         }else{
             img.src=url;
         }
-        
     },
+    /*注册*/
     userRegist:function(){
         var sex=$("#regSex").value,
             email=$("#regEmail"),
@@ -1130,33 +1154,36 @@ var UserAction={
 
         function checkReg(){
             if(0==email.value.length){
-                throw {msg:'请输入您的邮箱地址！'};
+                throw {msg:'请输入您的邮箱地址'};
             }
-            if(!/^.+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/.test(email.value)){
-                throw {msg:'邮箱地址有误！'};
+            if(!regExpObj['email'].test(email.value)){
+                throw {msg:'邮箱地址有误'};
             }
             if(0==nickname.value.length){
-                throw {msg:'请输入您的昵称！'};
+                throw {msg:'请输入您的昵称'};
             }
-            if(nickname.value.chineseLen()>12){
-                throw {msg:'昵称过长！'};
+            if(nickname.value.chineseLen()>6){
+                throw {msg:'昵称超过指定长度'};
             }
             if(0==password.value.length){
-                throw {msg:'请输入您的密码！'};
+                throw {msg:'请输入您的密码'};
             }
             if(password.value!=passwordR.value){
-                throw {msg:'两次密码不一致！'};
+                throw {msg:'两次密码不一致'};
             }
             if(0==imgcode.value){
-                throw {msg:'请输入验证码！'};
+                throw {msg:'请输入验证码'};
             }
             if(4!=imgcode.value.length){
-                throw {msg:'验证码有误！'};
+                throw {msg:'验证码有误'};
             }
         }
         try{
             checkReg();
             url+="&sex="+sex+"&email="+email.value+"&nickname="+nickname.value+"&password="+password.value+"&imgcode="+imgcode.value;
+            if(StorMgr.gpsInfo){//加入经纬度
+                url+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
+            }
             UserAction.sendAction(url,"","get",secCb,errCb);
         }catch(e){
             toast(e.msg);
@@ -1237,9 +1264,92 @@ var UserAction={
         };
         UserAction.sendAction(url,"","get",secCb,null);
     },
+    /*重置密码*/
+    resetPwd:function(emailIpt){
+        var findUrl=StorMgr.siteUrl+"/findPassword.php?email=",
+            emailVal=emailIpt.value,
+            secCb=function(a){
+                if(a.error){
+                    toast(a.msg||"未能正确发送新密码！",2);
+                }else{
+                    toast("新密码已发送！");
+                }
+            },
+            errCb=function(a){
+                toast(a.msg||"未能正确发送新密码！",2);
+            };
+        if(0==emailVal.length){
+            toast('请输入您的邮箱地址！',2);
+            return;
+        }
+        if(!regExpObj['email'].test(emailVal)){
+            toast("邮箱地址有误！",2);
+            return;
+        }
+        UserAction.sendAction(findUrl+encodeURIComponent(emailVal),"","get",secCb,errCb);
+    },
+    /*发送意见反馈*/
+    sendFeedBack:function(fbIpt){
+        var fbUrl=StorMgr.siteUrl+"/help.php?ajax=1&type=1&sid="+StorMgr.sid,
+            fb=fbIpt.value,
+            secCb=function(a){
+                if(a.error){
+                    toast(a.error,2);
+                }else{
+                    toast("提交成功!",2);
+                    setTimeout(function(){ViewMgr.back();},2000);
+                }
+            },
+            errCb=function(a){
+                toast(a.error,2);
+            };
+        if(0==fb.length){
+            toast('发送内容不能为空！',2);
+            return;
+        }
+        UserAction.sendAction(fbUrl,"message="+encodeURIComponent(fb),"post",secCb,errCb);
+    },
     /*检测应用是否有新版本*/
     checkAppVersion:function(){
-        var checkUrl=StorMgr.siteUrl+"mobileVersion.php";
+        var checkUrl=StorMgr.siteUrl+"/mobileVersion.php?ver=",
+            secCb=function(a){
+                if(0==a.newVersion){
+                    toast("您当前为最新版本。",2);
+                }else if(1==a.newVersion){
+                    function getPlatStr(plat){
+                        var url=a[plat],
+                            downUrl='wgt://data/kxjy.apk';
+                        if("ios"==plat){
+                          Device.loadApp(url);
+                        }
+                        if("android"==plat){
+                            Device.download(url,downUrl,function(){
+                                Device.installApp(downUrl);
+                            });
+                        }
+                    }
+                    function downloadNew(){//下载新版本
+                        Device.getPlatForm(getPlatStr);
+                    }
+                    Device.confirm(a['str'],downloadNew,null,["现在更新","以后再说"],"有新版本，是否下载?");
+                }
+            },
+            errCb=function(){
+                toast("检测无法成功，请检查你的网络配置。",2);
+            };
+        function verCb(ver){
+            alert(ver);
+            UserAction.sendAction(checkUrl+ver,"","get",secCb);
+        }
+        Device.getAppVersion(verCb);
+    },
+    /*用户退出*/
+    logOut:function(){
+        Device.confirm('确定退出？',function(){
+            Tools.refresh();
+            StorMgr.destory();
+            ViewMgr.init();
+        });
     },
     /*执行ajax请求*/
     sendAction:function(url,data,method,secCb,errCb){

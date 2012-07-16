@@ -2,8 +2,8 @@
 var feedTemplate={
     mainPhoto:'<div _click="ViewMgr.goto(${cb:isself})" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
 	photo:'<div _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
-    myPhoto:'<div _click="ViewMgr.goto(\'myDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileurl}" alt="" /></div>',
-    hisPhoto:'<div _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileurl}" alt="" /></div>',
+    myPhoto:'<div _click="ViewMgr.goto(\'myDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
+    hisPhoto:'<div _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
     mood:'<div class="DynamicList clearfix">\
         <div class="DynamicInfo">\
             <div _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')" class="DynamicAvatar"><img src="${avatarPicUrlx}" alt="" /></div>\
@@ -28,7 +28,7 @@ var feedTemplate={
                         <p class="ub-f1">${cb:mood}</p>\
                         <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')">></strong>\
                         </div>\
-                        <div class="DynamicImg">${cb:fileurl}</div>\
+                        <div class="DynamicImg">${cb:fileimg}</div>\
 	                    <ul class="DynamicMenu clearfix">\
 							<li class="ub ub-ac" _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
 	                        <li class="ub ub-ac" _click="UserAction.loveData(\'mood\',this,\'${enwid}\',${cb:lovecount})"><span class="DynamicMenuIco love ${cb:lovemood}"></span>${cb:lovecount}</li>\
@@ -61,7 +61,7 @@ var feedTemplate={
                         <p class="ub-f1">${cb:mood}</p>\
                         <strong class="DynamicMore" _click="ViewMgr.goto(\'myDetail\',\'wid=${enwid}\')">></strong>\
                     </div>\
-                    <div class="DynamicImg">${cb:fileurl}</div>\
+                    <div class="DynamicImg">${cb:fileimg}</div>\
 					<ul class="DynamicMenu clearfix">\
 						<li class="ub ub-ac" _click="ViewMgr.goto(\'myDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
 					    <li class="ub ub-ac"><span class="DynamicMenuIco love"></span>${cb:lovecount}</li>\
@@ -94,7 +94,7 @@ var feedTemplate={
                         <p class="ub-f1">${cb:mood}</p>\
                         <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')">></strong>\
                     </div>\
-                    <div class="DynamicImg">${cb:fileurl}</div>\
+                    <div class="DynamicImg">${cb:fileimg}</div>\
 					<ul class="DynamicMenu clearfix">\
 						<li class="ub ub-ac" _click="ViewMgr.goto(\'hisDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
 					    <li class="ub ub-ac" _click="UserAction.loveData(\'mood\',this,\'${enwid}\',${cb:lovecount})"><span class="DynamicMenuIco love ${cb:islove}"></span>${cb:lovecount}</li>\
@@ -104,7 +104,7 @@ var feedTemplate={
             </div>\
         </div>\
     </div>',
-    myDetail:'<div class="commentList ub ub-ac clearfix ${cb:childClass}" _click="Comment.popOperation(this,\'${parentid}\',\'${enwid}\',${cb:isself})">\
+    myDetail:'<div class="commentList ub clearfix ${cb:childClass}" _click="Comment.popOperation(this,\'${parentid}\',\'${enwid}\',${cb:isself})">\
         <div class="commentListAvatar"><img src="${avatarPicUrl}" alt="头像" /></div>\
         <div class="commentListText ub-f1">${cb:commentMood}</div>\
     </div>${cb:child}',
@@ -237,7 +237,7 @@ var Feed={
         * cont 容器DOM;
         * more 更多按钮DOM;
         * cb   数据加载完成回调函数;
-        * lastPos 数据插入位置;
+        * lastPos 数据插入位置;(-1表示插入列表前保留第一个个DOM节点,1表示在最后一个DOM节点之前插入列表)
         */
         var that=this;
         that.destory();
@@ -325,7 +325,7 @@ var Feed={
         }
 
         this.dataCount=a.datacount||(a.data&&a.data.length)||0;
-        this.totalPage=a.allpage;
+        this.totalPage=a.allpage||0;
 
         if(WIN['Page']&&!!this.dataCount)
             Page.setDataNum();
@@ -687,10 +687,10 @@ var Feed={
                         case 'colorPng':
                             return (!o.colorPng)?"":'<img src="'+o.colorPng+'" alt="">';
                             break;
-                        // case 'fileimg'://用不到了
-                        //     return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
-                        //     break;
-                        case 'fileurl':
+                        case 'fileimg':
+                            return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
+                            break;
+                        case 'fileurl'://用不到了
                             return (!o.fileurl)?"":'<img src="'+o.fileurl+'" alt="" />';
                             break;
                         case 'islove':

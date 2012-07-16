@@ -359,18 +359,29 @@ Delegate.init();
 
 /*工具*/
 var Tools={
+    /*清除缓存和一些记录的变量值,用户退出时需要*/
+    refresh:function(){
+        Tools.storage.clear();
+        Tools.storage.clear('session');
+        Tools.sidUidParam=null;
+    },
     /*计算直角边*/
     calculPy:function(l,w){
         return Math.pow(Math.pow(l, 2) + Math.pow(w, 2), .5);
     },
     /*取sid和uid参数字符串*/
     getSidUidParams:function(gotoUrl,setParams){
+        var paramStr;
         if(Tools.sidUidParam){
             return Tools.sidUidParam;
         }
 
-        var paramStr="sid="+StorMgr.sid+"&uid="+StorMgr.uid+"&userKey="+StorMgr.userKey;
-        Tools.sidUidParam=paramStr;
+        if(StorMgr.uid&&StorMgr.userKey){
+            paramStr="sid="+StorMgr.sid+"&uid="+StorMgr.uid+"&userKey="+StorMgr.userKey;
+            Tools.sidUidParam=paramStr;
+        }else{
+            paramStr="sid="+StorMgr.sid;
+        }
         return paramStr;
     },
     /*从临时变量ViewMgr.tmpParams取参数值*/

@@ -273,6 +273,7 @@ to {
 	color:#FFF;
 }
 #verify{padding:0 .5em;}
+#verify img{height:1.5em;}
 .gender{
 	border-color:#300f40;
 	margin-bottom:.8em;
@@ -1047,4 +1048,38 @@ li .comment{
 	height:8.958em;
 	border-width:0.667em;
 	-webkit-border-image:url(images/sw-alpha.png) 16;
+}
+/*重置密码*/
+.resetBox,.feedbackBox{
+	padding:.5em;
+}
+.reset,.feedback{
+	width:100%;
+	background:#FFF;
+	-webkit-border-radius:.3em;
+	border:1px solid #e4dccb;
+}
+.feedback{
+	height:12em;
+	-webkit-box-shadow:1px 1px 3px #DDD inset;
+}
+.resetText{
+	margin:0 .5em;
+	color:#FFF;
+	font-size:.8em;
+}
+
+.about_logo{
+	text-align:center;
+	margin:1.66em 0 1em 0;
+}
+.about_logo img{
+	width:4em;
+	height:4.66em;
+}
+.about_footer{
+	margin-bottom:.5em;
+	text-align:center;
+	color:#FFF;
+	font-size:.7em;
 }

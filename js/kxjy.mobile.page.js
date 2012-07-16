@@ -78,10 +78,10 @@ var contentTmpl={
             <label class="uinn">密码</label>\
             <div class="loginInput ub-f1"><input id="password" class="btnBg" type="password" /></div>\
         </div>\
-        <div class="Forget tr">忘记密码?</div>\
+        <div _click="setTimeout(function(){ViewMgr.goto(\'reset\');},500)" class="Forget tr">忘记密码?</div>\
         <div class="loginButton">\
             <span id="loginBtn" class="btnBg" _click="UserAction.checkLogin(\'#email\',\'#password\',this)">登陆</span>\
-            <span class="btnBg" _click="setTimeout(function(){ViewMgr.goto(\'users\');},350)">注册</span>\
+            <span class="btnBg" _click="setTimeout(function(){ViewMgr.goto(\'users\');},500)">注册</span>\
         </div>\
     </div>\
     <div class="qqLogin">\
@@ -664,7 +664,7 @@ var contentTmpl={
     <!--content开始-->\
     <div id="content" class="ub-f1 tx-l t-bla ub-img6 ub ub-ver bg">\
         <div class="chatBox ub-f1">\
-            <div id="wrapper" class="fixWrapperLeft">\
+            <div id="wrapper" class="fixWrapperLeft bg">\
             <div>\
             <div class="pullDown">\
             <span class="pullDownIcon"></span><span class="pullDownLabel">下拉刷新页面...</span>\
@@ -773,13 +773,13 @@ var contentTmpl={
         <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">评分支持</div>\
         </div>\
-        <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'feedBack\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">意见反馈</div>\
         </div>\
-        <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.goto(\'about\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">关于</div>\
         </div>\
-        <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="Device.confirm(\'确定退出？\',function(){Tools.storage.clear();Tools.storage.clear(\'session\');ViewMgr.init();})">\
+        <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="UserAction.logOut();">\
             <div class="ub-f1 ut-s">退出当前账号</div>\
         </div>\
     </div>\
@@ -847,6 +847,86 @@ var contentTmpl={
         </div>\
     </div>\
     <!--列表结束-->\
+    </div>\
+    <!--content结束-->',
+'feedBack':'${headerBack}\
+            <h1 class="ut ulev0 ut-s tx-c" >意见反馈</h1>\
+            <div _click="UserAction.sendFeedBack($(\'#feedBackIpt\'))" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div class="ulim">提交</div>\
+            </div>\
+        </div>\
+    </div>\
+    <!--header结束-->\
+    <!--content开始-->\
+    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
+    <div id="wrapper" class="fixWrapperLeft bg">\
+    <div>\
+    <!--列表开始-->\
+    <div class="uba b-gra us listBg">\
+        <div class="feedbackBox">\
+            <div class="feedback uinput">\
+                <textarea id="feedBackIpt" placeholder="请填写您建议和意见，我们将不胜感激!"></textarea>\
+            </div>\
+        </div>\
+      </div>\
+    <!--列表结束-->\
+    </div>\
+    </div>\
+    </div>\
+    <!--content结束-->',
+'about':'${headerBack}\
+            <h1 class="ut ulev0 ut-s tx-c" >关于开心交友</h1>\
+        </div>\
+    </div>\
+    <!--header结束-->\
+    <!--content开始-->\
+    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
+    <div id="wrapper" class="fixWrapperLeft bg ub ub-ver"">\
+        <div class="about_logo"><img src="${siteurl}/template/mobile/css/images/about_logo.png" alt="开心交友" /></div>\
+        <div class="ub-f1">\
+            <!--列表开始-->\
+            <div class="uba b-gra us listBg">\
+                <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+                <div id="verCont" class="ub-f1 ut-s">版本v1.0</div>\
+                </div>\
+                <div _click="UserAction.checkAppVersion()" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+                    <div class="ub-f1 ut-s">检查新版本</div>\
+                     <div class="res8 lis-sw ub-img"></div>\
+                </div>\
+             </div>\
+            <!--列表结束-->\
+        </div>\
+        <div class="about_footer">\
+            <p></p>上海翼友网络科技有限公司  2012版权所有</p>\
+            <p> 官方网站:HTTP://WWW.KXJY.COM</p>\
+        </div>\
+    </div>\
+    </div>\
+    <!--content结束-->',
+'reset':'${headerBack}\
+            <h1 class="ut ulev0 ut-s tx-c" >重置密码</h1>\
+            <div _click="UserAction.resetPwd($(\'#emailIpt\'))" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div class="ulim">提交</div>\
+            </div>\
+        </div>\
+    </div>\
+    <!--header结束-->\
+    <!--content开始-->\
+    <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
+    <div id="wrapper" class="fixWrapperLeft bg">\
+    <div>\
+    <!--列表开始-->\
+    <div class="uba b-gra us listBg">\
+        <div class="resetBox">\
+            <div class="reset uinput">\
+                <input id="emailIpt" type="text" placeholder="填写您的注册邮箱..." />\
+            </div>\
+        </div>\
+      </div>\
+      <div class="resetText">重置密码的连接将发送到您的邮箱</div>\
+    <!--列表结束-->\
+    </div>\
+    </div>\
     </div>\
     <!--content结束-->',
 'users':'${headerBack}\
@@ -935,7 +1015,6 @@ var footerTmple={
     </div>\
     <!--footer结束-->'
 };
-
 
 /*各个页面相关配置*/
 //[footerTmpl{string,boolean},
@@ -1071,9 +1150,7 @@ var pageConfig={
         e.event.stopPropagation();
     });
 }],
-'infoCenter':['mainFooter',4,true,true,function(){
-    new iScroll('wrapper');
-}],
+'infoCenter':['mainFooter',4,true,true],
 'chatList':['mainFooter',4,true,true],
 'chat':[false,false,false,true,function(){
     hisInfo.init();
@@ -1091,7 +1168,7 @@ var pageConfig={
     }else{
         nickname=hisInfo.get(hisInfo.curId).nickname;
     }
-    $('#nickName').innerHTML=nickname;
+    $('#nickName').innerHTML=nickname||"&nbsp;";
     ChatFeed.init({
         noDataTxt:"暂无数据,请返回",
         noMoreBtn:true,
@@ -1127,9 +1204,7 @@ var pageConfig={
 'blackList':['mainFooter',4,true,true],
 'likeMood':['mainFooter',4,true,true],
 'likePerson':['mainFooter',4,true,true],
-'more':['mainFooter',5,true,true,function(){
-    new iScroll('wrapper');
-}],
+'more':['mainFooter',5,true,true],
 'rank':['mainFooter',5,true,true,function(){
     var myInfo=StorMgr.myInfo,
         infoCent=StorMgr.infoCenter,
@@ -1160,9 +1235,16 @@ var pageConfig={
     }
 }],
 'password':[false,false,false,true],
+'feedBack':[false,false,false,true],
+'about':[false,false,false,true,function(){
+    function setVersion(ver){
+        $('#verCont').innerHTML="版本V"+ver;
+    }
+    Device.getAppVersion(setVersion);
+}],
+'reset':[false,false,false,false],
 'users':[false,false,false,false,function(){
     UserAction.getVerify();
-
     delete WIN['setSex'];
     WIN['setSex']=function(node,val){
         if(DOM.hasClass(node,'usersActive'))
@@ -1266,10 +1348,11 @@ PageEngine.prototype={
             initFn=pageConfig[that.curPage][4];
 
 
-        if(reqTips){//信息中心更新
-            ViewMgr.getMsg=(reqInfo)?true:false;//tips更新
+        if(reqTips){//tips更新
+            ViewMgr.getMsg=(reqInfo)?true:false;//信息中心更新
             ViewMgr.getData(true);
         }else{
+            ViewMgr.getMsg=false;
             ViewMgr.stopGetData();
         }
 
@@ -1277,7 +1360,6 @@ PageEngine.prototype={
         if($.isFunc(initFn)){
             initFn.call(null);
         }
-
         that.initIScrollAndFeed();
     },
     /*执行iScroll和feed相关代码*/
@@ -1380,6 +1462,10 @@ PageEngine.prototype={
                 WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
                 feedOption['noDataTxt']="暂无数据,请返回";
                 Feed.init(feedOption);
+                break;
+            case "infoCenter":
+            case "more":
+                WIN['myScroll']=new iScroll('wrapper');
                 break;
         }
     },

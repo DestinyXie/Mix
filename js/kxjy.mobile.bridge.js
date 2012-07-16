@@ -13,6 +13,7 @@ var Device={
     isLoaded:false,
     loadEventBinded:false,
     loadQueue:[],
+    opCode:1,
     onLoad:function(loadFn){
         function load(){
             if(Device.isLoaded){
@@ -153,7 +154,8 @@ var Device={
         }
         uexLocation.openLocation();
     },
-    getAddress:function(lat,log,cb,errCb){//获取地址 cb(addr);
+    /*根据经纬度获取地址 cb(addr);*/
+    getAddress:function(lat,log,cb,errCb){
         if(!Device.isAppcan()){return;}
         function LocationSuccess(opCode,dataType,data){
             if(dataType==0){
@@ -188,12 +190,60 @@ var Device={
             }
         }
     },
+    getAppVersion:function(cb){
+        if(!Device.isAppcan()){toast('你不是手机，请自便。');return;}
+        function versionSuccess(opId,dataType,data){
+            if(dataType==0){
+                if(cb){cb(data);}
+                Device.appVersion=data;
+            }else{
+                toast('版本获取失败!');
+            }
+        }
+
+        if(!Device.appVersion){
+            uexWidgetOne.cbGetVersion = versionSuccess;
+            uexWidgetOne.getVersion();
+        }else{
+            if(cb){cb(Device.appVersion);}
+        }
+    },
+    /*启动一个第三方应用*/
+    loadApp:function(addr){
+        uexWidget.loadApp(addr);
+    },
     /*安装应用*/
     installApp:function(addr){
         uexWidget.installApp(addr);
     },
     /*下载*/
-    download:function(){
-
+    download:function(url,downUrl,cb){
+        Device.opCode++;
+        var inOpCode=Device.opCode;
+        uexDownloaderMgr.onStatus = function(opCode,fileSize,percent,status){
+            switch(status){
+            case 0: uexWindow.toast('1','5','当前下载的进度：'+percent+ '%','');
+                    break;
+            case 1: uexWindow.alert("温馨提示","下载完成，请进行安装！","我知道了");
+                    uexDownloaderMgr.closeDownloader(opCode);
+                    uexWindow.closeToast();
+                    cb();
+                    break;
+            case 2: uexWindow.alert("温馨提示","下载失败，请联系管理员！","我知道了");
+                    uexDownloaderMgr.closeDownloader(opCode);
+                    break;
+            }
+        }
+        uexDownloaderMgr.cbCreateDownloader = function(opCode,dataType,data){
+            if(data == 0){
+                uexDownloaderMgr.download(inOpCode,url,downUrl,'0');
+            }else{
+                uexWindow.alert("温馨提示","创建下载资源失败，请确认你手机中装有SD存储卡。","我知道了");
+            }
+        }
+        uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
+            toast(errorInfo,3);
+        }
+        uexDownloaderMgr.createDownloader(inOpCode);
     },
 }
