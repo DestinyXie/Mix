@@ -14,8 +14,6 @@ function extend(d, s ,o) {
         if(o&&o[p]!==undefined)continue;
         if (s[p] !== null){
             d[p] = (typeof(s[p]) == 'object' && !(s[p].nodeType) && !(s[p] instanceof Array)) ? extend({}, s[p]) : s[p];
-        }else{
-            d[p]=null;
         }
     }
     if(o){
@@ -361,9 +359,10 @@ Delegate.init();
 var Tools={
     /*清除缓存和一些记录的变量值,用户退出时需要*/
     refresh:function(){
-        Tools.storage.clear();
+        // Tools.storage.clear();//check
         Tools.storage.clear('session');
         Tools.sidUidParam=null;
+        StorMgr.destory();
     },
     /*计算直角边*/
     calculPy:function(l,w){
@@ -404,6 +403,16 @@ var Tools={
             value=hisInfo['curId'];
 
         return value;
+    },
+    /*替换Url中的${param}变量*/
+    compileUrl:function(url){
+        var reUrl=url.replace(/\$\{(\w+)\}/g,
+            function(m,c){
+                if(['uid','sid','userKey'].has(c))
+                    return StorMgr[c];
+                return Tools.getParamVal(c);
+            });
+        return reUrl;
     },
     /*在当前对象光标处插入指定的内容*/
     insertAtCaret:function(ipt,textFeildValue){
@@ -503,7 +512,7 @@ var Tools={
     /*转换字符串中的html特殊字符串*/
     htmlEncode:function(str){
         if(str){
-            return str.replace(/"/g,'&#039;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return str.replace(/&(?!amp;)/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&#034;');
         }else{
             return str;
         }
@@ -511,7 +520,7 @@ var Tools={
     /*反转换字符串中的html特殊字符串*/
     htmlDecode:function(str){
         if(str){
-            return str.replace(/&#039;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+            return str.replace(/&#034;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
         }else{
             return str;
         }
@@ -596,7 +605,6 @@ var Tools={
                 val=provVal+' '+cityVal;
                 Page.setEditVal("area",val);
             }
-            
         }
 
         function cancel() {

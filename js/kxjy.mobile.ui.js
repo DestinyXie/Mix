@@ -128,7 +128,7 @@ function initDockScroll(dockSel,wrapperID,listEl){
 var actionSheet={
     show:function(action){
         if(!isTouch){
-            toast("不支持手机原生弹出窗",4);
+            toast("不支持手机原生弹出窗，因为你用的不是手机",4);
             return;
         }else{
             var ao=this.actionObj[action];
@@ -158,41 +158,49 @@ var actionSheet={
         }],
         "moodPhoto":[],
         "photo":['添加照片','取消',["从相册中选择","拍照"],function(opId,dataType,data){
-
+            Device.opCode++;
             var imgurl,
-                uopCode=3,
+                uopCode=Device.opCode,
                 uploadUrl="http://"+StorMgr.siteHost+StorMgr.siteUrl+"/photo.php",
                 isMyPhoto=/myPhoto/.test(pageEngine.curPage);
 
-            function xmlHttpPost(){
+            function xmlHttpPost(size){
                 if(StorMgr.filesAllowed<=0){
                     alert("您上传的照片数量已经达到上限！");
                     return;
                 }
+                if(!/\.jpg$|\.jpeg$|\.gif$/.test(imgurl)){
+                    alert("只能上传jpg，jpeg，gif格式的照片");
+                    return;
+                }
+                if(size>1024*3){
+                    alert("上传单个文件最大尺寸为3MB，请重新选择");
+                    return;
+                }
                 uexXmlHttpMgr.onPostProgress=function(uopCode,p){
                     if(p==100){
-                        toast("上传完成！",2);
-                        StorMgr.filesAllowed--;
+                        toast("上传结束！",1);
                         return;
                     }
-                    toast("已上传"+p+"%");
+                    toast("已上传"+p+"%",10);
                 }
 
                 function httpSuccess(uopCode,status,result){
                     if(status==1){
-                        if(!/^.*\..*$/.test(result)){
-                            toast(result);
+                        if(!/^FILEID:/.test(result)){
+                            alert(result);
                         }else{
-                            if(!isMyPhoto){
+                            StorMgr.filesAllowed--;
+                            if(isMyPhoto){
+                                Feed.refresh();
+                            }else{
                                 var img=DOM.create("img");
                                 img.src=result.replace("FILEID:","");
                                 $(".showMoodPlus").appendChild(img);
-                            }else{
-                                Feed.refresh();
                             }
                         }
                     }else{
-                        toast("上传出错",3)
+                        toast("上传出错",2)
                     }
                     uexXmlHttpMgr.close(uopCode);
                 }
@@ -214,7 +222,7 @@ var actionSheet={
                 case 0:
                     uexImageBrowser.cbPick=function (opCode,dataType,data){
                         imgurl=data;
-                        xmlHttpPost();
+                        Device.getFileSize(data,xmlHttpPost);
                     };
                     uexImageBrowser.pick();
                     break;
@@ -223,7 +231,7 @@ var actionSheet={
                         toast(dataType);
                         if(dataType==0){
                             imgurl=data;
-                            xmlHttpPost();
+                            Device.getFileSize(data,xmlHttpPost);
                         }
                     };
                     uexCamera.open();
@@ -237,12 +245,12 @@ var actionSheet={
     }
 }
 
-/*原生提示信息，默认5秒消失*/
+/*原生提示信息，默认2,3秒消失*/
 function toast(s,t){
     if(Device.isAppcan()){
-        uexWindow.toast(0,5,s,t*1000||5000);
+        uexWindow.toast(0,5,s,t*1000||2000);
     }else{
-        Tips.show(s,null,t*1000||5000);
+        Tips.show(s,null,t*1000||3000);
     }
 }
 
@@ -276,7 +284,6 @@ var Tips={
         tipsDiv.innerHTML=s;
         tipsDiv.style.display="block";
         Tips.tipH=tipsDiv.offsetHeight;
-        // tipsDiv.bottom="-"+Tips.tipH+"px";
         clearTimeout(Tips.timer);
         Tips.timer=null;
         setTimeout(function(){tipsDiv.style.bottom="0px";},0);

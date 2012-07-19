@@ -70,7 +70,7 @@ var m = Math,
 			y: 0,
 			bounce: true,
 			bounceLock: false,
-			momentum: true,
+			momentum: false,//changed by destiny 2012.7.16 check
 			lockDirection: true,
 			useTransform: true,
 			useTransition: false,

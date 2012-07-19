@@ -617,7 +617,7 @@ var contentTmpl={
     <div class="chatList">\
     </div>\
     <!--列表结束-->\
-    <div _click="Feed.loadMore();" class="moreFeed">\
+    <div _click="ChatListFeed.loadMore();" class="moreFeed">\
         查看更多\
     </div>\
     </div>\
@@ -651,7 +651,7 @@ var contentTmpl={
     <div class="enter ub ub-ac">\
         <div class="enterMood" _click="Comment.switchMoodBox(this);"><img src="${siteurl}/template/mobile/css/images/f_1.png" alt="心情" /></div>\
         <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="私信内容..." _click="Comment.focusInput(this)"></div>\
-        <div class="enterButton btnBg" _click="Comment.sendComment(function(){ChatFeed.loadMore(null,true)},\'chat\');">发送私信</div>\
+        <div class="enterButton btnBg" _click="Comment.sendComment(null,\'chat\');">发送私信</div>\
     </div>\
     <!-- 输入结束-->\
     </div>\
@@ -806,7 +806,7 @@ var contentTmpl={
     <div class="rankBox">\
         <div class="rankAddress">\
             所在地区：<span _click="Tools.initArea(\'rank\');" id="area"></span>\
-            <p>我今日的人气值为：<label id="expToday"></label>，目前<label id="curPos">无排名</label></p>\
+            <p>我今日的人气值为：<label id="expToday"></label><label id="curPos"></label></p>\
         </div>\
         <div class="uba b-gra us listBg">\
         </div>\
@@ -935,7 +935,7 @@ var contentTmpl={
     </div>\
     <!--header结束-->\
     <!--content开始-->\
-    <div id="content" class="ub-f1 tx-l t-bla ub-img6 bg">\
+    <div class="ub-f1 tx-l t-bla ub-img6 bg">\
     <!--列表开始-->\
     <div class="passwordBox">\
     <!--复选框开始-->\
@@ -956,7 +956,7 @@ var contentTmpl={
             <div class="loginInput ub-f1"><input class="btnBg" type="text" id="regEmail" value="@qq.com"/></div>\
         </div>\
         <div class="ub-ac ub loginList">\
-            <label class="uinn">　用户名:</label>\
+            <label class="uinn">　　昵称:</label>\
             <div class="loginInput ub-f1"><input class="btnBg" type="text" id="regNickName"/></div>\
         </div>\
         <div class="ub-ac ub loginList">\
@@ -969,7 +969,10 @@ var contentTmpl={
         </div>\
         <div class="ub-ac ub loginList">\
             <label class="uinn">　验证码:</label>\
-            <div class="loginInput ub-f1"><input class="btnBg" type="text" placeholder="点击右边图片,刷新验证码" id="regVeri"/></div>\
+            <div class="loginInput ub-f1"><input class="btnBg" type="text" id="regVeri"/></div>\
+        </div>\
+        <div class="ub-ac ub loginList">\
+            <label class="uinn">　　　　</label>\
             <div id="verify" _click="UserAction.getVerify()"></div>\
         </div>\
     </div>\
@@ -1039,10 +1042,6 @@ var pageConfig={
 'mainPhoto':['mainFooter',1,true,true],
 'mainList':['mainFooter',1,true,true],
 'myPhoto':['mainFooter',2,true,true,function(){
-    Page.init({
-        name:'myPhoto',
-        dataUrl:'/do.php?action=getUserInfo&sid='+StorMgr.sid+"&user_id="+StorMgr.uid
-    });
     //取得心情总数
     UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+StorMgr.uid+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
         try{$("#titleMenu-mood span").innerHTML=num+"<br/>心情";}catch(e){}
@@ -1050,10 +1049,6 @@ var pageConfig={
     });
 }],
 'myList':['mainFooter',2,true,true,function(){
-    Page.init({
-        name:'myList',
-        dataUrl:'/do.php?action=getUserInfo&sid='+StorMgr.sid+"&user_id="+StorMgr.uid
-    });
     //取得照片总数
     UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+StorMgr.uid+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
         try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
@@ -1064,23 +1059,10 @@ var pageConfig={
     Tools.initSelect('#marrySel','marry');
     Tools.initSelect('#targetSel','target');
     Tools.initSelect('#interestSel','interest',true);
-    Page.init({
-        name:'editInfo',
-        dataUrl:'/do.php?action=getUserInfo&sid='+StorMgr.sid+"&user_id="+StorMgr.uid
-    });
 }],
-'myDetail':[false,false,false,true,function(){
-    Page.init({
-        name:'myDetail',
-        dataUrl:'/mood.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorMgr.sid
-    });
-}],
+'myDetail':[false,false,false,true],
 'hisPhoto':['hisFooter',false,false,true,function(){
     hisInfo.init();
-    Page.init({
-        name:'hisPhoto',
-        dataUrl:'/profile.php?ajax=1&sid='+StorMgr.sid+"&user_id="+hisInfo.curId
-    });
     //取得心情总数
     UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+hisInfo.curId+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
         try{$("#titleMenu-mood span").innerHTML=num+"<br/>心情";}catch(e){}
@@ -1088,21 +1070,12 @@ var pageConfig={
 }],
 'hisList':['hisFooter',false,false,true,function(){
     hisInfo.init();
-    Page.init({
-        name:'hisList',
-        dataUrl:'/profile.php?ajax=1&sid='+StorMgr.sid+"&user_id="+hisInfo.curId
-    });
     //取得照片总数
     UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+hisInfo.curId+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
         try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
     });
 }],
-'hisDetail':[false,false,false,true,function(){
-    Page.init({
-        name:'hisDetail',
-        dataUrl:'/moodHe.php?ajax=1&wid='+Tools.getParamVal("wid")+'&sid='+StorMgr.sid
-    });
-}],
+'hisDetail':[false,false,false,true],
 'showMood':['mainFooter',3,true,true,function(){
     //计算TextArea的高度
     var moodIpt=$('.showMoodTextarea'),
@@ -1169,24 +1142,7 @@ var pageConfig={
         nickname=hisInfo.get(hisInfo.curId).nickname;
     }
     $('#nickName').innerHTML=nickname||"&nbsp;";
-    ChatFeed.init({
-        noDataTxt:"暂无数据,请返回",
-        noMoreBtn:true,
-        page:'chat',
-        cont:$('#chatContent'),
-        more:$('.moreFeed'),
-        cb:function(){
-            if(ChatFeed.hasData){
-                ChatFeed.more.style.display="none";
-            }
-            myScroll.refresh();
-
-            if(myScroll.maxScrollY<0&&ChatFeed.hasData){
-                myScroll.scrollTo(0,myScroll.maxScrollY,500);
-            }
-        }
-    });
-    Comment.init('.enter');
+    
     DOM.addEvent($('#enterInput input'),'keypress',function(e){
         e.event.stopPropagation();
     });
@@ -1206,21 +1162,6 @@ var pageConfig={
 'likePerson':['mainFooter',4,true,true],
 'more':['mainFooter',5,true,true],
 'rank':['mainFooter',5,true,true,function(){
-    var myInfo=StorMgr.myInfo,
-        infoCent=StorMgr.infoCenter,
-        myPro=myInfo.reside_province,
-        myCity=myInfo.reside_city,
-        addre=[myPro?myPro:"",myCity?myCity:""].join(" ");
-    if(" "==addre&&StorMgr.gpsInfo){
-        addre=StorMgr.gpsInfo['prov']+" "+StorMgr.gpsInfo['city'];
-    }
-    $(".rankAddress span").innerHTML=(" "!=addre)?addre:"地区不详";
-    if(!["无排名","0",0].has(infoCent.current_rank)){
-        $('#curPos').innerHTML="排在第"+infoCent.current_rank+"位";
-    }else{
-        $('#curPos').innerHTML="无排名";
-    }
-
     //取今日人气值
     var todayExp=StorMgr.myTodayExp;
     if(!todayExp){
@@ -1237,10 +1178,10 @@ var pageConfig={
 'password':[false,false,false,true],
 'feedBack':[false,false,false,true],
 'about':[false,false,false,true,function(){
-    function setVersion(ver){
-        $('#verCont').innerHTML="版本V"+ver;
-    }
-    Device.getAppVersion(setVersion);
+    // function setVersion(ver){
+    //     $('#verCont').innerHTML="版本V"+ver;
+    // }
+    // Device.getAppVersion(setVersion);
 }],
 'reset':[false,false,false,false],
 'users':[false,false,false,false,function(){
@@ -1320,10 +1261,14 @@ PageEngine.prototype={
         if('chat'==this.curPage){//撤销私信轮询
             ChatFeed.destory();
         }
+        if('users'==this.curPage){
+            WIN.scrollTo(0,0);
+        }
         Page.destory();//撤销页面载入
         UserAction.stop();//撤销用户动作
         Tips.destory();//Tips
         Comment.destory();//撤销评论对象
+        Device.destory();
     },
     initPage:function(page){
         this.cancelPrePage();
@@ -1347,19 +1292,26 @@ PageEngine.prototype={
             reqTips=pcofig[3],
             initFn=pageConfig[that.curPage][4];
 
-
         if(reqTips){//tips更新
             ViewMgr.getMsg=(reqInfo)?true:false;//信息中心更新
             ViewMgr.getData(true);
         }else{
             ViewMgr.getMsg=false;
             ViewMgr.stopGetData();
+            ViewMgr.tipsArray=null;
         }
 
         /*执行页面配置项中页面初始化代码*/
         if($.isFunc(initFn)){
             initFn.call(null);
         }
+
+        /*Page类初始化*/
+        if(['myPhoto','myList','editInfo','myDetail','hisPhoto','hisList','hisDetail'].has(page)){
+            Page.init(page);
+        }
+        
+
         that.initIScrollAndFeed();
     },
     /*执行iScroll和feed相关代码*/
@@ -1375,28 +1327,68 @@ PageEngine.prototype={
         switch(that.curPage){
             case "mainPhoto":
             case "mainList":
-            case "rank":
                 WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
                 var myInfo=StorMgr.myInfo;
-                
-                if("rank"==that.curPage){
-                    if(myInfo.reside_province&&myInfo.reside_city){
-                        feedOption['addParams']="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;    
-                    }else if(StorMgr.gpsInfo){
-                        feedOption['addParams']="reside_province="+StorMgr.gpsInfo['prov']+"&reside_city="+StorMgr.gpsInfo['city'];
-                    }
-                    feedOption['cont']=$('.rankBox .listBg');
-                }else{
-                    if(Feed.mainParams){//mainPhoto,mainList页面取得记录参数
-                        feedOption['addParams']=Feed.mainParams;
-                    }
-                    else if(StorMgr.gpsInfo){
-                        feedOption['addParams']="reside_province="+StorMgr.gpsInfo['prov']+"&reside_city="+StorMgr.gpsInfo['city'];
-                    }else if(myInfo){
-                        feedOption['addParams']="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;    
-                    }
-
+                if(Feed.mainParams){//mainPhoto,mainList页面取得记录参数
+                    feedOption['addParams']=Feed.mainParams;
                 }
+                else if(StorMgr.gpsInfo){
+                    feedOption['addParams']="reside_province="+StorMgr.gpsInfo['prov']+"&reside_city="+StorMgr.gpsInfo['city'];
+                }else if(myInfo){
+                    feedOption['addParams']="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;    
+                }
+                Feed.init(feedOption);
+                break;
+            case "rank":
+                WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
+                var userObj,
+                    infoCent=StorMgr.infoCenter,
+                    addrSpan=$(".rankAddress span");
+                
+                if(/his/.test(that.prePage)){//他人到他人城市排行
+                    userObj=hisInfo.get(hisInfo.curId);
+                }else{
+                    userObj=StorMgr.myInfo;
+                }
+
+                var prov=userObj.reside_province,
+                    city=userObj.reside_city,
+                    addre=[prov?prov:"",city?city:""].join(" ");
+
+                if(" "==addre&&StorMgr.gpsInfo){//无数据时取GPS地址
+                    prov=StorMgr.gpsInfo['prov'];
+                    city=StorMgr.gpsInfo['city'];
+                    addre=prov+" "+city;
+                }
+                
+                if(" "!=addre){
+                    addrSpan.innerHTML=addre;
+                    feedOption['addParams']="reside_province="+prov+"&reside_city="+city;
+                }else if(StorMgr.gpsInfo){
+                    addrSpan.innerHTML="地区不详";
+                }
+
+                function setMyNum(){
+                    WIN["myScroll"].refresh();
+                    var feedProv=prov,
+                        feedCity=city;
+                    if(/reside_province=/.test(Feed.addParams)&&/reside_city=/.test(Feed.addParams)){
+                        feedProv=/reside_province=([^&]*)/.exec(Feed.addParams)[1];
+                        feedCity=/reside_city=([^&]*)/.exec(Feed.addParams)[1];
+                    }
+                    if(feedProv==StorMgr.myInfo.reside_province&&feedCity==StorMgr.myInfo.reside_city){
+                        if(!["无排名","0",0].has(infoCent.current_rank)){
+                            $('#curPos').innerHTML="，目前排在第"+infoCent.current_rank+"位";
+                        }else{
+                            $('#curPos').innerHTML="，目前无排名";
+                        }
+                    }else{
+                        $('#curPos').innerHTML="";
+                    }
+                }
+
+                feedOption['cb']=setMyNum;
+                feedOption['cont']=$('.rankBox .listBg');
                 Feed.init(feedOption);
                 break;
             case "myPhoto":
@@ -1437,6 +1429,11 @@ PageEngine.prototype={
                 Comment.init('.enter');
                 break;
             case "chatList":
+                WIN['myScroll']=new iScroll('wrapper');
+                feedOption['cont']=$('.chatList');
+                feedOption['noDataTxt']="暂无数据,请返回";
+                ChatListFeed.init(feedOption);
+                break;
             case "commentMe":
             case "sendComment":
                 WIN['myScroll']=new iScroll('wrapper');
@@ -1449,6 +1446,21 @@ PageEngine.prototype={
                 WIN['myScroll']=initIScroll($('.pullDown'),'wrapper',function(){
                     ChatFeed.refresh();
                 });
+                feedOption['noDataTxt']="暂无数据,请返回";
+                feedOption['noMoreBtn']=true;
+                feedOption['cont']=$('#chatContent');
+                feedOption['cb']=function(){
+                    if(ChatFeed.hasData){
+                        ChatFeed.more.style.display="none";
+                    }
+                    myScroll.refresh();
+
+                    if(myScroll.maxScrollY<0&&ChatFeed.hasData){
+                        myScroll.scrollTo(0,myScroll.maxScrollY,500);
+                    }
+                };
+                ChatFeed.init(feedOption);
+                Comment.init('.enter');
                 break;
             case "sysNotice":
             case "newGuest":

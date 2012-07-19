@@ -66,10 +66,10 @@ var ViewMgr={
         if(that.getTipsXhr){
             that.getTipsXhr.abort();    
         }
-        that.tipsArray=null;
-        if(that.getTipsTimeout){
-            clearTimeout(that.getTipsTimeout);
-        }
+        that.showingTips=false;//check
+        // if(that.getTipsTimeout){
+        //     clearTimeout(that.getTipsTimeout);
+        // }
         if(that.getMsgXhr){
             that.getMsgXhr.abort();
         }
@@ -164,9 +164,11 @@ var ViewMgr={
         },ViewMgr.getDataTime/2);
     },
     showMsg:function(data){
-        if('infoCenter'==pageEngine.curPage&&(!this.hasFilledInfoCen||StorMgr.infoCenterChange)){
-            InfoCenter.fill(data);
-            this.hasFilledInfoCen=true;
+        if(!this.hasFilledInfoCen||StorMgr.infoCenterChange){
+            if('infoCenter'==pageEngine.curPage){
+                InfoCenter.fill(data);
+                this.hasFilledInfoCen=true;    
+            }
         }
 
         if(this.noInfoNumDom)
@@ -216,7 +218,7 @@ var ViewMgr={
         var msg=this.tipsArray.shift();
         if(msg){
             this.showingTips=true;
-            Tips.show('<img _click="ViewMgr.goto(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,null,5000);
+            Tips.show('<img _click="ViewMgr.goto(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" style="height:2.5em" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,null,5000);
             this.getTipsTimeout=setTimeout(function(){ViewMgr.showTips();},2000);
         }
     }
@@ -230,6 +232,7 @@ var StorMgr={
     destory:function(){
         this.myInfo=null;
         this.infoCenter=null;
+        this.myTodayExp=null;
     },
     initStor:function(){//初始化需要的缓存资料
         if(!this.myInfo){
@@ -382,11 +385,26 @@ var hisInfo={
 }
 
 /*页面内容管理*/
-Page={
-    init:function(options){
+var Page={
+    init:function(name){
         this.destory();
-        extend(Page,options);
+        this.name=name;
         this.getUserData();
+    },
+    refresh:function(){
+        var that=this;
+        if(that.name){
+            that.init(that.name);    
+        }
+    },
+    dataUrlObj:{
+        myPhoto:'/do.php?action=getUserInfo&sid=${sid}&user_id=${uid}',
+        myList:'/do.php?action=getUserInfo&sid=${sid}&user_id=${uid}',
+        editInfo:'/do.php?action=getUserInfo&sid=${sid}&user_id=${uid}',
+        myDetail:'/mood.php?ajax=1&wid=${wid}&sid=${sid}',
+        hisPhoto:'/profile.php?ajax=1&sid=${sid}&user_id=${user_id}',
+        hisList:'/profile.php?ajax=1&sid=${sid}&user_id=${user_id}',
+        hisDetail:'/moodHe.php?ajax=1&wid=${wid}&sid=${sid}'
     },
     destory:function(){
         this.userData=null;
@@ -399,7 +417,7 @@ Page={
     },
     fullFillInfo:function(){
         var that=this;
-        if(!that.name||!that.dataUrl||!that.userData){
+        if(!that.name||!that.userData){
             toast("页面信息不充分，无法载入资料",2);
         }else{
             var data=that.userData;
@@ -419,13 +437,13 @@ Page={
                 avatarDom.innerHTML='<img src="'+data.avatar_file+'" alt="" />';
             }
 
-
             if($('.myTitleMenu')!=null){
                 //排名
                 var myRank,
                     rankStr="<br />无排名";
                 if(["myPhoto","myList"].has(that.name)){
-                    myRank=StorMgr.infoCenter['current_rank'];
+                    try{myRank=StorMgr.infoCenter['current_rank'];}
+                    catch(e){}                    
                 }else{
                     myRank=data.myRank;
                 }
@@ -464,7 +482,7 @@ Page={
                 if(data.iconid&&data.iconid!=0){
                     $('.DynamicMood').innerHTML=('<img src="${siteUrl}/template/mobile/css/images/f_'+data.iconid+'.png" alt="xx" />').replace(/\$\{siteUrl\}/,StorMgr.siteUrl);
                 }
-                $('.DynamicImg').innerHTML=data.fileurl?'<img src="'+data.fileurl+'" alt="xx" />':"";
+                $('.DynamicImg').innerHTML=data.fileimg?'<img src="'+data.fileimg+'" alt="xx" />':"";
 
                 if(data.islove){
                     DOM.addClass($('.DynamicMenu .love'),'active');
@@ -487,7 +505,7 @@ Page={
             $('#myInfo-1').innerHTML=[address,age,gender].join("/");
 
             //交友目的
-            var target=(data.target)?"交友目的:"+dataArray.target[data.target-1]:"交友目的:不详";
+            var target=(data.target&&0!=data.target*1)?"交友目的:"+dataArray.target[data.target-1]:"交友目的:不详";
             $('#myInfo-2').innerHTML=target;
 
             //个人描述
@@ -525,6 +543,7 @@ Page={
             ipt=$("#"+id);
         if(init){
             ipt.setAttribute('default',value);
+            ipt.innerHTML=value;
         }else{
             if(ipt.getAttribute('default')!=value){
                 if(!that.editedValues.has(id))
@@ -532,9 +551,9 @@ Page={
             }else{
                 that.editedValues.remove(id);
             }
+            ipt.innerHTML=Tools.htmlEncode(value);
         }
-        ipt.innerHTML=Tools.htmlEncode(value);
-
+        
         switch(id){
             case 'marry':
             case 'target':
@@ -638,7 +657,8 @@ Page={
                 that.editedValues.remove(id);
                 if(a.error){
                     ipt.innerHTML=ipt.getAttribute("default");
-                    that.editedErrors.push(a.error);
+                    var errMsg=that.filterError(a.error);
+                    that.editedErrors.push(errMsg);
                 }else{
                     ipt.setAttribute("default",ipt.innerHTML);    
                 }
@@ -647,10 +667,20 @@ Page={
             errCb=function(m){
                 that.editedValues.remove(id);
                 ipt.innerHTML=ipt.getAttribute("default");
-                that.editedErrors.push(m.error);
+                var errMsg=that.filterError(m.error);
+                    that.editedErrors.push(errMsg);
                 check();
             };
         that.dataXhr=UserAction.sendAction(dataUrl,param,"post",secCb,errCb);
+    },
+    filterError:function(errMsg){//明确报错内容
+        var reMsg="";
+        if(/不能超过12个字符/.test(errMsg)){
+            reMsg="昵称不能超过12个字符";
+        }else{
+            reMsg=errMsg;
+        }
+        return reMsg;
     },
     showMore:function(){
         var that=this,
@@ -664,7 +694,7 @@ Page={
             infoUl.appendChild(li);
         }
 
-        if(!that.name||!that.dataUrl||!that.userData){
+        if(!that.name||!that.userData){
             toast("页面信息不充分，无法载入资料");
         }else{
             if(that.loadedMore){
@@ -700,9 +730,8 @@ Page={
         }
     },
     getUserData:function(){
-
         var that=this;
-            dataUrl=StorMgr.siteUrl+that.dataUrl,
+        var dataUrl=StorMgr.siteUrl+Tools.compileUrl(that.dataUrlObj[that.name]),
             params=that.params,
             secCb=function(a){
                 if(a.error){toast(a.error,3);
@@ -776,9 +805,6 @@ Page={
         if(['myList','hisList'].has(that.name)&&$('.myTitleMenu')!=null){
             $('#titleMenu-mood span').innerHTML=Feed.dataCount+"<br />心情";
         }
-        if(['myDetail','hisDetail'].has(that.name)){
-            $('.DynamicMenu .comment').nextSibling.replaceWholeText(Feed.dataCount);
-        }
     }
 }
 
@@ -803,10 +829,22 @@ var regExpObj={
 var UserAction={
     xhr:null,
     stop:function(){
+        UserAction.sendingMood=false;
+        UserAction.sendingDelete=false;
+        UserAction.sendingLove=false;
+        UserAction.sendingShield=false;
+        UserAction.sendingLogin=false;
+        UserAction.sendingRegist=false;
+        UserAction.sendingResetPwd=false;
+        UserAction.sendingFeedBack=false;
         this.xhr&&this.xhr.abort();
     },
     /*秀心情*/
     showMood:function(imgDom,iconDom,moodDom){
+        if(UserAction.sendingMood){//防止重复发送
+            return;
+        }
+
         var hasImg=(imgDom.childNodes.length>0),
             actionUrl=StorMgr.siteUrl,
             iconid=iconDom.getAttribute('iconid'),
@@ -832,27 +870,37 @@ var UserAction={
             return;
         }
 
-        params+="&title="+title+"&iconid="+iconid;
+        params+="&title="+encodeURIComponent(title)+"&iconid="+iconid;
+
+        if(StorMgr.gpsInfo){//加入经纬度
+            params+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
+        }
 
         secCb=function(){
-            toast('发布成功!',2);
+            toast('发布成功!',1.5);
             imgDom.innerHTML="";
             moodDom.value="";
             // Tools.setIconId(null,true);
             setTimeout(function(){
                 ViewMgr.goto('myList');//秀心情成功后返回个人主页-心情
-            },2000);
+                UserAction.sendingMood=false;
+            },1500);
         }
 
         errCb=function(m){
             toast(m.error);
+            UserAction.sendingMood=false;
         }
 
-        UserAction.sendAction(actionUrl,params,"post",secCb,errCb);
+        UserAction.sendingMood=true;
+        UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
 
     },
     /*删除照片,心情或评论*/
     deleteData:function(type,node,wid,cb){
+        if(UserAction.sendingDelete){//防止重复发送
+            return;
+        }
         var actionUrl=StorMgr.siteUrl+"/weibo.php?"+Tools.getSidUidParams(),
             params="",secCb,errCb,paraLi,msg,doneMsg;
         if(type=="pic"){
@@ -882,18 +930,35 @@ var UserAction={
             cb&&cb();
 
             if(!!wid){
+                Page.refresh();
                 Feed.refresh();
             }else{
                 ViewMgr.back();
             }
+            UserAction.sendingDelete=false;
         }
 
         errCb=function(m){
-            toast(m.error);
+            if(m.error){
+                toast(m.error);
+            }else{//check
+                if(/myDetail/.test(pageEngine.curPage)){
+                    ViewMgr.back();    
+                }
+            }
+            UserAction.sendingDelete=false;
         }
 
         Device.confirm(msg,function(){
-            UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
+            UserAction.sendingDelete=true;
+            //附带删除照片check
+            try{
+                var picParams=params.replace('action=del&type=2&wid','action=selectdel&type=1&wid[]'),
+                    sendCb=function(){
+                        UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
+                    };
+                UserAction.sendAction(actionUrl,picParams,"get",sendCb,sendCb);
+            }catch(e){UserAction.sendingDelete=false;}
         });
     },
     /*举报*/
@@ -913,6 +978,10 @@ var UserAction={
     },
     /*喜欢人或心情*/
     loveData:function(type,node,wid){
+        if(UserAction.sendingLove){//防止重复发送
+            return;
+        }
+
         var actionUrl,
             params="",
             secCb,
@@ -931,11 +1000,18 @@ var UserAction={
                 secCb=function(){
                     var loveNum=loveDom.wholeText;
                     loveDom.replaceWholeText(parseInt(loveNum)+1);
-                    DOM.addClass(loveIcon,"active")
+                    DOM.addClass(loveIcon,"active");
+                    if(['myDetail','hisDetail'].has(pageEngine.curPage)){
+                        Page.refresh();
+                        Feed.refresh();
+                    }
+                    UserAction.sendingLove=false;
                 },
                 errCb=function(m){
-                    toast(m);
+                    toast(m.error);
+                    UserAction.sendingLove=false;
                 }
+                UserAction.sendingLove=true;
                 UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
             }
         }
@@ -957,10 +1033,13 @@ var UserAction={
                     hisInfo.storInfos[hisInfo.curId].friendnum=userInfo.friendnum;
                     hisInfo.storInfos[hisInfo.curId].islove=1;
                     loveDom.innerHTML="喜欢("+userInfo.friendnum+")";
+                    UserAction.sendingLove=false;
                 }
                 errCb=function(m){
                     toast(m.error);
+                    UserAction.sendingLove=false;
                 }
+                UserAction.sendingLove=true;
                 UserAction.sendAction(actionUrl,params,"post",secCb,errCb);
             }else{
                 params+="&action=disadmire";
@@ -971,10 +1050,13 @@ var UserAction={
                     hisInfo.storInfos[hisInfo.curId].friendnum=userInfo.friendnum;
                     hisInfo.storInfos[hisInfo.curId].islove=0;
                     loveDom.innerHTML="喜欢("+userInfo.friendnum+")";
+                    UserAction.sendingLove=false;
                 }
                 errCb=function(m){
                     toast(m);
+                    UserAction.sendingLove=false;
                 }
+                UserAction.sendingLove=true;
                 Device.confirm('你确定要取消心TA吗?',function(){
                     UserAction.sendAction(actionUrl,params,"post",secCb,errCb);
                 });
@@ -1007,6 +1089,9 @@ var UserAction={
     },
     /*屏蔽,取消屏蔽*/
     shieldPerson:function(type,node,user_id){
+        if(UserAction.sendingShield){//防止重复发送
+            return;
+        }
         var actionUrl=StorMgr.siteUrl+"/do.php",
             params="sid="+StorMgr.sid,
             secCb,
@@ -1026,30 +1111,35 @@ var UserAction={
                 }else{
                     hisInfo.storInfos[hisInfo.curId].isBlocked=true;
                     shieldDom.setAttribute("checked","checked");
-                    toast("屏蔽成功",1.6);
-                    setTimeout(function(){ViewMgr.back();},1500);
+                    toast("屏蔽成功",1);
+                    setTimeout(function(){ViewMgr.back();},1000);
                 }
             }
+            UserAction.sendingShield=false;
         }
         errCb=function(m){
             toast(m.error);
+            UserAction.sendingShield=false;
         }
 
         if(type=="del"){//取消屏蔽
             params+="&user_id="+user_id+"&type=del&action=block_user&id="+user_id;
             Device.confirm('确认取消屏蔽?',function(){
+                UserAction.sendingShield=true;
                 UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
             });
         }else{
             if(shieldDom.getAttribute("checked")=="checked"){
                 params+="&user_id="+Tools.getParamVal('user_id')+"&type=del&action=block_user&id="+Tools.getParamVal('user_id');
                 Device.confirm('确认取消屏蔽?',function(){
+                    UserAction.sendingShield=true;
                     UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
                 });
                 
             }else{
                 params+="&user_id="+Tools.getParamVal('user_id')+"&action=block_user";
                 Device.confirm(msg,function(){
+                    UserAction.sendingShield=true;
                     UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
                 });
             }
@@ -1073,23 +1163,26 @@ var UserAction={
             return;
         }
 
-        node.innerHTML="登陆中...";
         UserAction.sendLogin(mailVal,passVal,node);
     },
     sendLogin:function(mail,pwd,btn,ok,fail){
+        if(UserAction.sendingLogin){//防止重复发送
+            return;
+        }
         var checkUrl=StorMgr.siteUrl+"/userLogin.php",
             params='email='+mail+'&password='+pwd,
             secCb=function(a) {
                 if(a.msg){
                     toast(a.msg);
-                    if(btn){
-                        btn.innerHTML="登陆";
-                    }
                     if($.isFunc(fail)){
                         fail();
                     }
+                    UserAction.sendingLogin=false;
                     return;
                 }
+
+                Tools.refresh();//刷新数据check
+
                 Tools.storage.set('kxjy_my_email',mail);
                 Tools.storage.set('kxjy_my_pwd',pwd);
 
@@ -1100,16 +1193,20 @@ var UserAction={
                 if($.isFunc(ok)){
                     ok();
                 }
+                UserAction.sendingLogin=false;
             },
             errCb=function(e){
                 toast(e.msg);
-                if(btn){
-                    btn.innerHTML="登陆"
-                }
                 if($.isFunc(fail)){
                     fail();
                 }
+                UserAction.sendingLogin=false;
             };
+
+        if(StorMgr.gpsInfo){//加入经纬度
+            params+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
+        }
+        UserAction.sendingLogin=true;
         UserAction.sendAction(checkUrl,params,"get",secCb,errCb);
     },
     getVerify:function(){//获得验证码
@@ -1127,6 +1224,9 @@ var UserAction={
     },
     /*注册*/
     userRegist:function(){
+        if(UserAction.sendingRegist){//防止重复发送
+            return;
+        }
         var sex=$("#regSex").value,
             email=$("#regEmail"),
             nickname=$("#regNickName"),
@@ -1138,16 +1238,19 @@ var UserAction={
                 if(1==a.error){
                     toast(a.msg);
                     UserAction.getVerify();
+                    UserAction.sendingRegist=false;
                     return;
                 }
-                toast('注册成功,将自动登陆');
+                toast('注册成功,将自动登陆',0.6);
                 setTimeout(function(){
+                    UserAction.sendingRegist=false;
                     UserAction.sendLogin(email.value,password.value);
-                },2000);
+                },500);
             },errCb=function(a){
                 if(1==a.error){
                     toast(a.msg);
                     UserAction.getVerify();
+                    UserAction.sendingRegist=false;
                     return;
                 }
             };
@@ -1165,7 +1268,7 @@ var UserAction={
             if(nickname.value.chineseLen()>6){
                 throw {msg:'昵称超过指定长度'};
             }
-            if(0==password.value.length){
+            if(0==password.value.trim().length){
                 throw {msg:'请输入您的密码'};
             }
             if(password.value!=passwordR.value){
@@ -1184,6 +1287,7 @@ var UserAction={
             if(StorMgr.gpsInfo){//加入经纬度
                 url+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
             }
+            UserAction.sendingRegist=true;
             UserAction.sendAction(url,"","get",secCb,errCb);
         }catch(e){
             toast(e.msg);
@@ -1212,11 +1316,19 @@ var UserAction={
             nVal=$(nSel).value,
             cVal=$(cSel).value;
         if(oVal.length==0||nVal.length==0||cVal.length==0){
-            toast("请填完所有输入框！",2);
+            toast("请填完所有输入框",2);
+            return;
+        }
+        if(0==oVal.trim().length){
+            toast("当前密码为空",2);
+            return;
+        }
+        if(0==nVal.trim().length){
+            toast("请输入新密码",2);
             return;
         }
         if(nVal!=cVal){
-            toast("两次新密码不相同！",2);
+            toast("两次新密码不相同",2);
             return;
         }
         var setUrl=StorMgr.siteUrl+"/do.php?action=account_setting&sid="+StorMgr.sid,
@@ -1266,17 +1378,26 @@ var UserAction={
     },
     /*重置密码*/
     resetPwd:function(emailIpt){
+        if(UserAction.sendingResetPwd){//防止重复发送
+            return;
+        }
         var findUrl=StorMgr.siteUrl+"/findPassword.php?email=",
             emailVal=emailIpt.value,
             secCb=function(a){
                 if(a.error){
                     toast(a.msg||"未能正确发送新密码！",2);
+                    UserAction.sendingResetPwd=false;
                 }else{
-                    toast("新密码已发送！");
+                    toast("新密码已发送！",1);
+                    setTimeout(function(){
+                        ViewMgr.back();
+                        UserAction.sendingResetPwd=false;
+                    },1000);
                 }
             },
             errCb=function(a){
                 toast(a.msg||"未能正确发送新密码！",2);
+                UserAction.sendingResetPwd=false;
             };
         if(0==emailVal.length){
             toast('请输入您的邮箱地址！',2);
@@ -1286,27 +1407,34 @@ var UserAction={
             toast("邮箱地址有误！",2);
             return;
         }
+        UserAction.sendingResetPwd=true;
         UserAction.sendAction(findUrl+encodeURIComponent(emailVal),"","get",secCb,errCb);
     },
     /*发送意见反馈*/
     sendFeedBack:function(fbIpt){
+        if(UserAction.sendingFeedBack){//防止重复发送
+            return;
+        }
         var fbUrl=StorMgr.siteUrl+"/help.php?ajax=1&type=1&sid="+StorMgr.sid,
             fb=fbIpt.value,
             secCb=function(a){
                 if(a.error){
-                    toast(a.error,2);
+                    toast(a.error,1);
                 }else{
-                    toast("提交成功!",2);
-                    setTimeout(function(){ViewMgr.back();},2000);
+                    toast("提交成功!",1);
+                    setTimeout(function(){ViewMgr.back();},1000);
                 }
+                UserAction.sendingFeedBack=false;
             },
             errCb=function(a){
                 toast(a.error,2);
+                UserAction.sendingFeedBack=false;
             };
         if(0==fb.length){
             toast('发送内容不能为空！',2);
             return;
         }
+        UserAction.sendingFeedBack=true;
         UserAction.sendAction(fbUrl,"message="+encodeURIComponent(fb),"post",secCb,errCb);
     },
     /*检测应用是否有新版本*/
@@ -1338,16 +1466,16 @@ var UserAction={
                 toast("检测无法成功，请检查你的网络配置。",2);
             };
         function verCb(ver){
-            alert(ver);
             UserAction.sendAction(checkUrl+ver,"","get",secCb);
         }
-        Device.getAppVersion(verCb);
+        Device.alert('检测完成','您当前为最新版本。','我知道了');
+        // Device.getAppVersion(verCb);
     },
     /*用户退出*/
     logOut:function(){
         Device.confirm('确定退出？',function(){
             Tools.refresh();
-            StorMgr.destory();
+            Tools.storage.clear();
             ViewMgr.init();
         });
     },

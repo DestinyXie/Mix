@@ -104,6 +104,7 @@ body {
 }
 #wrapper>div{
 	width:100%;
+	padding-bottom:0.5em;
 }
 #wrapper.fixWrapperLeft {
 	left:0;
@@ -152,17 +153,14 @@ to {
 }
 }
 /*滚动常驻*/
-.dockEl {
-	background-color:#333;
-	color:#fff;
-}
-.fackDock {
+#wrapper .fackDock {
 	position: absolute;
 	top:0;
 	width:100%;
 	left:.5em;
 	right:.5em;
 	background-color:#491B5A;
+	padding-bottom: 0;
 }
 /*附近动态*/
 
@@ -262,6 +260,9 @@ to {
 	border:1px solid #750945;
 	-webkit-border-radius:.3em;
 }
+.qqLogin{
+	display: none;
+}
 .users{
 	width:90%;
 	margin:0 auto;
@@ -306,7 +307,7 @@ to {
 	background:#831a77;
 	font-size:0.75em;
 	color:#FFF;
-	margin:0.5em;
+	margin:0.5em 0.5em 0;
 	-webkit-border-radius:.3em;
 	-webkit-box-shadow:1px 1px 2px #333;
 	text-shadow:1px 1px 1px #333;
@@ -671,6 +672,9 @@ li .comment{
 	padding:.5em 0;
 	font-size:0.83em;
 }
+#enterInput.wrong input{
+	color:#f00;
+}
 .enterButton {
 	padding:0.5em 0.6em;
 	font-size:0.83em;
@@ -808,17 +812,18 @@ li .comment{
 	-webkit-box-shadow:0 1px 1px #fff inset;
 	color:#242326;
 	text-shadow:1px 1px 1px #FFF;
-	background: #efe4cb	
+	background: #efe4cb;
+	word-break:break-word;
 }
 .chatMood{
 	width:18.7em;
 	position:absolute;
-	display: none;
+	display:block;
 	z-index:3;
 	padding:0.7em 0 0 0.7em;
 	height:8.333em;
-	left:0;
-	bottom:3.5em;
+	left:-0.4em;
+	bottom:1000em;
 	-webkit-border-radius:.5em;
 	-webkit-box-shadow:3px 3px 3px #333;
 	background:-webkit-linear-gradient(top,#fefefe,#f2f2f2);
@@ -942,6 +947,9 @@ li .comment{
 }
 .hd-list{
 	background:url(images/list.png) no-repeat;
+}
+#content{
+	overflow:hidden;
 }
 /*底部*/
 .footer{

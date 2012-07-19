@@ -132,19 +132,19 @@ var feedTemplate={
         <div class="commentListAvatar" _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')"><img src="${avatar_url}" alt="" /></div>\
         <div class="commentListText ub-f1">\
             <p class="chatListName t-blue" _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')">${nickname}</p>\
-            <p>评论内容<span class="t-pur">${cb:title}</span><span class="t-gra">(${create_time})</span></p>\
-            <p>评论我的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
+            <p>${cb:sendType}内容<span class="t-pur">${cb:title}</span><span class="t-gra">(${create_time})</span></p>\
+            <p>${cb:sendType}我的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
         </div>\
-        <strong class="DynamicMore" _click="ViewMgr.goto(\'${cb:isself}\',\'wid=${parentid}\')">></strong>\
+        <strong class="DynamicMore" _click="ViewMgr.goto(${cb:isselfDetail},\'wid=${parentid}\')">></strong>\
     </div>',
     sendComment:'<div class="commentList ub clearfix">\
         <div class="commentListAvatar" _click="ViewMgr.goto(${cb:isself})"><img src="${avatar_url}" alt="" /></div>\
         <div class="commentListText ub-f1">\
-            <p>评论内容 ${cb:title} <span class="t-gra">(${create_time})</span></p>\
-            <p>评论<span class="t-pur"_click="ViewMgr.goto(${cb:isself})">${nickname}</span>的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
+            <p>${cb:sendType}内容 ${cb:title} <span class="t-gra">(${create_time})</span></p>\
+            <p>${cb:sendType}<span class="t-pur"_click="ViewMgr.goto(${cb:isself})">${nickname}</span>的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
             <div class="chatDelete" _click="UserAction.deleteData(\'comment\',DOM.findParent(this,\'.commentList\',true),\'${enwid}\');">删除</div>\
         </div>\
-        <strong class="DynamicMore" _click="ViewMgr.goto(\'hisDetail\',\'user_id=${uid}&wid=${parentid}\')">></strong>\
+        <strong class="DynamicMore" _click="ViewMgr.goto(${cb:isselfDetail},\'wid=${parentid}\')">></strong>\
     </div>',
     blackList:'<div _click="ViewMgr.goto(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');this.event.stop();"></span></div>',
     rank:'<div class="rankList uc-t ub b-gra ub-ac umh4 lis">\
@@ -201,9 +201,9 @@ var pageFeedUrl={
     newGuest:"/see.php?type=1&uid=${uid}",
     likeMe:"/admire.php?type=0&uid=${uid}",
     attract:"/admire.php?type=2&uid=${uid}",
-    commentMe:"/weibo.php?action=commentme&uid=${uid}",
+    commentMe:"/weibo.php?action=commentme&uid=${uid}&pagecount=5",
     myView:"/see.php?type=0&uid=${uid}",
-    sendComment:"/weibo.php?action=mycomment&uid=${uid}",
+    sendComment:"/weibo.php?action=mycomment&uid=${uid}&pagecount=5",
     blackList:"/Blacklist.php?uid=${uid}",
     likeMood:"/moodlist.php?action=love",
     likePerson:"/admire.php?type=1",
@@ -214,17 +214,12 @@ var pageFeedUrl={
 var Feed={
     defOptions:{
             index:0,
-            cont:null,
-            more:null,
-            onePageNum:null,
-            loadXhr:null,
             isLoading:false,
             loadingTxt:"正在加载...",
             moreTxt:"查看更多",
             noMoreTxt:"没有更多了",
             noDataTxt:"暂时没有数据",
             noMoreBtn:false,//是否显示加载按钮
-            lastPos:null,
             addParams:"",
             dataCount:0,
             totalPage:0,
@@ -252,21 +247,36 @@ var Feed={
         }
     },
     destory:function(){
+        this.cont=null;
+        this.more=null;
+        this.onePageNum=null;
+        this.loadXhr=null;
+        this.lastPos=null;
+        this.nowtime=null;
+
         if(this.beforeDestory){//供继承类使用
             this.beforeDestory();
         }
+
         this.isDestoryed=true;
         if(this.loadXhr){
             this.loadXhr.abort();
         }
     },
     refresh:function(setParam){
+        if(this.isRefresh){
+            return;
+        }
+        if(this.beforeRefersh){
+            this.beforeRefersh();
+        }
         if(this.noMoreBtn&&this.more.innerHTML!=this.noDataTxt&&this.more){
             this.more.style.display="none";
         }
         this.index=0;
         this.isRefresh=true;
         this.isLoading=false;
+        this.nowtime=null;
         if(this.loadXhr){
             this.loadXhr.abort();
         }
@@ -274,6 +284,10 @@ var Feed={
     },
     loadMoreSecc:function(a){
         this.index++;
+        if(!this.nowtime&&a.nowtime){
+            this.nowtime=a.nowtime;
+        }
+
         if(a.error&&this.page!="rank"){
             this.reset();
             toast(a.error);
@@ -299,21 +313,12 @@ var Feed={
                 this.cont.innerHTML="";
             }
         }
-        
-        if(['chatList'].has(this.page)){
-            this.dataCount=a.sysMsgNum;
-            this.totalPage=1;
-            this.fullFillFeed(a.list);
-            //记住头像
-            Tools.storage.set("kxjy_my_chatList",a.list,"session");
-            return;
-        }
 
         if(['chat','sysNotice'].has(this.page)){
             this.dataCount=a.msg?a.msg.length:0;
             this.totalPage=1;
-            this.fullFillFeed(a.msg?a.msg:{});
-            return;   
+            this.fullFillFeed(a.msg?a.msg:[]);
+            return;
         }
 
         if(['rank'].has(this.page)){
@@ -378,15 +383,15 @@ var Feed={
         that.loadXhr=UserAction.sendAction(dataUrl,params,"get",secCb,errCb);
     },
     getUrl:function(){
-        var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
-            function(m,c){
-                if(['uid','sid','userKey'].has(c))
-                    return StorMgr[c];
-                return Tools.getParamVal(c);
-            });
+        var that=this;
+        var feedUrl=Tools.compileUrl(pageFeedUrl[that.page]);
 
-        if(['hisPhoto','hisList'].has(this.page)){
-            feedUrl=pageFeedUrl[this.page].replace(/uid=[\d+]?$/,'uid='+hisInfo.curId);
+        if(['hisPhoto','hisList'].has(that.page)){
+            feedUrl=pageFeedUrl[that.page].replace(/uid=[\d+]?$/,'uid='+hisInfo.curId);
+        }
+
+        if('mainPhoto'==that.page&&StorMgr.gpsInfo){//附近的人加入经纬度
+            feedUrl+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
         }
 
         return feedUrl+"&sid="+StorMgr.sid;
@@ -400,8 +405,11 @@ var Feed={
         if(that.addParams){//临时增加的参数
             params+="&"+that.addParams;
             if(['mainPhoto','mainList'].has(that.page)){
-                this.mainParams=this.addParams;//mainPhoto,mainList页面记录参数
+                that.mainParams=that.addParams;//mainPhoto,mainList页面记录参数
             }
+        }
+        if(that.nowtime){
+            params+="&nowtime="+that.nowtime;
         }
         return params;
     },
@@ -579,12 +587,24 @@ var Feed={
             case "sendComment":
                 tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="urlType"){
-                        switch(o.urlType){
-                            case "2":
-                                return "心情";
+                        switch(o.parentType*1){
+                            case 1:
+                                return "生活";
+                                break;
+                            case 4:
+                                return "评论";
                                 break;
                             default:
-                                return "生活";
+                                return "心情";
+                        }
+                    }
+                    if(t[1]=="sendType"){
+                        switch(o.parentType*1){
+                            case 4:
+                                return "回复";
+                                break;
+                            default:
+                                return "评论";
                         }
                     }
                     if(t[1]=="title"){
@@ -595,17 +615,18 @@ var Feed={
                     }
                     if(t[1]=="isself"){
                         if("sendComment"==that.page){
-                            if(o.touid==o.uid){
+                            if(o.touid==StorMgr.uid){
                                 return "'myPhoto'";
                             }else{
-                                return "'hisPhoto','user_id="+((that.page=="sendComment")?o.touid:o.uid)+"'";
+                                return "'hisPhoto','user_id="+o.touid+"'";
                             }
+                        }
+                    }
+                    if(t[1]=="isselfDetail"){
+                        if(o.parentUid==StorMgr.uid){
+                            return "'myDetail'";
                         }else{
-                            if(o.parentUid==StorMgr.uid){
-                                return "myDetail";
-                            }else{
-                                return "hisDetail";
-                            }
+                            return "'hisDetail'";
                         }
                     }
                 },idx);
@@ -642,8 +663,8 @@ var Feed={
                             }
                             break;
                         case "target":
-                            if(dataArray['target'][o.target]){
-                                return dataArray['target'][o.target];
+                            if(dataArray['target'][o.target-1]){
+                                return dataArray['target'][o.target-1];
                             }else{
                                 return "交友目的不详";
                             }
@@ -690,9 +711,6 @@ var Feed={
                         case 'fileimg':
                             return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
                             break;
-                        case 'fileurl'://用不到了
-                            return (!o.fileurl)?"":'<img src="'+o.fileurl+'" alt="" />';
-                            break;
                         case 'islove':
                             return (o.islove==1)?"active":"";
                             break;
@@ -723,6 +741,94 @@ var Feed={
     }
 };
 
+//私信列表类,继承Feed,前端分页
+var ChatListFeed=extend({},Feed,{
+    onePageNum:10,
+    listDB:null,
+    beforeDestory:function(){
+        this.onePageNum=10;
+        this.listDB=null;
+    },
+    loadMoreSecc:function(a){
+        this.index=1;
+        if(a.error){
+            this.reset();
+            toast(a.error);
+            return;
+        }
+        this.isLoading=false;
+        this.cont.innerHTML="";
+        
+        this.listDB=a.list;
+        this.getCacheData();
+    },
+    getCacheData:function(){//对方清除记录，只能从cashe中获得数据
+        var that=this,
+            cacheUrl=StorMgr.chatPath+Tools.compileUrl(pageFeedUrl['sysNotice']),
+            secCb=function(a){
+                function hasFid(fid){
+                    var lists=that.listDB;
+                    for(var i=0,len=lists.length;i<len;i++){
+                        if(fid==lists[i]['fid']){
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                if(0==a.state*1&&a.list.length>0){
+                    for(var i=0,len=a.list.length;i<len;i++){
+                        if(!hasFid(a.list[i]['fid'])){
+                            that.listDB.unshift(a.list[i]);    
+                        }
+                    }
+                }
+                that.cacheCallback();
+            },
+            errCb=function(){
+                that.cacheCallback();
+            }
+        UserAction.sendAction(cacheUrl,"","get",secCb,errCb);
+    },
+    cacheCallback:function(){
+        var that=this;
+        //记住头像
+        Tools.storage.set("kxjy_my_chatList",that.listDB,"session");
+        that.dataCount=that.listDB.length;
+        that.totalPage=Math.ceil(that.dataCount/that.onePageNum);
+        var firstList=that.listDB.slice((that.index-1)*that.onePageNum,that.index*that.onePageNum);
+        that.fullFillFeed(firstList);
+    },
+    loadMore:function(setParam){
+        var that=this;
+        if(that.isRefresh){
+            if(that.isLoading)
+                return;
+            that.isLoading=true;
+
+            if(that.more){
+                that.more.innerHTML=that.loadingTxt;
+            }
+
+            var dataUrl=that.getUrl(),
+                params=that.setParams(setParam);
+
+            dataUrl=StorMgr.chatPath+dataUrl;
+            that.sendRequest(dataUrl,params);
+        }else{
+            if((typeof that.totalPage=="number")&&that.index>=that.totalPage){
+                if("暂无数据,请返回"==that.more.innerHTML){
+                    ViewMgr.back();
+                }else{
+                    that.reset();
+                }
+                return false;
+            }
+            that.index++;
+            var dataList=that.listDB.slice((that.index-1)*that.onePageNum,that.index*that.onePageNum);
+            that.fullFillFeed(dataList);
+        }
+    }
+});
 
 //私信类,继承Feed
 var ChatFeed=extend({},Feed,{
@@ -738,6 +844,7 @@ var ChatFeed=extend({},Feed,{
             return;
         that.getDataInter=setTimeout(function(){
             that.ingterCount++;
+            that.isRefresh=false;
             that.loadMore();},that.getMsgInter||2000);
 
         if($.isFunc(that.cb)){
@@ -746,35 +853,48 @@ var ChatFeed=extend({},Feed,{
 
         that.hasData=false;
     },
+    beforeRefersh:function(){
+        this.ingterCount=0;
+    },
     beforeDestory:function(){
+        this.onePageNum=10;
         this.hasData=false;
         this.ingterCount=0;
     },
-    getUrl:function(mine){
-        var feedUrl=pageFeedUrl[this.page].replace(/\$\{(\w+)\}/g,
-            function(m,c){
-                if(['uid','sid','userKey'].has(c))
-                    return StorMgr[c];
-                return Tools.getParamVal(c);
-            });
+    getUrl:function(){
+        var feedUrl=Tools.compileUrl(pageFeedUrl['chat']);
 
         var url=feedUrl+"&sid="+StorMgr.sid;
 
-        if(mine)
-            url=url.replace(/&fid=\d+/,"&fid="+StorMgr.uid).replace(/&tid=\d+/,"&tid="+Tools.getParamVal('fid')).replace("st=3m","st=");
         if(!this.isRefresh)
             url=url.replace("st=3m","st=");
         return url;
     },
-    loadMore:function(setParam,mine){
+    loadMoreSecc:function(a){
+        if(a.error){
+            this.reset();
+            toast(a.error);
+            return;
+        }
+        if(this.isRefresh){
+            this.cont.innerHTML="";
+        }
+
+        var listData=a.msg;
+
+        this.dataCount=listData.length||0;
+        this.totalPage=1;
+        this.fullFillFeed(listData||[]);
+    },
+    loadMore:function(setParam){
         var that=this;
-        if(that.isLoading||that.isDestoryed)
+        if(that.isLoading||that.isDestoryed||'chat'!=pageEngine.curPage)
             return;
         that.isLoading=true;
 
         clearTimeout(that.getDataInter);
 
-        var dataUrl=that.getUrl(mine),
+        var dataUrl=that.getUrl(),
             params=that.setParams(setParam);
 
         dataUrl=StorMgr.chatPath+dataUrl;
@@ -785,19 +905,11 @@ var ChatFeed=extend({},Feed,{
         var that=this;
 
         if(that.isRefresh){
-            if(that.more&&that.more.innerHTML!=that.noDataTxt)
-                that.more.style.display="none";
             that.cont.innerHTML="";
-        }
-
-        if(!that.noMoreBtn){
-            that.more&&(that.more.innerHTML=that.moreTxt);    
         }
         
         if(that.isRefresh&&(!data||data.length==0)){
             that.reset();
-            that.more.style.display="block"
-            that.more.innerHTML=that.noDataTxt;
             return;
         }
 
@@ -819,8 +931,7 @@ var ChatFeed=extend({},Feed,{
 
         that.reset();
     }
-})
-
+});
 
 /*评论类*/
 var Comment={
@@ -856,6 +967,7 @@ var Comment={
         clearTimeout(that.moodInter);
         that.type="评论";
         that.moodInter=null;
+        that.sendingComm=false;
 
         delete this.commBox;
         this.commBox=null;
@@ -876,7 +988,7 @@ var Comment={
         that.hideMoodBox();
         that.input.focus();
         if(DOM.hasClass(that.input.parentNode,"wrong")){
-            that.reset();
+            that.resetErr();
         }
         if(node){
             node.event.event.stopPropagation();
@@ -884,7 +996,16 @@ var Comment={
     },
     sendComment:function(cb,type){
         var that=this;
+        if(that.sendingComm){
+            return;
+        }
+
         that.hideMoodBox();
+        that.input.blur();
+
+        if(type&&type=="chat"){
+            that.type="私信";
+        }
 
         if(!that.checkComment()){
             return;
@@ -893,31 +1014,69 @@ var Comment={
         var sendUrl,
             params="",
             secCb=function(a){
-                if(a.error||a.state*1==1){
-                    toast('出错了:'+a.msg);
+                if(a.error||(a.state&&a.state*1>0)){
+                    if(a.state){
+                        switch(a.state*1){
+                        case 1:
+                            that.setErr('您输入的信息有误！');
+                            break;
+                        case 2:
+                            that.setErr('等待对方回应，请稍候！');
+                            break;
+                        case 3:
+                            that.setErr('非常抱歉，您此项操作今日的权限已经用完。');  
+                            break;
+                        case 4:
+                            that.setErr('发送频繁，请稍后再试！');
+                            break;
+                        }
+                    }else{
+                        toast(a.msg);
+                    }
+                    that.sendingComm=false;
                     return;
                 }
                 cb&&cb();
-                that.reset();
-                toast('发送成功！',2);
-            };
+                if(chatData){
+                    ChatFeed.fullFillFeed([chatData]);
+                }else{
+                    Page.refresh();
+                    toast('发送成功！',2);    
+                }
+                that.resetErr();
+                that.sendingComm=false;
+            },
+            errCb=function(m){
+                toast(m.error||m.msg);
+                that.sendingComm=false;
+            },
+            chatData=null,
+            msg=that.transMotion(that.commTxt);
 
         if(type&&type=="chat"){
-            that.type="私信";
-            sendUrl="/send_msg.php?callback=?&sid="+StorMgr.sid+"&fid="+StorMgr.uid+"&tid="+Tools.getParamVal('fid')+"&msg="+that.transMotion(that.commTxt)+"&i="+StorMgr.uid+"&k="+StorMgr.userKey;
+            sendUrl="/send_msg.php?callback=?&sid="+StorMgr.sid+"&fid="+StorMgr.uid+"&tid="+Tools.getParamVal('fid')+"&msg="+encodeURIComponent(msg)+"&i="+StorMgr.uid+"&k="+StorMgr.userKey;
+
+            var nd=new Date(),
+                ndS=nd.getFullYear()+"-"+(nd.getMonth()+1)+"-"+nd.getDate()+" "+nd.toLocaleTimeString();
+            chatData={
+                content:msg,
+                fid:StorMgr.uid,
+                datetime:ndS
+            };
 
             sendUrl=StorMgr.chatPath+sendUrl;
         }else{
             sendUrl=StorMgr.siteUrl+"/weibo.php?action=comment&type=4&sid="+StorMgr.sid+"&parentid="+Tools.getParamVal('wid');
 
-            params="title="+that.transMotion(that.commTxt);
+            params="title="+encodeURIComponent(msg);
             if(that.parenNode){
                 params+="&parentNode="+that.parenNode
                 that._unSetParenComm();
             }
         }
         
-        UserAction.sendAction(sendUrl,params,"get",secCb);
+        that.sendingComm=true;
+        UserAction.sendAction(sendUrl,params,"get",secCb,errCb);
     },
     checkComment:function(){
         var that=this;
@@ -928,10 +1087,10 @@ var Comment={
 
         var errTxt="";
         if(that.commTxt==""){
-            errTxt=that.type+"内容不能为空！";
+            errTxt="发送内容不能为空！";
         }
         if(that.commTxt.chineseLen()>139){
-            errTxt=that.type+"过长！";
+            errTxt=that.type+"内容过长！";
         }
 
         if(errTxt!=""){
@@ -945,7 +1104,7 @@ var Comment={
         that.input.value=txt;
         DOM.addClass(that.input.parentNode,"wrong");
     },
-    reset:function(){
+    resetErr:function(){
         var that=this;
         that.input.value="";
         DOM.dropClass(that.input.parentNode,"wrong");
@@ -981,7 +1140,7 @@ var Comment={
         var idx=liArr.indexOf(li);
         if(typeof idx=="number"&&idx>=0){
             if(DOM.hasClass(that.input.parentNode,"wrong"))
-                that.reset();
+                that.resetErr();
             Tools.insertAtCaret(that.input,that.motions[idx]);
         }
         that.stopHideBox=true;
@@ -990,7 +1149,7 @@ var Comment={
     },
     switchMoodBox:function(node){
         var that=this;
-        if(getComputedStyle(that.moodBox).display!="block"){
+        if(getComputedStyle(that.moodBox).bottom!=3.5*BODYFS+"px"){
             that.showMoodBox();
             that.stopHideBox=true;
         }else{
@@ -1001,24 +1160,20 @@ var Comment={
     },
     showMoodBox:function(){
         var that=this;
-        if(that.moodBox.style.display=="block"){
+        if(that.moodBox.style.bottom=="3.5em"){
             return;
         }
         clearTimeout(that.moodInter);
-        that.moodBox.style.display="block";
-        that.moodInter=setTimeout(function(){
-            DOM.addClass(that.moodBox,'display');
-        },0);
+        that.moodBox.style.bottom="3.5em";
     },
     hideMoodBox:function(){
         var that=Comment;
-        if(that.stopHideBox||that.moodBox.style.display=="none"){
+        if(that.stopHideBox||that.moodBox.style.bottom=="1000em"){
             return;
         }
         clearTimeout(that.moodInter);
-        DOM.dropClass(that.moodBox,'display');
         that.moodInter=setTimeout(function(){
-            that.moodBox.style.display="none";
+            that.moodBox.style.bottom="1000em";
         },250);
     },
     _setParenComm:function(pid){

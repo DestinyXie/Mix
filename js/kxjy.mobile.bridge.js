@@ -38,6 +38,15 @@ var Device={
 
         Device.loadEventBinded=true;
     },
+    destory:function(){//关掉一下东西，比如上传
+        if(!Device.isAppcan()){return;}
+        //减1因为拍照时会取文件尺寸 Device.opCode 会比上传的加1
+        uexXmlHttpMgr.close(Device.opCode-1);
+        uexWindow.closeToast();
+    },
+    alert:function(title,msg,btn){
+        uexWindow.alert(title,msg,btn);
+    },
     /*uexWindow接口*/
     confirm:function(msg,ok,cancel,labs,title){
         if(Device.isAppcan()){
@@ -127,8 +136,13 @@ var Device={
         if(!Device.isAppcan()){return;}
         uexControl.cbOpenDatePicker=function(opCode,dataType,data){
 　　　　　　　　if(dataType==1){
-　　　　　　　　　　var obj = eval('('+data+')');
-                    var dataStr=obj.year+"-"+obj.month+"-"+obj.day;
+　　　　　　　　　　var obj = eval('('+data+')'),
+                        dataStr=obj.year+"-"+obj.month+"-"+obj.day,
+                        today=new Date().getTime();
+                    if(new Date(obj.year,obj.month-1,obj.day).getTime()>today){
+                        alert('日期超过今天无效');
+                        return;
+                    }
                     okCb?okCb(dataStr):toast(dataStr);
 　　　　　　　　}else{
                     errCb?errCb:toast('日期没有选择成功');
@@ -149,9 +163,10 @@ var Device={
             cb(lat,log);
         }
         uexLocation.onChange = locationCallback;
-        uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
-            toast("未能取得经纬度 errorCode:" + errorCode + "\nerrorInfo:" + errorInfo);
-        }
+        // check
+        // uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
+        //     toast("未能取得经纬度 errorCode:" + errorCode + "\nerrorInfo:" + errorInfo);
+        // }
         uexLocation.openLocation();
     },
     /*根据经纬度获取地址 cb(addr);*/
@@ -241,9 +256,26 @@ var Device={
                 uexWindow.alert("温馨提示","创建下载资源失败，请确认你手机中装有SD存储卡。","我知道了");
             }
         }
-        uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
-            toast(errorInfo,3);
-        }
+        // check
+        // uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
+        //     toast(errorInfo,3);
+        // }
         uexDownloaderMgr.createDownloader(inOpCode);
     },
+    /*取得文件大小*/
+    getFileSize:function(path,cb){
+        if(!Device.isAppcan()){return;}
+        Device.opCode++;
+        var inOpCode=Device.opCode;
+        function callback(opId,dataType,data){
+            if(dataType==2){
+                //alert(data/1024);//k
+                if(cb){cb(data/1024);}
+            }
+        }
+        uexFileMgr.cbGetFileSize = callback;
+        uexFileMgr.openFile(inOpCode,path,1);
+        uexFileMgr.getFileSize(inOpCode);
+        uexFileMgr.closeFile(inOpCode);
+    }
 }
