@@ -12,7 +12,7 @@ function executeLoad(){
     ViewMgr.init();
 
     /*加载weinre debug工具*/
-    DOM.loadJs("http://192.168.30.78:8081/target/target-script.js",function(){alert('weinre test ok!')});
+    // DOM.loadJs("http://192.168.30.78:8081/target/target-script.js",function(){alert('weinre test ok!')});
 }
 
 Device.onLoad(executeLoad);
