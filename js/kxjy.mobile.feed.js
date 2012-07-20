@@ -391,7 +391,7 @@ var Feed={
         }
 
         if('mainPhoto'==that.page&&StorMgr.gpsInfo){//附近的人加入经纬度
-            feedUrl+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
+            feedUrl+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];
         }
 
         return feedUrl+"&sid="+StorMgr.sid;

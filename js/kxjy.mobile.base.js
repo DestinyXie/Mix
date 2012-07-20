@@ -10,10 +10,11 @@ CLICK_EVENT = isTouch ? 'touchend' : 'click';
 
 /*扩展一个Object对象*/
 function extend(d, s ,o) {
-    for (p in s) {
-        if(o&&o[p]!==undefined)continue;
-        if (s[p] !== null){
-            d[p] = (typeof(s[p]) == 'object' && !(s[p].nodeType) && !(s[p] instanceof Array)) ? extend({}, s[p]) : s[p];
+    var k;
+    for (k in s) {
+        if(o&&o[k]!==undefined)continue;
+        if (s[k] !== null){
+            d[k] = (typeof(s[k]) == 'object' && !(s[k].nodeType) && !(s[k] instanceof Array)) ? extend({}, s[k]) : s[k];
         }
     }
     if(o){
@@ -704,8 +705,8 @@ var Tools={
         StorMgr.gpsInfo=Tools.storage.get("kxjy_my_gpsInfo");
         function parseAddr(addr){
             var prov,city,addrArr,
-                provReg=/([\u4E00-\u9FA3]{2})省/;
-                cityReg=/([\u4E00-\u9FA3]{2})市/;
+                provReg=/([\u4E00-\u9FA3]{2})省/,
+                cityReg=/([\u4E00-\u9FA3]{2})市/,
                 areaReg=/([\u4E00-\u9FA3]{2})区/;
             if(/北京|上海|重庆|天津/.test(addr)){
                 prov=cityReg.exec(addr)[1];

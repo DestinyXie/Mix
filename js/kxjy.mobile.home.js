@@ -409,7 +409,6 @@ var Page={
     destory:function(){
         this.userData=null;
         this.name="";
-        this.dataUrl="";
         this.loadedMore=false;
         this.editedValues=[];
         this.editedErrors=[];
@@ -873,7 +872,7 @@ var UserAction={
         params+="&title="+encodeURIComponent(title)+"&iconid="+iconid;
 
         if(StorMgr.gpsInfo){//加入经纬度
-            params+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
+            params+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];
         }
 
         secCb=function(){
@@ -1204,7 +1203,7 @@ var UserAction={
             };
 
         if(StorMgr.gpsInfo){//加入经纬度
-            params+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
+            params+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];
         }
         UserAction.sendingLogin=true;
         UserAction.sendAction(checkUrl,params,"get",secCb,errCb);
@@ -1285,7 +1284,7 @@ var UserAction={
             checkReg();
             url+="&sex="+sex+"&email="+email.value+"&nickname="+nickname.value+"&password="+password.value+"&imgcode="+imgcode.value;
             if(StorMgr.gpsInfo){//加入经纬度
-                url+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude"+StorMgr.gpsInfo['log'];
+                url+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];
             }
             UserAction.sendingRegist=true;
             UserAction.sendAction(url,"","get",secCb,errCb);

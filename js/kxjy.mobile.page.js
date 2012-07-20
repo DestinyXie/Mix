@@ -1261,7 +1261,7 @@ PageEngine.prototype={
         if('chat'==this.curPage){//撤销私信轮询
             ChatFeed.destory();
         }
-        if('users'==this.curPage){
+        if(['login','users'].has(this.curPage)){
             WIN.scrollTo(0,0);
         }
         Page.destory();//撤销页面载入
