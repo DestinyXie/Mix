@@ -37,15 +37,14 @@ ul, li {
 #footer{
 	z-index:2;
 }
-#footer input[type="radio"] + div.active,#footer input[checked="checked"] + div
-{
+#footer div.active,#footer .select{
 	background:-webkit-linear-gradient(top, #dc1ab3, #a50883) !important;
  	background:-webkit-gradient(linear, left top, left bottom, from(#dc1ab3), to(#a50883)) !important;
 	border-radius:0 0 0.3em 0.3em;
 	border: 1px solid #f248cd;
 	background-image: none;
 }
-#footer input[type="radio"] + div.disable.active
+#footer .disable.active
 {
 	background:-webkit-linear-gradient(top, #7a7a7a, #575757) !important;
  	background:-webkit-gradient(linear, left top, left bottom, from(#7a7a7a), to(#575757)) !important;

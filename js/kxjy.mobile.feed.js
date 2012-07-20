@@ -192,11 +192,11 @@ var pageFeedUrl={
     myPhoto:"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=${uid}",
     myList:"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=${uid}",
     myDetail:"/weibo.php?action=weibolist&type=4&parentid=${wid}",
-    hisPhoto:"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=",
-    hisList:"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=",
+    hisPhoto:"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=8&uid=${user_id}",
+    hisList:"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=8&uid=${user_id}",
     hisDetail:"/weibo.php?action=weibolist&type=4&parentid=${wid}",
     chatList:"/get_sess_list.php?callback=?&t=1&i=${uid}&k=${userKey}",
-    chat:"/get_msg.php?callback=?&st=3m&i=${uid}&fid=${fid}&tid=${uid}&k=${userKey}",
+    chat:"/get_msg.php?callback=?&st=3m&i=${uid}&fid=${user_id}&tid=${uid}&k=${userKey}",
     sysNotice:"/get_msg.php?callback=?&st=&i=${uid}&fid=1&tid=${uid}&k=${userKey}",
     newGuest:"/see.php?type=1&uid=${uid}",
     likeMe:"/admire.php?type=0&uid=${uid}",
@@ -385,10 +385,6 @@ var Feed={
     getUrl:function(){
         var that=this;
         var feedUrl=Tools.compileUrl(pageFeedUrl[that.page]);
-
-        if(['hisPhoto','hisList'].has(that.page)){
-            feedUrl=pageFeedUrl[that.page].replace(/uid=[\d+]?$/,'uid='+hisInfo.curId);
-        }
 
         if('mainPhoto'==that.page&&StorMgr.gpsInfo){//附近的人加入经纬度
             feedUrl+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];

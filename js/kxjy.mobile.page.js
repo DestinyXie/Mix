@@ -8,6 +8,12 @@ var headerBack='<!--header开始-->\
             <div class="ulim">返回</div>\
             </div>',
     headerCancel=headerBack.replace('返回','取消'),
+    headerSearch='<!--header开始-->\
+    <div id="header" class="uh">\
+        <div class="kxjy-hd">\
+            <div _click="actionSheet.show(\'search\')" class="btn btn-l kxjy-btn ub ub-ac ">\
+                <span class="header-ico hd-search"></span>\
+            </div>',
     photoContTmpl='<!--content开始-->\
     <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
     <div id="wrapper" class="bg">\
@@ -46,9 +52,9 @@ var headerBack='<!--header开始-->\
     <!--content结束-->',
     commentTmpl='<!-- 输入 -->\
     <div class="enter ub ub-ac">\
-        <div class="enterMood" _click="Comment.switchMoodBox(this)"><img src="${siteurl}/template/mobile/css/images/f_1.png" alt="心情" /></div>\
-        <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="评论内容..." _click="Comment.focusInput(this)"></div>\
-        <div class="enterButton btnBg" _click="Comment.sendComment(function(){Feed.refresh();});">发表评论</div>\
+    <div class="enterMood" _click="Comment.switchMoodBox(this)"><img src="${siteurl}/template/mobile/css/images/f_1.png" alt="心情" /></div>\
+    <div class="enterInput btnBg ub-f1 uinput" id="enterInput"><input type="text" placeholder="评论内容..." _click="Comment.focusInput(this)"></div>\
+    <div class="enterButton btnBg" _click="Comment.sendComment(function(){Feed.refresh();});">发表评论</div>\
     </div>\
     <!-- 输入结束-->',
     commentListTmpl='<!--content开始-->\
@@ -87,12 +93,7 @@ var contentTmpl={
     <div class="qqLogin">\
         <span>用QQ帐号登录</span>\
     </div>',
-'mainPhoto':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="actionSheet.show(\'search\')" class="btn btn-l kxjy-btn ub ub-ac ">\
-                <span class="header-ico hd-search"></span>\
-            </div>\
+'mainPhoto':'${headerSearch}\
             <h1 class="ut ulev0 ut-s tx-c">附近的人</h1>\
             <div _click="ViewMgr.goto(\'mainList\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">动态<span class="header-ico hd-list"></span></div>\
@@ -101,12 +102,7 @@ var contentTmpl={
     </div>\
     <!--header结束-->\
     ${photoContTmpl}',
-'mainList':'<!--header开始-->\
-    <div id="header" class="uh">\
-        <div class="kxjy-hd">\
-            <div _click="actionSheet.show(\'search\')" class="btn btn-l kxjy-btn ub ub-ac ">\
-                <span class="header-ico hd-search"></span>\
-            </div>\
+'mainList':'${headerSearch}\
             <h1 class="ut ulev0 ut-s tx-c">附近动态</h1>\
             <div _click="ViewMgr.goto(\'mainPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">头像<span class="header-ico hd-photo"></span></div>\
@@ -985,36 +981,23 @@ var contentTmpl={
 var footerTmple={
 'mainFooter':'<!--footer开始-->\
     <div id="footer" class="uf c-m2 c-bla t-wh">\
-        <!--iPhone导航条开始-->\
         <div class="ub c-bla c-m12 t-wh footer">\
-        <input class="uhide" ${1} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("mainPhoto");\' class="ub-f1 ub ub-ver "><div class="ub-f1 ub-img5 tp-info"></div><div class="uinn ulev-2 tx-c">交友广场</div></div>\
-        <input class="uhide" ${2} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("myPhoto");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-home"></div><div class="uinn ulev-2 tx-c">我的主页</div></div>\
-        <input class="uhide" ${3} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("showMood");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-set"></div><div class="uinn ulev-2 tx-c">秀心情</div></div>\
-        <input class="uhide" ${4} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("infoCenter");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-shop"></div><div class="uinn ulev-2 tx-c">信息中心</div></div>\
-        <input class="uhide" ${5} type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("more");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-talk"></div><div class="uinn ulev-2 tx-c">更多</div></div>\
+        <div _click=\'ViewMgr.goto("mainPhoto");\' class="${1} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-info"></div><div class="uinn ulev-2 tx-c">交友广场</div></div>\
+        <div _click=\'ViewMgr.goto("myPhoto");\' class="${2} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-home"></div><div class="uinn ulev-2 tx-c">我的主页</div></div>\
+        <div _click=\'ViewMgr.goto("showMood");\' class="${3} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-set"></div><div class="uinn ulev-2 tx-c">秀心情</div></div>\
+        <div _click=\'ViewMgr.goto("infoCenter");\' class="${4} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-shop"></div><div class="uinn ulev-2 tx-c">信息中心</div></div>\
+        <div _click=\'ViewMgr.goto("more");\' class="${5} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-talk"></div><div class="uinn ulev-2 tx-c">更多</div></div>\
         </div>\
-        <!--iPhone导航条结束-->\
     </div>\
     <!--footer结束-->',
 'hisFooter':'<!--footer开始-->\
     <div id="footer" class="uf c-m2 c-bla t-wh">\
-        <!--iPhone导航条开始-->\
         <div class="ub c-bla c-m12 t-wh footer">\
-        <input class="uhide" ${love} type="radio" name="tabSwitch">\
         <div id="footer-love" _click=\'UserAction.loveData("people",this);\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-love"></div><div class="uinn ulev-2 tx-c">喜欢</div></div>\
-        <input class="uhide" type="radio" name="tabSwitch">\
-        <div _click=\'ViewMgr.goto("chat","st=3m&fid="+Tools.getParamVal("user_id")+"&user_id="+Tools.getParamVal("user_id"));\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-commnet"></div><div class="uinn ulev-2 tx-c">发私信</div></div>\
-        <input class="uhide" type="radio" name="tabSwitch">\
+        <div _click=\'ViewMgr.goto("chat");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-commnet"></div><div class="uinn ulev-2 tx-c">发私信</div></div>\
         <div _click=\'UserAction.sendFlower("people",this);\' class="ub-f1 ub ub-ver disable"><div class="ub-f1 ub-img5 tp-flower"></div><div class="uinn ulev-2 tx-c">送鲜花</div></div>\
-        <input class="uhide" ${shield} type="radio" name="tabSwitch">\
         <div id="footer-shield" _click=\'UserAction.shieldPerson("people",this);\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-blacklist"></div><div class="uinn ulev-2 tx-c">屏蔽</div></div>\
         </div>\
-        <!--iPhone导航条结束-->\
     </div>\
     <!--footer结束-->'
 };
@@ -1043,17 +1026,11 @@ var pageConfig={
 'mainList':['mainFooter',1,true,true],
 'myPhoto':['mainFooter',2,true,true,function(){
     //取得心情总数
-    UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+StorMgr.uid+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
-        try{$("#titleMenu-mood span").innerHTML=num+"<br/>心情";}catch(e){}
-        
-    });
+    UserAction.getPicMood(pageEngine.curPage);
 }],
 'myList':['mainFooter',2,true,true,function(){
-    //取得照片总数
-    UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+StorMgr.uid+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
-        try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
-        
-    });
+    //取得心情总数
+    UserAction.getPicMood(pageEngine.curPage);
 }],
 'editInfo':['mainFooter',2,true,true,function(){
     Tools.initSelect('#marrySel','marry');
@@ -1064,23 +1041,19 @@ var pageConfig={
 'hisPhoto':['hisFooter',false,false,true,function(){
     hisInfo.init();
     //取得心情总数
-    UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=2&pagecount=1&uid="+hisInfo.curId+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
-        try{$("#titleMenu-mood span").innerHTML=num+"<br/>心情";}catch(e){}
-    });
+    UserAction.getPicMood(pageEngine.curPage);
 }],
 'hisList':['hisFooter',false,false,true,function(){
     hisInfo.init();
-    //取得照片总数
-    UserAction.getMoodNum(StorMgr.siteUrl+"/weibo.php?action=weibolist&mbweibotype=1&type=1&pagecount=1&uid="+hisInfo.curId+"&sid="+StorMgr.sid+"&page=1&ajax=1",function(num){
-        try{$('#titleMenu-pic span').innerHTML=num+"<br/>照片";}catch(e){}
-    });
+    //取得心情总数
+    UserAction.getPicMood(pageEngine.curPage);
 }],
 'hisDetail':[false,false,false,true],
 'showMood':['mainFooter',3,true,true,function(){
     //计算TextArea的高度
-    var moodIpt=$('.showMoodTextarea'),
-        cont=$('#content'),
+    var cont=$('#content'),
         foot=$('#footer'),
+        moodIpt=$('.showMoodTextarea'),
         moodPlus=$('.showMoodPlus'),
         moodIcon=$('.showMoodList');
     function setMoodH(){
@@ -1230,6 +1203,7 @@ PageEngine.prototype={
         var retStr=tmplStr;
         retStr=retStr.replace(/\$\{headerCancel\}/,headerCancel);
         retStr=retStr.replace(/\$\{headerBack\}/,headerBack);
+        retStr=retStr.replace(/\$\{headerSearch\}/,headerSearch);
         retStr=retStr.replace(/\$\{photoContTmpl\}/,photoContTmpl);
         retStr=retStr.replace(/\$\{moodContTmpl\}/,moodContTmpl);
         retStr=retStr.replace(/\$\{commentTmpl\}/,commentTmpl);
@@ -1251,18 +1225,24 @@ PageEngine.prototype={
         if(ftFocus){
             var fReg=new RegExp('\\$\\{'+ftFocus+'\\}','g'),
                 aReg=new RegExp('\\$\\{\\d+\\}','g');
-            ftStr=ftStr.replace(fReg,'checked="checked"');
+            ftStr=ftStr.replace(fReg,'select');
             ftStr=ftStr.replace(aReg,'');
         }
 
         return htmlStr+ftStr;
     },
     cancelPrePage:function(){//撤销前一个页面相关
-        if('chat'==this.curPage){//撤销私信轮询
-            ChatFeed.destory();
-        }
-        if(['login','users'].has(this.curPage)){
-            WIN.scrollTo(0,0);
+        switch(this.curPage){
+            case 'chat'://撤销私信轮询
+                ChatFeed.destory();
+                break;
+            case 'login':
+            case 'users':
+                WIN.scrollTo(0,0);
+                break;
+            case 'infoCenter':
+                InfoCenter.clear(that.name);
+                break;
         }
         Page.destory();//撤销页面载入
         UserAction.stop();//撤销用户动作
@@ -1310,7 +1290,6 @@ PageEngine.prototype={
         if(['myPhoto','myList','editInfo','myDetail','hisPhoto','hisList','hisDetail'].has(page)){
             Page.init(page);
         }
-        
 
         that.initIScrollAndFeed();
     },

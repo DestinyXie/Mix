@@ -365,6 +365,22 @@ var Tools={
         Tools.sidUidParam=null;
         StorMgr.destory();
     },
+    sameObj:function(obj1,obj2,except){//比较两个对象是否一样,除了except数组中的属性
+        if(JSON.stringify(obj1).length!=JSON.stringify(obj2).length){
+            return false;
+        }
+        for(var k in obj1){
+            if(obj1.hasOwnProperty(k)){
+                if(JSON.stringify(obj1[k])!=JSON.stringify(obj2[k])){
+                    if(except&&except.has(k)){
+                        continue;
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
     /*计算直角边*/
     calculPy:function(l,w){
         return Math.pow(Math.pow(l, 2) + Math.pow(w, 2), .5);
@@ -389,15 +405,14 @@ var Tools={
         var value="",
             params=ViewMgr.tmpParams.split('&');
 
-        if(0===params.length)
-            return "";
-
-        $.each(params,function(pa){
-            var rg=new RegExp(paramKey+"=(.*)");
-            if(rg.test(pa)){
-                value=rg.exec(pa)[1];
-            }
-        });
+        if(0!=params.length){
+            $.each(params,function(pa){
+                var rg=new RegExp(paramKey+"=(.*)");
+                if(rg.test(pa)){
+                    value=rg.exec(pa)[1];
+                }
+            });
+        }
 
         //多次跳转页面会丢失ViewMgr.tmpParams中user_id参数
         if('user_id'==paramKey&&""==value)
