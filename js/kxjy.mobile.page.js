@@ -1091,10 +1091,6 @@ var pageConfig={
         }
         setMoodH();
     }
-
-    DOM.addEvent($("#mood"),"keypress",function(e){
-        e.event.stopPropagation();
-    });
 }],
 'infoCenter':['mainFooter',4,true,true],
 'chatList':['mainFooter',4,true,true],
@@ -1241,14 +1237,14 @@ PageEngine.prototype={
                 WIN.scrollTo(0,0);
                 break;
             case 'infoCenter':
-                InfoCenter.clear(that.name);
+                InfoCenter.clear(that.name);//清除信息中心的提示数量
                 break;
         }
         Page.destory();//撤销页面载入
         UserAction.stop();//撤销用户动作
         Tips.destory();//Tips
         Comment.destory();//撤销评论对象
-        Device.destory();
+        Device.destory();//撤销如上传等手机正在执行的动作
     },
     initPage:function(page){
         this.cancelPrePage();
@@ -1419,7 +1415,6 @@ PageEngine.prototype={
                 feedOption['cont']=$('.chatList');
                 feedOption['noDataTxt']="暂无数据,请返回";
                 Feed.init(feedOption);
-                InfoCenter.clear(that.curPage);
                 break;
             case "chat":
                 WIN['myScroll']=initIScroll($('.pullDown'),'wrapper',function(){

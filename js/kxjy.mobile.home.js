@@ -379,7 +379,9 @@ var hisInfo={
     }
 }
 
-/*页面内容管理*/
+/*页面内容管理
+* 'myPhoto','myList','editInfo','myDetail','hisPhoto','hisList','hisDetail'使用
+*/
 var Page={
     init:function(name){
         this.destory();
@@ -393,9 +395,6 @@ var Page={
         }
     },
     dataUrlObj:{
-        myPhoto:'/do.php?action=getUserInfo&sid=${sid}&user_id=${uid}',
-        myList:'/do.php?action=getUserInfo&sid=${sid}&user_id=${uid}',
-        editInfo:'/do.php?action=getUserInfo&sid=${sid}&user_id=${uid}',
         myDetail:'/mood.php?ajax=1&wid=${wid}&sid=${sid}',
         hisPhoto:'/profile.php?ajax=1&sid=${sid}&user_id=${user_id}',
         hisList:'/profile.php?ajax=1&sid=${sid}&user_id=${user_id}',
@@ -412,7 +411,7 @@ var Page={
     fullFillInfo:function(){
         var that=this;
         if(!that.name||!that.userData){
-            toast("页面信息不充分，无法载入资料",2);
+            // toast("页面信息不充分，无法载入资料",2);
             return;
         }
         if('editInfo'==that.name){
@@ -694,44 +693,44 @@ var Page={
         }
 
         if(!that.name||!that.userData){
-            toast("页面信息不充分，无法载入资料");
-        }else{
-            if(that.loadedMore){
-                if(DOM.hasClass(infoUl,'showMore')){
-                    DOM.dropClass(infoUl,'showMore');
-                    moreBtn.innerHTML="更多资料";
-                }else{
-                    DOM.addClass(infoUl,'showMore');
-                    moreBtn.innerHTML="收起更多";
-                }
-                return;
-            }
-
-            var data=that.userData;
-
-            dataArray.blood[data.blood-1]&&insertLi("血型:"+dataArray.blood[data.blood-1]);
-            dataArray.ethnic[data.ethnic-1]&&insertLi("民族:"+dataArray.ethnic[data.ethnic-1]);
-            (data.tall&&data.tall!="0")&&insertLi("身高:"+data.tall+"cm");
-            (data.birth_province||data.birth_city)&&insertLi("籍贯:"+data.birth_province+" "+data.birth_city);
-            (data.weight&&data.weight!="0")&&insertLi("体重:"+data.weight+"kg");
-
-            //个性
-            if(data.personality.length>0){
-                var persStr=[];
-                $.each(data.personality,function(o,i){
-                    persStr.push(dataArray.personality[o-1]);
-                });
-                insertLi("个性:"+persStr.join(","));
-            }
-            DOM.addClass(infoUl,'showMore');
-            moreBtn.innerHTML="收起更多";
-            that.loadedMore=true;
+            // toast("页面信息不充分，无法载入资料");
+            return;
         }
+
+        if(that.loadedMore){
+            if(DOM.hasClass(infoUl,'showMore')){
+                DOM.dropClass(infoUl,'showMore');
+                moreBtn.innerHTML="更多资料";
+            }else{
+                DOM.addClass(infoUl,'showMore');
+                moreBtn.innerHTML="收起更多";
+            }
+            return;
+        }
+
+        var data=that.userData;
+
+        dataArray.blood[data.blood-1]&&insertLi("血型:"+dataArray.blood[data.blood-1]);
+        dataArray.ethnic[data.ethnic-1]&&insertLi("民族:"+dataArray.ethnic[data.ethnic-1]);
+        (data.tall&&data.tall!="0")&&insertLi("身高:"+data.tall+"cm");
+        (data.birth_province||data.birth_city)&&insertLi("籍贯:"+data.birth_province+" "+data.birth_city);
+        (data.weight&&data.weight!="0")&&insertLi("体重:"+data.weight+"kg");
+
+        //个性
+        if(data.personality.length>0){
+            var persStr=[];
+            $.each(data.personality,function(o,i){
+                persStr.push(dataArray.personality[o-1]);
+            });
+            insertLi("个性:"+persStr.join(","));
+        }
+        DOM.addClass(infoUl,'showMore');
+        moreBtn.innerHTML="收起更多";
+        that.loadedMore=true;
     },
     getUserData:function(){
-        var that=this;
-        var dataUrl=StorMgr.siteUrl+Tools.compileUrl(that.dataUrlObj[that.name]),
-            params=that.params,
+        var that=this,
+            dataUrl,
             secCb=function(a){
                 if(a.error){toast(a.error,3);
                     return;
@@ -753,9 +752,7 @@ var Page={
                 }
                 that.fullFillInfo();
             },
-            errCb=function(){
-                // toast('connect error');
-            };
+            errCb=function(){};
 
         that.userData=null;
 
@@ -769,7 +766,8 @@ var Page={
                 }
             },true);
         }else{
-            that.dataXhr=UserAction.sendAction(dataUrl,params|"","get",secCb,errCb);
+            dataUrl=StorMgr.siteUrl+Tools.compileUrl(that.dataUrlObj[that.name]);
+            that.dataXhr=UserAction.sendAction(dataUrl,"","get",secCb,errCb);
         }
 
         if(['hisPhoto','hisList'].has(that.name)){

@@ -37,7 +37,7 @@ function initIScroll(pullDownEl,wrapperID,downAction) {
             if ($('.pullDownLabel',pullDownEl).innerHTML == '释放刷新页面...') {
                 DOM.addClass(pullDownEl,'loading');
                 pullDownEl.querySelector('.pullDownLabel').innerHTML = '载入中...';                
-                if(typeof downAction=="function"){
+                if($.isFunc(downAction)){
                     downAction();
                 }else{
                     pullDownAction();
@@ -63,7 +63,7 @@ function initDockScroll(dockSel,wrapperID,listEl){
         if(calculing)
             return;
         calculing=true;
-        if(calculTime>10){
+        if(calculTime>3){
             clearInterval(calculInter);
             calculTime=0;
         }else{
@@ -112,7 +112,7 @@ function initDockScroll(dockSel,wrapperID,listEl){
                 calculPos();
                 clearInterval(calculInter);
                 calculTime=0;
-                calculInter=setInterval(calculPos,300);
+                calculInter=setInterval(calculPos,500);
             }
         },
         onScrollEnd: function () {
