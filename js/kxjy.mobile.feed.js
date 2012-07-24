@@ -370,6 +370,60 @@ var Feed={
     sendRequest:function(dataUrl,params){
         var that=this,
             secCb=function(a) {
+                if(that.isRefresh){
+                    var strData=JSON.stringify(a);
+                    switch(that.page){//缓存数据
+                        case 'mainPhoto':
+                            if(StorMgr.mainPhoto==strData){
+                                that.isRefresh=false;
+                                return;
+                            }else{
+                                StorMgr.mainPhoto=strData;
+                            }
+                            break;
+                        case 'mainList':
+                            if(StorMgr.mainMood==strData){
+                                that.isRefresh=false;
+                                return;
+                            }else{
+                                StorMgr.mainMood=strData;
+                            }
+                            break;
+                        case 'myPhoto':
+                            if(StorMgr.myPhoto==strData){
+                                that.isRefresh=false;
+                                return;
+                            }else{
+                                StorMgr.myPhoto=strData;
+                            }
+                            break;
+                        case 'myList':
+                            if(StorMgr.myMood==strData){
+                                that.isRefresh=false;
+                                return;
+                            }else{
+                                StorMgr.myMood=strData;
+                            }
+                            break;
+                        case 'hisPhoto':
+                            if(hisInfo.storPics[hisInfo.curId]==strData){
+                                that.isRefresh=false;
+                                return;
+                            }else{
+                                hisInfo.storPics[hisInfo.curId]=strData;
+                            }
+                            break;
+                        case 'hisList':
+                            if(hisInfo.storMoods[hisInfo.curId]==strData){
+                                that.isRefresh=false;
+                                return;
+                            }else{
+                                hisInfo.storMoods[hisInfo.curId]=strData;
+                            }
+                            break;
+                    }
+                }
+
                 that.loadMoreSecc(a);
             },
             errCb=function(m){
@@ -380,6 +434,36 @@ var Feed={
                 }
                 that.reset();
             };
+        
+        //取缓存数据
+        if(that.isRefresh){
+            var cacheDate=null;
+            switch(that.page){
+                case 'mainPhoto':
+                    cacheDate=StorMgr.mainPhoto;
+                    break;
+                case 'mainList':
+                    cacheDate=StorMgr.mainMood;
+                    break;
+                case 'myPhoto':
+                    cacheDate=StorMgr.myPhoto;
+                    break;
+                case 'myList':
+                    cacheDate=StorMgr.myMood;
+                    break;
+                case 'hisPhoto':
+                    cacheDate=hisInfo.storPics[hisInfo.curId];
+                    break;
+                case 'hisList':
+                    cacheDate=hisInfo.storMoods[hisInfo.curId];
+                    break;
+            }
+            if(cacheDate){
+                that.loadMoreSecc(JSON.parse(cacheDate));
+                that.isRefresh=true;
+            }
+        }
+
         that.loadXhr=UserAction.sendAction(dataUrl,params,"get",secCb,errCb);
     },
     getUrl:function(){
@@ -645,7 +729,7 @@ var Feed={
                             }
                             break;
                         case "address":
-                            if(o.reside_city||o.reside_provice){
+                            if(o.reside_city||o.reside_province){
                                 return [o.reside_province||"",o.reside_city||""].join(" ");
                             }else{
                                 return "地区不详";
@@ -1050,7 +1134,7 @@ var Comment={
             msg=that.transMotion(that.commTxt);
 
         if(type&&type=="chat"){
-            sendUrl="/send_msg.php?callback=?&sid="+StorMgr.sid+"&fid="+StorMgr.uid+"&tid="+Tools.getParamVal('fid')+"&msg="+encodeURIComponent(msg)+"&i="+StorMgr.uid+"&k="+StorMgr.userKey;
+            sendUrl="/send_msg.php?callback=?&sid="+StorMgr.sid+"&fid="+StorMgr.uid+"&tid="+Tools.getParamVal('user_id')+"&msg="+encodeURIComponent(msg)+"&i="+StorMgr.uid+"&k="+StorMgr.userKey;
 
             var nd=new Date(),
                 ndS=nd.getFullYear()+"-"+(nd.getMonth()+1)+"-"+nd.getDate()+" "+nd.toLocaleTimeString();

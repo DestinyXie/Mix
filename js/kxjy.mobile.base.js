@@ -720,9 +720,9 @@ var Tools={
         StorMgr.gpsInfo=Tools.storage.get("kxjy_my_gpsInfo");
         function parseAddr(addr){
             var prov,city,addrArr,
-                provReg=/([\u4E00-\u9FA3]{2,})省/,
-                cityReg=/([\u4E00-\u9FA3]{2,})市/,
-                areaReg=/([\u4E00-\u9FA3]{2,})区/;
+                provReg=/([\u4E00-\u56FC\u56FE-\u9FA3]{2,})省/,
+                cityReg=/([\u4E00-\u56FC\u56FE-\u7700\u7702-\u9FA3]{2,})市/,
+                areaReg=/([\u4E00-\u5E01\u5e03-\u9FA3]{2,})区/;
             if(/北京|上海|重庆|天津/.test(addr)){
                 prov=cityReg.exec(addr)[1];
                 city=areaReg.exec(addr)[1];

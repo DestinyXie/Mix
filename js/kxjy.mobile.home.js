@@ -76,13 +76,18 @@ var ViewMgr={
         clearTimeout(that.getDataInter);
     },
     goto:function(page,params){
+        var isBack=false;
         this.stopGetData();
         page=page.replace("\.html","");
         var viewLen=this.views.length;
         if(this.checkLast(page)){
+            if(/Photo/.test(page)){
+                isBack=true;
+            }
             this.views[viewLen-1]=page;
         }else if(this.views[viewLen-2]==page){//back
             this.views.pop(1);
+            isBack=true;
         }else{
             if(viewLen>=this.recordLen)
                 this.views.shift(1);
@@ -99,14 +104,18 @@ var ViewMgr={
             }
         }catch(e){}
 
-        this.setUrl(page,params);
+        this.setUrl(page,params,isBack);
     },
     /*切换页面*/
-    setUrl:function(url,params){
+    setUrl:function(url,params,back){
         if(!!params)
             ViewMgr.tmpParams=params;
 
-        pageEngine.initPage(url);
+        if(back){
+            pageEngine.initPage(url,'right');    
+        }else{
+            pageEngine.initPage(url);    
+        }
     },
     back:function(){//返回上一个历史页面
         this.stopGetData();
@@ -229,8 +238,16 @@ var StorMgr={
     myInfo:null,
     infoCenter:null,
     gpsInfo:null,
+    myPic:null,//缓存我的照片
+    myMood:null,//缓存我的心情
+    mainPhoto:null,//缓存附近照片
+    mainMood:null,//缓存附近动态
     destory:function(){
         this.myInfo=null;
+        this.myPhoto=null;
+        this.myMood=null;
+        this.mainPhoto=null;
+        this.mainMood=null;
         this.infoCenter=null;
         this.myTodayExp=null;
     },
@@ -350,6 +367,8 @@ var hisInfo={
     maxLength:5,//最多缓存人数
     storIDs:[],
     storInfos:{},
+    storPics:{},
+    storMoods:{},
     init:function(){
         var that=this,
             storId=Tools.storage.get("kxjy_his_storId");
@@ -364,18 +383,22 @@ var hisInfo={
         return retObj;
     },
     set:function(id,data){
+        var that=this;
         Tools.storage.set("kxjy_his_info_"+id,data);
-        this.storInfos[id]=data;
+        that.storInfos[id]=data;
 
-        var popId=this.storIDs[this.storIDs.length-1];
-        if(this.storIDs.length>this.maxLength&&popId!=id){
-            this.storIDs.pop(1);
+        var popId=that.storIDs[that.storIDs.length-1];
+        if(that.storIDs.length>that.maxLength&&popId!=id){
+            that.storIDs.pop(1);
             Tools.storage.remove("kxjy_his_info_"+popId);
+            delete that.storInfos[that.curId];
+            delete hisInfo.storPics[that.curId];
+            delete hisInfo.storMoods[that.curId];
         }
 
-        this.storIDs.remove(id);
-        this.storIDs.unshift(id);
-        Tools.storage.set("kxjy_his_storId",this.storIDs);
+        that.storIDs.remove(id);
+        that.storIDs.unshift(id);
+        Tools.storage.set("kxjy_his_storId",that.storIDs);
     }
 }
 
@@ -771,11 +794,13 @@ var Page={
         }
 
         if(['hisPhoto','hisList'].has(that.name)){
+            hisInfo.init();
             that.userData=hisInfo.get(hisInfo.curId);
         }
         if(!!that.userData){
             that.fullFillInfo();
         }
+        UserAction.getPicMood(pageEngine.curPage);
     },
     setDataNum:function(){
         var that=this;
@@ -1147,7 +1172,7 @@ var UserAction={
             return;
         }
         var checkUrl=StorMgr.siteUrl+"/userLogin.php",
-            params='email='+mail+'&password='+pwd,
+            params='email='+encodeURIComponent(mail)+'&password='+encodeURIComponent(pwd),
             secCb=function(a) {
                 if(a.msg){
                     toast(a.msg);
@@ -1205,11 +1230,11 @@ var UserAction={
             return;
         }
         var sex=$("#regSex").value,
-            email=$("#regEmail"),
-            nickname=$("#regNickName"),
-            password=$("#regPwd"),
-            passwordR=$("#regPwdR"),
-            imgcode=$("#regVeri"),
+            email=$("#regEmail").value,
+            nickname=$("#regNickName").value,
+            password=$("#regPwd").value,
+            passwordR=$("#regPwdR").value,
+            imgcode=$("#regVeri").value,
             url=StorMgr.siteUrl+"/register.php?sid="+StorMgr.sid,
             secCb=function(a){
                 if(1==a.error){
@@ -1221,7 +1246,7 @@ var UserAction={
                 toast('注册成功,将自动登陆',0.6);
                 setTimeout(function(){
                     UserAction.sendingRegist=false;
-                    UserAction.sendLogin(email.value,password.value);
+                    UserAction.sendLogin(email,password);
                 },500);
             },errCb=function(a){
                 if(1==a.error){
@@ -1233,34 +1258,38 @@ var UserAction={
             };
 
         function checkReg(){
-            if(0==email.value.length){
+            if(0==email.length){
                 throw {msg:'请输入您的邮箱地址'};
             }
-            if(!regExpObj['email'].test(email.value)){
+            if(!regExpObj['email'].test(email)){
                 throw {msg:'邮箱地址有误'};
             }
-            if(0==nickname.value.length){
+            if(0==nickname.length){
                 throw {msg:'请输入您的昵称'};
             }
-            if(nickname.value.chineseLen()>6){
+            if(nickname.chineseLen()>6){
                 throw {msg:'昵称超过指定长度'};
             }
-            if(0==password.value.trim().length){
+            if(0==password.trim().length){
                 throw {msg:'请输入您的密码'};
             }
-            if(password.value!=passwordR.value){
+            if(password!=passwordR){
                 throw {msg:'两次密码不一致'};
             }
-            if(0==imgcode.value){
+            if(0==imgcode){
                 throw {msg:'请输入验证码'};
             }
-            if(4!=imgcode.value.length){
+            if(4!=imgcode.length){
                 throw {msg:'验证码有误'};
             }
         }
         try{
             checkReg();
-            url+="&sex="+sex+"&email="+email.value+"&nickname="+nickname.value+"&password="+password.value+"&imgcode="+imgcode.value;
+            var emailVal=encodeURIComponent(email),
+                nickVal=encodeURIComponent(nickname),
+                pwdVal=encodeURIComponent(password),
+                imgVal=encodeURIComponent(imgcode);
+            url+="&sex="+sex+"&email="+emailVal+"&nickname="+nickVal+"&password="+pwdVal+"&imgcode="+imgVal;
             if(StorMgr.gpsInfo){//加入经纬度
                 url+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];
             }
@@ -1273,7 +1302,7 @@ var UserAction={
     /*验证密码*/
     checkPassword:function(psw,ok,err){
         var checkUrl=StorMgr.siteUrl+"/userLogin.php",
-            params='email='+StorMgr.myInfo.email+'&password='+psw,
+            params='email='+encodeURIComponent(StorMgr.myInfo.email)+'&password='+encodeURIComponent(psw),
             secCb=function(a) {
                 if(a.msg){
                     err(a.msg);
@@ -1309,7 +1338,7 @@ var UserAction={
             return;
         }
         var setUrl=StorMgr.siteUrl+"/do.php?action=account_setting&sid="+StorMgr.sid,
-            params='password='+nVal,
+            params='password='+encodeURIComponent(nVal),
             secCb=function(a){
                 if(a.error)
                     toast(a.error)
@@ -1346,23 +1375,60 @@ var UserAction={
             sendModiPwd();
         }
     },
-    /*取得mood或picture*/
+    /*取得mood或picture
+    * 'myPhoto','myList','hisPhoto','hisList'
+    */
     getPicMood:function(page){
+        if(!['myPhoto','myList','hisPhoto','hisList'].has(page)){
+            return;
+        }
         var picUrl=Tools.compileUrl(pageFeedUrl[page].replace(/&type=\d+/,'&type=1')),
             moodUrl=Tools.compileUrl(pageFeedUrl[page].replace(/&type=\d+/,'&type=2')),
             sendUrl,
             secCb=function(a){
+                if('myList'==page){
+                    StorMgr.myPhoto=JSON.stringify(a);
+                }
+                if('hisList'==page){
+                    hisInfo.storPics[hisInfo.curId]=JSON.stringify(a);
+                }
                 try{$('#titleMenu-pic span').innerHTML=a.datacount+"<br/>照片";}catch(e){}
             };
-        if(!/Photo/.test(page)){
+        if(/List/.test(page)){
             sendUrl=StorMgr.siteUrl+picUrl;
         }else{
             sendUrl=StorMgr.siteUrl+moodUrl;
             secCb=function(a){
+                if('myPhoto'==page){
+                    StorMgr.myMood=JSON.stringify(a);
+                }
+                if('hisPhoto'==page){
+                    hisInfo.storMoods[hisInfo.curId]=JSON.stringify(a);
+                }
                 try{$("#titleMenu-mood span").innerHTML=a.datacount+"<br/>心情";}catch(e){}
             }
         }
-        sendUrl=sendUrl.replace(/&pagecount=\d+/,'&pagecount=1');
+        
+        var cacheData=null;
+        switch(page){
+            case 'myPhoto':
+                cacheData=StorMgr.myMood;
+                break;
+            case 'myList':
+                cacheData=StorMgr.myPhoto;
+                break;
+            case 'hisPhoto':
+                cacheData=hisInfo.storMoods[hisInfo.curId];
+                break;
+            case 'hisList':
+                cacheData=hisInfo.storPics[hisInfo.curId];
+                break;
+        }
+        if(cacheData){
+            secCb(JSON.parse(cacheData));
+            return;
+        }
+
         UserAction.sendAction(sendUrl,"","get",secCb,null);
     },
     /*重置密码*/

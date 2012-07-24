@@ -128,7 +128,7 @@ var contentTmpl={
     <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
     <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
-    <div class="ub-f1 tx-l t-bla ub-img6 mainPhoto">\
+    <div class="ub-f1 tx-l t-bla ub-img6">\
         <div class="myTitle clearfix">\
             <div class="myTitleAvatar fl"></div>\
             <div class="myTitle-r">\
@@ -183,7 +183,7 @@ var contentTmpl={
     <!--header结束-->\
     <!--content开始-->\
     <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
+    <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
     <div class="dockScroll" id="feedCont">\
@@ -401,7 +401,7 @@ var contentTmpl={
     <!--header结束-->\
     <!--content开始-->\
     <div id="content" class="ub-f1 tx-l t-bla ub-img6">\
-    <div id="wrapper" class="bg">\
+    <div id="wrapper" class="fixWrapperLeft bg">\
     <div>\
     <!--网格开始-->\
     <div class="dockScroll" id="feedCont">\
@@ -1024,30 +1024,16 @@ var pageConfig={
 }],
 'mainPhoto':['mainFooter',1,true,true],
 'mainList':['mainFooter',1,true,true],
-'myPhoto':['mainFooter',2,true,true,function(){
-    //取得心情总数
-    UserAction.getPicMood(pageEngine.curPage);
-}],
-'myList':['mainFooter',2,true,true,function(){
-    //取得心情总数
-    UserAction.getPicMood(pageEngine.curPage);
-}],
+'myPhoto':['mainFooter',2,true,true],
+'myList':['mainFooter',2,true,true],
 'editInfo':['mainFooter',2,true,true,function(){
     Tools.initSelect('#marrySel','marry');
     Tools.initSelect('#targetSel','target');
     Tools.initSelect('#interestSel','interest',true);
 }],
 'myDetail':[false,false,false,true],
-'hisPhoto':['hisFooter',false,false,true,function(){
-    hisInfo.init();
-    //取得心情总数
-    UserAction.getPicMood(pageEngine.curPage);
-}],
-'hisList':['hisFooter',false,false,true,function(){
-    hisInfo.init();
-    //取得心情总数
-    UserAction.getPicMood(pageEngine.curPage);
-}],
+'hisPhoto':['hisFooter',false,false,true],
+'hisList':['hisFooter',false,false,true],
 'hisDetail':[false,false,false,true],
 'showMood':['mainFooter',3,true,true,function(){
     //计算TextArea的高度
@@ -1155,7 +1141,9 @@ var pageConfig={
 'reset':[false,false,false,false],
 'users':[false,false,false,false,function(){
     UserAction.getVerify();
-    delete WIN['setSex'];
+    if(WIN['setSex']){
+        return;
+    }
     WIN['setSex']=function(node,val){
         if(DOM.hasClass(node,'usersActive'))
             return;
@@ -1173,9 +1161,10 @@ var PageEngine=function(options){
     var that=this;
     that.destory();
 
-    that.options={//缓存DOM节点 待实现
+    that.options={
         pageWrap:$('#pageWraper'),
-        cacheDomPage:['mainPhoto','myPhoto','showMood','editInfo','more']
+        cacheDomPage:['mainPhoto','myPhoto','showMood','editInfo','more'],//缓存DOM节点 待实现
+        animate:false//是否动画切换
     }
 
     extend(that.options,options);
@@ -1236,9 +1225,6 @@ PageEngine.prototype={
             case 'users':
                 WIN.scrollTo(0,0);
                 break;
-            case 'infoCenter':
-                InfoCenter.clear(that.name);//清除信息中心的提示数量
-                break;
         }
         Page.destory();//撤销页面载入
         UserAction.stop();//撤销用户动作
@@ -1246,19 +1232,62 @@ PageEngine.prototype={
         Comment.destory();//撤销评论对象
         Device.destory();//撤销如上传等手机正在执行的动作
     },
-    initPage:function(page){
-        this.cancelPrePage();
+    initPage:function(page,diret){
+        var that=this;
+        that.cancelPrePage();
 
-        if(page!=this.curPage){
-            this.prePage=this.curPage;
-            this.curPage=page;
+        if(page!=that.curPage){
+            that.prePage=that.curPage;
+            that.curPage=page;
         }
 
-        this.initUser();
-        var tmplStr=this.compileTmpl();
+        if('infoCenter'==that.prePage){
+            InfoCenter.clear(page);//清除信息中心的提示数量
+        }
+
+        that.initUser();
+        var tmplStr=that.compileTmpl(),
+            wrap=that.options.pageWrap;
+
+        if(that.options.animate&&that.prePage!=that.curPage){//是否使用动画
+            that.animate(diret,tmplStr);
+        }else{
+            wrap.innerHTML=tmplStr;
+            that.fireEvent();
+        }
+    },
+    animate:function(diret,tmplStr){//动画切换，暂不使用
+        if($('#fackWrap')){
+            BODY.removeChild($('#fackWrap'));
+        }
+        var that=this,
+            wrap=that.options.pageWrap,
+            prePage=wrap.cloneNode(true);
+        BODY.appendChild(prePage);
         
-        this.options.pageWrap.innerHTML=tmplStr;
-        this.fireEvent();
+        prePage.id="fackWrap";
+        wrap.innerHTML=tmplStr;
+        wrap.style.left=wrap.offsetWidth+"px";
+        that.fireEvent();
+        if('right'==diret){
+            wrap.style.left="-"+wrap.offsetWidth+"px";
+        }
+        BODY.style.webkitTransition="-webkit-transform 300ms";
+        setTimeout(function(){
+            if('right'==diret){
+                BODY.style.webkitTransform="translate3d("+wrap.offsetWidth+"px,0,0)";
+            }else{
+                BODY.style.webkitTransform="translate3d(-"+wrap.offsetWidth+"px,0,0)";
+            }
+        },0);
+
+        setTimeout(function(){
+            wrap.style.left="0";
+            BODY.style.webkitTransition="";
+            BODY.style.webkitTransform="translate3d(0,0,0)";
+            BODY.removeChild(prePage);
+            delete prePage;
+        },300);
     },
     fireEvent:function(){
         var that=this,
