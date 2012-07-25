@@ -1236,12 +1236,10 @@ PageEngine.prototype={
         var that=this;
         that.cancelPrePage();
 
-        if(page!=that.curPage){
-            that.prePage=that.curPage;
-            that.curPage=page;
-        }
+        that.prePage=that.curPage;
+        that.curPage=page;
 
-        if('infoCenter'==that.prePage){
+        if(page!=that.prePage&&'infoCenter'==that.prePage){
             InfoCenter.clear(page);//清除信息中心的提示数量
         }
 
@@ -1267,24 +1265,25 @@ PageEngine.prototype={
         
         prePage.id="fackWrap";
         wrap.innerHTML=tmplStr;
-        wrap.style.left=wrap.offsetWidth+"px";
-        that.fireEvent();
         if('right'==diret){
             wrap.style.left="-"+wrap.offsetWidth+"px";
+        }else{
+            wrap.style.left=wrap.offsetWidth+"px";
         }
+        that.fireEvent();
         BODY.style.webkitTransition="-webkit-transform 300ms";
         setTimeout(function(){
             if('right'==diret){
-                BODY.style.webkitTransform="translate3d("+wrap.offsetWidth+"px,0,0)";
+                BODY.style.webkitTransform="translateX("+wrap.offsetWidth+"px)";
             }else{
-                BODY.style.webkitTransform="translate3d(-"+wrap.offsetWidth+"px,0,0)";
+                BODY.style.webkitTransform="translateX(-"+wrap.offsetWidth+"px)";
             }
         },0);
-
+        // webkitRequestAnimationFrame(function(){console.log('animating')});
         setTimeout(function(){
             wrap.style.left="0";
             BODY.style.webkitTransition="";
-            BODY.style.webkitTransform="translate3d(0,0,0)";
+            BODY.style.webkitTransform="translateX(0)";
             BODY.removeChild(prePage);
             delete prePage;
         },300);

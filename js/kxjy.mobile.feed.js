@@ -987,7 +987,7 @@ var ChatFeed=extend({},Feed,{
         if(that.isRefresh){
             that.cont.innerHTML="";
         }
-        
+
         if(that.isRefresh&&(!data||data.length==0)){
             that.reset();
             return;
@@ -998,19 +998,23 @@ var ChatFeed=extend({},Feed,{
 
         if(that.ingterCount!=1){//st=3m和st=""会同时把最后一次私信内容取出来
             for (var i=0; i<len; i++) {
-                var item=DOM.create("div");
-                
-                item.innerHTML=that.compileTmpl(data[i],i);
-                
-                for(var j=0,chiLen=item.children.length;j<chiLen;j++){
-                    that.cont.appendChild(item.firstElementChild);
-                }
-                delete item;
+                that.addChatCont(data[i],i);
             }
         }
 
         that.reset();
-    }
+    },
+    addChatCont:function(data,i){//添加chat内容
+        var that=this,
+            item=DOM.create("div");
+        
+        item.innerHTML=that.compileTmpl(data,i);
+        
+        for(var j=0,chiLen=item.children.length;j<chiLen;j++){
+            that.cont.appendChild(item.firstElementChild);
+        }
+        delete item;
+    },
 });
 
 /*评论类*/
@@ -1118,7 +1122,7 @@ var Comment={
                 }
                 cb&&cb();
                 if(chatData){
-                    ChatFeed.fullFillFeed([chatData]);
+                    ChatFeed.addChatCont(chatData);
                 }else{
                     Page.refresh();
                     toast('发送成功！',2);    
