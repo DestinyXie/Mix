@@ -1123,6 +1123,8 @@ var Comment={
                 cb&&cb();
                 if(chatData){
                     ChatFeed.addChatCont(chatData);
+                    myScroll.refresh();
+                    myScroll.scrollTo(0,myScroll.maxScrollY,500);
                 }else{
                     Page.refresh();
                     toast('发送成功！',2);    
