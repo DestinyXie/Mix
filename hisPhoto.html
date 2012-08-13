@@ -35,7 +35,7 @@
 	    <div class="ulim">返回</div>
 	    </div>
 	    <h1 class="ut ulev0 ut-s tx-c" >&nbsp;</h1>
-	    <div _click="ViewMgr.goto('hisList.html')" class="btn btn-r kxjy-btn ub ub-ac ">
+	    <div _click="ViewMgr.gotoPage('hisList.html')" class="btn btn-r kxjy-btn ub ub-ac ">
 	    <div class="ulim ub ub-ac">心情<span class="header-ico hd-list"></span></div>
 	</div>
     </div>
@@ -57,10 +57,10 @@
                 <li class="ub-f1 active" id="titleMenu-pic">
                     <span>0<br />照片</span>
                 </li>
-                <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.goto('hisList.html')">
+                <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.gotoPage('hisList.html')">
                     <span>0<br />心情</span>
                 </li>
-                <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto('rank.html')">
+                <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.gotoPage('rank.html')">
                     <span><br />无排名</span>
                 </li>
                 <li class="ub-f1" id="titleMenu_more" _click="Page.showMore()">
@@ -92,7 +92,7 @@
 	
 	<div id="footer-love" _click='UserAction.loveData("people",this);' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-love"></div><div class="uinn ulev-2 tx-c">喜欢</div></div>
 	
-	<div _click='ViewMgr.goto("chat.html","st=3m&fid="+Tools.getParamVal("user_id")+"&user_id="+Tools.getParamVal("user_id"));' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-commnet"></div><div class="uinn ulev-2 tx-c">发私信</div></div>
+	<div _click='ViewMgr.gotoPage("chat.html","st=3m&fid="+Tools.getParamVal("user_id")+"&user_id="+Tools.getParamVal("user_id"));' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-commnet"></div><div class="uinn ulev-2 tx-c">发私信</div></div>
 	
 	<div _click='UserAction.sendFlower("people",this);' class="ub-f1 ub ub-ver disable"><div class="ub-f1 ub-img5 tp-flower"></div><div class="uinn ulev-2 tx-c">送鲜花</div></div>
 	

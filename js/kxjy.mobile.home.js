@@ -67,15 +67,12 @@ var ViewMgr={
             that.getTipsXhr.abort();    
         }
         that.showingTips=false;//check
-        // if(that.getTipsTimeout){
-        //     clearTimeout(that.getTipsTimeout);
-        // }
         if(that.getMsgXhr){
             that.getMsgXhr.abort();
         }
         clearTimeout(that.getDataInter);
     },
-    goto:function(page,params){
+    gotoPage:function(page,params){
         var isBack=false;
         this.stopGetData();
         page=page.replace("\.html","");
@@ -121,7 +118,7 @@ var ViewMgr={
         this.stopGetData();
         var backPage=this.views[this.views.length-2];
         if(backPage){
-            this.goto(backPage);
+            this.gotoPage(backPage);
         }
     },
     checkLast:function(page){//判断上一个页面是否因记录为同一个历史(e.g:mainPhoto和mainList不因重复记入历史)或者同一个页面
@@ -227,7 +224,7 @@ var ViewMgr={
         var msg=this.tipsArray.shift();
         if(msg){
             this.showingTips=true;
-            Tips.show('<img _click="ViewMgr.goto(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" style="height:2.5em" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,null,5000);
+            Tips.show('<img _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" style="height:2.5em" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,null,5000);
             this.getTipsTimeout=setTimeout(function(){ViewMgr.showTips();},2000);
         }
     }
@@ -358,7 +355,7 @@ var InfoCenter={
         var clearUrl=InfoCenter.clearUrl[page].replace(/\$\{siduid\}/,Tools.getSidUidParams()),
             url=StorMgr.siteUrl+clearUrl;
 
-        UserAction.sendAction(url,null,'get',cb,ecb);
+        UserAction.sendAction(url,"",'get',cb,ecb);
     }
 }
 
@@ -662,7 +659,7 @@ var Page={
                 }else{
                     toast('保存成功!');
                     setTimeout(function(){
-                        ViewMgr.goto('myPhoto');//编辑成功后返回个人主页
+                        ViewMgr.gotoPage('myPhoto');//编辑成功后返回个人主页
                     },1500);
                     
                 }
@@ -818,7 +815,7 @@ var Page={
 var dataArray={
     sex:['男','女'],
     target:['找男孩','找女孩','约会','友谊','玩伴','激情','艳遇','亲密关系','真情','婚姻'],
-    ethnic:['阿昌族','白族','保安族','布朗族','布依族','朝鲜族','达斡尔族','傣族','德昂族','侗族','东乡族','独龙族','鄂伦春族','俄罗斯族','鄂温克族','高山族','仡佬族','哈尼族','哈萨克族','赫哲族','回族','基诺族','京族','景颇族','柯尔克孜族','拉祜族','黎族','傈僳族','珞巴族','满族','毛南族','门巴族','蒙古族','苗族','仫佬族','纳西族','怒族','普米族','羌族','撒拉族','畲族','水族','塔吉克族','塔塔尔族','土族','土家族','佤族','锡伯族','乌兹别克族','瑶族','彝族','裕固族','藏族','维吾尔族','壮族','其它','汉族',],
+    ethnic:['阿昌族','白族','保安族','布朗族','布依族','朝鲜族','达斡尔族','傣族','德昂族','侗族','东乡族','独龙族','鄂伦春族','俄罗斯族','鄂温克族','高山族','仡佬族','哈尼族','哈萨克族','赫哲族','回族','基诺族','京族','景颇族','柯尔克孜族','拉祜族','黎族','傈僳族','珞巴族','满族','毛南族','门巴族','蒙古族','苗族','仫佬族','纳西族','怒族','普米族','羌族','撒拉族','畲族','水族','塔吉克族','塔塔尔族','土族','土家族','佤族','锡伯族','乌兹别克族','瑶族','彝族','裕固族','藏族','维吾尔族','壮族','其它','汉族'],
     blood:['A型','B型','AB型','O型','其它'],
     personality:['温柔','浪漫','成熟','腼腆','幽默','善良','可爱','忠厚','前卫','热辣','豪放'],
     interest:['上网','摄影','音乐','动漫','电玩','汽车','写作','影视','购物','唱歌','跳舞','读书','运动','动物','园艺','烹饪','投资','手工艺','绘画','美食','旅游','其他'],
@@ -832,7 +829,7 @@ var regExpObj={
 
 /*用户执行动作*/
 var UserAction={
-    xhr:null,
+    x:null,
     stop:function(){
         UserAction.sendingMood=false;
         UserAction.sendingDelete=false;
@@ -842,7 +839,7 @@ var UserAction={
         UserAction.sendingRegist=false;
         UserAction.sendingResetPwd=false;
         UserAction.sendingFeedBack=false;
-        this.xhr&&this.xhr.abort();
+        this.x&&this.x.abort();
     },
     /*秀心情*/
     showMood:function(imgDom,iconDom,moodDom){
@@ -887,7 +884,7 @@ var UserAction={
             moodDom.value="";
             // Tools.setIconId(null,true);
             setTimeout(function(){
-                ViewMgr.goto('myList');//秀心情成功后返回个人主页-心情
+                ViewMgr.gotoPage('myList');//秀心情成功后返回个人主页-心情
                 UserAction.sendingMood=false;
             },1500);
         }
@@ -1191,7 +1188,7 @@ var UserAction={
                 StorMgr.uid=a.uid;
                 StorMgr.userKey=a.userKey;
 
-                ViewMgr.goto('mainPhoto');
+                ViewMgr.gotoPage('mainPhoto');
                 if($.isFunc(ok)){
                     ok();
                 }
@@ -1536,22 +1533,25 @@ var UserAction={
     },
     /*执行ajax请求*/
     sendAction:function(url,data,method,secCb,errCb){
-        var xhr=zy_$.ajax({url:url,
-           data:data,
-           type:method||'get',
-           dataType:'json',
-           success:function(a){
-                if(a.error&&a.error!=""){
-                    errCb?errCb(a):toast(a.error||a.msg);
-                    return;
-                }
-                secCb&&secCb(a);
-            },
-            error:function(e){
-                errCb&&errCb(e);
-            }
+        var x=new X({
+            method:method||'get',
+            dataType:'json'
         });
-        this.xhr=xhr;
-        return xhr;
+        x.onLoad=function(){
+            var resp=x.response;
+            if(resp.error&&resp.error!=""){
+                errCb?errCb(resp):toast(resp.error||resp.msg);
+                return;
+            }
+            secCb&&secCb(resp);
+        }
+        x.onFail=function(){
+            if(errCb&&x.response){
+                errCb(x.response);
+            }
+        }
+        x.send(url,data);
+        this.x=x;
+        return x;
     }
 }

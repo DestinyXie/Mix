@@ -657,7 +657,6 @@ var Tools={
 
         SpinningWheel.addSlot(pros, 'right', 0);
         SpinningWheel.addSlot(city, '', 0);
-        
 
         SpinningWheel.setCancelAction(cancel);
         SpinningWheel.setDoneAction(done);

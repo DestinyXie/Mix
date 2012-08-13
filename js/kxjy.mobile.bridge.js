@@ -33,7 +33,7 @@ var Device={
         window.uexOnload=load;
         if(!isTouch){
             //PC test
-            window.onload=load;    
+            DOM.addEvent(DOC,'DOMContentLoaded',load);
         }
 
         Device.loadEventBinded=true;

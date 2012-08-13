@@ -84,10 +84,10 @@ var contentTmpl={
             <label class="uinn">密码</label>\
             <div class="loginInput ub-f1"><input id="password" class="btnBg" type="password" /></div>\
         </div>\
-        <div _click="setTimeout(function(){ViewMgr.goto(\'reset\');},500)" class="Forget tr">忘记密码?</div>\
+        <div _click="setTimeout(function(){ViewMgr.gotoPage(\'reset\');},500)" class="Forget tr">忘记密码?</div>\
         <div class="loginButton">\
             <span id="loginBtn" class="btnBg" _click="UserAction.checkLogin(\'#email\',\'#password\',this)">登陆</span>\
-            <span class="btnBg" _click="setTimeout(function(){ViewMgr.goto(\'users\');},500)">注册</span>\
+            <span class="btnBg" _click="setTimeout(function(){ViewMgr.gotoPage(\'users\');},500)">注册</span>\
         </div>\
     </div>\
     <div class="qqLogin">\
@@ -95,7 +95,7 @@ var contentTmpl={
     </div>',
 'mainPhoto':'${headerSearch}\
             <h1 class="ut ulev0 ut-s tx-c">附近的人</h1>\
-            <div _click="ViewMgr.goto(\'mainList\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.gotoPage(\'mainList\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">动态<span class="header-ico hd-list"></span></div>\
         </div>\
         </div>\
@@ -104,7 +104,7 @@ var contentTmpl={
     ${photoContTmpl}',
 'mainList':'${headerSearch}\
             <h1 class="ut ulev0 ut-s tx-c">附近动态</h1>\
-            <div _click="ViewMgr.goto(\'mainPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.gotoPage(\'mainPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">头像<span class="header-ico hd-photo"></span></div>\
             </div>\
         </div>\
@@ -114,11 +114,11 @@ var contentTmpl={
 'myPhoto':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
-            <div _click="ViewMgr.goto(\'myList\')" class="btn btn-l kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.gotoPage(\'myList\')" class="btn btn-l kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac"><span class="header-ico hd-list"></span>心情</div>\
             </div>\
             <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
-            <div _click="ViewMgr.goto(\'editInfo\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.gotoPage(\'editInfo\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim">编辑资料</div>\
             </div>\
         </div>\
@@ -138,10 +138,10 @@ var contentTmpl={
                     <li class="ub-f1 active" id="titleMenu-pic">\
                         <span>0<br />照片</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.goto(\'myList\')">\
+                    <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.gotoPage(\'myList\')">\
                         <span>0<br />心情</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank\')">\
+                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.gotoPage(\'rank\')">\
                         <span><br />无排名</span>\
                     </li>\
                     <li class="ub-f1" id="titleMenu_more" _click="Page.showMore()">\
@@ -171,11 +171,11 @@ var contentTmpl={
 'myList':'<!--header开始-->\
     <div id="header" class="uh">\
         <div class="kxjy-hd">\
-            <div _click="ViewMgr.goto(\'myPhoto\')" class="btn btn-l kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.gotoPage(\'myPhoto\')" class="btn btn-l kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac"><span class="header-ico hd-photo"></span>照片</div>\
             </div>\
             <h1 class="ut ulev0 ut-s tx-c">\&nbsp;</h1>\
-            <div _click="ViewMgr.goto(\'editInfo\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.gotoPage(\'editInfo\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim">编辑资料</div>\
             </div>\
         </div>\
@@ -193,13 +193,13 @@ var contentTmpl={
                 <strong class="DynamicName">&nbsp;</strong>\
                 <span class="DynamicTrank"></span>\
                 <ul class="myTitleMenu ub">\
-                    <li class="ub-f1" id="titleMenu-pic" _click="ViewMgr.goto(\'myPhoto\')">\
+                    <li class="ub-f1" id="titleMenu-pic" _click="ViewMgr.gotoPage(\'myPhoto\')">\
                         <span>0<br />照片</span>\
                     </li>\
                     <li class="ub-f1 active" id="titleMenu-mood">\
                         <span>0<br />心情</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank\')">\
+                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.gotoPage(\'rank\')">\
                         <span><br />无排名</span>\
                     </li>\
                 </ul>\
@@ -343,7 +343,7 @@ var contentTmpl={
     <!--content结束-->',
 'hisPhoto':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
-            <div _click="ViewMgr.goto(\'hisList\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.gotoPage(\'hisList\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">心情<span class="header-ico hd-list"></span></div>\
         </div>\
         </div>\
@@ -364,10 +364,10 @@ var contentTmpl={
                     <li class="ub-f1 active" id="titleMenu-pic">\
                         <span>0<br />照片</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.goto(\'hisList\')">\
+                    <li class="ub-f1" id="titleMenu-mood" _click="ViewMgr.gotoPage(\'hisList\')">\
                         <span>0<br />心情</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank\')">\
+                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.gotoPage(\'rank\')">\
                         <span><br />无排名</span>\
                     </li>\
                     <li class="ub-f1" id="titleMenu_more" _click="Page.showMore()">\
@@ -393,7 +393,7 @@ var contentTmpl={
     <!--content结束-->',
 'hisList':'${headerBack}\
             <h1 class="ut ulev0 ut-s tx-c">&nbsp;</h1>\
-            <div _click="ViewMgr.goto(\'hisPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+            <div _click="ViewMgr.gotoPage(\'hisPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
             <div class="ulim ub ub-ac">照片<span class="header-ico hd-photo"></span></div>\
         </div>\
         </div>\
@@ -411,13 +411,13 @@ var contentTmpl={
                 <strong class="DynamicName">&nbsp;</strong>\
                 <span class="DynamicTrank"></span>\
                 <ul class="myTitleMenu ub">\
-                    <li class="ub-f1" id="titleMenu-pic" _click="ViewMgr.goto(\'hisPhoto\')">\
+                    <li class="ub-f1" id="titleMenu-pic" _click="ViewMgr.gotoPage(\'hisPhoto\')">\
                         <span>0<br />照片</span>\
                     </li>\
                     <li class="ub-f1 active" id="titleMenu-mood">\
                         <span>0<br />心情</span>\
                     </li>\
-                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.goto(\'rank\')">\
+                    <li class="ub-f1" id="titleMenu-rank" _click="ViewMgr.gotoPage(\'rank\')">\
                         <span><br />无排名</span>\
                     </li>\
                 </ul>\
@@ -537,35 +537,35 @@ var contentTmpl={
     <div>\
         <!--列表开始-->\
     <div class="uba b-gra us listBg">\
-        <div  _click="ViewMgr.goto(\'chatList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div  _click="ViewMgr.gotoPage(\'chatList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">私信</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'sysNotice\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'sysNotice\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">通知</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'newGuest\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'newGuest\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">最近访客</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'likeMe\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'likeMe\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">谁在&hearts;我</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'myList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'myList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">&hearts;我的心情 </div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'attract\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'attract\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">相互吸引</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'commentMe\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'commentMe\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">收到的评论</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'rank\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'rank\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我的排名</div>\
             <div class="tx-r t-blu ulev-1">无排名</div>\
         </div>\
@@ -573,23 +573,23 @@ var contentTmpl={
             <div class="ub-f1 ut-s">收到的鲜花</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'myView\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'myView\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我看过谁</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'sendComment\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'sendComment\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">发出的评论</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'blackList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'blackList\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我屏蔽的人</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'likeMood\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'likeMood\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我&hearts;过的心情</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'likePerson\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'likePerson\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">我&hearts;过的人</div>\
             <div class="tx-r t-blu ulev-1">0</div>\
         </div>\
@@ -622,7 +622,7 @@ var contentTmpl={
     <!--content结束-->',
 'chat':'${headerBack}\
         <h1 class="ut ulev0 ut-s tx-c"  id="nickName">&nbsp;</h1>\
-        <div _click="ViewMgr.goto(\'hisPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
+        <div _click="ViewMgr.gotoPage(\'hisPhoto\')" class="btn btn-r kxjy-btn ub ub-ac ">\
         <div class="ulim">TA的主页</div>\
         </div>\
         </div>\
@@ -744,7 +744,7 @@ var contentTmpl={
     <div>\
     <!--列表开始-->\
     <div class="uba  b-gra listBg us">\
-        <div _click="ViewMgr.goto(\'rank\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'rank\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">达人榜</div>\
             <div class="res8 lis-sw ub-img"></div>\
         </div>\
@@ -762,17 +762,17 @@ var contentTmpl={
             <div class="uba b-gra swi swi-bg uc-a1"  _click="$(\'#dBtn\').checked=!$(\'#dBtn\').checked;"></div>\
             <!--开关按钮结束-->\
         </div>\
-        <div _click="ViewMgr.goto(\'password\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'password\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">修改密码</div>\
             <div class="res8 lis-sw ub-img"></div>\
         </div>\
         <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">评分支持</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'feedBack\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'feedBack\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">意见反馈</div>\
         </div>\
-        <div _click="ViewMgr.goto(\'about\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
+        <div _click="ViewMgr.gotoPage(\'about\')" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">\
             <div class="ub-f1 ut-s">关于</div>\
         </div>\
         <div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis" _click="UserAction.logOut();">\
@@ -982,11 +982,11 @@ var footerTmple={
 'mainFooter':'<!--footer开始-->\
     <div id="footer" class="uf c-m2 c-bla t-wh">\
         <div class="ub c-bla c-m12 t-wh footer">\
-        <div _click=\'ViewMgr.goto("mainPhoto");\' class="${1} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-info"></div><div class="uinn ulev-2 tx-c">交友广场</div></div>\
-        <div _click=\'ViewMgr.goto("myPhoto");\' class="${2} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-home"></div><div class="uinn ulev-2 tx-c">我的主页</div></div>\
-        <div _click=\'ViewMgr.goto("showMood");\' class="${3} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-set"></div><div class="uinn ulev-2 tx-c">秀心情</div></div>\
-        <div _click=\'ViewMgr.goto("infoCenter");\' class="${4} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-shop"></div><div class="uinn ulev-2 tx-c">信息中心</div></div>\
-        <div _click=\'ViewMgr.goto("more");\' class="${5} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-talk"></div><div class="uinn ulev-2 tx-c">更多</div></div>\
+        <div _click=\'ViewMgr.gotoPage("mainPhoto");\' class="${1} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-info"></div><div class="uinn ulev-2 tx-c">交友广场</div></div>\
+        <div _click=\'ViewMgr.gotoPage("myPhoto");\' class="${2} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-home"></div><div class="uinn ulev-2 tx-c">我的主页</div></div>\
+        <div _click=\'ViewMgr.gotoPage("showMood");\' class="${3} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-set"></div><div class="uinn ulev-2 tx-c">秀心情</div></div>\
+        <div _click=\'ViewMgr.gotoPage("infoCenter");\' class="${4} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-shop"></div><div class="uinn ulev-2 tx-c">信息中心</div></div>\
+        <div _click=\'ViewMgr.gotoPage("more");\' class="${5} ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-talk"></div><div class="uinn ulev-2 tx-c">更多</div></div>\
         </div>\
     </div>\
     <!--footer结束-->',
@@ -994,7 +994,7 @@ var footerTmple={
     <div id="footer" class="uf c-m2 c-bla t-wh">\
         <div class="ub c-bla c-m12 t-wh footer">\
         <div id="footer-love" _click=\'UserAction.loveData("people",this);\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-love"></div><div class="uinn ulev-2 tx-c">喜欢</div></div>\
-        <div _click=\'ViewMgr.goto("chat");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-commnet"></div><div class="uinn ulev-2 tx-c">发私信</div></div>\
+        <div _click=\'ViewMgr.gotoPage("chat");\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-commnet"></div><div class="uinn ulev-2 tx-c">发私信</div></div>\
         <div _click=\'UserAction.sendFlower("people",this);\' class="ub-f1 ub ub-ver disable"><div class="ub-f1 ub-img5 tp-flower"></div><div class="uinn ulev-2 tx-c">送鲜花</div></div>\
         <div id="footer-shield" _click=\'UserAction.shieldPerson("people",this);\' class="ub-f1 ub ub-ver"><div class="ub-f1 ub-img5 tp-blacklist"></div><div class="uinn ulev-2 tx-c">屏蔽</div></div>\
         </div>\
@@ -1324,7 +1324,7 @@ PageEngine.prototype={
                 page:that.curPage,
                 cont:$('#feedCont'),
                 more:$('.moreFeed'),
-                cb:function(){myScroll.refresh();},
+                cb:function(){myScroll.refresh();}
             }
         delete WIN['myScroll'];
         switch(that.curPage){
@@ -1485,7 +1485,6 @@ PageEngine.prototype={
     },
     display:function(dirc){},
     destory:function(){
-        this.domCaches={};
         this.curPage='login';
         this.prePage=null;
         this.hasUser=false;
