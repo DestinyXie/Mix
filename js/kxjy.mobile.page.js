@@ -1326,7 +1326,11 @@ PageEngine.prototype={
                 more:$('.moreFeed'),
                 cb:function(){myScroll.refresh();}
             }
-        delete WIN['myScroll'];
+        if(WIN['myScroll']){
+            myScroll.destory();
+            myScroll=null;
+        }
+        // delete WIN['myScroll'];
         switch(that.curPage){
             case "mainPhoto":
             case "mainList":

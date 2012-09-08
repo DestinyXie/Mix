@@ -383,7 +383,7 @@ var Tools={
     },
     /*计算直角边*/
     calculPy:function(l,w){
-        return Math.pow(Math.pow(l, 2) + Math.pow(w, 2), .5);
+        return Math.sqrt(Math.pow(l, 2) + Math.pow(w, 2));
     },
     /*取sid和uid参数字符串*/
     getSidUidParams:function(gotoUrl,setParams){
