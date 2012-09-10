@@ -1,0 +1,3 @@
+Little js lib for web-app,write by DestinyXie(xiebin) from Jun 2012.
+It call mobile features with Appcan(a chinese product like PhoneGap).
+I want finish the file mobile.bridge.js to use any products for call mobile features.I write this lib for a SNS company,for the mobile version.
