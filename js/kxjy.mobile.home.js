@@ -239,7 +239,7 @@ var StorMgr={
     myMood:null,//缓存我的心情
     mainPhoto:null,//缓存附近照片
     mainMood:null,//缓存附近动态
-    destory:function(){
+    destroy:function(){
         this.myInfo=null;
         this.myPhoto=null;
         this.myMood=null;
@@ -404,7 +404,7 @@ var hisInfo={
 */
 var Page={
     init:function(name){
-        this.destory();
+        this.destroy();
         this.name=name;
         this.getUserData();
     },
@@ -420,7 +420,7 @@ var Page={
         hisList:'/profile.php?ajax=1&sid=${sid}&user_id=${user_id}',
         hisDetail:'/moodHe.php?ajax=1&wid=${wid}&sid=${sid}'
     },
-    destory:function(){
+    destroy:function(){
         this.userData=null;
         this.name="";
         this.loadedMore=false;

@@ -260,7 +260,7 @@ var Tips={
     container:'#content',
     tipH:0,
     timer:null,
-    destory:function(){
+    destroy:function(){
         var that=this;
         if(that.hasTip){
             that.hasTip=false;

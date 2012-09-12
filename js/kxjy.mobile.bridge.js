@@ -38,7 +38,7 @@ var Device={
 
         Device.loadEventBinded=true;
     },
-    destory:function(){//关掉一些东西，比如上传
+    destroy:function(){//关掉一些东西，比如上传
         if(!Device.isAppcan()){return;}
         //减1因为拍照时会取文件尺寸 Device.opCode 会比上传的加1
         uexXmlHttpMgr.close(Device.opCode-1);

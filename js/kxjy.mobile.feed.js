@@ -224,7 +224,7 @@ var Feed={
             addParams:"",
             dataCount:0,
             totalPage:0,
-            isDestoryed:false
+            isDestroyed:false
     },
     mainParams:null,//记录mainPhoto和mainList的搜索变量
 	init:function(options){
@@ -236,7 +236,7 @@ var Feed={
         * lastPos 数据插入位置;(-1表示插入列表前保留第一个个DOM节点,1表示在最后一个DOM节点之前插入列表)
         */
         var that=this;
-        that.destory();
+        that.destroy();
         extend(that,that.defOptions,options);
         that.refresh();
 	},
@@ -247,18 +247,18 @@ var Feed={
             this.cb();
         }
     },
-    destory:function(){
+    destroy:function(){
         this.cont=null;
         this.more=null;
         this.onePageNum=null;
         this.lastPos=null;
         this.nowtime=null;
 
-        if(this.beforeDestory){//供继承类使用
-            this.beforeDestory();
+        if(this.beforedestroy){//供继承类使用
+            this.beforedestroy();
         }
 
-        this.isDestoryed=true;
+        this.isDestroyed=true;
         if(this.loadXhr){
             this.loadXhr.abort();
         }
@@ -826,7 +826,7 @@ var Feed={
 var ChatListFeed=extend({},Feed,{
     onePageNum:10,
     listDB:null,
-    beforeDestory:function(){
+    beforeDestroy:function(){
         this.onePageNum=10;
         this.listDB=null;
     },
@@ -840,7 +840,7 @@ var ChatListFeed=extend({},Feed,{
         this.isLoading=false;
         this.cont.innerHTML="";
         
-        this.listDB=a.list;
+        this.listDB=a.list||[];
         this.getCacheData();
     },
     getCacheData:function(){//对方清除记录，只能从cashe中获得数据
@@ -875,7 +875,7 @@ var ChatListFeed=extend({},Feed,{
         //记住头像
         Tools.storage.set("kxjy_my_chatList",that.listDB,"session");
         that.dataCount=that.listDB.length;
-        that.totalPage=Math.ceil(that.dataCount/that.onePageNum);
+        that.totalPage=Math.ceil(that.dataCount/that.onePageNum)||0;
         var firstList=that.listDB.slice((that.index-1)*that.onePageNum,that.index*that.onePageNum);
         that.fullFillFeed(firstList);
     },
@@ -937,7 +937,7 @@ var ChatFeed=extend({},Feed,{
     beforeRefersh:function(){
         this.ingterCount=0;
     },
-    beforeDestory:function(){
+    beforeDestroy:function(){
         this.onePageNum=10;
         this.hasData=false;
         this.ingterCount=0;
@@ -969,7 +969,7 @@ var ChatFeed=extend({},Feed,{
     },
     loadMore:function(setParam){
         var that=this;
-        if(that.isLoading||that.isDestoryed||'chat'!=pageEngine.curPage)
+        if(that.isLoading||that.isDestroyed||'chat'!=pageEngine.curPage)
             return;
         that.isLoading=true;
 
@@ -1044,7 +1044,7 @@ var Comment={
         this.sentBtn=$('.enterButton',comBox);
         this._bindEvent();
     },
-    destory:function(){
+    destroy:function(){
         var that=this;
         if(!this.commBox){
             return;

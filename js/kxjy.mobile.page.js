@@ -1159,7 +1159,7 @@ var pageConfig={
 
 var PageEngine=function(options){
     var that=this;
-    that.destory();
+    that.destroy();
 
     that.options={
         pageWrap:$('#pageWraper'),
@@ -1219,18 +1219,18 @@ PageEngine.prototype={
     cancelPrePage:function(){//撤销前一个页面相关
         switch(this.curPage){
             case 'chat'://撤销私信轮询
-                ChatFeed.destory();
+                ChatFeed.destroy();
                 break;
             case 'login':
             case 'users':
                 WIN.scrollTo(0,0);
                 break;
         }
-        Page.destory();//撤销页面载入
+        Page.destroy();//撤销页面载入
         UserAction.stop();//撤销用户动作
-        Tips.destory();//Tips
-        Comment.destory();//撤销评论对象
-        Device.destory();//撤销如上传等手机正在执行的动作
+        Tips.destroy();//Tips
+        Comment.destroy();//撤销评论对象
+        Device.destroy();//撤销如上传等手机正在执行的动作
     },
     initPage:function(page,diret){
         var that=this;
@@ -1327,7 +1327,7 @@ PageEngine.prototype={
                 cb:function(){myScroll.refresh();}
             }
         if(WIN['myScroll']){
-            myScroll.destory();
+            myScroll.destroy();
             myScroll=null;
         }
         // delete WIN['myScroll'];
@@ -1371,7 +1371,7 @@ PageEngine.prototype={
                 if(" "!=addre){
                     addrSpan.innerHTML=addre;
                     feedOption['addParams']="reside_province="+prov+"&reside_city="+city;
-                }else if(StorMgr.gpsInfo){
+                }else{
                     addrSpan.innerHTML="地区不详";
                 }
 
@@ -1488,7 +1488,7 @@ PageEngine.prototype={
         }
     },
     display:function(dirc){},
-    destory:function(){
+    destroy:function(){
         this.curPage='login';
         this.prePage=null;
         this.hasUser=false;

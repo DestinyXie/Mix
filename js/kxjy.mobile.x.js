@@ -1,5 +1,6 @@
 /* Ajax */
 var X = function(options) {
+	this.jsonpId=0;
 	this.options = extend({
 		varsEncode: false,
 		method: 'get',
@@ -18,7 +19,7 @@ X.prototype = {
 	},
 	ajaxJSONP:function(url,data){
 		var that=this,
-			jsonp = 'jsonp' + (new Date).getTime(),
+			jsonp = 'Xjsonp' + (++that.jsonpId),
 			script=DOM.create("script");
 		WIN[jsonp] = function(a) {
 			that.response=a;
