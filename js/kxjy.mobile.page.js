@@ -1466,7 +1466,7 @@ PageEngine.prototype={
                     }
                 };
                 ChatFeed.init(feedOption);
-                Comment.init('.enter');
+                Comment.init('.enter',{type:'chat'});
                 break;
             case "sysNotice":
             case "newGuest":

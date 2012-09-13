@@ -1020,7 +1020,7 @@ var ChatFeed=extend({},Feed,{
 
 /*评论类*/
 var Comment={
-    type:"评论",
+    text:"评论",
     moodInter:null,
     motions:["[龇牙]","[吐舌头]","[流汗]","[捂嘴]","[挥手]","[敲打]","[擦汗]","[玫瑰]","[大哭]","[流泪]","[嘘]","[抓狂]","[委屈]","[微笑]","[色]","[脸红]","[得瑟]","[笑]","[惊恐]","[尴尬]","[吻]","[无语]","[不开心]","[惊讶]","[疑问]","[睡觉]","[亲]","[憨笑]","[吐]","[阴险]","[坏笑]","[鄙视]","[晕]","[可怜]","[好]","[坏]","[握手]","[耶]","[承让]","[勾手指]","[OK]","[折磨]","[挖鼻屎]","[拍手]","[糗]","[打哈欠]","[要哭了]","[闭嘴]"],
     transMotion:function(){
@@ -1033,16 +1033,18 @@ var Comment={
         return msg;
     },
 	init:function(commBox,opt){
-        var comBox=$(commBox);
-        this.commBox=comBox;
-        this.moodImg=$('.enterMood',comBox);
-        this.moodBox=$('.chatMood',comBox);
-        if(!this.moodBox){
-            this.createMoodBox();
+        var that=this,
+            comBox=$(commBox);
+        that.commBox=comBox;
+        that.moodImg=$('.enterMood',comBox);
+        that.moodBox=$('.chatMood',comBox);
+        if(!that.moodBox){
+            that.createMoodBox();
         }
-        this.input=$('.enterInput input',comBox);
-        this.sentBtn=$('.enterButton',comBox);
-        this._bindEvent();
+        that.input=$('.enterInput input',comBox);
+        that.sentBtn=$('.enterButton',comBox);
+        extend(that,opt);
+        that._bindEvent();
     },
     destroy:function(){
         var that=this;
@@ -1050,7 +1052,7 @@ var Comment={
             return;
         }
         clearTimeout(that.moodInter);
-        that.type="评论";
+        that.text="评论";
         that.moodInter=null;
         that.sendingComm=false;
 
@@ -1063,7 +1065,19 @@ var Comment={
         this._unBindEvent();
     },
     _bindEvent:function(){
+        var that=this;
         DOC.addEventListener(CLICK_EVENT,Comment.hideMoodBox,false);
+        DOM.addEvent(that.input,"keypress",function(e) {//按enter发送信息
+            var key=e.event.keyCode;
+            if(13!==key){
+                return;
+            }
+            if('chat'==that.type){
+                that.sendComment(null,'chat');
+            }else{
+                that.sendComment(function(){Feed.refresh();});
+            }
+        });
     },
     _unBindEvent:function(){
         DOC.removeEventListener(CLICK_EVENT,Comment.hideMoodBox,false);
@@ -1089,7 +1103,7 @@ var Comment={
         that.input.blur();
 
         if(type&&type=="chat"){
-            that.type="私信";
+            that.text="私信";
         }
 
         if(!that.checkComment()){
@@ -1125,7 +1139,9 @@ var Comment={
                 if(chatData){
                     ChatFeed.addChatCont(chatData);
                     myScroll.refresh();
-                    myScroll.scrollTo(0,myScroll.maxScrollY,500);
+                    if(0>myScroll.maxScrollY){//内容超过容器是才需要向上移动
+                        myScroll.scrollTo(0,myScroll.maxScrollY,500);
+                    }
                 }else{
                     Page.refresh();
                     toast('发送成功！',2);    
@@ -1177,7 +1193,7 @@ var Comment={
             errTxt="发送内容不能为空！";
         }
         if(that.commTxt.chineseLen()>139){
-            errTxt=that.type+"内容过长！";
+            errTxt=that.text+"内容过长！";
         }
 
         if(errTxt!=""){

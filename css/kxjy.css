@@ -370,10 +370,10 @@ to {
 	background-size:1.4375em;
 }
 .time {
-	background:url(images/time.png);	
+	background-image:url(images/time.png);	
 }
 .place {
-	background:url(images/place.png);
+	background-image:url(images/place.png);
 }
 .DynamicMoodBox{
 	padding:0 .5em;
@@ -931,13 +931,6 @@ li .comment{
 .kxjy-btn.active{
 	-webkit-box-shadow:1px 1px 1px #660151 inset;
 }
-.header-ico{
-	display:block;
-	margin:0 .3em;
-	width:1.5em;
-	height:1.5em;
-	background-size:1.5em;
-}
 .hd-search{
 	background:url(images/search.png) no-repeat;
 }
@@ -946,6 +939,13 @@ li .comment{
 }
 .hd-list{
 	background:url(images/list.png) no-repeat;
+}
+.header-ico{
+	display:block;
+	margin:0 .3em;
+	width:1.5em;
+	height:1.5em;
+	background-size:1.5em;
 }
 #content{
 	overflow:hidden;

@@ -24,10 +24,10 @@ var ViewMgr={
     pairPages:['mainPhoto','mainList','myPhoto','myList','hisPhoto','hisList'],//成双的页面
     getMsg:true,
     getDataInter:null,//轮询信息中心数据及Tips
-    getDataTime:10000,//轮询信息中心数据及Tips时间间隔 10秒
-    getTipsTimeout:null,
-    getTipsXhr:null,
-    getMsgXhr:null,
+    getDataTime:5000,//轮询信息中心数据,个人信息及Tips时间间隔 5秒
+    showTipsTimeout:null,
+    // getTipsXhr:null,
+    // getMsgXhr:null,
     init:function(){//取得历史页面
         delete WIN['pageEngine'];
         Device.disetBackBtn();
@@ -48,29 +48,6 @@ var ViewMgr={
         }
 
         Device.backFunc=function(){ViewMgr.back();}
-    },
-    getData:function(init){//轮询信息中心数据及Tips
-        var that=this;
-        that.stopGetData();
-        if(init){
-            that.getMsgTips(init);
-        }else{
-            that.getDataInter=setTimeout(
-            function(){
-                that.getMsgTips();
-            },that.getDataTime);
-        }
-    },
-    stopGetData:function(){
-        var that=this;
-        if(that.getTipsXhr){
-            that.getTipsXhr.abort();    
-        }
-        that.showingTips=false;//check
-        if(that.getMsgXhr){
-            that.getMsgXhr.abort();
-        }
-        clearTimeout(that.getDataInter);
     },
     gotoPage:function(page,params){
         var isBack=false;
@@ -135,7 +112,31 @@ var ViewMgr={
             return false;
         }
     },
-    getMsgTips:function(init){
+    getData:function(init,cb){//轮询信息中心数据及Tips
+        var that=this;
+        that.stopGetData();
+        if(init){
+            that.getMsgTips(init,cb);
+        }else{
+            that.getDataInter=setTimeout(
+            function(){
+                that.getMsgTips(false,cb);
+            },that.getDataTime);
+        }
+    },
+    stopGetData:function(){
+        var that=this;
+        that.showingTips=false;//check
+
+        if(that.getDataXhr){
+            that.getDataXhr.abort();
+        }
+
+        ViewMgr.isIniting=false;
+        clearTimeout(that.getDataInter);
+        clearTimeout(that.showTipsTimeout);
+    },
+    getMsgTips:function(init,cb){
         /*infoCenter*/
         if(ViewMgr.getMsg){
             if(init&&StorMgr.infoCenter){
@@ -143,33 +144,38 @@ var ViewMgr={
                 ViewMgr.infoNumDom=null;
                 ViewMgr.hasFilledInfoCen=false;
                 ViewMgr.showMsg(StorMgr.infoCenter);
-
             }
-            StorMgr.getInfoCenter(function(a){
-                    ViewMgr.showMsg(a);
-            },true);    
         }
         if(ViewMgr.isIniting){//防止过快切换页面发起重复请求
             return;
         }
         ViewMgr.isIniting=true;
-        /*tips*/
-        var dataUrl=StorMgr.siteUrl+'/feed_flow.php?'+Tools.getSidUidParams(),
-            secCb=function(a){
-                ViewMgr.addTips(a);
+
+        /*合并的接口*/
+        var type=init?"1,2,3":"1,3",
+            dataUrl=StorMgr.siteUrl+'/do.php?action=getInfo&type='+type+'&sid='+StorMgr.sid,
+            secCb=function(data) {
                 ViewMgr.isIniting=false;
+                if(""==data.error){
+                    ViewMgr.addTips(data.feed_flow);
+                    ViewMgr.showMsg(data.centerInfo);
+                    if(init){//初始时取个人信息
+                        var encodeInfo=Tools.htmlEncodeObj(data.myInfo);
+                        StorMgr.setMyInfo(encodeInfo);
+                    }
+                    cb&&cb();
+                }
                 ViewMgr.getData();
             },
-            errCb=function(m){
+            errCb=function(m) {
                 ViewMgr.isIniting=false;
                 ViewMgr.getData();
             };
+        ViewMgr.getDataXhr=UserAction.sendAction(dataUrl,"","get",secCb,errCb);
 
-        setTimeout(function(){//和infoCenter请求发起时刻错开，提升性能
-            ViewMgr.getTipsXhr=UserAction.sendAction(dataUrl,"","get",secCb,errCb);
-        },ViewMgr.getDataTime/2);
     },
     showMsg:function(data){
+        StorMgr.setInfoCenter(data);
         if(!this.hasFilledInfoCen||StorMgr.infoCenterChange){
             if('infoCenter'==pageEngine.curPage){
                 InfoCenter.fill(data);
@@ -217,7 +223,7 @@ var ViewMgr={
     },
     showTips:function(){//显示Tips
         this.showingTips=false;
-        if(!this.tipsArray){
+        if(!this.tipsArray.length){
             return;
         }
 
@@ -225,7 +231,7 @@ var ViewMgr={
         if(msg){
             this.showingTips=true;
             Tips.show('<img _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" style="height:2.5em" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,null,5000);
-            this.getTipsTimeout=setTimeout(function(){ViewMgr.showTips();},2000);
+            this.showTipsTimeout=setTimeout(function(){ViewMgr.showTips();},2000);
         }
     }
 }
@@ -249,48 +255,25 @@ var StorMgr={
         this.myTodayExp=null;
     },
     initStor:function(){//初始化需要的缓存资料
-        if(!this.myInfo){
-            this.getMyInfo();
+        if(!this.myInfo||!this.infoCenter){
+            ViewMgr.getData(true);
         }
-        if(!this.infoCenter){
-            this.getInfoCenter();
-        }
+
         if(!this.gpsInfo){
             this.gpsInfo=Tools.storage.get("kxjy_my_gpsInfo");
         }
     },
-    getMyInfo:function(cb,force){//取得我的信息并保存
-        var stor=Tools.storage.get("kxjy_my_myInfo","session");
-        if(force||!stor){
-            var getUrl=StorMgr.siteUrl+'/do.php?action=getUserInfo&sid='+StorMgr.sid+"&user_id="+StorMgr.uid,
-                secCb=function(a){
-                    var encodeInfo=Tools.htmlEncodeObj(a.myInfo);
-                    StorMgr.setMyInfo(encodeInfo);
-                    cb&&cb(encodeInfo);
-                };
-            UserAction.sendAction(getUrl,"","get",secCb);
-        }else{
-            this.myInfo=stor;
-            cb&&cb(stor);
-        }
+    getMyInfo:function(cb){//取得我的信息并保存
+        var that=this;
+        ViewMgr.getData(true,function(){
+            if(cb&&that.myInfo){
+                cb(that.myInfo);
+            }
+        });
     },
     setMyInfo:function(o){
         Tools.storage.set("kxjy_my_myInfo",o,"session");
         this.myInfo=o;
-    },
-    getInfoCenter:function(cb,force){
-        var stor=Tools.storage.get("kxjy_my_infoCenter","session");
-        if(force||!stor){
-            var getUrl=StorMgr.siteUrl+'/do.php?action=getInfoCenterData&'+Tools.getSidUidParams(),
-                secCb=function(a){
-                    StorMgr.setInfoCenter(a);
-                    cb&&cb(a);
-                };
-            ViewMgr.getMsgXhr=UserAction.sendAction(getUrl,"","get",secCb);
-        }else{
-            this.infoCenter=stor;
-            cb&&cb(stor);
-        }
     },
     setInfoCenter:function(o){
         if(Tools.sameObj(StorMgr.infoCenter,o)){
