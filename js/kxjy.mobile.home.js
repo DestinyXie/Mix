@@ -114,7 +114,7 @@ var ViewMgr={
     },
     getData:function(init,cb){//轮询信息中心数据及Tips
         var that=this;
-        that.stopGetData();
+        // that.stopGetData();//check if it'll make mistakes
         if(init){
             that.getMsgTips(init,cb);
         }else{
@@ -175,6 +175,7 @@ var ViewMgr={
 
     },
     showMsg:function(data){
+        if(!data){return;}
         StorMgr.setInfoCenter(data);
         if(!this.hasFilledInfoCen||StorMgr.infoCenterChange){
             if('infoCenter'==pageEngine.curPage){

@@ -360,7 +360,7 @@ Delegate.init();
 var Tools={
     /*清除缓存和一些记录的变量值,用户退出时需要*/
     refresh:function(){
-        // Tools.storage.clear();//check
+        // Tools.storage.clear();//gps等信息
         Tools.storage.clear('session');
         Tools.sidUidParam=null;
         StorMgr.destroy();

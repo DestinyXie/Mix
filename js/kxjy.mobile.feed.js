@@ -952,7 +952,7 @@ var ChatFeed=extend({},Feed,{
         return url;
     },
     loadMoreSecc:function(a){
-        if(a.error){
+        if(a.error||a.state){
             this.reset();
             toast(a.error);
             return;
