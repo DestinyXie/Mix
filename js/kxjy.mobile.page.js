@@ -1056,6 +1056,10 @@ var pageConfig={
     },100);
 
     //取得上次的心情图标
+    var lastIconId=3;
+    if(StorMgr.myInfo){
+        lastIconId=StorMgr.myInfo['mood_icon_id']||3;
+    }
     Tools.setIconId(null,StorMgr.myInfo['mood_icon_id']||3);
 
     var wrapEl=$('#pageWraper'),//输入框设置
@@ -1104,7 +1108,11 @@ var pageConfig={
 }],
 'sysNotice':[false,false,false,true],
 'newGuest':['mainFooter',4,true,true,function(){
-    var totalView=StorMgr.infoCenter['visitor_total']||'总数不详';
+    var totalView='总数不详';
+    if(StorMgr.infoCenter){
+        totalView=StorMgr.infoCenter['visitor_total']||'总数不详';
+    }
+    
     $('.kxjy-hd h1').innerHTML="最近访客("+totalView+")";
 }],
 'likeMe':['mainFooter',4,true,true],
@@ -1122,12 +1130,16 @@ var pageConfig={
     if(!todayExp){
         var url=StorMgr.siteUrl+"/starPromotion.php?"+Tools.getSidUidParams()+"&ajax=1";
         function secCb(a){
-            $("#expToday").innerHTML=a.today_pop;
+            if($("#expToday").length!=0){
+                $("#expToday").innerHTML=a.today_pop;
+            }
             StorMgr.myTodayExp=a.today_pop;
         }
         UserAction.sendAction(url,"","get",secCb,null);    
     }else{
-        $("#expToday").innerHTML=todayExp;
+        if($("#expToday").length!=0){
+            $("#expToday").innerHTML=todayExp;
+        }
     }
 }],
 'password':[false,false,false,true],
@@ -1338,8 +1350,7 @@ PageEngine.prototype={
                 var myInfo=StorMgr.myInfo;
                 if(Feed.mainParams){//mainPhoto,mainList页面取得记录参数
                     feedOption['addParams']=Feed.mainParams;
-                }
-                else if(StorMgr.gpsInfo){
+                }else if(StorMgr.gpsInfo){
                     feedOption['addParams']="reside_province="+StorMgr.gpsInfo['prov']+"&reside_city="+StorMgr.gpsInfo['city'];
                 }else if(myInfo){
                     feedOption['addParams']="reside_province="+myInfo.reside_province+"&reside_city="+myInfo.reside_city;    
@@ -1355,7 +1366,7 @@ PageEngine.prototype={
                 if(/his/.test(that.prePage)){//他人到他人城市排行
                     userObj=hisInfo.get(hisInfo.curId);
                 }else{
-                    userObj=StorMgr.myInfo;
+                    userObj=StorMgr.myInfo||{};
                 }
 
                 var prov=userObj.reside_province,
@@ -1383,8 +1394,8 @@ PageEngine.prototype={
                         feedProv=/reside_province=([^&]*)/.exec(Feed.addParams)[1];
                         feedCity=/reside_city=([^&]*)/.exec(Feed.addParams)[1];
                     }
-                    if(feedProv==StorMgr.myInfo.reside_province&&feedCity==StorMgr.myInfo.reside_city){
-                        if(!["无排名","0",0].has(infoCent.current_rank)){
+                    if(StorMgr.myInfo&&feedProv==StorMgr.myInfo.reside_province&&feedCity==StorMgr.myInfo.reside_city){
+                        if(infoCent&&!["无排名","0",0].has(infoCent.current_rank)){
                             $('#curPos').innerHTML="，目前排在第"+infoCent.current_rank+"位";
                         }else{
                             $('#curPos').innerHTML="，目前无排名";
@@ -1460,7 +1471,7 @@ PageEngine.prototype={
                         ChatFeed.more.style.display="none";
                     }
                     myScroll.refresh();
-
+                    
                     if(myScroll.maxScrollY<0&&ChatFeed.hasData){
                         myScroll.scrollTo(0,myScroll.maxScrollY,500);
                     }
