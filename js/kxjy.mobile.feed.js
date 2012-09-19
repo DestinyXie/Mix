@@ -4,160 +4,160 @@ var feedTemplate={
 	photo:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
     myPhoto:'<div _click="ViewMgr.gotoPage(\'myDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
     hisPhoto:'<div _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
-    mood:'<div class="DynamicList clearfix">\
-        <div class="DynamicInfo">\
-            <div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="DynamicAvatar"><img src="${avatarPicUrlx}" alt="" /></div>\
-            <div class="DynamicAvatar-r">\
-                <strong _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="DynamicName">${nickname}</strong>\
-                <span class="DynamicTrank">${cb:colorPng}</span>\
-                <ul class="DynamicNav clearfix">\
-                    <li><span class="DynamicIco ub-img1 time"></span>${mooddate}</li>\
-                    <li><span class="DynamicIco ub-img1 place"></span>${area}</li>\
-                </ul>\
-            </div>\
-        </div>\
-        <div class="">\
-            <div class="ub">\
-                <div class="DynamicMood ub ub-ver">\
-                    <img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />\
-                </div>\
-                <div class="DynamicMoodTextBox ub-f1">\
-                    <div class="ub-f1 DynamicMoodText">\
-                    <span>&diams;</span>\
-                        <div class="DynamicText ub ub-ac">\
-                        <p class="ub-f1">${cb:mood}</p>\
-                        <strong class="DynamicMore" _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')">></strong>\
-                        </div>\
-                        <div class="DynamicImg">${cb:fileimg}</div>\
-	                    <ul class="DynamicMenu clearfix">\
-							<li class="ub ub-ac" _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
-	                        <li class="ub ub-ac" _click="UserAction.loveData(\'mood\',this,\'${enwid}\',${cb:lovecount})"><span class="DynamicMenuIco love ${cb:lovemood}"></span>${cb:lovecount}</li>\
-	                    </ul>\
-                    </div>\
-                </div>\
-            </div>\
-        </div>\
-    </div>',
-    myMood:'<div class="DynamicMoodBox">\
-        <div class="DynamicMoodTtile ub ub-ac">\
-            <div class="DynamicMoodTime">\
-                ${mooddate}\
-                <span>&diams;</span>\
-            </div>\
-            <ul class="DynamicNav clearfix">\
-                <li><span class="DynamicIco ub-img1 time"></span>${cb:time}</li>\
-                <li><span class="DynamicIco ub-img1 place"></span>${area}</li>\
-            </ul>\
-        </div>\
-        <div class="ub">\
-            <div class="DynamicMood ub ub-ver">\
-                <img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />\
-                <div class="DynamicMoodLine ub-f1"></div>\
-            </div>\
-            <div class="DynamicMoodTextBox ub-f1">\
-                <div class="ub-f1 DynamicMoodText">\
-                    <span>&diams;</span>\
-                    <div class="DynamicText ub ub-ac">\
-                        <p class="ub-f1">${cb:mood}</p>\
-                        <strong class="DynamicMore" _click="ViewMgr.gotoPage(\'myDetail\',\'wid=${enwid}\')">></strong>\
-                    </div>\
-                    <div class="DynamicImg">${cb:fileimg}</div>\
-					<ul class="DynamicMenu clearfix">\
-						<li class="ub ub-ac" _click="ViewMgr.gotoPage(\'myDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
-					    <li class="ub ub-ac"><span class="DynamicMenuIco love"></span>${cb:lovecount}</li>\
-					</ul>\
-                </div>\
-                <div class="DynamicMenuLine"></div>\
-            </div>\
-        </div>\
-    </div>',
-    hisMood:'<div class="DynamicMoodBox">\
-        <div class="DynamicMoodTtile ub ub-ac">\
-            <div class="DynamicMoodTime">\
-                ${mooddate}\
-                <span>&diams;</span>\
-            </div>\
-            <ul class="DynamicNav clearfix">\
-                <li><span class="DynamicIco ub-img1 time"></span>${cb:time}</li>\
-                <li><span class="DynamicIco ub-img1 place"></span>${area}</li>\
-            </ul>\
-        </div>\
-        <div class="ub">\
-            <div class="DynamicMood ub ub-ver">\
-                <img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />\
-                <div class="DynamicMoodLine ub-f1"></div>\
-            </div>\
-            <div class="DynamicMoodTextBox ub-f1">\
-                <div class="ub-f1 DynamicMoodText">\
-                    <span>&diams;</span>\
-                    <div class="DynamicText ub ub-ac">\
-                        <p class="ub-f1">${cb:mood}</p>\
-                        <strong class="DynamicMore" _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')">></strong>\
-                    </div>\
-                    <div class="DynamicImg">${cb:fileimg}</div>\
-					<ul class="DynamicMenu clearfix">\
-						<li class="ub ub-ac" _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>\
-					    <li class="ub ub-ac" _click="UserAction.loveData(\'mood\',this,\'${enwid}\',${cb:lovecount})"><span class="DynamicMenuIco love ${cb:islove}"></span>${cb:lovecount}</li>\
-					</ul>\
-                </div>\
-                <div class="DynamicMenuLine"></div>\
-            </div>\
-        </div>\
-    </div>',
-    myDetail:'<div class="commentList ub clearfix ${cb:childClass}" _click="Comment.popOperation(this,\'${parentid}\',\'${enwid}\',${cb:isself})">\
-        <div class="commentListAvatar"><img src="${avatarPicUrl}" alt="头像" /></div>\
-        <div class="commentListText ub-f1">${cb:commentMood}</div>\
-    </div>${cb:child}',
-    chatList:'<div class="commentList ub ub-ac clearfix" _click="ViewMgr.gotoPage(\'chat\',\'fid=${fid}&user_id=${fid}\')">\
-        <div class="commentListAvatar">\
-			<img src="${img}" alt="" />\
-            ${cb:hasMsg}\
-		</div>\
-        <div class="commentListText ub-f1">\
-            <p class="chatListName">${name}</p>\
-            <p class=" ut-s">&nbsp;</p>\
-        </div>\
-        <strong class="DynamicMore">></strong>\
-    </div>',
-    chat:'<div class="chatContent ub ${cb:who} clearfix">\
-        ${cb:avatar}\
-        <div class="chatTextBox ub-f1">\
-            <div class="chatTime">${datetime}</div>\
-            <div class="chatText">${cb:content}</div>\
-            <span>&diams;</span>\
-        </div>\
-    </div>',
+    mood:['<div class="DynamicList clearfix">',
+        '<div class="DynamicInfo">',
+            '<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="DynamicAvatar"><img src="${avatarPicUrlx}" alt="" /></div>',
+            '<div class="DynamicAvatar-r">',
+                '<strong _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="DynamicName">${nickname}</strong>',
+                '<span class="DynamicTrank">${cb:colorPng}</span>',
+                '<ul class="DynamicNav clearfix">',
+                    '<li><span class="DynamicIco ub-img1 time"></span>${mooddate}</li>',
+                    '<li><span class="DynamicIco ub-img1 place"></span>${area}</li>',
+                '</ul>',
+            '</div>',
+        '</div>',
+        '<div class="">',
+            '<div class="ub">',
+                '<div class="DynamicMood ub ub-ver">',
+                    '<img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />',
+                '</div>',
+                '<div class="DynamicMoodTextBox ub-f1">',
+                    '<div class="ub-f1 DynamicMoodText">',
+                    '<span>&diams;</span>',
+                        '<div class="DynamicText ub ub-ac">',
+                        '<p class="ub-f1">${cb:mood}</p>',
+                        '<strong class="DynamicMore" _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')">></strong>',
+                        '</div>',
+                        '<div class="DynamicImg">${cb:fileimg}</div>',
+	                    '<ul class="DynamicMenu clearfix">',
+							'<li class="ub ub-ac" _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>',
+	                        '<li class="ub ub-ac" _click="UserAction.loveData(\'mood\',this,\'${enwid}\',${cb:lovecount})"><span class="DynamicMenuIco love ${cb:lovemood}"></span>${cb:lovecount}</li>',
+	                    '</ul>',
+                    '</div>',
+                '</div>',
+            '</div>',
+        '</div>',
+    '</div>'].join(''),
+    myMood:['<div class="DynamicMoodBox">',
+        '<div class="DynamicMoodTtile ub ub-ac">',
+            '<div class="DynamicMoodTime">',
+                '${mooddate}',
+                '<span>&diams;</span>',
+            '</div>',
+            '<ul class="DynamicNav clearfix">',
+                '<li><span class="DynamicIco ub-img1 time"></span>${cb:time}</li>',
+                '<li><span class="DynamicIco ub-img1 place"></span>${area}</li>',
+            '</ul>',
+        '</div>',
+        '<div class="ub">',
+            '<div class="DynamicMood ub ub-ver">',
+                '<img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />',
+                '<div class="DynamicMoodLine ub-f1"></div>',
+            '</div>',
+            '<div class="DynamicMoodTextBox ub-f1">',
+                '<div class="ub-f1 DynamicMoodText">',
+                    '<span>&diams;</span>',
+                    '<div class="DynamicText ub ub-ac">',
+                        '<p class="ub-f1">${cb:mood}</p>',
+                        '<strong class="DynamicMore" _click="ViewMgr.gotoPage(\'myDetail\',\'wid=${enwid}\')">></strong>',
+                    '</div>',
+                    '<div class="DynamicImg">${cb:fileimg}</div>',
+					'<ul class="DynamicMenu clearfix">',
+						'<li class="ub ub-ac" _click="ViewMgr.gotoPage(\'myDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>',
+					    '<li class="ub ub-ac"><span class="DynamicMenuIco love"></span>${cb:lovecount}</li>',
+					'</ul>',
+                '</div>',
+                '<div class="DynamicMenuLine"></div>',
+            '</div>',
+        '</div>',
+    '</div>'].join(''),
+    hisMood:['<div class="DynamicMoodBox">',
+        '<div class="DynamicMoodTtile ub ub-ac">',
+            '<div class="DynamicMoodTime">',
+                '${mooddate}',
+                '<span>&diams;</span>',
+            '</div>',
+            '<ul class="DynamicNav clearfix">',
+                '<li><span class="DynamicIco ub-img1 time"></span>${cb:time}</li>',
+                '<li><span class="DynamicIco ub-img1 place"></span>${area}</li>',
+            '</ul>',
+        '</div>',
+        '<div class="ub">',
+            '<div class="DynamicMood ub ub-ver">',
+                '<img src="${cb:siteurl}/template/mobile/css/images/f_${cb:mood_icon_id}.png" alt="" />',
+                '<div class="DynamicMoodLine ub-f1"></div>',
+            '</div>',
+            '<div class="DynamicMoodTextBox ub-f1">',
+                '<div class="ub-f1 DynamicMoodText">',
+                    '<span>&diams;</span>',
+                    '<div class="DynamicText ub ub-ac">',
+                        '<p class="ub-f1">${cb:mood}</p>',
+                        '<strong class="DynamicMore" _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')">></strong>',
+                    '</div>',
+                    '<div class="DynamicImg">${cb:fileimg}</div>',
+					'<ul class="DynamicMenu clearfix">',
+						'<li class="ub ub-ac" _click="ViewMgr.gotoPage(\'hisDetail\',\'wid=${enwid}\')"><span class="DynamicMenuIco comment"></span>${cb:commentcount}</li>',
+					    '<li class="ub ub-ac" _click="UserAction.loveData(\'mood\',this,\'${enwid}\',${cb:lovecount})"><span class="DynamicMenuIco love ${cb:islove}"></span>${cb:lovecount}</li>',
+					'</ul>',
+                '</div>',
+                '<div class="DynamicMenuLine"></div>',
+            '</div>',
+        '</div>',
+    '</div>'].join(''),
+    myDetail:['<div class="commentList ub clearfix ${cb:childClass}" _click="Comment.popOperation(this,\'${parentid}\',\'${enwid}\',${cb:isself})">',
+        '<div class="commentListAvatar"><img src="${avatarPicUrl}" alt="头像" /></div>',
+        '<div class="commentListText ub-f1">${cb:commentMood}</div>',
+    '</div>${cb:child}'].join(''),
+    chatList:['<div class="commentList ub ub-ac clearfix" _click="ViewMgr.gotoPage(\'chat\',\'fid=${fid}&user_id=${fid}\')">',
+        '<div class="commentListAvatar">',
+			'<img src="${img}" alt="" />',
+            '${cb:hasMsg}',
+		'</div>',
+        '<div class="commentListText ub-f1">',
+            '<p class="chatListName">${name}</p>',
+            '<p class=" ut-s">&nbsp;</p>',
+        '</div>',
+        '<strong class="DynamicMore">></strong>',
+    '</div>'].join(''),
+    chat:['<div class="chatContent ub ${cb:who} clearfix">',
+        '${cb:avatar}',
+        '<div class="chatTextBox ub-f1">',
+            '<div class="chatTime">${datetime}</div>',
+            '<div class="chatText">${cb:content}</div>',
+            '<span>&diams;</span>',
+        '</div>',
+    '</div>'].join(''),
     attract:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.disadmire(\'people\',this,\'${uid}\');this.event.stop();"></span></div>',
-    commentMe:'<div class="commentList ub clearfix">\
-        <div class="commentListAvatar" _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')"><img src="${avatar_url}" alt="" /></div>\
-        <div class="commentListText ub-f1">\
-            <p class="chatListName t-blue" _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')">${nickname}</p>\
-            <p>${cb:sendType}内容<span class="t-pur">${cb:title}</span><span class="t-gra">(${create_time})</span></p>\
-            <p>${cb:sendType}我的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
-        </div>\
-        <strong class="DynamicMore" _click="ViewMgr.gotoPage(${cb:isselfDetail},\'wid=${parentid}\')">></strong>\
-    </div>',
-    sendComment:'<div class="commentList ub clearfix">\
-        <div class="commentListAvatar" _click="ViewMgr.gotoPage(${cb:isself})"><img src="${avatar_url}" alt="" /></div>\
-        <div class="commentListText ub-f1">\
-            <p>${cb:sendType}内容 ${cb:title} <span class="t-gra">(${create_time})</span></p>\
-            <p>${cb:sendType}<span class="t-pur"_click="ViewMgr.gotoPage(${cb:isself})">${nickname}</span>的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>\
-            <div class="chatDelete" _click="UserAction.deleteData(\'comment\',DOM.findParent(this,\'.commentList\',true),\'${enwid}\');">删除</div>\
-        </div>\
-        <strong class="DynamicMore" _click="ViewMgr.gotoPage(${cb:isselfDetail},\'wid=${parentid}\')">></strong>\
-    </div>',
+    commentMe:['<div class="commentList ub clearfix">',
+        '<div class="commentListAvatar" _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')"><img src="${avatar_url}" alt="" /></div>',
+        '<div class="commentListText ub-f1">',
+            '<p class="chatListName t-blue" _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')">${nickname}</p>',
+            '<p>${cb:sendType}内容<span class="t-pur">${cb:title}</span><span class="t-gra">(${create_time})</span></p>',
+            '<p>${cb:sendType}我的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>',
+        '</div>',
+        '<strong class="DynamicMore" _click="ViewMgr.gotoPage(${cb:isselfDetail},\'wid=${parentid}\')">></strong>',
+    '</div>'].join(''),
+    sendComment:['<div class="commentList ub clearfix">',
+        '<div class="commentListAvatar" _click="ViewMgr.gotoPage(${cb:isself})"><img src="${avatar_url}" alt="" /></div>',
+        '<div class="commentListText ub-f1">',
+            '<p>${cb:sendType}内容 ${cb:title} <span class="t-gra">(${create_time})</span></p>',
+            '<p>${cb:sendType}<span class="t-pur"_click="ViewMgr.gotoPage(${cb:isself})">${nickname}</span>的${cb:urlType}:<span class="t-blue">${cb:parentTitle}</span></p>',
+            '<div class="chatDelete" _click="UserAction.deleteData(\'comment\',DOM.findParent(this,\'.commentList\',true),\'${enwid}\');">删除</div>',
+        '</div>',
+        '<strong class="DynamicMore" _click="ViewMgr.gotoPage(${cb:isselfDetail},\'wid=${parentid}\')">></strong>',
+    '</div>'].join(''),
     blackList:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');this.event.stop();"></span></div>',
-    rank:'<div class="rankList uc-t ub b-gra ub-ac umh4 lis">\
-            <div class="topRank">${index:}</div>\
-            <div class="commentListAvatar" ${cb:isself}>\
-                <img src="${avatarPicUrlx}" alt="">\
-            </div>\
-            <div class="commentListText ub-f1">\
-                <p class="chatListNameub-f1 chatListName" ${cb:isself}>${nickname}</p>\
-                <p>${cb:age}/${cb:address}/${cb:sex}/${cb:target}</p>\
-            </div>\
-            ${cb:top}\
-        </div> '
+    rank:['<div class="rankList uc-t ub b-gra ub-ac umh4 lis">',
+            '<div class="topRank">${index:}</div>',
+            '<div class="commentListAvatar" ${cb:isself}>',
+                '<img src="${avatarPicUrlx}" alt="">',
+            '</div>',
+            '<div class="commentListText ub-f1">',
+                '<p class="chatListNameub-f1 chatListName" ${cb:isself}>${nickname}</p>',
+                '<p>${cb:age}/${cb:address}/${cb:sex}/${cb:target}</p>',
+            '</div>',
+            '${cb:top}',
+        '</div>'].join('')
 };
 
 /*页面列表对应的模板*/
