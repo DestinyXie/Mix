@@ -458,14 +458,14 @@ var Tools={
             var exdate=new Date(),cv=Tools.cookie(name);
             exdate.setTime(exdate.getTime()-1);
             if(cv)
-                document.cookie=name+"="+cv+";expires="+exdate.toGMTString();
+                document.cookie=name+"="+escape(cv)+";expires="+exdate.toGMTString();
             return false;
         }
         if(arguments.length>1) {
             var exdate=new Date(),
             days=expiredays||3000;
             exdate.setTime(exdate.getTime()+days*24*60*60*1000);
-            document.cookie=name+"="+value+";expires="+exdate.toGMTString();
+            document.cookie=name+"="+escape(value)+";expires="+exdate.toGMTString();
         } else {
             if(dc.length>0) {
                 cs=dc.indexOf(name+"=");
@@ -494,7 +494,19 @@ var Tools={
         removeItem: function(name) {
             Tools.cookie(name,null);
         },
-        clear:function(){}//待实现
+        clear:function(){//待实现
+            var dc=document.cookie,items,name;
+            if(dc.length>0){
+                items=dc.split(';');
+                if(items.length==0){
+                    return;
+                }
+                for (var i = items.length-1; i >= 0; i--) {
+                    name=items[i].split('=')[0];
+                    Tools.cookieStor.removeItem(name);
+                }
+            }
+        }
     },
     /*本地存储*/
     storage:(function(){
@@ -660,6 +672,7 @@ var Tools={
 
         SpinningWheel.setCancelAction(cancel);
         SpinningWheel.setDoneAction(done);
+
         function checkProv(){
             var results = SpinningWheel.getSelectedValues(),
                 val=results.values[0];
