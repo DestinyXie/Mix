@@ -24,7 +24,7 @@ var ViewMgr={
     pairPages:['mainPhoto','mainList','myPhoto','myList','hisPhoto','hisList'],//成双的页面
     getMsg:true,
     getDataInter:null,//轮询信息中心数据及Tips
-    getDataTime:5000,//轮询信息中心数据,个人信息及Tips时间间隔 5秒
+    getDataTime:50000,//轮询信息中心数据,个人信息及Tips时间间隔 50秒 由于切换页面既取数据 间隔时间可以拉长以节省流量
     showTipsTimeout:null,
     // getTipsXhr:null,
     // getMsgXhr:null,
