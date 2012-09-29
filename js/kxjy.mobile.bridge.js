@@ -1,5 +1,5 @@
 /*手机接口调用*/
-var Device={
+;var Device={
     /*手机初始化*/
     getBridgeName:function(){
         if(WIN["uexWindow"]){
@@ -8,7 +8,7 @@ var Device={
         return 'PC-window';
     },
     isAppcan:function(){
-        return (this.getBridgeName()=="appCan");
+        return (Device.getBridgeName()=="appCan");
     },
     isLoaded:false,
     loadEventBinded:false,
@@ -24,7 +24,7 @@ var Device={
             }
             Device.isLoaded=true;
         }
-        this.loadQueue.push(loadFn);
+        Device.loadQueue.push(loadFn);
 
         if(Device.loadEventBinded)
             return;

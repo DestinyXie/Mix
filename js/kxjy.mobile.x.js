@@ -1,12 +1,16 @@
 /* Ajax */
-var X = function(options) {
-	this.options = extend({
+;var X = function(options) {
+	var that=this;
+	console.log("!-0-!");
+	that.options = {
 		varsEncode: false,
 		method: 'get',
 		dataType: 'json',
 		timeOut: 15 /* timeout in seconds;*/
-	}, options || {});
-	return this.reset();
+	};
+	extend(that.options , options || {});
+	console.log("!-1-!");
+	return that.reset();
 };
 
 X.prototype = {
@@ -82,15 +86,17 @@ X.prototype = {
 		return that;
 	},
 	abort: function() {
-		if (this.loading) {
-			this.xmlhttp.abort();
-			this.reset();
-			this.loading = false;
+		var that=this;
+		if (that.loading) {
+			that.xmlhttp.abort();
+			that.reset();
+			that.loading = false;
 		}
 	},
 	_onTimeout: function() {
-		this.abort();
-		this.onTimeout();
+		var that=this;
+		that.abort();
+		that.onTimeout();
 	},
 	onStart: function() {},
 	onLoad: function() {},

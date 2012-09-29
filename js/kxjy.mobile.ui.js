@@ -1,5 +1,5 @@
 /*下拉刷新页面*/
-function initIScroll(pullDownEl,wrapperID,downAction) {
+;function initIScroll(pullDownEl,wrapperID,downAction) {
     function pullDownAction () {
         Feed.refresh();
     }

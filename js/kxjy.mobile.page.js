@@ -1,5 +1,5 @@
 /*单页面模式*/
-(function(){
+;(function(){
 //公共tmpl,减少代码量
 var headerBack=['<!--header开始-->',
     '<div id="header" class="uh">',
@@ -1171,8 +1171,8 @@ var pageConfig={
 
 var PageEngine=function(options){
     var that=this;
+    
     that.destroy();
-
     that.options={
         pageWrap:$('#pageWraper'),
         cacheDomPage:['mainPhoto','myPhoto','showMood','editInfo','more'],//缓存DOM节点 待实现
@@ -1185,7 +1185,6 @@ var PageEngine=function(options){
 PageEngine.prototype={
     initUser:function(){//用户信息初始化
         var that=this;
-
         if(!/login|users/.test(that.curPage)){
             if(that.hasUser){
                 return;
@@ -1246,6 +1245,7 @@ PageEngine.prototype={
     },
     initPage:function(page,diret){
         var that=this;
+
         that.cancelPrePage();
 
         that.prePage=that.curPage;
@@ -1505,5 +1505,5 @@ PageEngine.prototype={
         this.hasUser=false;
     }
 }
-window.PageEngine=PageEngine;
+window['PageEngine']=PageEngine;
 })();

@@ -4,9 +4,8 @@
 <title>开心交友 - 手机版</title>
 <meta charset="utf-8">
 <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-
-<!--{if !$debug}-->
-<link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/kxjy.min.css','static');}-->"/>
+<!--{if $debug}-->
+<link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/kxjy-min.css','static');}-->"/>
 <!--{else}-->
 <link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/zy-ui.css','static');}-->"/>
 <link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/kxjy.css','static');}-->"/>
@@ -17,12 +16,12 @@
 <div id="pageWraper" class="up ub ub-ver" >
 </div>
 
-<!--{if !$debug}-->
-<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.min.js','static');}-->"></script>
+<!--{if $debug}-->
+<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy-min.js','static');}-->"></script>
 <!--{else}-->
-<script src="<!--{eval echo createDomain('/template/default/js/validate.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/iscroll.js','static');}-->"></script>
 <script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.base.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/validate.js','static');}-->"></script>
+<script src="<!--{eval echo createDomain('/template/mobile/js/iscroll.js','static');}-->"></script>
 <script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.bridge.js','static');}-->"></script>
 <script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.page.js','static');}-->"></script>
 <script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.x.js','static');}-->"></script>
@@ -34,11 +33,16 @@
 
 <script type="text/javascript">
     //页面初始时从服务器取得的变量值
-    StorMgr.sid="$sid";
-    StorMgr.siteUrl="$_SC['siteurl']";
-    StorMgr.chatPath="$_SC['chat_system_url']";/*Chat服务器*/
-    StorMgr.siteHost="$_SERVER['HTTP_HOST']";
-    StorMgr.filesAllowed =$_SC['max_file_num']-$user_info['picnum'];/*还能上传照片的数量*/
+    var StorMgrInit=["$sid",
+	    "$_SC['siteurl']",
+	    "$_SC['chat_system_url']",
+	    "$_SERVER['HTTP_HOST']",
+	    ($_SC['max_file_num']-$user_info['picnum'])*1];
+    // StorMgr.sid="$sid";
+    // StorMgr.siteUrl="$_SC['siteurl']";
+    // StorMgr.chatPath="$_SC['chat_system_url']";/*Chat服务器*/
+    // StorMgr.siteHost="$_SERVER['HTTP_HOST']";
+    // StorMgr.filesAllowed =$_SC['max_file_num']-$user_info['picnum'];/*还能上传照片的数量*/
 </script>
 
 </body>

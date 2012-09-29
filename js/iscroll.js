@@ -2,7 +2,7 @@
  * iScroll v4.2.2 ~ Copyright (c) 2012 Matteo Spinelli, http://cubiq.org
  * Released under MIT license, http://cubiq.org/license
  */
-(function(window, doc){
+;(function(window, doc){
 var m = Math,
 	dummyStyle = doc.createElement('div').style,
 	vendor = (function () {
@@ -22,13 +22,13 @@ var m = Math,
 	})(),
 	cssVendor = vendor ? '-' + vendor.toLowerCase() + '-' : '',
 
-	// Style properties
-	transform = prefixStyle('transform'),
-	transitionProperty = prefixStyle('transitionProperty'),
-	transitionDuration = prefixStyle('transitionDuration'),
-	transformOrigin = prefixStyle('transformOrigin'),
-	transitionTimingFunction = prefixStyle('transitionTimingFunction'),
-	transitionDelay = prefixStyle('transitionDelay'),
+	// Style properties//e.g webkit
+	transform = prefixStyle('transform'),//webkitTransform
+	transitionProperty = prefixStyle('transitionProperty'),//webkitTransitionProperty
+	transitionDuration = prefixStyle('transitionDuration'),//webkitTransitionDuration
+	transformOrigin = prefixStyle('transformOrigin'),//webkitTransitionOrigin
+	transitionTimingFunction = prefixStyle('transitionTimingFunction'),//webkitTransitionTimingFunction
+	transitionDelay = prefixStyle('transitionDelay'),//webkitTransitionDelay
 
     // Browser capabilities
 	isAndroid = (/android/gi).test(navigator.appVersion),
@@ -60,6 +60,11 @@ var m = Math,
 		return transitionEnd[vendor];
 	})(),
 
+	/*
+	* CSS3 transitions和animations的优势在于浏览器知道哪些动画将会发生，所以得到正确的间隔来刷新UI
+	* 如果不使用transition或animation做动画 浏览器的(prefix)requestAnimationFrame属性能使动画更流畅
+	* (prefix)requestAnimationFrame接受一个参数，是一个屏幕重绘前被调用的函数
+	*/
 	nextFrame = (function() {
 		return window.requestAnimationFrame ||
 			window.webkitRequestAnimationFrame ||
@@ -78,7 +83,7 @@ var m = Math,
 			clearTimeout;
 	})(),
 
-	// Helpers
+	// Helpers ?? 3d更高效么?
 	translateZ = has3d ? ' translateZ(0)' : '',
 
 	// Constructor
@@ -92,29 +97,29 @@ var m = Math,
 
 		// Default options
 		that.options = {
-			hScroll: true,
+			hScroll: true,//if that.scroller can scroll at horizontal direction
 			vScroll: true,
-			x: 0,
+			x: 0,//scroller的位置
 			y: 0,
-			bounce: true,
-			bounceLock: false,
-			momentum: false,//change by destiny 2012.9.24
-			lockDirection: true,
-			useTransform: true,
-			useTransition: false,
-			topOffset: 0,
+			bounce: true,//Slow down if outside of the boundaries
+			bounceLock: false,//在垂直方向设置滚动,scroller<wrapper,水平方向不滚动时 true:垂直方向不能拖动 false:垂直方向可以拖动
+			momentum: false,//change by destiny 2012.9.24 记录300毫秒内手指移动的时间和距离 以设置手指离开后scroller的继续移动
+			lockDirection: true,//锁定一动方向 忽略另一个方向的手指轻微移动距离
+			useTransform: true,//使用变形
+			useTransition: false,//使用动画
+			topOffset: 0,//顶部位移 minScrollY=-topOffset||0
 			checkDOMChanges: false,// Experimental
-			handleClick: true,
+			handleClick: true,//是否处理点击事件
 
 			// Scrollbar
 			hScrollbar: false,//change by destiny 2012.9.24
 			vScrollbar: false,//change by destiny 2012.9.24
-			fixedScrollbar: isAndroid,
-			hideScrollbar: isIDevice,
-			fadeScrollbar: isIDevice && has3d,
-			scrollbarClass: '',
+			fixedScrollbar: false,//滚动指示器长度和宽度是否计算完就固定不变了
+			hideScrollbar: isIDevice,//不触发时隐藏滚动指示器
+			fadeScrollbar: isIDevice && has3d,//滚动指示器渐显
+			scrollbarClass: '',//customize
 
-			// Zoom
+			// Zoom //cool stuff
 			zoom: false,
 			zoomMin: 1,
 			zoomMax: 4,
@@ -122,8 +127,8 @@ var m = Math,
 			wheelAction: 'scroll',
 
 			// Snap
-			snap: false,
-			snapThreshold: 1,
+			snap: false,//是否直接移动到位
+			snapThreshold: 1,//超过这个距离时执行
 
 			// Events
 			onRefresh: null,
@@ -171,8 +176,11 @@ var m = Math,
 		that.scroller.style[transitionProperty] = that.options.useTransform ? cssVendor + 'transform' : 'top left';
 		that.scroller.style[transitionDuration] = '0';
 		that.scroller.style[transformOrigin] = '0 0';
+
+		//cubic-bezier bezier曲线
 		if (that.options.useTransition) that.scroller.style[transitionTimingFunction] = 'cubic-bezier(0.33,0.66,0.66,1)';
 		
+		//cssText属性所有浏览器都支持 但是ie中需要注意使用cssText相加时 之间需要手动添加一个分号
 		if (that.options.useTransform) that.scroller.style[transform] = 'translate(' + that.x + 'px,' + that.y + 'px)' + translateZ;
 		else that.scroller.style.cssText += ';position:absolute;top:' + that.y + 'px;left:' + that.x + 'px';
 
@@ -182,6 +190,7 @@ var m = Math,
 
 		that._bind(RESIZE_EV, window);
 		that._bind(START_EV);
+
 		if (!hasTouch) {
 			if (that.options.wheelAction != 'none')
 				that._bind(WHEEL_EV);
@@ -231,8 +240,8 @@ iScroll.prototype = {
 		var that = this,
 			bar;
 
-		if (!that[dir + 'Scrollbar']) {
-			if (that[dir + 'ScrollbarWrapper']) {
+		if (!that[dir + 'Scrollbar']) {//无滚动指示条 
+			if (that[dir + 'ScrollbarWrapper']) {//或者destroy时 撤销滚动指示条
 				if (hasTransform) that[dir + 'ScrollbarIndicator'].style[transform] = '';
 				that[dir + 'ScrollbarWrapper'].parentNode.removeChild(that[dir + 'ScrollbarWrapper']);
 				that[dir + 'ScrollbarWrapper'] = null;
@@ -242,7 +251,7 @@ iScroll.prototype = {
 			return;
 		}
 
-		if (!that[dir + 'ScrollbarWrapper']) {
+		if (!that[dir + 'ScrollbarWrapper']) {//创建滚动指示条 
 			// Create the scrollbar wrapper
 			bar = doc.createElement('div');
 
@@ -281,7 +290,7 @@ iScroll.prototype = {
 		}
 
 		// Reset position
-		that._scrollbarPos(dir, true);
+		that._scrollbarPos(dir, true);//_scrollbarPos(dir, hidden)准备阶段先hide 滚动指示器
 	},
 	
 	_resize: function () {
@@ -289,7 +298,7 @@ iScroll.prototype = {
 		setTimeout(function () { that.refresh(); }, isAndroid ? 200 : 0);
 	},
 	
-	_pos: function (x, y) {
+	_pos: function (x, y) {//use transform:translate(x,y) or left:x right:y
 		if (this.zoomed) return;
 
 		x = this.hScroll ? x : 0;
@@ -318,7 +327,7 @@ iScroll.prototype = {
 
 		if (!that[dir + 'Scrollbar']) return;
 
-		pos = that[dir + 'ScrollbarProp'] * pos;
+		pos = that[dir + 'ScrollbarProp'] * pos;//计算滚动指示器应该在的位置
 
 		if (pos < 0) {
 			if (!that.options.fixedScrollbar) {
@@ -355,7 +364,7 @@ iScroll.prototype = {
 
 		if (that.options.onBeforeScrollStart) that.options.onBeforeScrollStart.call(that, e);
 
-		if (that.options.useTransition || that.options.zoom) that._transitionTime(0);
+		if (that.options.useTransition || that.options.zoom) that._transitionTime(0);//设置动画经历时间
 
 		that.moved = false;
 		that.animating = false;
@@ -369,8 +378,8 @@ iScroll.prototype = {
 
 		// Gesture start
 		if (that.options.zoom && hasTouch && e.touches.length > 1) {
-			c1 = m.abs(e.touches[0].pageX-e.touches[1].pageX);
-			c2 = m.abs(e.touches[0].pageY-e.touches[1].pageY);
+			c1 = e.touches[0].pageX-e.touches[1].pageX;
+			c2 = e.touches[0].pageY-e.touches[1].pageY;
 			that.touchesDistStart = m.sqrt(c1 * c1 + c2 * c2);
 
 			that.originX = m.abs(e.touches[0].pageX + e.touches[1].pageX - that.wrapperOffsetLeft * 2) / 2 - that.x;
@@ -379,7 +388,7 @@ iScroll.prototype = {
 			if (that.options.onZoomStart) that.options.onZoomStart.call(that, e);
 		}
 
-		if (that.options.momentum) {
+		if (that.options.momentum) {//冲量效果
 			if (that.options.useTransform) {
 				// Very lame general purpose alternative to CSSMatrix
 				matrix = getComputedStyle(that.scroller, null)[transform].replace(/[^0-9\-.,]/g, '').split(',');
@@ -407,7 +416,7 @@ iScroll.prototype = {
 		that.pointX = point.pageX;
 		that.pointY = point.pageY;
 
-		that.startTime = e.timeStamp || Date.now();
+		that.startTime = e.timeStamp || Date.now();//点击开始时间
 
 		if (that.options.onScrollStart) that.options.onScrollStart.call(that, e);
 
@@ -419,9 +428,9 @@ iScroll.prototype = {
 	_move: function (e) {
 		var that = this,
 			point = hasTouch ? e.touches[0] : e,
-			deltaX = point.pageX - that.pointX,
+			deltaX = point.pageX - that.pointX,//手指移动距离
 			deltaY = point.pageY - that.pointY,
-			newX = that.x + deltaX,
+			newX = that.x + deltaX,//scroller新位置
 			newY = that.y + deltaY,
 			c1, c2, scale,
 			timestamp = e.timeStamp || Date.now();
@@ -430,8 +439,8 @@ iScroll.prototype = {
 
 		// Zoom
 		if (that.options.zoom && hasTouch && e.touches.length > 1) {
-			c1 = m.abs(e.touches[0].pageX - e.touches[1].pageX);
-			c2 = m.abs(e.touches[0].pageY - e.touches[1].pageY);
+			c1 = e.touches[0].pageX - e.touches[1].pageX;//两个手指间的距离 需支持多点触摸
+			c2 = e.touches[0].pageY - e.touches[1].pageY;
 			that.touchesDist = m.sqrt(c1*c1+c2*c2);
 
 			that.zoomed = true;
@@ -449,7 +458,7 @@ iScroll.prototype = {
 			this.scroller.style[transform] = 'translate(' + newX + 'px,' + newY + 'px) scale(' + scale + ')' + translateZ;
 
 			if (that.options.onZoom) that.options.onZoom.call(that, e);
-			return;
+			return;//zoom 返回
 		}
 
 		that.pointX = point.pageX;
@@ -488,6 +497,7 @@ iScroll.prototype = {
 		that.dirX = deltaX > 0 ? -1 : deltaX < 0 ? 1 : 0;
 		that.dirY = deltaY > 0 ? -1 : deltaY < 0 ? 1 : 0;
 
+		//手指移动超过300毫秒 重新设置点击开始时间 使_end方法中duration变量的设置更合理
 		if (timestamp - that.startTime > 300) {
 			that.startTime = timestamp;
 			that.startX = that.x;
@@ -561,7 +571,7 @@ iScroll.prototype = {
 						while (target.nodeType != 1) target = target.parentNode;
 
 						if (target.tagName != 'SELECT' && target.tagName != 'INPUT' && target.tagName != 'TEXTAREA') {
-							ev = doc.createEvent('MouseEvents');
+							ev = doc.createEvent('MouseEvents');//创建鼠标事件
 							ev.initMouseEvent('click', true, true, e.view, 1,
 								point.screenX, point.screenY, point.clientX, point.clientY,
 								e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
@@ -731,8 +741,8 @@ iScroll.prototype = {
 			animate;
 
 		if (that.animating) return;
-		
-		if (!that.steps.length) {
+
+		if (!that.steps.length) {//基本都是1或0
 			that._resetPos(400);
 			return;
 		}
@@ -925,8 +935,8 @@ iScroll.prototype = {
 		that.scrollerH = m.round((that.scroller.offsetHeight + that.minScrollY) * that.scale);
 		that.maxScrollX = that.wrapperW - that.scrollerW;
 		that.maxScrollY = that.wrapperH - that.scrollerH + that.minScrollY;
-		that.dirX = 0;
-		that.dirY = 0;
+		that.dirX = 0;//水平移动方向?-1:右移 0:未移动 1:左移
+		that.dirY = 0;//垂直移动方向?-1:下移 0:未移动 1:上移
 
 		if (that.options.onRefresh) that.options.onRefresh.call(that);
 
@@ -1105,6 +1115,6 @@ function prefixStyle (style) {
 dummyStyle = null;	// for the sake of it
 
 if (typeof exports !== 'undefined') exports.iScroll = iScroll;
-else window.iScroll = iScroll;
+else window['iScroll'] = iScroll;
 
 })(window, document);

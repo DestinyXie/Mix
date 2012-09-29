@@ -1,5 +1,5 @@
 /*页面初始化*/
-function executeLoad(){
+;function executeLoad(){
     /*全局变量赋值*/
     HEAD = $('head');
     BODY = DOC.body;
@@ -8,6 +8,16 @@ function executeLoad(){
     /*取得GPS信息*/
     Tools.getGpsInfo();
 
+    /*装载页面初始时从服务器取得的变量值*/
+    if(window['StorMgrInit']){
+        var iniA=window['StorMgrInit'];
+        StorMgr.sid          = iniA[0];
+        StorMgr.siteUrl      = iniA[1];
+        StorMgr.chatPath     = iniA[2];
+        StorMgr.siteHost     = iniA[3];
+        StorMgr.filesAllowed = iniA[4];
+    }
+    
     /*页面历史管理初始化*/
     ViewMgr.init();
 
@@ -32,7 +42,7 @@ var ViewMgr={
         delete WIN['pageEngine'];
         Device.disetBackBtn();
         WIN['pageEngine']=new PageEngine();
-        this.views=['login'];
+        ViewMgr.views=['login'];
 
         var storEmail=Tools.storage.get('kxjy_my_email'),
             storPwd=Tools.storage.get('kxjy_my_pwd'),
@@ -42,7 +52,9 @@ var ViewMgr={
                 Tools.storage.remove("kxjy_view_history","session");
             };
         if(storEmail&&storPwd){
+            console.log("??");
             UserAction.sendLogin(storEmail,storPwd,null,ok,fail);
+            console.log("!!");
         }else{
             fail();
         }
@@ -50,27 +62,28 @@ var ViewMgr={
         Device.backFunc=function(){ViewMgr.back();}
     },
     gotoPage:function(page,params){
-        var isBack=false;
-        this.stopGetData();
+        var isBack=false,
+            that=ViewMgr;
+        that.stopGetData();
         page=page.replace("\.html","");
-        var viewLen=this.views.length;
-        if(this.checkLast(page)){
+        var viewLen=that.views.length;
+        if(that.checkLast(page)){
             if(/Photo/.test(page)){
                 isBack=true;
             }
-            this.views[viewLen-1]=page;
-        }else if(this.views[viewLen-2]==page){//back
-            this.views.pop(1);
+            that.views[viewLen-1]=page;
+        }else if(that.views[viewLen-2]==page){//back
+            that.views.pop(1);
             isBack=true;
         }else{
-            if(viewLen>=this.recordLen)
-                this.views.shift(1);
-            this.views.push(page);
+            if(viewLen>=that.recordLen)
+                that.views.shift(1);
+            that.views.push(page);
         }
         Tools.storage.set("kxjy_view_history",ViewMgr.views,"session");
         
         try{
-            if(1==this.views.length){//设置返回按钮为历史回退
+            if(1==that.views.length){//设置返回按钮为历史回退
                 pageEngine.initPage('login');
                 Device.disetBackBtn();
             }else{
@@ -78,7 +91,7 @@ var ViewMgr={
             }
         }catch(e){}
 
-        this.setUrl(page,params,isBack);
+        that.setUrl(page,params,isBack);
     },
     /*切换页面*/
     setUrl:function(url,params,back){
@@ -92,28 +105,30 @@ var ViewMgr={
         }
     },
     back:function(){//返回上一个历史页面
-        this.stopGetData();
-        var backPage=this.views[this.views.length-2];
+        var that=ViewMgr;
+        that.stopGetData();
+        var backPage=that.views[that.views.length-2];
         if(backPage){
-            this.gotoPage(backPage);
+            that.gotoPage(backPage);
         }
     },
     checkLast:function(page){//判断上一个页面是否因记录为同一个历史(e.g:mainPhoto和mainList不因重复记入历史)或者同一个页面
-        var lastPage=this.views[this.views.length-1];
-        if(!this.pairPages.has(lastPage)){
+        var that=ViewMgr,
+            lastPage=that.views[that.views.length-1];
+        if(!that.pairPages.has(lastPage)){
             if(lastPage==page)
                 return true;
             return false;
         }else{
             try{
-                if(this.pairPages.has(page)&&/^(his|my|main)\w+/.exec(lastPage)[1]==/^(his|my|main)\w+/.exec(page)[1])
+                if(that.pairPages.has(page)&&/^(his|my|main)\w+/.exec(lastPage)[1]==/^(his|my|main)\w+/.exec(page)[1])
                 return true;
             }catch(e){}
             return false;
         }
     },
     getData:function(init,cb){//轮询信息中心数据及Tips
-        var that=this;
+        var that=ViewMgr;
         // that.stopGetData();//check if it'll make mistakes
         if(init){
             that.getMsgTips(init,cb);
@@ -125,7 +140,7 @@ var ViewMgr={
         }
     },
     stopGetData:function(){
-        var that=this;
+        var that=ViewMgr;
         that.showingTips=false;//check
 
         if(that.getDataXhr){
@@ -175,64 +190,67 @@ var ViewMgr={
 
     },
     showMsg:function(data){
+        var that=ViewMgr;
         if(!data){return;}
         StorMgr.setInfoCenter(data);
-        if(!this.hasFilledInfoCen||StorMgr.infoCenterChange){
+        if(!that.hasFilledInfoCen||StorMgr.infoCenterChange){
             if('infoCenter'==pageEngine.curPage){
                 InfoCenter.fill(data);
-                this.hasFilledInfoCen=true;    
+                that.hasFilledInfoCen=true;    
             }
         }
 
-        if(this.noInfoNumDom)
+        if(that.noInfoNumDom)
             return;
 
-        if(!this.infoNumDom){
+        if(!that.infoNumDom){
             var ftLis=$$('#footer>div>div'),infoDiv;
             if(ftLis&&ftLis.length==5){
                 infoDiv=ftLis[3];
             }else{
-                this.noInfoNumDom=true;
+                that.noInfoNumDom=true;
                 return;
             }
 
             if(infoDiv.children.length==3){
-                this.infoNumDom=infoDiv.children[0];
+                that.infoNumDom=infoDiv.children[0];
             }else{
                 var numDom=DOM.create('div');
                 numDom.className="us uinl b-wh uba1 c-m1 c-red uc-a2 t-wh ulev-1 uinn1 newAmount";
                 infoDiv.insertBefore(numDom,infoDiv.firstElementChild);
-                this.infoNumDom=numDom;
+                that.infoNumDom=numDom;
             }
         }
         if(data.remindNum==0){
-            this.infoNumDom.style.display="none";
+            that.infoNumDom.style.display="none";
         }else{
-            this.infoNumDom.style.display="block";
+            that.infoNumDom.style.display="block";
         }
-        if(this.infoNumDom.innerHTML!=data.remindNum)
-            this.infoNumDom.innerHTML=data.remindNum;
+        if(that.infoNumDom.innerHTML!=data.remindNum)
+            that.infoNumDom.innerHTML=data.remindNum;
     },
     addTips:function(data){//添加Tips
-        this.tipsArray=this.tipsArray||[];
+        var that=ViewMgr;
+        that.tipsArray=that.tipsArray||[];
         if(data&&$.isArray(data)&&data.length>0){
-            this.tipsArray=this.tipsArray.concat(data);
+            that.tipsArray=that.tipsArray.concat(data);
         }
-        if(this.tipsArray.length>0&&!this.showingTips){
-            this.showTips();
+        if(that.tipsArray.length>0&&!that.showingTips){
+            that.showTips();
         }
     },
     showTips:function(){//显示Tips
-        this.showingTips=false;
-        if(!this.tipsArray.length){
+        var that=ViewMgr;
+        that.showingTips=false;
+        if(!that.tipsArray.length){
             return;
         }
 
-        var msg=this.tipsArray.shift();
+        var msg=that.tipsArray.shift();
         if(msg){
-            this.showingTips=true;
+            that.showingTips=true;
             Tips.show('<img _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" style="height:2.5em" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,null,5000);
-            this.showTipsTimeout=setTimeout(function(){ViewMgr.showTips();},2000);
+            that.showTipsTimeout=setTimeout(function(){ViewMgr.showTips();},2000);
         }
     }
 }
@@ -265,7 +283,7 @@ var StorMgr={
         }
     },
     getMyInfo:function(cb){//取得我的信息并保存
-        var that=this;
+        var that=StorMgr;
         ViewMgr.getData(true,function(){
             if(cb&&that.myInfo){
                 cb(that.myInfo);
@@ -351,7 +369,7 @@ var hisInfo={
     storPics:{},
     storMoods:{},
     init:function(){
-        var that=this,
+        var that=hisInfo,
             storId=Tools.storage.get("kxjy_his_storId");
         that.storIDs=storId?storId:[];
         that.curId=Tools.getParamVal("user_id")||that.storIDs[0];
@@ -364,7 +382,7 @@ var hisInfo={
         return retObj;
     },
     set:function(id,data){
-        var that=this;
+        var that=hisInfo;
         Tools.storage.set("kxjy_his_info_"+id,data);
         that.storInfos[id]=data;
 
@@ -388,12 +406,13 @@ var hisInfo={
 */
 var Page={
     init:function(name){
-        this.destroy();
-        this.name=name;
-        this.getUserData();
+        var that=Page;
+        that.destroy();
+        that.name=name;
+        that.getUserData();
     },
     refresh:function(){
-        var that=this;
+        var that=Page;
         if(that.name){
             that.init(that.name);    
         }
@@ -413,7 +432,7 @@ var Page={
         this.dataXhr&&this.dataXhr.abort();
     },
     fullFillInfo:function(){
-        var that=this;
+        var that=Page;
         if(!that.name||!that.userData){
             // toast("页面信息不充分，无法载入资料",2);
             return;
@@ -517,31 +536,32 @@ var Page={
     },
     /*填充编辑资料内容*/
     fullFillEditInfo:function(){
-        var data=this.userData;
+        var that=Page,
+            data=that.userData;
 
-        this.editedValues=[];
-        this.editedErrors=[];
+        that.editedValues=[];
+        that.editedErrors=[];
 
-        this.setEditVal("nickname",data.nickname||"",true);
-        this.setEditVal("sex",dataArray.sex[data.sex
+        that.setEditVal("nickname",data.nickname||"",true);
+        that.setEditVal("sex",dataArray.sex[data.sex
             ]||"",true);
-        this.setEditVal("area",[data.reside_province,data.reside_city].join(" ")||"",true);
-        this.setEditVal("birthDay",("0"!=data.birthyear&&"0"!=data.birthmonth&&"0"!=data.birthday)?[data.birthyear,data.birthmonth,data.birthday].join('-'):"",true);
-        this.setEditVal("marry",dataArray.marry[data.marry-1]||"",true);
-        this.setEditVal("target",dataArray.target[data.target-1]||"",true);
-        this.setEditVal("note",data.note||"",true);
-        this.setEditVal("qq",data.qq||"",true);
-        this.setEditVal("mobile",data.mobile||"",true);
+        that.setEditVal("area",[data.reside_province,data.reside_city].join(" ")||"",true);
+        that.setEditVal("birthDay",("0"!=data.birthyear&&"0"!=data.birthmonth&&"0"!=data.birthday)?[data.birthyear,data.birthmonth,data.birthday].join('-'):"",true);
+        that.setEditVal("marry",dataArray.marry[data.marry-1]||"",true);
+        that.setEditVal("target",dataArray.target[data.target-1]||"",true);
+        that.setEditVal("note",data.note||"",true);
+        that.setEditVal("qq",data.qq||"",true);
+        that.setEditVal("mobile",data.mobile||"",true);
 
         var interestArr=data.interest?data.interest.sort(function(a,b){return a-b;}):[],
             interestStr=[];
         $.each(interestArr,function(num){
             interestStr.unshift(dataArray.interest[num-1]);
         });
-        this.setEditVal("interest",interestStr.join(" "),true);
+        that.setEditVal("interest",interestStr.join(" "),true);
     },
     setEditVal:function(id,value,init){
-        var that=this,
+        var that=Page,
             ipt=$("#"+id);
         if(init){
             ipt.setAttribute('default',value);
@@ -580,7 +600,7 @@ var Page={
 
     },
     submitEditInfo:function(){
-        var that=this,
+        var that=Page,
             editedIds=that.editedValues;
         that.editedErrors=[];
 
@@ -635,7 +655,7 @@ var Page={
         }
     },
     sendEditVal:function(params,id){
-        var that=this;
+        var that=Page;
         function check(){//检查是否保存完成
             if(that.editedValues.length<=0){
                 if(that.editedErrors.length>0){
@@ -685,7 +705,7 @@ var Page={
         return reMsg;
     },
     showMore:function(){
-        var that=this,
+        var that=Page,
             infoUl=$('ul.myInfo'),
             moreBtn=$("#titleMenu_more span");
         
@@ -733,7 +753,7 @@ var Page={
         that.loadedMore=true;
     },
     getUserData:function(){
-        var that=this,
+        var that=Page,
             dataUrl,
             secCb=function(a){
                 if(a.error){toast(a.error,3);
@@ -784,7 +804,7 @@ var Page={
         UserAction.getPicMood(pageEngine.curPage);
     },
     setDataNum:function(){
-        var that=this;
+        var that=Page;
         if(['myPhoto','hisPhoto'].has(that.name)&&$('.myTitleMenu')!=null){
             $('#titleMenu-pic span').innerHTML=Feed.dataCount+"<br />照片";
         }
@@ -1152,6 +1172,7 @@ var UserAction={
         if(UserAction.sendingLogin){//防止重复发送
             return;
         }
+       
         var checkUrl=StorMgr.siteUrl+"/userLogin.php",
             params='email='+encodeURIComponent(mail)+'&password='+encodeURIComponent(pwd),
             secCb=function(a) {
@@ -1189,8 +1210,10 @@ var UserAction={
         if(StorMgr.gpsInfo){//加入经纬度
             params+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];
         }
+
         UserAction.sendingLogin=true;
         UserAction.sendAction(checkUrl,params,"get",secCb,errCb);
+        console.log("!-0-!");
     },
     getVerify:function(){//获得验证码
         var veriNode=$("#verify"),

@@ -1,5 +1,5 @@
 /*列表模板*/
-var feedTemplate={
+;var feedTemplate={
     mainPhoto:'<div _click="ViewMgr.gotoPage(${cb:isself})" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
 	photo:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /></div>',
     myPhoto:'<div _click="ViewMgr.gotoPage(\'myDetail\',\'wid=${enwid}\')" class="mainList ub-img1"><img src="${fileimg}" alt="" /></div>',
@@ -241,102 +241,106 @@ var Feed={
         that.refresh();
 	},
     reset:function(){
-        this.isRefresh=false;
-        this.isLoading=false;
-        if(typeof this.cb=="function"){
-            this.cb();
+        var that=this;
+        that.isRefresh=false;
+        that.isLoading=false;
+        if(typeof that.cb=="function"){
+            that.cb();
         }
     },
     destroy:function(){
-        this.cont=null;
-        this.more=null;
-        this.onePageNum=null;
-        this.lastPos=null;
-        this.nowtime=null;
+        var that=this;
+        that.cont=null;
+        that.more=null;
+        that.onePageNum=null;
+        that.lastPos=null;
+        that.nowtime=null;
 
-        if(this.beforedestroy){//供继承类使用
-            this.beforedestroy();
+        if(that.beforedestroy){//供继承类使用
+            that.beforedestroy();
         }
 
-        this.isDestroyed=true;
-        if(this.loadXhr){
-            this.loadXhr.abort();
+        that.isDestroyed=true;
+        if(that.loadXhr){
+            that.loadXhr.abort();
         }
-        this.loadXhr=null;
+        that.loadXhr=null;
     },
     refresh:function(setParam){
-        if(this.isRefresh){
+        var that=this;
+        if(that.isRefresh){
             return;
         }
-        if(this.beforeRefersh){
-            this.beforeRefersh();
+        if(that.beforeRefersh){
+            that.beforeRefersh();
         }
-        if(this.noMoreBtn&&this.more.innerHTML!=this.noDataTxt&&this.more){
-            this.more.style.display="none";
+        if(that.noMoreBtn&&that.more.innerHTML!=that.noDataTxt&&that.more){
+            that.more.style.display="none";
         }
-        this.index=0;
-        this.isRefresh=true;
-        this.isLoading=false;
-        this.nowtime=null;
-        if(this.loadXhr){
-            this.loadXhr.abort();
+        that.index=0;
+        that.isRefresh=true;
+        that.isLoading=false;
+        that.nowtime=null;
+        if(that.loadXhr){
+            that.loadXhr.abort();
         }
-        this.loadMore(setParam);
+        that.loadMore(setParam);
     },
     loadMoreSecc:function(a){
-        this.index++;
-        if(!this.nowtime&&a.nowtime){
-            this.nowtime=a.nowtime;
+        var that=this;
+        that.index++;
+        if(!that.nowtime&&a.nowtime){
+            that.nowtime=a.nowtime;
         }
 
-        if(a.error&&this.page!="rank"){
-            this.reset();
+        if(a.error&&that.page!="rank"){
+            that.reset();
             toast(a.error);
             return;
         }
 
-        if(this.page=="rank"&&a.error.length>0){
-            this.reset();
+        if(that.page=="rank"&&a.error.length>0){
+            that.reset();
             toast(a.error[0]);
             return;
         }
 
-        if(this.isRefresh){//清除内容移至数据出来前
-            if(this.lastPos==1){
-                var lastEl=this.cont.lastElementChild.cloneNode(true);
-                this.cont.innerHTML="";
-                this.cont.appendChild(lastEl);
-            }else if(this.lastPos==-1){
-                var firstEl=this.cont.firstElementChild.cloneNode(true);
-                this.cont.innerHTML="";
-                this.cont.appendChild(firstEl);
+        if(that.isRefresh){//清除内容移至数据出来前
+            if(that.lastPos==1){
+                var lastEl=that.cont.lastElementChild.cloneNode(true);
+                that.cont.innerHTML="";
+                that.cont.appendChild(lastEl);
+            }else if(that.lastPos==-1){
+                var firstEl=that.cont.firstElementChild.cloneNode(true);
+                that.cont.innerHTML="";
+                that.cont.appendChild(firstEl);
             }else{
-                this.cont.innerHTML="";
+                that.cont.innerHTML="";
             }
         }
 
-        if(['chat','sysNotice'].has(this.page)){
-            this.dataCount=a.msg?a.msg.length:0;
-            this.totalPage=1;
-            this.fullFillFeed(a.msg?a.msg:[]);
+        if(['chat','sysNotice'].has(that.page)){
+            that.dataCount=a.msg?a.msg.length:0;
+            that.totalPage=1;
+            that.fullFillFeed(a.msg?a.msg:[]);
             return;
         }
 
-        if(['rank'].has(this.page)){
+        if(['rank'].has(that.page)){
             var data=a.data;
-            this.dataCount=data.rank_info.length;
-            this.totalPage=data.allNum;
-            this.fullFillFeed(data.rank_info);
+            that.dataCount=data.rank_info.length;
+            that.totalPage=data.allNum;
+            that.fullFillFeed(data.rank_info);
             return;   
         }
 
-        this.dataCount=a.datacount||(a.data&&a.data.length)||0;
-        this.totalPage=a.allpage||0;
+        that.dataCount=a.datacount||(a.data&&a.data.length)||0;
+        that.totalPage=a.allpage||0;
 
-        if(WIN['Page']&&!!this.dataCount)
+        if(WIN['Page']&&!!that.dataCount)
             Page.setDataNum();
 
-        this.fullFillFeed(a.data);
+        that.fullFillFeed(a.data);
     },
     loadMore:function(setParam){
         var that=this;
@@ -1047,8 +1051,8 @@ var Comment={
         that._bindEvent();
     },
     destroy:function(){
-        var that=this;
-        if(!this.commBox){
+        var that=Comment;
+        if(!that.commBox){
             return;
         }
         clearTimeout(that.moodInter);
@@ -1056,13 +1060,13 @@ var Comment={
         that.moodInter=null;
         that.sendingComm=false;
 
-        delete this.commBox;
-        this.commBox=null;
-        this.moodImg=null;
-        this.moodBox=null;
-        this.input=null;
-        this.sentBtn=null;
-        this._unBindEvent();
+        delete that.commBox;
+        that.commBox=null;
+        that.moodImg=null;
+        that.moodBox=null;
+        that.input=null;
+        that.sentBtn=null;
+        that._unBindEvent();
     },
     _bindEvent:function(){
         var that=this;

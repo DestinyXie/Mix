@@ -1,5 +1,5 @@
 ﻿/*保存常用DOM及其属性值的全局变量BODYFS=BODY.style.fontSize*/
-var HEAD, BODY, BODYFS, DOC = document, WIN = window;
+;var HEAD, BODY, BODYFS, DOC = document, WIN = window;
 
 /*常量设置*/
 var isTouch = ('ontouchstart' in WIN),
