@@ -32,17 +32,11 @@
 <!--{/if}-->
 
 <script type="text/javascript">
-    //页面初始时从服务器取得的变量值
-    var StorMgrInit=["$sid",
-	    "$_SC['siteurl']",
-	    "$_SC['chat_system_url']",
-	    "$_SERVER['HTTP_HOST']",
-	    ($_SC['max_file_num']-$user_info['picnum'])*1];
-    // StorMgr.sid="$sid";
-    // StorMgr.siteUrl="$_SC['siteurl']";
-    // StorMgr.chatPath="$_SC['chat_system_url']";/*Chat服务器*/
-    // StorMgr.siteHost="$_SERVER['HTTP_HOST']";
-    // StorMgr.filesAllowed =$_SC['max_file_num']-$user_info['picnum'];/*还能上传照片的数量*/
+    StorMgr.sid="$sid";
+    StorMgr.siteUrl="$_SC['siteurl']";
+    StorMgr.chatPath="$_SC['chat_system_url']";/*Chat服务器*/
+    StorMgr.siteHost="$_SERVER['HTTP_HOST']";
+    StorMgr.filesAllowed =$_SC['max_file_num']-$user_info['picnum'];/*还能上传照片的数量*/
 </script>
 
 </body>

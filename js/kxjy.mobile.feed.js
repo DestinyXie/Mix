@@ -472,8 +472,8 @@ var Feed={
         that.loadXhr=UserAction.sendAction(dataUrl,params,"get",secCb,errCb);
     },
     getUrl:function(){
-        var that=this;
-        var feedUrl=Tools.compileUrl(pageFeedUrl[that.page]);
+        var that=this,
+            feedUrl=Tools.compileUrl(pageFeedUrl[that.page]);
 
         if('mainPhoto'==that.page&&StorMgr.gpsInfo){//附近的人加入经纬度
             feedUrl+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];

@@ -103,8 +103,8 @@
             <arg value="--warning_level"/>
             <arg value="QUIET"/>
             <arg value="--compilation_level"/>
-            <!--SIMPLE_OPTIMIZATIONS is default value-->
-            <arg value="ADVANCED_OPTIMIZATIONS"/>
+            <!--SIMPLE_OPTIMIZATIONS is default value,not ADVANCED_OPTIMIZATIONS-->
+            <arg value="SIMPLE_OPTIMIZATIONS"/>
             <arg value="--js"/>
             <srcfile/>
             <arg value="--js_output_file"/>

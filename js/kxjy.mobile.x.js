@@ -1,7 +1,6 @@
 /* Ajax */
 ;var X = function(options) {
 	var that=this;
-	console.log("!-0-!");
 	that.options = {
 		varsEncode: false,
 		method: 'get',
@@ -9,7 +8,6 @@
 		timeOut: 15 /* timeout in seconds;*/
 	};
 	extend(that.options , options || {});
-	console.log("!-1-!");
 	return that.reset();
 };
 

@@ -7,16 +7,6 @@
 
     /*取得GPS信息*/
     Tools.getGpsInfo();
-
-    /*装载页面初始时从服务器取得的变量值*/
-    if(window['StorMgrInit']){
-        var iniA=window['StorMgrInit'];
-        StorMgr.sid          = iniA[0];
-        StorMgr.siteUrl      = iniA[1];
-        StorMgr.chatPath     = iniA[2];
-        StorMgr.siteHost     = iniA[3];
-        StorMgr.filesAllowed = iniA[4];
-    }
     
     /*页面历史管理初始化*/
     ViewMgr.init();
@@ -52,9 +42,7 @@ var ViewMgr={
                 Tools.storage.remove("kxjy_view_history","session");
             };
         if(storEmail&&storPwd){
-            console.log("??");
             UserAction.sendLogin(storEmail,storPwd,null,ok,fail);
-            console.log("!!");
         }else{
             fail();
         }
@@ -1213,7 +1201,6 @@ var UserAction={
 
         UserAction.sendingLogin=true;
         UserAction.sendAction(checkUrl,params,"get",secCb,errCb);
-        console.log("!-0-!");
     },
     getVerify:function(){//获得验证码
         var veriNode=$("#verify"),
