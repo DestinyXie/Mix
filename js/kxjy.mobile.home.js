@@ -5,14 +5,14 @@
     BODY = DOC.body;
     BODYFS = parseInt(getComputedStyle(BODY).fontSize);
 
+    /*加载weinre debug工具*/
+    // DOM.loadJs("http://192.168.40.28:8081/target/target-script.js",function(){alert('weinre test ok!')});
+    
     /*取得GPS信息*/
     Tools.getGpsInfo();
     
     /*页面历史管理初始化*/
     ViewMgr.init();
-
-    /*加载weinre debug工具*/
-    // DOM.loadJs("http://192.168.30.78:8081/target/target-script.js",function(){alert('weinre test ok!')});
 }
 
 Device.onLoad(executeLoad);

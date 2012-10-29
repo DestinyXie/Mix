@@ -31,7 +31,7 @@
 
         //appCan对象初始化比window.onload慢
         window.uexOnload=load;
-        if(!isTouch){
+        if(!WIN["uexWindow"]){
             //PC test
             DOM.addEvent(DOC,'DOMContentLoaded',load);
         }

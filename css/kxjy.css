@@ -746,7 +746,7 @@ li .comment{
 .infoList:last-child,.rankList:last-child{
 	border-bottom:0;
 }
-.infoList.active{background:#efefef;}
+.infoList.active{background:-webkit-gradient(linear, left top, left bottom, from(#FF4BAA), to(#FC2E9B));}
 
 .chatList{
 	padding:0.35em 0;

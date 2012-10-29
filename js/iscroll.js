@@ -103,7 +103,7 @@ var m = Math,
 			y: 0,
 			bounce: true,//Slow down if outside of the boundaries
 			bounceLock: false,//在垂直方向设置滚动,scroller<wrapper,水平方向不滚动时 true:垂直方向不能拖动 false:垂直方向可以拖动
-			momentum: false,//change by destiny 2012.9.24 记录300毫秒内手指移动的时间和距离 以设置手指离开后scroller的继续移动
+			momentum: true,//change by destiny 2012.9.24 记录300毫秒内手指移动的时间和距离 以设置手指离开后scroller的继续移动
 			lockDirection: true,//锁定一动方向 忽略另一个方向的手指轻微移动距离
 			useTransform: true,//使用变形
 			useTransition: false,//使用动画
