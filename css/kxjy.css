@@ -757,7 +757,7 @@ li .comment{
 .listBg{
 	margin:.5em;
 	background:#f4f0e7;
-	-webkit-border-radius:.4em;
+	-webkit-border-radius:.6em;
 }
 /*聊天*/
 .chatContent{

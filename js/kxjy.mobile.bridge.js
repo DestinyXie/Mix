@@ -1,14 +1,14 @@
 /*手机接口调用*/
 ;var Device={
     /*手机初始化*/
-    getBridgeName:function(){
+    hasBridge:function(){
         if(WIN["uexWindow"]){
-            return 'appCan';
+            return true;
         }
-        return 'PC-window';
+        return false;
     },
-    isAppcan:function(){
-        return (Device.getBridgeName()=="appCan");
+    isMobi:function(){
+        return Device.hasBridge();
     },
     isLoaded:false,
     loadEventBinded:false,
@@ -24,6 +24,16 @@
             }
             Device.isLoaded=true;
         }
+
+        function PCload(){
+            setTimeout(function(){//appcan对象初始化延迟
+                if(!WIN["uexWindow"]){
+                    //PC test
+                    load();
+                }
+            },1000);
+        }
+
         Device.loadQueue.push(loadFn);
 
         if(Device.loadEventBinded)
@@ -31,25 +41,31 @@
 
         //appCan对象初始化比window.onload慢
         window.uexOnload=load;
-        if(!WIN["uexWindow"]){
-            //PC test
-            DOM.addEvent(DOC,'DOMContentLoaded',load);
-        }
+        DOM.addEvent(DOC,'DOMContentLoaded',PCload);
 
         Device.loadEventBinded=true;
     },
     destroy:function(){//关掉一些东西，比如上传
-        if(!Device.isAppcan()){return;}
+        if(!Device.isMobi()){return;}
         //减1因为拍照时会取文件尺寸 Device.opCode 会比上传的加1
         uexXmlHttpMgr.close(Device.opCode-1);
         uexWindow.closeToast();
     },
+    exit:function(){//退出应用
+        if(!Device.isMobi()){return;}
+        uexWidgetOne.exit();
+    },
     alert:function(title,msg,btn){
+        if(!Device.isMobi()){return;}
         uexWindow.alert(title,msg,btn);
+    },
+    toast:function(s,t){
+        if(!Device.isMobi()){return;}
+        uexWindow.toast(0,5,s,t*1000||2000);
     },
     /*uexWindow接口*/
     confirm:function(msg,ok,cancel,labs,title){
-        if(Device.isAppcan()){
+        if(Device.isMobi()){
             uexWindow.cbConfirm=function(opId,dataType,data){
                 switch(data*1){
                     case 0:
@@ -69,7 +85,7 @@
         }
     },
     actionThree:function(title,msg,labArr,first,second,third){
-        if(Device.isAppcan()){
+        if(Device.isMobi()){
             uexWindow.cbConfirm=function(opId,dataType,data){
                 switch(data*1){
                     case 0:
@@ -91,7 +107,7 @@
         }
     },
     prompt:function(msg,ok,cancel,labs,def){
-        if(Device.isAppcan()){
+        if(Device.isMobi()){
             uexWindow.cbPrompt=function(opId, dataType, data){
                 var obj = eval('('+data+')');
                 var num=obj.num,
@@ -115,25 +131,45 @@
             }
         }
     },
+    actionSheet:function(ao){
+        uexWindow.cbActionSheet=ao[3];
+        uexWindow.actionSheet(ao[0],ao[1],ao[2]);
+    },
     backFunc:null,
-    setBackBtn:function(fn){//设置返回按钮android symbian
-        if(!Device.isAppcan()){return;}
-        uexWindow.onKeyPressed=function(){
-            if($.isFunc(Device.backFunc)){
-                Device.backFunc.call(null);
-            }
-            if($.isFunc(fn)){
-                fn.call(null);
+    menuFunc:null,
+    setKeyPress:function(){
+        uexWindow.onKeyPressed=function(code){
+            if(0===code*1){
+                if($.isFunc(Device.backFunc)){
+                    Device.backFunc.call(null);
+                }
+            }else if(1===code*1){
+                if($.isFunc(Device.menuFunc)){
+                    Device.menuFunc.call(null);
+                }
             }
         }
+    },
+    setBackBtn:function(fn){//设置返回按钮android symbian
+        if(!Device.isMobi()){return;}
+        Device.setKeyPress();
         uexWindow.setReportKey('0', '1');
     },
     disetBackBtn:function(){//取消设置返回按钮android symbian
-        if(!Device.isAppcan()){return;}
+        if(!Device.isMobi()){return;}
         uexWindow.setReportKey('0', '0');
     },
-    datePicker:function(node,okCb,errCb){
-        if(!Device.isAppcan()){return;}
+    setMenuBtn:function(fn){//设置menu键
+        if(!Device.isMobi()){return;}
+        Device.setKeyPress();
+        uexWindow.setReportKey('1', '1');
+    },
+    disetMenuBtn:function(){//取消设置menu键
+        if(!Device.isMobi()){return;}
+        uexWindow.setReportKey('1', '0');
+    },
+    datePicker:function(node,okCb,errCb){//日期选择
+        if(!Device.isMobi()){return;}
         uexControl.cbOpenDatePicker=function(opCode,dataType,data){
 　　　　　　　　if(dataType==1){
 　　　　　　　　　　var obj = eval('('+data+')'),
@@ -143,9 +179,9 @@
                         alert('日期超过今天无效');
                         return;
                     }
-                    okCb?okCb(dataStr):toast(dataStr);
+                    okCb?okCb(dataStr):Device.toast(dataStr);
 　　　　　　　　}else{
-                    errCb?errCb:toast('日期没有选择成功');
+                    errCb?errCb():Device.toast('日期没有选择成功');
                 }
 　　　　}
         var defData=node.getAttribute('default').split("-");
@@ -157,7 +193,7 @@
     },
     /*GPS功能*/
     getLocation:function(cb){//获取经纬度 cb(latitude,longitude)
-        if(!Device.isAppcan()){return;}
+        if(!Device.isMobi()){return;}
         function locationCallback(lat,log){
             uexLocation.closeLocation();
             cb(lat,log);
@@ -171,7 +207,7 @@
     },
     /*根据经纬度获取地址 cb(addr);*/
     getAddress:function(lat,log,cb,errCb){
-        if(!Device.isAppcan()){return;}
+        if(!Device.isMobi()){return;}
         function LocationSuccess(opCode,dataType,data){
             if(dataType==0){
                 cb(data);
@@ -179,7 +215,7 @@
                 if(errCb){
                     errCb();
                 }else{
-                    toast('未能获得地址信息');
+                    Device.toast('未能获得地址信息');
                 }
             }
         }
@@ -206,13 +242,13 @@
         }
     },
     getAppVersion:function(cb){
-        if(!Device.isAppcan()){toast('你不是手机，请自便。');return;}
+        if(!Device.isMobi()){Device.toast('你不是手机，请自便。');return;}
         function versionSuccess(opId,dataType,data){
             if(dataType==0){
                 if(cb){cb(data);}
                 Device.appVersion=data;
             }else{
-                toast('版本获取失败!');
+                Device.toast('版本获取失败!');
             }
         }
 
@@ -262,9 +298,53 @@
         // }
         uexDownloaderMgr.createDownloader(inOpCode);
     },
+    xmlHttp:function(customObj){//跨域异步请求数据的方法
+        /* param:customObj{object}:
+        src 请求地址
+        method 请求方法
+        plainPara 简单参数
+        sourcePara 资源参数
+        progressCb 进度回调
+        secCb 请求成功回调
+        failCb 请求失败回调
+        */
+        if(!customObj['src']){
+            Device.toast('缺少xmlHttp请求地址。');
+            return;
+        }
+
+        var option={
+            opCode:Device.opCode++,
+            method:'POST',
+            timeout:0//请求超时
+        }
+        extend(option,customObj);
+
+        function sendParam(paramStr,isSource){
+            var params=paramStr.split('&'),tmpArr;
+            for (var i = params.length - 1; i >= 0; i--) {
+                tmpArr=params[i].split('=');
+                if(2===tmpArr.length){
+                    uexXmlHttpMgr.setPostData(option.opCode, !isSource?"0":"1", tmpArr[0], tmpArr[1]);
+                }
+            };
+        }
+        
+        uexXmlHttpMgr.onPostProgress=option.progressCb;
+        uexXmlHttpMgr.onData = option.secCb;
+        uexXmlHttpMgr.open(option.opCode, option.method.toUpperCase(), option.src, option.timeout);
+
+        sendParam(option['plainPara'],false);
+        sendParam(option['sourcePara'],true);
+
+        uexXmlHttpMgr.send(option.opCode);
+    },
+    xmlHttpClose:function(opCode){
+        uexXmlHttpMgr.close(opCode);
+    },
     /*取得文件大小*/
     getFileSize:function(path,cb){
-        if(!Device.isAppcan()){return;}
+        if(!Device.isMobi()){return;}
         Device.opCode++;
         var inOpCode=Device.opCode;
         function callback(opId,dataType,data){
@@ -277,5 +357,17 @@
         uexFileMgr.openFile(inOpCode,path,1);
         uexFileMgr.getFileSize(inOpCode);
         uexFileMgr.closeFile(inOpCode);
+    },
+    camera:function(cb){//拍照
+        uexCamera.cbOpen=function(opId,dataType,data){
+            cb(opId,dataType,data);
+        };
+        uexCamera.open();
+    },
+    imageBrowser:function(cb){//浏览照片
+        uexImageBrowser.cbPick=function (opCode,dataType,data){
+            cb(opId,dataType,data);
+        };
+        uexImageBrowser.pick();
     }
 }

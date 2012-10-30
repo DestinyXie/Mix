@@ -127,13 +127,12 @@ function initDockScroll(dockSel,wrapperID,listEl){
 /*手机原生弹出窗接口*/
 var actionSheet={
     show:function(action){
-        if(!isTouch){
-            toast("不支持手机原生弹出窗，因为你用的不是手机",4);
+        if(!Device.isMobi()){
+            toast("不支持手机原生弹出窗，因为你不是webapp",4);
             return;
         }else{
             var ao=this.actionObj[action];
-            uexWindow.cbActionSheet=ao[3];
-            uexWindow.actionSheet(ao[0],ao[1],ao[2]);
+            Device.actionSheet(ao);
         }
     },
     actionObj:{
@@ -177,7 +176,8 @@ var actionSheet={
                     alert("上传单个文件最大尺寸为3MB，请重新选择");
                     return;
                 }
-                uexXmlHttpMgr.onPostProgress=function(uopCode,p){
+
+                function onProgress(uopCode,p){
                     if(p==100){
                         toast("上传结束！",1);
                         return;
@@ -200,45 +200,58 @@ var actionSheet={
                             }
                         }
                     }else{
-                        toast("上传出错",2)
+                        toast("上传出错",2);
                     }
-                    uexXmlHttpMgr.close(uopCode);
+                    Device.xmlHttpClose(uopCode);
                 }
-                uexXmlHttpMgr.onData = httpSuccess;
-                uexXmlHttpMgr.open(uopCode, "POST", uploadUrl, "");
-                uexXmlHttpMgr.setPostData(uopCode, "0", "upload", "1");
-                uexXmlHttpMgr.setPostData(uopCode, "0", "sid", StorMgr.sid);
-                uexXmlHttpMgr.setPostData(uopCode, "0", "uid", StorMgr.uid);
-                if(!isMyPhoto){
-                    uexXmlHttpMgr.setPostData(uopCode, "0", "type", "1");
-                }
+
+                var sendObj={
+                    'opCode':uopCode,
+                    'src':uploadUrl,
+                    'method':"POST",
+                    'plainPara':"upload=1&sid="+StorMgr.sid+"&uid="+StorMgr.uid,
+                    'progressCb':onProgress,
+                    'secCb':httpSuccess
+                };
                 
-                if(imgurl){
-                    uexXmlHttpMgr.setPostData(uopCode, "1", "image", imgurl);
+                if(!isMyPhoto){
+                    sendObj.plainPara+="&type=1";
                 }
-                uexXmlHttpMgr.send(uopCode);
+                if(imgurl){
+                    sendObj.sourcePara="image="+imgurl;
+                }
+                Device.xmlHttp(sendObj);
             }
             switch(data*1){
                 case 0:
-                    uexImageBrowser.cbPick=function (opCode,dataType,data){
+                    function imageBrowserCb(opCode,dataType,data){
                         imgurl=data;
                         Device.getFileSize(data,xmlHttpPost);
-                    };
-                    uexImageBrowser.pick();
+                    }
+                    Device.imageBrowser(imageBrowserCb);
                     break;
                 case 1:
-                    uexCamera.cbOpen=function(opId,dataType,data){
-                        toast(dataType);
+                    function cameraCb(opId,dataType,data){
                         if(dataType==0){
                             imgurl=data;
                             Device.getFileSize(data,xmlHttpPost);
                         }
-                    };
-                    uexCamera.open();
+                    }
+                    Device.camera(cameraCb);
                     break;
                 case 3:
                     if(!isMyPhoto)
                         $("#mood").focus();
+                    break;
+            }
+        }],
+        "menu":['','取消',['注销用户','退出应用'],function(opId,dataType,data){
+            switch(data*1){
+                case 0:
+                    UserAction.logOut();
+                    break;
+                case 1:
+                    Device.exit();
                     break;
             }
         }]
@@ -247,8 +260,8 @@ var actionSheet={
 
 /*原生提示信息，默认2,3秒消失*/
 function toast(s,t){
-    if(Device.isAppcan()){
-        uexWindow.toast(0,5,s,t*1000||2000);
+    if(Device.isMobi()){
+        Device.toast(s,t);
     }else{
         Tips.show(s,null,t*1000||3000);
     }

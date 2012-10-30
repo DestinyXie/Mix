@@ -13,6 +13,11 @@
     
     /*页面历史管理初始化*/
     ViewMgr.init();
+
+    /*设置menu键*/
+    Device.menuFunc=function(){
+        actionSheet.show('menu');
+    }
 }
 
 Device.onLoad(executeLoad);
@@ -1185,6 +1190,7 @@ var UserAction={
                 if($.isFunc(ok)){
                     ok();
                 }
+                Device.setMenuBtn();
                 UserAction.sendingLogin=false;
             },
             errCb=function(e){
@@ -1519,11 +1525,11 @@ var UserAction={
     },
     /*用户退出*/
     logOut:function(){
-        Device.confirm('确定退出？',function(){
+        Device.confirm('确定注销用户？',function(){
             Tools.refresh();
             Tools.storage.clear();
             ViewMgr.init();
-        });
+        },null,null,'注销提示');
     },
     /*执行ajax请求*/
     sendAction:function(url,data,method,secCb,errCb){
