@@ -124,7 +124,7 @@ function initDockScroll(dockSel,wrapperID,listEl){
     return myScroll;
 }
 
-/*手机原生弹出窗接口*/
+/*appcan模拟actionSheet弹出框接口*/
 var actionSheet={
     show:function(action){
         if(!Device.isMobi()){
@@ -313,5 +313,56 @@ var Tips={
                 tipsDiv.style.display="none";
             },600);
         }catch(e){}
+    }
+}
+
+//UI工具类
+var UITools={};
+UITools.mask={
+    /*option{cont}*/
+    show:function(){
+        var that=this,
+            option={//default config
+                cont:'body'
+            };
+        if(arguments.length>0){
+            extent(option,arguments[0]);
+        }
+        if(that.maskDom||$('.pageMask')){
+            return;
+        }
+        that.container=$(option.cont),
+        that.maskDom=DOM.create('div',{className:'pageMask'});
+        that.container.appendChild(that.maskDom);
+        Device.disetMenuBtn();
+        Device.disetBackBtn();
+    },
+    hide:function(){
+        var that=this;
+        that.container.removeChild(that.maskDom);
+        delete that.maskDom;
+        Device.setMenuBtn();
+        Device.setBackBtn();
+    }
+}
+
+UITools.regionSelector={
+    domStr:'<div class="selectWrap clearfix"><select><option>省份</option></select><select><option>城市</option></select></div><div class="chooseWrap"><a>确认</a><a>取消</a></div>',
+
+    show:function(){
+        var that=this;
+        
+        that.regionDom=DOM.create('div',{id:'regionSel',className:'regionSelWrap'});
+
+        that.regionDom.innerHTML=that.domStr;
+
+        UITools.mask.show();
+        UITools.mask.maskDom.appendChild(that.regionDom);
+    },
+    hide:function(){
+        var that=this;
+        UITools.mask.maskDom.removeChild(that.regionDom);
+        delete that.regionDom;
+        UITools.mask.hide();
     }
 }

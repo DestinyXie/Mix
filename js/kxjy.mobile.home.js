@@ -1529,6 +1529,7 @@ var UserAction={
             Tools.refresh();
             Tools.storage.clear();
             ViewMgr.init();
+            Device.disetMenuBtn();
         },null,null,'注销提示');
     },
     /*执行ajax请求*/
