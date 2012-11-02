@@ -347,22 +347,102 @@ UITools.mask={
 }
 
 UITools.regionSelector={
-    domStr:'<div class="selectWrap clearfix"><select><option>省份</option></select><select><option>城市</option></select></div><div class="chooseWrap"><a>确认</a><a>取消</a></div>',
-
-    show:function(){
+    provVal:"",
+    cityVal:"",
+    domStr:['<div class="selectWrap clearfix">',
+            '<select class="provSel">',
+                '<option>省份</option>',
+            '</select>',
+            '<select class="citySel">',
+                '<option>城市</option>',
+            '</select>',
+            '</div>',
+            '<div class="chooseWrap">',
+                '<a class="confirm">确认</a>',
+                '<a class="cancel">取消</a>',
+            '</div>'],
+    option:{
+        domId:'regionSel',
+        domCls:'regionSelWrap',
+        provProm:'选择省份',
+        cityProm:'选择城市'
+    },
+    show:function(cusOption){
         var that=this;
-        
-        that.regionDom=DOM.create('div',{id:'regionSel',className:'regionSelWrap'});
 
-        that.regionDom.innerHTML=that.domStr;
+        extend(that.option,cusOption);
+        
+        that.regionDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
+        that.regionDom.innerHTML=that.domStr.join('');
 
         UITools.mask.show();
         UITools.mask.maskDom.appendChild(that.regionDom);
+        that.provSel=$('.provSel',that.regionDom);
+        that.citySel=$('.provSel',that.regionDom);
+        that.confirmBtn=$('.confirm',that.regionDom);
+        that.cancelBtn=$('.cancel',that.regionDom);
+        that.conbProv(that.option.prov||that.option.provProm);
+        that.conbCity(that.option.city||that.option.provProm);
+        that.domEvent();
+    },
+    domEvent:function(){
+        var that=this;
+        DOM.addEvent(that.confirmBtn,CLICK_EVENT,function(){that.onSelect();});
+        DOM.addEvent(that.cancelBtn,CLICK_EVENT,function(){that.onCancel();});
+    },
+    conbProv:function(defProv){
+        var that=this,
+            options=that.conbOpt(provinces,that.option.provProm);
+
+        function checkProv(){
+            if(that.option.provProm==that.provSel.value){
+                that.provVal="";
+            }else{
+                that.provVal=that.provSel.value;
+            }
+            that.conbCity(that.provVal);
+        }
+        that.provSel.innerHTML=options;
+        that.provSel.value=defProv;
+        DOM.addEvent(that.provSel,"change",checkProv);
+    },
+    conbCity:function(prov,defCity){
+        var that=this,
+            citys=show_next_flod(prov)||[];
+            options=that.conbOpt(citys,that.option.cityProm);
+
+        function checkCity(){
+            if(that.option.cityProm==that.citySel.value){
+                that.cityVal="";
+            }else{
+                that.cityVal=that.citySel.value;
+            }
+        }
+        that.citySel.innerHTML=options;
+        that.citySel.value=defCity;
+        DOM.addEvent(that.citySel,"change",checkCity);
+    },
+    conbOpt:function(arr,prompt){
+        var ops=[];
+        $.each(arr,function(item,idx){
+            ops.unshift("<option value='"+item+"'>"+item+"</option>");
+        });
+        ops.unshift("<option value='"+prompt+"'>"+prompt+"</option>");
+        return ops.join("");
     },
     hide:function(){
         var that=this;
         UITools.mask.maskDom.removeChild(that.regionDom);
         delete that.regionDom;
         UITools.mask.hide();
+    },
+    onSelect:function(){
+        var that=this;
+        that.option.select&&that.option.select(that.provVal,that.cityVal);
+    },
+    onCancel:function(){
+        var that=this;
+        that.option.cancel&&that.option.cancel();
+        that.hide();
     }
 }
