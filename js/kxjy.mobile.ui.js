@@ -351,10 +351,8 @@ UITools.regionSelector={
     cityVal:"",
     domStr:['<div class="selectWrap clearfix">',
             '<select class="provSel">',
-                '<option>省份</option>',
             '</select>',
             '<select class="citySel">',
-                '<option>城市</option>',
             '</select>',
             '</div>',
             '<div class="chooseWrap">',
@@ -378,11 +376,11 @@ UITools.regionSelector={
         UITools.mask.show();
         UITools.mask.maskDom.appendChild(that.regionDom);
         that.provSel=$('.provSel',that.regionDom);
-        that.citySel=$('.provSel',that.regionDom);
+        that.citySel=$('.citySel',that.regionDom);
         that.confirmBtn=$('.confirm',that.regionDom);
         that.cancelBtn=$('.cancel',that.regionDom);
         that.conbProv(that.option.prov||that.option.provProm);
-        that.conbCity(that.option.city||that.option.provProm);
+        that.conbCity(that.option.prov||that.option.provProm,that.option.city||that.option.cityProm);
         that.domEvent();
     },
     domEvent:function(){
@@ -400,7 +398,7 @@ UITools.regionSelector={
             }else{
                 that.provVal=that.provSel.value;
             }
-            that.conbCity(that.provVal);
+            that.conbCity(that.provVal,that.option.cityProm);
         }
         that.provSel.innerHTML=options;
         that.provSel.value=defProv;
@@ -439,6 +437,7 @@ UITools.regionSelector={
     onSelect:function(){
         var that=this;
         that.option.select&&that.option.select(that.provVal,that.cityVal);
+        that.hide();
     },
     onCancel:function(){
         var that=this;
