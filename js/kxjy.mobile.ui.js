@@ -355,9 +355,9 @@ UITools.regionSelector={
             '<select class="citySel">',
             '</select>',
             '</div>',
-            '<div class="chooseWrap">',
-                '<a class="confirm">确认</a>',
-                '<a class="cancel">取消</a>',
+            '<div class="chooseWrap clearfix">',
+                '<a class="confirm" _click="UITools.regionSelector.onSelect()">确认</a>',
+                '<a class="cancel" _click="UITools.regionSelector.onCancel()">取消</a>',
             '</div>'],
     option:{
         domId:'regionSel',
@@ -368,7 +368,9 @@ UITools.regionSelector={
     show:function(cusOption){
         var that=this;
 
-        extend(that.option,cusOption);
+        if(cusOption){
+            extend(that.option,cusOption);
+        }
         
         that.regionDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
         that.regionDom.innerHTML=that.domStr.join('');
@@ -381,7 +383,7 @@ UITools.regionSelector={
         that.cancelBtn=$('.cancel',that.regionDom);
         that.conbProv(that.option.prov||that.option.provProm);
         that.conbCity(that.option.prov||that.option.provProm,that.option.city||that.option.cityProm);
-        that.domEvent();
+        // that.domEvent();
     },
     domEvent:function(){
         var that=this;
