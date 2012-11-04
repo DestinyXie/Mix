@@ -12,9 +12,9 @@ CLICK_EVENT = isTouch ? 'touchend' : 'click';
 function extend(d, s ,o) {
     var k;
     for (k in s) {
-        if(o&&o[k]!==undefined)continue;
-        if (s[k] !== null){
-            d[k] = (typeof(s[k]) == 'object' && !(s[k].nodeType) && !(s[k] instanceof Array)) ? extend({}, s[k]) : s[k];
+        if (o&&o.hasOwnProperty(k)) continue;
+        if (s.hasOwnProperty(k)){
+            d[k] = (typeof(s[k]) == 'object' && s[k] !== null && !(s[k].nodeType) && !(s[k] instanceof Array)) ? extend({}, s[k]) : s[k];
         }
     }
     if(o){
