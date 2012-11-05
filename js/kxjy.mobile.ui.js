@@ -334,15 +334,11 @@ UITools.mask={
         that.container=$(option.cont),
         that.maskDom=DOM.create('div',{className:'pageMask'});
         that.container.appendChild(that.maskDom);
-        Device.disetMenuBtn();
-        Device.disetBackBtn();
     },
     hide:function(){
         var that=this;
         that.container.removeChild(that.maskDom);
         delete that.maskDom;
-        Device.setMenuBtn();
-        Device.setBackBtn();
     }
 }
 
@@ -383,12 +379,7 @@ UITools.regionSelector={
         that.cancelBtn=$('.cancel',that.regionDom);
         that.conbProv(that.option.prov||that.option.provProm);
         that.conbCity(that.option.prov||that.option.provProm,that.option.city||that.option.cityProm);
-        // that.domEvent();
-    },
-    domEvent:function(){
-        var that=this;
-        DOM.addEvent(that.confirmBtn,CLICK_EVENT,function(){that.onSelect();});
-        DOM.addEvent(that.cancelBtn,CLICK_EVENT,function(){that.onCancel();});
+        Device.backFunc=function(){that.hide();}
     },
     conbProv:function(defProv){
         var that=this,
@@ -404,6 +395,7 @@ UITools.regionSelector={
         }
         that.provSel.innerHTML=options;
         that.provSel.value=defProv;
+        that.provVal=defProv;
         DOM.addEvent(that.provSel,"change",checkProv);
     },
     conbCity:function(prov,defCity){
@@ -420,6 +412,7 @@ UITools.regionSelector={
         }
         that.citySel.innerHTML=options;
         that.citySel.value=defCity;
+        that.cityVal=defCity;
         DOM.addEvent(that.citySel,"change",checkCity);
     },
     conbOpt:function(arr,prompt){
@@ -435,6 +428,7 @@ UITools.regionSelector={
         UITools.mask.maskDom.removeChild(that.regionDom);
         delete that.regionDom;
         UITools.mask.hide();
+        Device.backFunc=function(){ViewMgr.back();}
     },
     onSelect:function(){
         var that=this;

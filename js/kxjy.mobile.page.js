@@ -237,7 +237,7 @@ var contentTmpl={
           '<div class="t-org umar-t color777 fr" id="sex"></div>',
           '<div class="umar-t">性别</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Tools.initArea();">',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="var defVal=$(\'#area\').innerHTML.split(\' \');Tools.initArea(null,defVal[0],defVal[1]);">',
           '<div class="umar-t">地区</div>',
           '<div class="t-org umar-t color777" id="area"></div>',
         '</div>',

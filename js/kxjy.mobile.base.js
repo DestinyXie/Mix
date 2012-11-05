@@ -607,88 +607,117 @@ var Tools={
         });
     },
     /*initArea弹出地区选择框*/
-    initArea:function(type){
-        if(Tools.hasSpinWheel)
-            return;
-        function done() {
-            var results = SpinningWheel.getSelectedValues(),
-                provVal=pros[results.keys[0]],
-                cityVal=city[results.keys[1]]
-            
-            Tools.hasSpinWheel=null;
-            WIN['myScroll']&&WIN['myScroll'].enable();
-
-            if(!provVal||!cityVal){
+    initArea:function(type,defProv,defCity){
+        function done(prov,city) {
+            if(!prov||!city){
                 toast('地区选择有误',2);
                 return;
             }
 
             if(type&&["rank","photo"].has(type)){
-                Feed.addParams="reside_province="+provVal+"&reside_city="+cityVal;
+                Feed.addParams="reside_province="+prov+"&reside_city="+city;
                 Feed.refresh();
                 if("rank"==type){
-                    $(".rankAddress span").innerHTML=provVal+' '+cityVal;
+                    $(".rankAddress span").innerHTML=prov+' '+city;
                 }
             }else{
-                val=provVal+' '+cityVal;
+                val=prov+' '+city;
                 Page.setEditVal("area",val);
             }
         }
-
-        function cancel() {
-            Tools.hasSpinWheel=null;
-            WIN['myScroll']&&WIN['myScroll'].enable();
+        var regObj={select:function(prov,city){
+            done(prov,city);
+        }}
+        if(defProv){
+            regObj.prov=defProv;
         }
-        var pros = {},
-            city = {};
-
-        function assembleCitys(prov){
-            var lis=show_next_flod(prov),
-                innerStr="";
-            city = {};
-            SpinningWheel.slotData[1].values={};
-            for(var i=0,len=lis.length;i<len;i++){
-                SpinningWheel.slotData[1].values[i+1]=lis[i];
-                city[i+1]=lis[i];
-                innerStr+="<li>"+lis[i]+"</li>";
-            }
-            SpinningWheel.slotEl[1].innerHTML=innerStr;
-            SpinningWheel.slotEl[1].slotMaxScroll = SpinningWheel.swSlotWrapper.clientHeight - SpinningWheel.slotEl[1].clientHeight - 86;//check
-            SpinningWheel.scrollTo(1,1);
+        if(defCity){
+            regObj.city=defCity;
         }
+        UITools.regionSelector.show(regObj);
+        return;
+
+        // if(Tools.hasSpinWheel)
+        //     return;
+        // function done() {
+        //     var results = SpinningWheel.getSelectedValues(),
+        //         provVal=pros[results.keys[0]],
+        //         cityVal=city[results.keys[1]]
+            
+        //     Tools.hasSpinWheel=null;
+        //     WIN['myScroll']&&WIN['myScroll'].enable();
+
+        //     if(!provVal||!cityVal){
+        //         toast('地区选择有误',2);
+        //         return;
+        //     }
+
+        //     if(type&&["rank","photo"].has(type)){
+        //         Feed.addParams="reside_province="+provVal+"&reside_city="+cityVal;
+        //         Feed.refresh();
+        //         if("rank"==type){
+        //             $(".rankAddress span").innerHTML=provVal+' '+cityVal;
+        //         }
+        //     }else{
+        //         val=provVal+' '+cityVal;
+        //         Page.setEditVal("area",val);
+        //     }
+        // }
+
+        // function cancel() {
+        //     Tools.hasSpinWheel=null;
+        //     WIN['myScroll']&&WIN['myScroll'].enable();
+        // }
+        // var pros = {},
+        //     city = {};
+
+        // function assembleCitys(prov){
+        //     var lis=show_next_flod(prov),
+        //         innerStr="";
+        //     city = {};
+        //     SpinningWheel.slotData[1].values={};
+        //     for(var i=0,len=lis.length;i<len;i++){
+        //         SpinningWheel.slotData[1].values[i+1]=lis[i];
+        //         city[i+1]=lis[i];
+        //         innerStr+="<li>"+lis[i]+"</li>";
+        //     }
+        //     SpinningWheel.slotEl[1].innerHTML=innerStr;
+        //     SpinningWheel.slotEl[1].slotMaxScroll = SpinningWheel.swSlotWrapper.clientHeight - SpinningWheel.slotEl[1].clientHeight - 86;//check
+        //     SpinningWheel.scrollTo(1,1);
+        // }
         
-        for(var i=0,len=provinces.length;i<len;i++){
-            pros[i+1]=provinces[i];
-        }
+        // for(var i=0,len=provinces.length;i<len;i++){
+        //     pros[i+1]=provinces[i];
+        // }
         
-        for(var i=0,citys=show_next_flod(provinces[0]),len=citys.length;i<len;i++){
-            city[i+1]=citys[i];
-        }
+        // for(var i=0,citys=show_next_flod(provinces[0]),len=citys.length;i<len;i++){
+        //     city[i+1]=citys[i];
+        // }
 
-        SpinningWheel.cellHeight=BODYFS*1.79;
+        // SpinningWheel.cellHeight=BODYFS*1.79;
 
-        SpinningWheel.addSlot(pros, 'right', 0);
-        SpinningWheel.addSlot(city, '', 0);
+        // SpinningWheel.addSlot(pros, 'right', 0);
+        // SpinningWheel.addSlot(city, '', 0);
 
-        SpinningWheel.setCancelAction(cancel);
-        SpinningWheel.setDoneAction(done);
+        // SpinningWheel.setCancelAction(cancel);
+        // SpinningWheel.setDoneAction(done);
 
-        function checkProv(){
-            var results = SpinningWheel.getSelectedValues(),
-                val=results.values[0];
-            if(!SpinningWheel.curProv||SpinningWheel.curProv!=val){
-                SpinningWheel.curProv=val;
-                assembleCitys(val);
-            }
-            clearTimeout(Tools.spinTimeout);
-            if(Tools.hasSpinWheel)
-                Tools.spinTimeout=setTimeout(checkProv,800);
-        }
+        // function checkProv(){
+        //     var results = SpinningWheel.getSelectedValues(),
+        //         val=results.values[0];
+        //     if(!SpinningWheel.curProv||SpinningWheel.curProv!=val){
+        //         SpinningWheel.curProv=val;
+        //         assembleCitys(val);
+        //     }
+        //     clearTimeout(Tools.spinTimeout);
+        //     if(Tools.hasSpinWheel)
+        //         Tools.spinTimeout=setTimeout(checkProv,800);
+        // }
 
-        SpinningWheel.open();
-        Tools.hasSpinWheel=true;
-        WIN['myScroll']&&WIN['myScroll'].disable();
-        Tools.spinTimeout=setTimeout(checkProv,800);
+        // SpinningWheel.open();
+        // Tools.hasSpinWheel=true;
+        // WIN['myScroll']&&WIN['myScroll'].disable();
+        // Tools.spinTimeout=setTimeout(checkProv,800);
     },
     /*初始化目的,婚姻状况,兴趣选项*/
     initSelect:function(sel,ipt,mul){

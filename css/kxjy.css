@@ -1095,10 +1095,10 @@ li .comment{
 .pageMask{position:absolute;left:0;top:0;height:100%;width:100%;background-color:rgba(0,0,0,0.8);z-index:100;}
 
 /*regionSelector*/
-.regionSelWrap{position:absolute;z-index:101;width:90%;left:5%;top:10%;background:#fff;
+.regionSelWrap{position:absolute;z-index:101;width:90%;left:5%;top:2em;background:#fff;
 	-webkit-box-shadow:0 0 10px #000;-webkit-border-radius:6px;padding:3%;}
 .regionSelWrap .selectWrap{width:100%;padding:0 0 1em 2%;}
 .regionSelWrap .selectWrap select{height:2em;float:left;width:45%;margin-right:5%;}
 .chooseWrap a{float:left;margin-right:1em;padding:.5em .8em;-webkit-border-radius:6px;-webkit-box-shadow:1px 1px 5px #999;}
-.chooseWrap a.active{color:#fff;text-shadow:1px 1px 0px #eee;background:-webkit-linear-gradient(top, #e70485, #c40370);
+.chooseWrap a.active{color:#fff;text-shadow:-1px -1px 0px #333;background:-webkit-linear-gradient(top, #e70485, #c40370);
  	background:-webkit-gradient(linear, left top, left bottom, from(#e70485), to(#c40370));-webkit-box-shadow:1px 1px 5px #666 inset;}
