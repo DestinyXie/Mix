@@ -309,7 +309,15 @@ var Delegate = {
         var dis = Tools.calculPy(cp[0] - sp[0],cp[1] - sp[1]);
         if (dis > 15) {
             Delegate.isClick = false;
+            Delegate.removeHover();
         }
+    },
+    /*@private 手指移出点击对象时 去掉hover样式*/
+    removeHover:function () {
+        var targets=Delegate.targets;
+        targets.forEach( function(el) {
+            DOM.dropClass(el,'active');
+        });
     },
     /*@private 触摸事件结束，触发模拟点击事件*/
     end: function(e) {

@@ -377,8 +377,8 @@ UITools.regionSelector={
         that.citySel=$('.citySel',that.regionDom);
         that.confirmBtn=$('.confirm',that.regionDom);
         that.cancelBtn=$('.cancel',that.regionDom);
-        that.conbProv(that.option.prov||that.option.provProm);
-        that.conbCity(that.option.prov||that.option.provProm,that.option.city||that.option.cityProm);
+        that.conbProv(that.option.prov);
+        that.conbCity(that.option.prov,that.option.city);
         Device.backFunc=function(){that.hide();}
     },
     conbProv:function(defProv){
@@ -391,11 +391,11 @@ UITools.regionSelector={
             }else{
                 that.provVal=that.provSel.value;
             }
-            that.conbCity(that.provVal,that.option.cityProm);
+            that.conbCity(that.provVal);
         }
         that.provSel.innerHTML=options;
-        that.provSel.value=defProv;
-        that.provVal=defProv;
+        that.provSel.value=defProv||that.option.provProm;
+        that.provVal=defProv||"";
         DOM.addEvent(that.provSel,"change",checkProv);
     },
     conbCity:function(prov,defCity){
@@ -411,8 +411,8 @@ UITools.regionSelector={
             }
         }
         that.citySel.innerHTML=options;
-        that.citySel.value=defCity;
-        that.cityVal=defCity;
+        that.citySel.value=defCity||that.option.cityProm;
+        that.cityVal=defCity||"";
         DOM.addEvent(that.citySel,"change",checkCity);
     },
     conbOpt:function(arr,prompt){
