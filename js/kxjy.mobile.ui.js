@@ -335,11 +335,14 @@ UITools.mask={
         that.container=$(option.cont),
         that.maskDom=DOM.create('div',{className:'pageMask'});
         that.container.appendChild(that.maskDom);
+        DOM.addEvent(that.maskDom,START_EVENT,function(e){e.stop()});
+        DOM.addEvent(that.maskDom,CLICK_EVENT,function(e){e.stop()});
     },
     hide:function(){
         var that=this;
         that.container.removeChild(that.maskDom);
         delete that.maskDom;
+        delete that.container;
     }
 }
 
