@@ -316,8 +316,9 @@ var Tips={
     }
 }
 
-//UI工具类
+/**UI工具类**/
 var UITools={};
+/*背景遮罩*/
 UITools.mask={
     /*option{cont}*/
     show:function(){
@@ -342,9 +343,8 @@ UITools.mask={
     }
 }
 
+/*地区选择*/
 UITools.regionSelector={
-    provVal:"",
-    cityVal:"",
     domStr:['<div class="selectWrap clearfix">',
             '<select class="provSel">',
             '</select>',
@@ -352,14 +352,22 @@ UITools.regionSelector={
             '</select>',
             '</div>',
             '<div class="chooseWrap clearfix">',
-                '<a class="confirm" _click="UITools.regionSelector.onSelect()">确认</a>',
-                '<a class="cancel" _click="UITools.regionSelector.onCancel()">取消</a>',
+                '<a class="confirm" _click="UITools.regionSelector.select()">确认</a>',
+                '<a class="cancel" _click="UITools.regionSelector.cancel()">取消</a>',
             '</div>'],
     option:{
-        domId:'regionSel',
-        domCls:'regionSelWrap',
-        provProm:'选择省份',
-        cityProm:'选择城市'
+        prov:"",//省份
+        city:"",//城市
+        domId:'regionSel',//选择框DOM id
+        domCls:'regionSelWrap',//选择框DOM class
+        provProm:'选择省份',//省份选择提示
+        cityProm:'选择城市',//城市选择提示
+        useMask:true,//显示背景遮罩
+        contSel:'body',//没有遮罩时，弹层显示的容器选择器
+        onShow:null,//params:this{object}
+        onSelect:null,//params:option.prov{string},option.city{string}
+        onCancel:null,//params:this{object}
+        hideEnd:null//params:void
     },
     show:function(cusOption){
         var that=this;
@@ -367,19 +375,27 @@ UITools.regionSelector={
         if(cusOption){
             extend(that.option,cusOption);
         }
-        
+
+        that.option.onShow&&that.option.onShow.call(null,that);
+
         that.regionDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
         that.regionDom.innerHTML=that.domStr.join('');
 
-        UITools.mask.show();
-        UITools.mask.maskDom.appendChild(that.regionDom);
+
+        if(that.option.useMask){
+            UITools.mask.show();
+            that.container=UITools.mask.maskDom;
+        }else{
+            that.container=$(that.option.contSel);
+        }
+        that.container.appendChild(that.regionDom);
+        
         that.provSel=$('.provSel',that.regionDom);
         that.citySel=$('.citySel',that.regionDom);
         that.confirmBtn=$('.confirm',that.regionDom);
         that.cancelBtn=$('.cancel',that.regionDom);
         that.conbProv(that.option.prov);
         that.conbCity(that.option.prov,that.option.city);
-        Device.backFunc=function(){that.hide();}
     },
     conbProv:function(defProv){
         var that=this,
@@ -387,15 +403,14 @@ UITools.regionSelector={
 
         function checkProv(){
             if(that.option.provProm==that.provSel.value){
-                that.provVal="";
+                that.option.prov="";
             }else{
-                that.provVal=that.provSel.value;
+                that.option.prov=that.provSel.value;
             }
-            that.conbCity(that.provVal);
+            that.conbCity(that.option.prov);
         }
         that.provSel.innerHTML=options;
         that.provSel.value=defProv||that.option.provProm;
-        that.provVal=defProv||"";
         DOM.addEvent(that.provSel,"change",checkProv);
     },
     conbCity:function(prov,defCity){
@@ -405,14 +420,13 @@ UITools.regionSelector={
 
         function checkCity(){
             if(that.option.cityProm==that.citySel.value){
-                that.cityVal="";
+                that.option.city="";
             }else{
-                that.cityVal=that.citySel.value;
+                that.option.city=that.citySel.value;
             }
         }
         that.citySel.innerHTML=options;
         that.citySel.value=defCity||that.option.cityProm;
-        that.cityVal=defCity||"";
         DOM.addEvent(that.citySel,"change",checkCity);
     },
     conbOpt:function(arr,prompt){
@@ -425,19 +439,21 @@ UITools.regionSelector={
     },
     hide:function(){
         var that=this;
-        UITools.mask.maskDom.removeChild(that.regionDom);
+
+        that.container.removeChild(that.regionDom);
+        that.option.useMask&&UITools.mask.hide();
+
         delete that.regionDom;
-        UITools.mask.hide();
-        Device.backFunc=function(){ViewMgr.back();}
+        that.option.hideEnd&&that.option.hideEnd.call(null,that);
     },
-    onSelect:function(){
+    select:function(){
         var that=this;
-        that.option.select&&that.option.select(that.provVal,that.cityVal);
+        that.option.onSelect&&that.option.onSelect(that.option.prov,that.option.city);
         that.hide();
     },
-    onCancel:function(){
+    cancel:function(){
         var that=this;
-        that.option.cancel&&that.option.cancel();
+        that.option.onCancel&&that.option.onCancel();
         that.hide();
     }
 }

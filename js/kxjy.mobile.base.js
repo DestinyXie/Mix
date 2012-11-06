@@ -633,9 +633,19 @@ var Tools={
                 Page.setEditVal("area",val);
             }
         }
-        var regObj={select:function(prov,city){
-            done(prov,city);
-        }}
+        var regObj={
+            useMask:true,
+            onSelect:function(prov,city){
+                done(prov,city);
+            },
+            onShow:function(regSel){
+                Device.backFunc=function(){regSel.hide();}
+            },
+            hideEnd:function(regSel){
+                Device.backFunc=function(){ViewMgr.back();}
+            }
+        };
+
         if(defProv){
             regObj.prov=defProv;
         }
