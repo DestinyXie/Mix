@@ -355,23 +355,33 @@ UITools.regionSelector={
                 '<a class="confirm" _click="UITools.regionSelector.select()">确认</a>',
                 '<a class="cancel" _click="UITools.regionSelector.cancel()">取消</a>',
             '</div>'],
-    option:{
-        prov:"",//省份
-        city:"",//城市
-        domId:'regionSel',//选择框DOM id
-        domCls:'regionSelWrap',//选择框DOM class
-        provProm:'选择省份',//省份选择提示
-        cityProm:'选择城市',//城市选择提示
-        useMask:true,//显示背景遮罩
-        contSel:'body',//没有遮罩时，弹层显示的容器选择器
-        onShow:null,//params:this{object}
-        onSelect:null,//params:option.prov{string},option.city{string}
-        onCancel:null,//params:this{object}
-        hideEnd:null//params:void
+    reset:function(){//重置地区选择对象和option值
+        var that=this;
+        that.option={
+            prov:"",//省份
+            city:"",//城市
+            domId:'regionSel',//选择框DOM id
+            domCls:'regionSelWrap',//选择框DOM class
+            provProm:'选择省份',//省份选择提示
+            cityProm:'选择城市',//城市选择提示
+            useMask:true,//显示背景遮罩
+            contSel:'body',//没有遮罩时，弹层显示的容器选择器
+            onShow:null,//params:this{object}
+            onSelect:null,//params:option.prov{string},option.city{string}
+            onCancel:null,//params:this{object}
+            hideEnd:null//params:void
+        }
+        delete that.provSel;
+        delete that.citySel;
+        delete that.confirmBtn;
+        delete that.cancelBtn;
+        delete that.regionDom;
+        delete that.container;
     },
     show:function(cusOption){
         var that=this;
 
+        that.reset();
         if(cusOption){
             extend(that.option,cusOption);
         }
@@ -444,8 +454,8 @@ UITools.regionSelector={
         that.container.removeChild(that.regionDom);
         that.option.useMask&&UITools.mask.hide();
 
-        delete that.regionDom;
-        that.option.hideEnd&&that.option.hideEnd.call(null,that);
+        that.reset();
+        that.option.hideEnd&&that.option.hideEnd.call(null);
     },
     select:function(){
         var that=this;
