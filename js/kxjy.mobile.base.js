@@ -238,6 +238,13 @@ var DOM = {
     } : function(el, event, fn) {
         el.attachEvent('on' + event, fn);
     },
+    /*触发某个元素的点击(或给定)事件*/
+    fireClick:function(el,type){
+        var ev = DOC.createEvent('MouseEvents');
+        ev.initEvent(type||'click');
+        // ev.initMouseEvent( type||'click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null );
+        el.dispatchEvent(ev);
+    },
     loadJs:function(src,cb){
         var sc=DOC.createElement("script");
         sc.src=src;
@@ -617,8 +624,8 @@ var Tools={
     /*initArea弹出地区选择框*/
     initArea:function(type,defProv,defCity){
         function done(prov,city) {
-            if(!prov||!city){
-                toast('地区选择有误',2);
+            if(!prov){
+                toast('未选择地区',2);
                 return;
             }
 

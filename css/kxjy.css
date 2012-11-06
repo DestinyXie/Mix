@@ -1098,7 +1098,8 @@ li .comment{
 .regionSelWrap{position:absolute;z-index:101;width:90%;left:5%;top:2em;background:#fff;
 	-webkit-box-shadow:0 0 10px #000;-webkit-border-radius:6px;padding:3%;}
 .regionSelWrap .selectWrap{width:100%;padding:0 0 1em 2%;}
-.regionSelWrap .selectWrap select{height:2em;float:left;width:45%;margin-right:5%;}
-.chooseWrap a{float:left;margin-right:1em;padding:.5em .8em;-webkit-border-radius:6px;-webkit-box-shadow:1px 1px 5px #999;}
-.chooseWrap a.active{color:#fff;text-shadow:-1px -1px 0px #333;background:-webkit-linear-gradient(top, #e70485, #c40370);
+.regionSelWrap .selectWrap select{height:2.5em;float:left;width:45%;margin-right:5%;padding:2px 0 2px 5px;}
+.regionSelWrap .chooseWrap{padding-left:2%;}
+.regionSelWrap .chooseWrap a{float:left;margin-right:1em;padding:.5em .8em;-webkit-border-radius:6px;-webkit-box-shadow:1px 1px 5px #999;}
+.regionSelWrap .chooseWrap a.active{color:#fff;text-shadow:-1px -1px 0px #333;background:-webkit-linear-gradient(top, #e70485, #c40370);
  	background:-webkit-gradient(linear, left top, left bottom, from(#e70485), to(#c40370));-webkit-box-shadow:1px 1px 5px #666 inset;}

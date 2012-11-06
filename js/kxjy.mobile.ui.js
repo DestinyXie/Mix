@@ -407,6 +407,7 @@ UITools.regionSelector={
             }else{
                 that.option.prov=that.provSel.value;
             }
+            that.option.city="";
             that.conbCity(that.option.prov);
         }
         that.provSel.innerHTML=options;
