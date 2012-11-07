@@ -250,11 +250,13 @@ var Feed={
     },
     destroy:function(){
         var that=this;
-        that.cont=null;
-        that.more=null;
-        that.onePageNum=null;
-        that.lastPos=null;
-        that.nowtime=null;
+        delete that.page;
+        delete that.cont;
+        delete that.more;
+        delete that.onePageNum;
+        delete that.cb;
+        delete that.lastPos;
+        delete that.nowtime;
 
         if(that.beforedestroy){//供继承类使用
             that.beforedestroy();
@@ -264,7 +266,7 @@ var Feed={
         if(that.loadXhr){
             that.loadXhr.abort();
         }
-        that.loadXhr=null;
+        delete that.loadXhr;
     },
     refresh:function(setParam){
         var that=this;
@@ -1057,15 +1059,14 @@ var Comment={
         }
         clearTimeout(that.moodInter);
         that.text="评论";
-        that.moodInter=null;
-        that.sendingComm=false;
+        delete that.moodInter;
+        delete that.sendingComm;
 
         delete that.commBox;
-        that.commBox=null;
-        that.moodImg=null;
-        that.moodBox=null;
-        that.input=null;
-        that.sentBtn=null;
+        delete that.moodImg;
+        delete that.moodBox;
+        delete that.input;
+        delete that.sentBtn;
         that._unBindEvent();
     },
     _bindEvent:function(){

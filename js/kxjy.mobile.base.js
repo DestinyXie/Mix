@@ -381,7 +381,7 @@ var Tools={
         StorMgr.destroy();
     },
     sameObj:function(obj1,obj2,except){//比较两个对象是否一样,除了except数组中的属性
-        if(JSON.stringify(obj1).length!=JSON.stringify(obj2).length){
+        if(obj1&&obj2&&JSON.stringify(obj1).length!=JSON.stringify(obj2).length){
             return false;
         }
         for(var k in obj1){

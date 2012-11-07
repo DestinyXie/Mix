@@ -258,13 +258,13 @@ var StorMgr={
     mainPhoto:null,//缓存附近照片
     mainMood:null,//缓存附近动态
     destroy:function(){
-        this.myInfo=null;
-        this.myPhoto=null;
-        this.myMood=null;
-        this.mainPhoto=null;
-        this.mainMood=null;
-        this.infoCenter=null;
-        this.myTodayExp=null;
+        delete this.myInfo;
+        delete this.myPhoto;
+        delete this.myMood;
+        delete this.mainPhoto;
+        delete this.mainMood;
+        delete this.infoCenter;
+        delete this.myTodayExp;
     },
     initStor:function(){//初始化需要的缓存资料
         if(!this.myInfo||!this.infoCenter){
