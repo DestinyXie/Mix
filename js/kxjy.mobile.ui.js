@@ -6,6 +6,7 @@
     var pullDownOffset = pullDownEl.offsetHeight;
     
     var myScroll = new iScroll(wrapperID, {
+        useTransform: false,//使用Transform的时候 地区在选择工具上点击select应用会卡死
         topOffset: pullDownOffset,
         onRefresh: function () {
             if (DOM.hasClass(pullDownEl,'loading')) {
@@ -335,8 +336,6 @@ UITools.mask={
         that.container=$(option.cont),
         that.maskDom=DOM.create('div',{className:'pageMask'});
         that.container.appendChild(that.maskDom);
-        DOM.addEvent(that.maskDom,START_EVENT,function(e){e.stop()});
-        DOM.addEvent(that.maskDom,CLICK_EVENT,function(e){e.stop()});
     },
     hide:function(){
         var that=this;
@@ -457,8 +456,8 @@ UITools.regionSelector={
         that.container.removeChild(that.regionDom);
         that.option.useMask&&UITools.mask.hide();
 
-        that.reset();
         that.option.hideEnd&&that.option.hideEnd.call(null);
+        that.reset();
     },
     select:function(){
         var that=this;

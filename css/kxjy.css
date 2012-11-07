@@ -1092,7 +1092,7 @@ li .comment{
 }
 /***UI Tools***/
 /*mask 注意被遮罩元素z-index不能大于100*/
-.pageMask{position:absolute;left:0;top:0;height:100%;width:100%;background-color:rgba(0,0,0,0.8);z-index:100;}
+.pageMask{position:absolute;left:0;top:0;height:100%;width:100%;background-color:rgba(0,0,0,0.5);z-index:100;}
 
 /*regionSelector*/
 .regionSelWrap{position:absolute;z-index:101;width:90%;left:5%;top:2em;background:#fff;
