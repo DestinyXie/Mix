@@ -6,7 +6,7 @@
     var pullDownOffset = pullDownEl.offsetHeight;
     
     var myScroll = new iScroll(wrapperID, {
-        useTransform: false,//使用Transform的时候 地区在选择工具上点击select应用会卡死
+        useTransform: false,//使用Transform的时候 在手机上点击地区选择的select应用会卡死
         topOffset: pullDownOffset,
         onRefresh: function () {
             if (DOM.hasClass(pullDownEl,'loading')) {
@@ -125,7 +125,7 @@ function initDockScroll(dockSel,wrapperID,listEl){
     return myScroll;
 }
 
-/*appcan模拟actionSheet弹出框接口*/
+/*appcan模拟ios actionSheet弹出框接口*/
 var actionSheet={
     show:function(action){
         if(!Device.isMobi()){
@@ -137,7 +137,7 @@ var actionSheet={
         }
     },
     actionObj:{
-        "search":['搜索','取消',['显示全部','只显示男','只显示女','取消很重要','更换地区'],function(opId,dataType,data){
+        "search":['搜索','取消',['显示全部','只显示男','只显示女','更换地区'],function(opId,dataType,data){
             switch(data*1){
                 case 0:
                     Feed.addParams="sex=2";
@@ -151,7 +151,7 @@ var actionSheet={
                     Feed.addParams="sex=1";
                     Feed.refresh();
                     break;
-                case 4:
+                case 3:
                     Tools.initArea('photo');
                     break;
             }
