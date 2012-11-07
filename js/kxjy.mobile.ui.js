@@ -325,17 +325,21 @@ UITools.mask={
     show:function(){
         var that=this,
             option={//default config
-                cont:'body'
+                cont:'body',
+                maskClickCb:null//点击背景遮罩方法
             };
         if(arguments.length>0){
-            extent(option,arguments[0]);
+            extend(option,arguments[0]);
         }
-        if(that.maskDom||$('.pageMask')){
-            return;
+        if(!$('.pageMask')){
+            that.container=$(option.cont),
+            that.maskDom=DOM.create('div',{className:'pageMask'});
+            that.container.appendChild(that.maskDom);
         }
-        that.container=$(option.cont),
-        that.maskDom=DOM.create('div',{className:'pageMask'});
-        that.container.appendChild(that.maskDom);
+
+        if(option.maskClickCb){
+            DOM.addEvent(that.maskDom,CLICK_EVENT,option.maskClickCb);
+        }
     },
     hide:function(){
         var that=this;
@@ -345,8 +349,76 @@ UITools.mask={
     }
 }
 
+/*所有弹出层的公共类*/
+UITools.popRegion={
+    domStr:['<div class="">',
+            '</div>'],
+    reset:function(){
+        var that=this;
+        that.option={
+            domId:'',//弹出层DOM id
+            domCls:'',//弹出层DOM class
+            useMask:true,//是否显示背景遮罩
+            clickMaskHide:true,//是否点击背景遮罩隐藏
+            canScroll:false,//弹出层内容是否可以滚动
+            contSel:'body',//没有遮罩时，弹出层显示的容器选择器
+            onShow:null,//params:this{object}
+            hideEnd:null//params:void
+        }
+        delete that.regionDom;
+        delete that.container;
+        if(that.scroller){
+            that.scroller.destroy();
+            delete that.scroller;
+        }
+        that.subReset&&that.subReset();//执行子类的reset方法
+    },
+    show:function(cusOption){
+        var that=this;
+        that.reset();
+        if(cusOption){
+            extend(that.option,cusOption);
+        }
+
+        that.option.onShow&&that.option.onShow.call(null,that);
+        that.regionDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
+        that.regionDom.innerHTML=that.domStr.join('');
+
+        if(that.option.useMask){
+            var maskOpt={};
+            if(that.option.clickMaskHide){
+                maskOpt={maskClickCb:function(ev){
+                    if(ev.target==UITools.mask.maskDom)
+                        that.hide();
+                }}
+            }
+            UITools.mask.show(maskOpt);
+            that.container=UITools.mask.maskDom;
+
+        }else{
+            that.container=$(that.option.contSel);
+        }
+        that.container.appendChild(that.regionDom);
+
+        if(that.option.canScroll){
+            that.scroller=new iScroll(that.option.domId);
+        }
+
+        that.subShow&&that.subShow();//执行子类的show方法
+    },
+    hide:function(){
+        var that=this;
+
+        that.container.removeChild(that.regionDom);
+        that.option.useMask&&UITools.mask.hide();
+
+        that.option.hideEnd&&that.option.hideEnd.call(null);
+        that.reset();
+    }
+}
+
 /*地区选择*/
-UITools.regionSelector={
+UITools.regionSelector=extend({},UITools.popRegion,{
     domStr:['<div class="selectWrap clearfix">',
             '<select class="provSel">',
             '</select>',
@@ -357,50 +429,26 @@ UITools.regionSelector={
                 '<a class="confirm" _click="UITools.regionSelector.select()">确认</a>',
                 '<a class="cancel" _click="UITools.regionSelector.cancel()">取消</a>',
             '</div>'],
-    reset:function(){//重置地区选择对象和option值
-        var that=this;
-        that.option={
-            prov:"",//省份
-            city:"",//城市
-            domId:'regionSel',//选择框DOM id
-            domCls:'regionSelWrap',//选择框DOM class
-            provProm:'选择省份',//省份选择提示
-            cityProm:'选择城市',//城市选择提示
-            useMask:true,//显示背景遮罩
-            contSel:'body',//没有遮罩时，弹层显示的容器选择器
-            onShow:null,//params:this{object}
-            onSelect:null,//params:option.prov{string},option.city{string}
-            onCancel:null,//params:this{object}
-            hideEnd:null//params:void
-        }
+    subReset:function(){//重置地区选择对象和option值
+        var that=this,
+            option={
+                prov:"",//省份
+                city:"",//城市
+                domId:'regionSel',//选择框DOM id
+                domCls:'regionSelWrap',//选择框DOM class
+                provProm:'选择省份',//省份选择提示
+                cityProm:'选择城市',//城市选择提示
+                onSelect:null,//params:option.prov{string},option.city{string}
+                onCancel:null,//params:this{object}
+            }
+        extend(that.option,option);
         delete that.provSel;
         delete that.citySel;
         delete that.confirmBtn;
         delete that.cancelBtn;
-        delete that.regionDom;
-        delete that.container;
     },
-    show:function(cusOption){
+    subShow:function(cusOption){
         var that=this;
-
-        that.reset();
-        if(cusOption){
-            extend(that.option,cusOption);
-        }
-
-        that.option.onShow&&that.option.onShow.call(null,that);
-
-        that.regionDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
-        that.regionDom.innerHTML=that.domStr.join('');
-
-
-        if(that.option.useMask){
-            UITools.mask.show();
-            that.container=UITools.mask.maskDom;
-        }else{
-            that.container=$(that.option.contSel);
-        }
-        that.container.appendChild(that.regionDom);
         
         that.provSel=$('.provSel',that.regionDom);
         that.citySel=$('.citySel',that.regionDom);
@@ -450,15 +498,6 @@ UITools.regionSelector={
         ops.unshift("<option value='"+prompt+"'>"+prompt+"</option>");
         return ops.join("");
     },
-    hide:function(){
-        var that=this;
-
-        that.container.removeChild(that.regionDom);
-        that.option.useMask&&UITools.mask.hide();
-
-        that.option.hideEnd&&that.option.hideEnd.call(null);
-        that.reset();
-    },
     select:function(){
         var that=this;
         that.option.onSelect&&that.option.onSelect(that.option.prov,that.option.city);
@@ -468,5 +507,160 @@ UITools.regionSelector={
         var that=this;
         that.option.onCancel&&that.option.onCancel();
         that.hide();
+    }
+});
+
+
+// /*地区选择*/
+// UITools.regionSelector={
+//     domStr:['<div class="selectWrap clearfix">',
+//             '<select class="provSel">',
+//             '</select>',
+//             '<select class="citySel">',
+//             '</select>',
+//             '</div>',
+//             '<div class="chooseWrap clearfix">',
+//                 '<a class="confirm" _click="UITools.regionSelector.select()">确认</a>',
+//                 '<a class="cancel" _click="UITools.regionSelector.cancel()">取消</a>',
+//             '</div>'],
+//     reset:function(){//重置地区选择对象和option值
+//         var that=this;
+//         that.option={
+//             prov:"",//省份
+//             city:"",//城市
+//             domId:'regionSel',//选择框DOM id
+//             domCls:'regionSelWrap',//选择框DOM class
+//             provProm:'选择省份',//省份选择提示
+//             cityProm:'选择城市',//城市选择提示
+//             useMask:true,//显示背景遮罩
+//             contSel:'body',//没有遮罩时，弹层显示的容器选择器
+//             onShow:null,//params:this{object}
+//             onSelect:null,//params:option.prov{string},option.city{string}
+//             onCancel:null,//params:this{object}
+//             hideEnd:null//params:void
+//         }
+//         delete that.provSel;
+//         delete that.citySel;
+//         delete that.confirmBtn;
+//         delete that.cancelBtn;
+//         delete that.regionDom;
+//         delete that.container;
+//     },
+//     show:function(cusOption){
+//         var that=this;
+
+//         that.reset();
+//         if(cusOption){
+//             extend(that.option,cusOption);
+//         }
+
+//         that.option.onShow&&that.option.onShow.call(null,that);
+
+//         that.regionDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
+//         that.regionDom.innerHTML=that.domStr.join('');
+
+
+//         if(that.option.useMask){
+//             UITools.mask.show();
+//             that.container=UITools.mask.maskDom;
+//         }else{
+//             that.container=$(that.option.contSel);
+//         }
+//         that.container.appendChild(that.regionDom);
+        
+//         that.provSel=$('.provSel',that.regionDom);
+//         that.citySel=$('.citySel',that.regionDom);
+//         that.confirmBtn=$('.confirm',that.regionDom);
+//         that.cancelBtn=$('.cancel',that.regionDom);
+//         that.conbProv(that.option.prov);
+//         that.conbCity(that.option.prov,that.option.city);
+//     },
+//     conbProv:function(defProv){
+//         var that=this,
+//             options=that.conbOpt(provinces,that.option.provProm);
+
+//         function checkProv(){
+//             if(that.option.provProm==that.provSel.value){
+//                 that.option.prov="";
+//             }else{
+//                 that.option.prov=that.provSel.value;
+//             }
+//             that.option.city="";
+//             that.conbCity(that.option.prov);
+//         }
+//         that.provSel.innerHTML=options;
+//         that.provSel.value=defProv||that.option.provProm;
+//         DOM.addEvent(that.provSel,"change",checkProv);
+//     },
+//     conbCity:function(prov,defCity){
+//         var that=this,
+//             citys=show_next_flod(prov)||[];
+//             options=that.conbOpt(citys,that.option.cityProm);
+
+//         function checkCity(){
+//             if(that.option.cityProm==that.citySel.value){
+//                 that.option.city="";
+//             }else{
+//                 that.option.city=that.citySel.value;
+//             }
+//         }
+//         that.citySel.innerHTML=options;
+//         that.citySel.value=defCity||that.option.cityProm;
+//         DOM.addEvent(that.citySel,"change",checkCity);
+//     },
+//     conbOpt:function(arr,prompt){
+//         var ops=[];
+//         $.each(arr,function(item,idx){
+//             ops.unshift("<option value='"+item+"'>"+item+"</option>");
+//         });
+//         ops.unshift("<option value='"+prompt+"'>"+prompt+"</option>");
+//         return ops.join("");
+//     },
+//     hide:function(){
+//         var that=this;
+
+//         that.container.removeChild(that.regionDom);
+//         that.option.useMask&&UITools.mask.hide();
+
+//         that.option.hideEnd&&that.option.hideEnd.call(null);
+//         that.reset();
+//     },
+//     select:function(){
+//         var that=this;
+//         that.option.onSelect&&that.option.onSelect(that.option.prov,that.option.city);
+//         that.hide();
+//     },
+//     cancel:function(){
+//         var that=this;
+//         that.option.onCancel&&that.option.onCancel();
+//         that.hide();
+//     }
+// }
+
+/*单选、多选框*/
+UITools.select={
+    domStr:'<div><ul class="selWrapper"></ul></div>',
+    reset:function(){
+        var that=this;
+        that.option={
+            options:[],//选项集合
+            multi:false,//是否为多选
+            useMask:true,//显示背景遮罩
+        }
+    },
+    show:function(selOpt){
+        var that=this;
+        that.reset();
+        extend(that.option,selOpt);
+        if(that.option.options.length===0){
+            toast('没有可供选择的项目');
+            return;
+        }
+    },
+    select:function(){
+
+    },
+    hide:function(){
+
     }
 }
