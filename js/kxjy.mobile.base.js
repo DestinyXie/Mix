@@ -659,7 +659,7 @@ var Tools={
         if(defCity){
             regObj.city=defCity;
         }
-        UITools.regionSelector.show(regObj);
+        UITools.regionLayer.show(regObj);
         return;
     },
     /*初始化目的,婚姻状况,兴趣选项*/

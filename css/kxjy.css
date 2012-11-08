@@ -1104,8 +1104,8 @@ li .comment{
 	z-index:100;
 }
 
-/*regionSelector地区选择*/
-.regionSelWrap{
+/*regionLayer地区选择*/
+.regionLayer{
 	position:absolute;
 	z-index:101;
 	width:90%;
@@ -1116,11 +1116,11 @@ li .comment{
 	-webkit-border-radius:6px;
 	padding:3%;
 }
-.regionSelWrap .selectWrap{
+.regionLayer .selectWrap{
 	width:100%;
 	padding:0 0 1em 2%;
 }
-.regionSelWrap .selectWrap select{
+.regionLayer .selectWrap select{
 	height:2.5em;
 	float:left;
 	width:45%;
@@ -1128,7 +1128,7 @@ li .comment{
 	padding:2px 0;
 	text-indent: .5em;
 }
-.regionSelWrap .chooseWrap{
+.regionLayer .chooseWrap{
 	padding-left:2%;
 }
 .chooseWrap a{
@@ -1148,7 +1148,7 @@ li .comment{
 }
 
 /*select单选、多选框*/
-.selectSelWrap{
+.selectLayer{
 	position:absolute;
 	z-index:101;
 	width:90%;
@@ -1160,26 +1160,26 @@ li .comment{
 	-webkit-border-radius:6px;
 	padding:3%;
 }
-.selectSelWrap.multiSelect .optWrapper{
+.selectLayer.multiSelect .optWrap{
 	padding-bottom:4.5em;
 }
-.selectSelWrap .optWrapper{
+.selectLayer .optWrap{
 	padding-bottom: .5em;
 }
-.selectSelWrap .optWrapper li{
+.selectLayer .optWrap li{
 	position: relative;
 	padding: .5em 2em .5em .5em;
 	line-height: 1.8em;
 	border-bottom: 1px solid #ddd;
 }
-.selectSelWrap .optWrapper li.active{
+.selectLayer .optWrap li.active{
 	background: -webkit-linear-gradient(top, #ddd, #ccc);
 	background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ccc))
 }
-.selectSelWrap .optWrapper li:last-child,.selectSelWrap .optWrapper li.active:last-child{
+.selectLayer .optWrap li:last-child,.selectLayer .optWrap li.active:last-child{
 	border-bottom-width: 0;
 }
-.selectSelWrap .optWrapper li:after{
+.selectLayer .optWrap li:after{
 	position: absolute;
 	content: "";
 	height: 1em;
@@ -1188,16 +1188,16 @@ li .comment{
 	right: .5em;
 	border-radius: .5em;
 }
-.selectSelWrap.multiSelect .optWrapper li:after{
+.selectLayer.multiSelect .optWrap li:after{
 	border-radius: 0;
 }
-.selectSelWrap .optWrapper li.selected{
+.selectLayer .optWrap li.selected{
 	background-color: #eee;
 }
-.selectSelWrap .optWrapper li.selected:after{
+.selectLayer .optWrap li.selected:after{
 	background-color: #666;
 }
-.selectSelWrap .chooseWrap{
+.selectLayer .chooseWrap{
 	display: none;
 	position: absolute;
 	background: #fff;
@@ -1210,6 +1210,6 @@ li .comment{
 	border-bottom-left-radius: .45em;
 	border-bottom-right-radius: .45em;
 }
-.selectSelWrap.multiSelect .chooseWrap{
+.selectLayer.multiSelect .chooseWrap{
 	display:block;
 }

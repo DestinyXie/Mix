@@ -423,7 +423,7 @@ UITools.popLayer={
 }
 
 /*地区选择(extend UITools.popLayer)*/
-UITools.regionSelector=extend({},UITools.popLayer,{
+UITools.regionLayer=extend({},UITools.popLayer,{
     domStr:['<div class="selectWrap clearfix">',
             '<select class="provSel">',
             '</select>',
@@ -431,8 +431,8 @@ UITools.regionSelector=extend({},UITools.popLayer,{
             '</select>',
             '</div>',
             '<div class="chooseWrap clearfix">',
-                '<a class="confirm" _click="UITools.regionSelector.confirm()">确认</a>',
-                '<a class="cancel" _click="UITools.regionSelector.cancel()">取消</a>',
+                '<a class="confirm" _click="UITools.regionLayer.confirm()">确认</a>',
+                '<a class="cancel" _click="UITools.regionLayer.cancel()">取消</a>',
             '</div>'],
     subReset:function(){//重置地区选择对象和option值
         var that=this,
@@ -440,7 +440,7 @@ UITools.regionSelector=extend({},UITools.popLayer,{
                 prov:"",//省份
                 city:"",//城市
                 domId:'regionSel',//选择框DOM id
-                domCls:'regionSelWrap',//选择框DOM class
+                domCls:'regionLayer',//选择框DOM class
                 provProm:'选择省份',//省份选择提示
                 cityProm:'选择城市',//城市选择提示
                 onConfirm:null,//params:option.prov{string},option.city{string}
@@ -517,7 +517,7 @@ UITools.regionSelector=extend({},UITools.popLayer,{
 
 /*单选、多选框(extend UITools.popLayer)*/
 UITools.select=extend({},UITools.popLayer,{
-    domStr:['<div><ul class="optWrapper"></ul></div>',
+    domStr:['<div><ul class="optWrap"></ul></div>',
             '<div class="chooseWrap clearfix">',
                 '<a class="confirm" _click="UITools.select.confirm()">确认</a>',
                 '<a class="cancel" _click="UITools.select.cancel()">取消</a>',
@@ -526,7 +526,7 @@ UITools.select=extend({},UITools.popLayer,{
         var that=this,
             option={
             domId:'selectSel',//选择框DOM id
-            domCls:'selectSelWrap',//选择框DOM class
+            domCls:'selectLayer',//选择框DOM class
             options:[],//选项集合
             defOptions:[],//默认选项集合
             selOptions:[],//选中项集合
@@ -555,7 +555,7 @@ UITools.select=extend({},UITools.popLayer,{
             }
             optStr.unshift('<li'+clsStr+' _click="UITools.select.select(this,'+idx+')">'+opt+'</li>');
         });
-        $('.optWrapper',that.regionDom).innerHTML=optStr.join('');
+        $('.optWrap',that.regionDom).innerHTML=optStr.join('');
 
     },
     select:function(item,idx){
@@ -563,7 +563,7 @@ UITools.select=extend({},UITools.popLayer,{
             selVal=that.option.options[idx];
 
         if(!that.option.multi){
-            DOM.removeClass($$('.optWrapper li',that.regionDom),'selected');
+            DOM.removeClass($$('.optWrap li',that.regionDom),'selected');
             this.option.selOptions=[selVal];
             that.confirm();
         }else{
