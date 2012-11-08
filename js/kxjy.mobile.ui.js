@@ -349,7 +349,7 @@ UITools.mask={
     }
 }
 
-/*所有弹出层的公共类*/
+/*@private所有弹出层的公共类*/
 UITools.popLayer={
     domStr:['<div class="">',
             '</div>'],
@@ -444,7 +444,7 @@ UITools.regionSelector=extend({},UITools.popLayer,{
                 provProm:'选择省份',//省份选择提示
                 cityProm:'选择城市',//城市选择提示
                 onConfirm:null,//params:option.prov{string},option.city{string}
-                onCancel:null,//params:this{object}
+                onCancel:null//params:this{object}
             }
         extend(that.option,option);
         delete that.provSel;

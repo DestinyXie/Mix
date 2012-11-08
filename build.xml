@@ -93,7 +93,6 @@
             <path path="${js.path}/kxjy.mobile.home.js"/>
             <path path="${js.path}/kxjy.mobile.feed.js"/>
             <path path="${js.path}/kxjy.mobile.ui.js"/>
-            <path path="${js.path}/spinningwheel-min.js"/>
         </concat>
         <apply executable="java" verbose="true" dest="${js.path}/" failonerror="true" parallel="false">
             <fileset dir="${js.path}/" includes="*.source.js"/>
