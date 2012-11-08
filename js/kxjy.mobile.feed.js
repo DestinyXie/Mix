@@ -1215,7 +1215,7 @@ var Comment={
     resetErr:function(){
         var that=this;
         that.input.value="";
-        DOM.dropClass(that.input.parentNode,"wrong");
+        DOM.removeClass(that.input.parentNode,"wrong");
     },
     createMoodBox:function(){
         var mb=DOM.create('div'),

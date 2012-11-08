@@ -473,7 +473,7 @@ var Page={
             if(data.islove==1){
                 DOM.addClass($("#footer-love"),"select");
             }else{
-                DOM.dropClass($("#footer-love"),"select");
+                DOM.removeClass($("#footer-love"),"select");
             }
                 
             if(data.friendnum&&data.friendnum>0){
@@ -485,7 +485,7 @@ var Page={
             if(data.isBlocked){
                 DOM.addClass($("#footer-shield"),"select");
             }else{
-                DOM.dropClass($("#footer-shield"),"select");
+                DOM.removeClass($("#footer-shield"),"select");
             }
         }
 
@@ -568,29 +568,6 @@ var Page={
             }
             ipt.innerHTML=Tools.htmlEncode(value);
         }
-        
-        switch(id){
-            case 'marry':
-            case 'target':
-                $("#"+id+"Sel").value=value;
-                break;
-            case 'interest':
-                var sel=$("#interestSel"),
-                    ops=sel.children,
-                    sels=[];
-                if(typeof value!="array"){
-                    sels=value.split(" ");
-                }else{
-                    sels=value;
-                }
-                $.each(sels,function(inter){
-                    var idx=dataArray['interest'].indexOf(inter);
-                    if(ops[idx])
-                        ops[idx].selected=true;
-                });
-                break;
-        }
-
     },
     submitEditInfo:function(){
         var that=Page,
@@ -622,9 +599,7 @@ var Page={
                     that.sendEditVal(id+"="+idx,id);
                     break;
                 case 'interest':
-                    var sel=$("#interestSel"),
-                        ops=sel.childNodes,
-                        inters=ipt.innerHTML.split(" "),
+                    var inters=ipt.innerHTML.split(" "),
                         sels=[];
                     $.each(inters,function(inter){
                         var idx=dataArray['interest'].indexOf(inter);
@@ -716,7 +691,7 @@ var Page={
 
         if(that.loadedMore){
             if(DOM.hasClass(infoUl,'showMore')){
-                DOM.dropClass(infoUl,'showMore');
+                DOM.removeClass(infoUl,'showMore');
                 moreBtn.innerHTML="更多资料";
             }else{
                 DOM.addClass(infoUl,'showMore');
@@ -1041,7 +1016,7 @@ var UserAction={
             }else{
                 params+="&action=disadmire";
                 secCb=function(m){
-                    DOM.dropClass(node,"select");
+                    DOM.removeClass(node,"select");
                     userInfo.friendnum--;
                     userInfo.islove=0;
                     hisInfo.storInfos[hisInfo.curId].friendnum=userInfo.friendnum;
@@ -1103,7 +1078,7 @@ var UserAction={
             }else{
                 if(DOM.hasClass(node,"select")){
                     hisInfo.storInfos[hisInfo.curId].isBlocked=false;
-                    DOM.dropClass(node,"select");
+                    DOM.removeClass(node,"select");
                 }else{
                     hisInfo.storInfos[hisInfo.curId].isBlocked=true;
                     DOM.addClass(node,"select");

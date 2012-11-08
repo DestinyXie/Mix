@@ -16,6 +16,7 @@ img {
 	vertical-align:top;
 }
 ul, li {
+	list-style-type:none;
 	padding:0;
 	margin:0;
 	border:0;
@@ -52,7 +53,7 @@ ul, li {
 	border: 1px solid #555;
 	background-image: none;
 }
-* {
+*,*:before,*:after {
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-webkit-tap-highlight-color:rgba(0, 0, 0, 0);
@@ -1103,7 +1104,7 @@ li .comment{
 	z-index:100;
 }
 
-/*regionSelector*/
+/*regionSelector地区选择*/
 .regionSelWrap{
 	position:absolute;
 	z-index:101;
@@ -1112,7 +1113,8 @@ li .comment{
 	top:2em;
 	background:#fff;
 	-webkit-box-shadow:0 0 10px #000;
-	-webkit-border-radius:6px;padding:3%;
+	-webkit-border-radius:6px;
+	padding:3%;
 }
 .regionSelWrap .selectWrap{
 	width:100%;
@@ -1129,17 +1131,85 @@ li .comment{
 .regionSelWrap .chooseWrap{
 	padding-left:2%;
 }
-.regionSelWrap .chooseWrap a{
+.chooseWrap a{
 	float:left;
 	margin-right:1em;
 	padding:.5em .8em;
 	-webkit-border-radius:6px;
 	-webkit-box-shadow:1px 1px 5px #999;
+	background:#fff;
 }
-.regionSelWrap .chooseWrap a.active{
+.chooseWrap a.active{
 	color:#fff;
 	text-shadow:-1px -1px 0px #333;
 	background:-webkit-linear-gradient(top, #e70485, #c40370);
 	background:-webkit-gradient(linear, left top, left bottom, from(#e70485), to(#c40370));
 	-webkit-box-shadow:1px 1px 5px #666 inset;
+}
+
+/*select单选、多选框*/
+.selectSelWrap{
+	position:absolute;
+	z-index:101;
+	width:90%;
+	max-height:90%;
+	left:5%;
+	top:5%;
+	background:#fff;
+	-webkit-box-shadow:0 0 10px #000;
+	-webkit-border-radius:6px;
+	padding:3%;
+}
+.selectSelWrap.multiSelect .optWrapper{
+	padding-bottom:4.5em;
+}
+.selectSelWrap .optWrapper{
+	padding-bottom: .5em;
+}
+.selectSelWrap .optWrapper li{
+	position: relative;
+	padding: .5em 2em .5em .5em;
+	line-height: 1.8em;
+	border-bottom: 1px solid #ddd;
+}
+.selectSelWrap .optWrapper li.active{
+	background: -webkit-linear-gradient(top, #ddd, #ccc);
+	background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ccc))
+}
+.selectSelWrap .optWrapper li:last-child,.selectSelWrap .optWrapper li.active:last-child{
+	border-bottom-width: 0;
+}
+.selectSelWrap .optWrapper li:after{
+	position: absolute;
+	content: "";
+	height: 1em;
+	width: 1em;
+	top:.9em;
+	right: .5em;
+	border-radius: .5em;
+}
+.selectSelWrap.multiSelect .optWrapper li:after{
+	border-radius: 0;
+}
+.selectSelWrap .optWrapper li.selected{
+	background-color: #eee;
+}
+.selectSelWrap .optWrapper li.selected:after{
+	background-color: #666;
+}
+.selectSelWrap .chooseWrap{
+	display: none;
+	position: absolute;
+	background: #fff;
+	width: 100%;
+	padding: .5em;
+	left: 0;
+	bottom: 0;
+	box-shadow: 0 -1px 5px rgba(0,0,0,.3);
+	background-color: #eee;
+	border-bottom-left-radius: .45em;
+	border-bottom-right-radius: .45em;
+}
+.selectSelWrap.multiSelect .chooseWrap{
+	display:block;
 }

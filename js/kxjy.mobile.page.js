@@ -245,15 +245,11 @@ var contentTmpl={
           '<div class="t-org umar-t color777 fr" id="birthDay"></div>',
           '<div class="umar-t">生日</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix">',
-            '<select id="marrySel">',
-            '</select>',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Tools.initSelect(\'marry\');">',
           '<div class="t-org umar-t color777 fr" id="marry"></div>',
           '<div class="umar-t">婚姻状况</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix">',
-            '<select id="targetSel">',
-            '</select>',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Tools.initSelect(\'target\');">',
           '<div class="t-org umar-t color777 fr" id="target"></div>',
           '<div class="umar-t">交友目的</div>',
         '</div>',
@@ -269,9 +265,7 @@ var contentTmpl={
           '<div class="t-org umar-t color777 fr" id="mobile"></div>',
           '<div class="umar-t">手机</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix">',
-            '<select id="interestSel" multiple>',
-            '</select>',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Tools.initSelect(\'interest\',true);">',
           '<div class="umar-t">兴趣爱好</div>',
           '<div class="t-org umar-t color777" id="interest"></div>',
         '</div>',
@@ -1026,11 +1020,7 @@ var pageConfig={
 'mainList':['mainFooter',1,true,true],
 'myPhoto':['mainFooter',2,true,true],
 'myList':['mainFooter',2,true,true],
-'editInfo':['mainFooter',2,true,true,function(){
-    Tools.initSelect('#marrySel','marry');
-    Tools.initSelect('#targetSel','target');
-    Tools.initSelect('#interestSel','interest',true);
-}],
+'editInfo':['mainFooter',2,true,true],
 'myDetail':[false,false,false,true],
 'hisPhoto':['hisFooter',false,false,true],
 'hisList':['hisFooter',false,false,true],
@@ -1159,10 +1149,10 @@ var pageConfig={
     WIN['setSex']=function(node,val){
         if(DOM.hasClass(node,'usersActive'))
             return;
-        DOM.dropClass(node,'btnBg');
+        DOM.removeClass(node,'btnBg');
         DOM.addClass(node,'usersActive');
         var sibling=node.previousElementSibling||node.nextElementSibling;
-        DOM.dropClass(sibling,'usersActive');
+        DOM.removeClass(sibling,'usersActive');
         DOM.addClass(sibling,'btnBg');
         $('#regSex').value=val;
     }

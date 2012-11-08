@@ -204,7 +204,7 @@ var DOM = {
         });
     },
     /*为DOM对象去掉指定的class名称*/
-    dropClass: function(el, className) {
+    removeClass: function(el, className) {
         $.each(el, function(_el) {
             var classes = _el.className.split(/\s+/);
             if (className && classes.has(className)) {
@@ -323,7 +323,7 @@ var Delegate = {
     removeHover:function () {
         var targets=Delegate.targets;
         targets.forEach( function(el) {
-            DOM.dropClass(el,'active');
+            DOM.removeClass(el,'active');
         });
     },
     /*@private 触摸事件结束，触发模拟点击事件*/
@@ -333,7 +333,7 @@ var Delegate = {
         var targets = Delegate.targets;
         if (targets) {
             targets.forEach( function(el) {
-                DOM.dropClass(el, 'active');
+                DOM.removeClass(el, 'active');
             });
             //触发点击事件
             if (Delegate.isClick) {
@@ -642,7 +642,7 @@ var Tools={
         }
         var regObj={
             useMask:true,
-            onSelect:function(prov,city){
+            onConfirm:function(prov,city){
                 done(prov,city);
             },
             onShow:function(regSel){
@@ -661,125 +661,36 @@ var Tools={
         }
         UITools.regionSelector.show(regObj);
         return;
-
-        // if(Tools.hasSpinWheel)
-        //     return;
-        // function done() {
-        //     var results = SpinningWheel.getSelectedValues(),
-        //         provVal=pros[results.keys[0]],
-        //         cityVal=city[results.keys[1]]
-            
-        //     Tools.hasSpinWheel=null;
-        //     WIN['myScroll']&&WIN['myScroll'].enable();
-
-        //     if(!provVal||!cityVal){
-        //         toast('地区选择有误',2);
-        //         return;
-        //     }
-
-        //     if(type&&["rank","photo"].has(type)){
-        //         Feed.addParams="reside_province="+provVal+"&reside_city="+cityVal;
-        //         Feed.refresh();
-        //         if("rank"==type){
-        //             $(".rankAddress span").innerHTML=provVal+' '+cityVal;
-        //         }
-        //     }else{
-        //         val=provVal+' '+cityVal;
-        //         Page.setEditVal("area",val);
-        //     }
-        // }
-
-        // function cancel() {
-        //     Tools.hasSpinWheel=null;
-        //     WIN['myScroll']&&WIN['myScroll'].enable();
-        // }
-        // var pros = {},
-        //     city = {};
-
-        // function assembleCitys(prov){
-        //     var lis=show_next_flod(prov),
-        //         innerStr="";
-        //     city = {};
-        //     SpinningWheel.slotData[1].values={};
-        //     for(var i=0,len=lis.length;i<len;i++){
-        //         SpinningWheel.slotData[1].values[i+1]=lis[i];
-        //         city[i+1]=lis[i];
-        //         innerStr+="<li>"+lis[i]+"</li>";
-        //     }
-        //     SpinningWheel.slotEl[1].innerHTML=innerStr;
-        //     SpinningWheel.slotEl[1].slotMaxScroll = SpinningWheel.swSlotWrapper.clientHeight - SpinningWheel.slotEl[1].clientHeight - 86;//check
-        //     SpinningWheel.scrollTo(1,1);
-        // }
-        
-        // for(var i=0,len=provinces.length;i<len;i++){
-        //     pros[i+1]=provinces[i];
-        // }
-        
-        // for(var i=0,citys=show_next_flod(provinces[0]),len=citys.length;i<len;i++){
-        //     city[i+1]=citys[i];
-        // }
-
-        // SpinningWheel.cellHeight=BODYFS*1.79;
-
-        // SpinningWheel.addSlot(pros, 'right', 0);
-        // SpinningWheel.addSlot(city, '', 0);
-
-        // SpinningWheel.setCancelAction(cancel);
-        // SpinningWheel.setDoneAction(done);
-
-        // function checkProv(){
-        //     var results = SpinningWheel.getSelectedValues(),
-        //         val=results.values[0];
-        //     if(!SpinningWheel.curProv||SpinningWheel.curProv!=val){
-        //         SpinningWheel.curProv=val;
-        //         assembleCitys(val);
-        //     }
-        //     clearTimeout(Tools.spinTimeout);
-        //     if(Tools.hasSpinWheel)
-        //         Tools.spinTimeout=setTimeout(checkProv,800);
-        // }
-
-        // SpinningWheel.open();
-        // Tools.hasSpinWheel=true;
-        // WIN['myScroll']&&WIN['myScroll'].disable();
-        // Tools.spinTimeout=setTimeout(checkProv,800);
     },
     /*初始化目的,婚姻状况,兴趣选项*/
-    initSelect:function(sel,ipt,mul){
-        function combileArr(arr){
-            var ops=[];
-            $.each(arr,function(item,idx){
-                ops.unshift("<option value='"+item+"'>"+item+"</option>");
-            })
-            return ops.join("");
-        }
-        function tarSet(){
-            var val=select.value;
-            if(mul){//兴趣
-                var ops=select.childNodes,
-                    len=ops.length,
-                    selectOps=[];
-                for(var i=0;i<len;i++){
-                    if(ops[i].selected){
-                        selectOps.push(dataArray["interest"][i]);
+    initSelect:function(ipt,mul){
+        var selectObj={
+            multi:!!mul,
+            options:dataArray[ipt],
+            defOptions:$("#"+ipt).innerHTML.trim().split(' '),
+            onConfirm:function(selOpts){
+                if(mul){
+                    if(selOpts.length<1){
+                        alert('至少选择一项');
+                        return false;
+                    }
+                    if(selOpts.length>4){
+                        alert('最多只能选4项')
+                        return false;
                     }
                 }
-                if(selectOps.length==0){
-                    toast('至少选择一项');
-                }else if(selectOps.length>4){
-                    toast('最多只能选4项');
-                    return;
-                }else{
-                    val=selectOps.join(" ");
-                }
+                Page.setEditVal(ipt,selOpts.join(" "));
+                return true;
+            },
+            onShow:function(regSel){
+                Device.backFunc=function(){regSel.hide();}
+            },
+            hideEnd:function(regSel){
+                Device.backFunc=function(){ViewMgr.back();}
             }
-            Page.setEditVal(ipt,val);
-        }
-        var select=$(sel),
-            sels=combileArr(dataArray[ipt]);
+        };
 
-        select.innerHTML=sels;
-        select.addEventListener("change",tarSet,false);
+        UITools.select.show(selectObj);
     },
     /*获得用户所在地址,解析地址为省,市*/
     getGpsInfo:function(cb){
