@@ -1006,6 +1006,7 @@ var pageConfig={
 'login':[false,false,false,false,function(){
     DOM.addEvent($('#password'),'keypress',function(e){
         if(13==e.event.keyCode){
+            $('#password').blur();
             UserAction.checkLogin('#email','#password',$('#loginBtn'));
         }
     });

@@ -366,7 +366,7 @@
     },
     imageBrowser:function(cb){//浏览照片
         uexImageBrowser.cbPick=function (opCode,dataType,data){
-            cb(opId,dataType,data);
+            cb(opCode,dataType,data);
         };
         uexImageBrowser.pick();
     }
