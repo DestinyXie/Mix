@@ -1067,6 +1067,10 @@ var Comment={
         delete that.moodBox;
         delete that.input;
         delete that.sentBtn;
+        if(that.scroller){
+            that.scroller.destroy();
+            delete that.scroller;
+        }
         that._unBindEvent();
     },
     _bindEvent:function(){
@@ -1221,7 +1225,8 @@ var Comment={
         var mb=DOM.create('div'),
             ul=DOM.create('ul'),
             arrow=DOM.create('span'),
-            li;
+            li,
+            needScroll=(BODY.offsetWidth<19*BODYFS||BODY.offsetHeight<9*BODYFS);
         mb.className="chatMood";
         ul.className="clearfix";
         for(var i=0;i<36;i++){
@@ -1230,9 +1235,32 @@ var Comment={
         }
         arrow.innerHTML='&diams;';
         ul.appendChild(arrow);
-        mb.appendChild(ul);
+        if(needScroll){
+            var scroller=DOM.create('div',{className:'scroller',style:{width:'100%',height:'100%',position:'relative'}}),
+                scrollObj={hScroll: false,
+                           vScroll: false};
+            scroller.innerHTML="<div style='position:absolute'></div>";
+            scroller.firstChild.appendChild(ul);
+            mb.appendChild(scroller);
+            if(BODY.offsetWidth<19*BODYFS){
+                mb.style.width=(BODY.offsetWidth-1.5*BODYFS)+"px";
+                scrollObj.hScroll=true;
+                scrollObj.hScrollbar=true;
+            }
+            if(BODY.offsetHeight<9*BODYFS){
+                mb.style.height=(BODY.offsetHeight-4*BODYFS)+"px";
+                scrollObj.vScroll=true;
+                scrollObj.vScrollbar=true;
+            }
+            
+        }else{
+            mb.appendChild(ul);
+        }
         mb.setAttribute('_click','Comment.selectMood(this)');
         this.commBox.appendChild(mb);
+        if(needScroll){
+            this.scroller=new iScroll($('.scroller',mb),scrollObj);
+        }
         this.moodBox=mb;
     },
     selectMood:function(node){

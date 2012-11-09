@@ -820,9 +820,9 @@ li .comment{
 	position:absolute;
 	display:block;
 	z-index:3;
-	padding:0.7em 0 0 0.7em;
-	height:8.333em;
-	left:-0.4em;
+	padding:.7em;
+	height:9em;
+	left:0;
 	bottom:1000em;
 	-webkit-border-radius:.5em;
 	-webkit-box-shadow:3px 3px 3px #333;
@@ -839,6 +839,7 @@ li .comment{
 	z-index: -1;
 }
 .chatMood ul{
+	width:18.7em;
 	background:url(images/mood.png) no-repeat;
 	background-size:17.5em;
 }
