@@ -405,7 +405,10 @@ UITools.popLayer={
         that.container.appendChild(that.regionDom);
 
         if(that.option.canScroll){
-            that.scroller=new iScroll(that.option.domId,{vScrollbar:true});
+            setTimeout(function(){
+                that.scroller=new iScroll(that.option.domId,{vScrollbar:true});
+            },200);
+            
         }
 
         that.subShow&&that.subShow();//执行子类的show方法
