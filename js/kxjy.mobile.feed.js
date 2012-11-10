@@ -1075,7 +1075,7 @@ var Comment={
     },
     _bindEvent:function(){
         var that=this;
-        DOC.addEventListener(CLICK_EVENT,Comment.hideMoodBox,false);
+        $('#pageWraper').setAttribute('_click','Comment.hideMoodBox()');
         DOM.addEvent(that.input,"keypress",function(e) {//按enter发送信息
             var key=e.event.keyCode;
             if(13!==key){
@@ -1089,7 +1089,7 @@ var Comment={
         });
     },
     _unBindEvent:function(){
-        DOC.removeEventListener(CLICK_EVENT,Comment.hideMoodBox,false);
+        $('#pageWraper').removeAttribute('_click');
     },
     focusInput:function(node){
         var that=this;
@@ -1279,20 +1279,16 @@ var Comment={
                 that.resetErr();
             Tools.insertAtCaret(that.input,that.motions[idx]);
         }
-        that.stopHideBox=true;
         evt.stop();
-        setTimeout(function(){that.stopHideBox=false;},200);
     },
     switchMoodBox:function(node){
         var that=this;
         if(getComputedStyle(that.moodBox).bottom!=3.5*BODYFS+"px"){
             that.showMoodBox();
-            that.stopHideBox=true;
         }else{
             that.hideMoodBox();
         }
         node.event.stop();
-        setTimeout(function(){that.stopHideBox=false;},200);
     },
     showMoodBox:function(){
         var that=this;
@@ -1304,7 +1300,7 @@ var Comment={
     },
     hideMoodBox:function(){
         var that=Comment;
-        if(that.stopHideBox||that.moodBox.style.bottom=="1000em"){
+        if(that.moodBox.style.bottom=="1000em"){
             return;
         }
         clearTimeout(that.moodInter);

@@ -879,7 +879,7 @@ var contentTmpl={
                 '<div class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">',
                 '<div id="verCont" class="ub-f1 ut-s">版本v1.0</div>',
                 '</div>',
-                '<div _click="UserAction.checkAppVersion()" class="infoList uc-t ubb ub b-gra t-bla ub-ac umh4 lis">',
+                '<div _click="UserAction.checkAppVersion()" class="infoList uc-b ubb ub b-gra t-bla ub-ac umh4 lis">',
                     '<div class="ub-f1 ut-s">检查新版本</div>',
                      '<div class="res8 lis-sw ub-img"></div>',
                 '</div>',

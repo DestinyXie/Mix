@@ -407,7 +407,7 @@ UITools.popLayer={
         if(that.option.canScroll){
             setTimeout(function(){
                 that.scroller=new iScroll(that.option.domId,{vScrollbar:true});
-            },200);
+            },0);
             
         }
 
