@@ -1243,7 +1243,7 @@ var Comment={
             scroller.firstChild.appendChild(ul);
             mb.appendChild(scroller);
             if(BODY.offsetWidth<19*BODYFS){
-                mb.style.width=(BODY.offsetWidth-1.5*BODYFS)+"px";
+                mb.style.width=(BODY.offsetWidth-BODYFS)+"px";
                 scrollObj.hScroll=true;
                 scrollObj.hScrollbar=true;
             }
@@ -1306,7 +1306,7 @@ var Comment={
         clearTimeout(that.moodInter);
         that.moodInter=setTimeout(function(){
             that.moodBox.style.bottom="1000em";
-        },250);
+        },0);
     },
     _setParenComm:function(pid){
         /*添加父节点,在Comment.sendComment方法中捕获*/

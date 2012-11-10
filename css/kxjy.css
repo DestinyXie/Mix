@@ -820,7 +820,7 @@ li .comment{
 	position:absolute;
 	display:block;
 	z-index:3;
-	padding:.7em;
+	padding:.7em .7em .2em;
 	height:9em;
 	left:0;
 	bottom:1000em;
@@ -830,7 +830,7 @@ li .comment{
 	background:-webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#f2f2f2));
 }
 .chatMood span{
-	color:#eee;
+	color:#f2f2f2;
 	font-family:Arial;
 	font-size:1.5em;
 	left:.7em;
