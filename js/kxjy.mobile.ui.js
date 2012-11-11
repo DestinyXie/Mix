@@ -401,7 +401,6 @@ UITools.popLayer={
         }else{
             that.container=$(that.option.contSel);
         }
-        that.container.innerHTML="";
         that.container.appendChild(that.regionDom);
 
         if(that.option.canScroll){
@@ -428,10 +427,10 @@ UITools.popLayer={
 /*地区选择(extend UITools.popLayer)*/
 UITools.regionLayer=extend({},UITools.popLayer,{
     domStr:['<div class="selectWrap clearfix">',
-            '<select class="provSel">',
-            '</select>',
-            '<select class="citySel">',
-            '</select>',
+            '<label class="provSel" _click="UITools.regionLayer.chooseProv()">',
+            '</label>',
+            '<label class="citySel" _click="UITools.regionLayer.chooseCity()">',
+            '</label>',
             '</div>',
             '<div class="chooseWrap clearfix">',
                 '<a class="confirm" _click="UITools.regionLayer.confirm()">确认</a>',
@@ -446,65 +445,61 @@ UITools.regionLayer=extend({},UITools.popLayer,{
                 domCls:'regionLayer',//选择框DOM class
                 provProm:'选择省份',//省份选择提示
                 cityProm:'选择城市',//城市选择提示
+                clickMaskHide:false,
                 onConfirm:null,//params:option.prov{string},option.city{string}
                 onCancel:null//params:this{object}
             }
         extend(that.option,option);
+        if($("#selectSel")){
+            UITools.select.hide();
+        }
         delete that.provSel;
         delete that.citySel;
-        delete that.confirmBtn;
-        delete that.cancelBtn;
     },
     subShow:function(){
         var that=this;
         
         that.provSel=$('.provSel',that.regionDom);
         that.citySel=$('.citySel',that.regionDom);
-        that.confirmBtn=$('.confirm',that.regionDom);
-        that.cancelBtn=$('.cancel',that.regionDom);
-        that.conbProv(that.option.prov);
-        that.conbCity(that.option.prov,that.option.city);
+        that.provSel.innerHTML=that.option.prov||that.option.provProm;
+        that.citySel.innerHTML=that.option.city||that.option.cityProm;
     },
-    conbProv:function(defProv){
-        var that=this,
-            options=that.conbOpt(provinces,that.option.provProm);
-
-        function checkProv(){
-            if(that.option.provProm==that.provSel.value){
+    chooseProv:function() {
+        var that=this;
+        function checkProv(selOpts){
+            that.provSel.innerHTML=selOpts[0];
+            that.citySel.innerHTML=that.option.cityProm;
+            if(that.option.provProm==selOpts[0]){
                 that.option.prov="";
             }else{
-                that.option.prov=that.provSel.value;
+                that.option.prov=selOpts[0];
             }
-            that.option.city="";
-            that.conbCity(that.option.prov);
-        }
-        that.provSel.innerHTML=options;
-        that.provSel.value=defProv||that.option.provProm;
-        DOM.addEvent(that.provSel,"change",checkProv);
-    },
-    conbCity:function(prov,defCity){
-        var that=this,
-            citys=show_next_flod(prov)||[];
-            options=that.conbOpt(citys,that.option.cityProm);
 
-        function checkCity(){
-            if(that.option.cityProm==that.citySel.value){
+            that.option.city="";
+        }
+        UITools.select.show({
+            useMask:false,
+            options:provinces,
+            defOptions:[that.option.prov||that.option.provProm],
+            onConfirm:checkProv
+        });
+    },
+    chooseCity:function() {
+        var that=this;
+        function checkCity(selOpts){
+            that.citySel.innerHTML=selOpts[0];
+            if(that.option.cityProm==selOpts[0]){
                 that.option.city="";
             }else{
-                that.option.city=that.citySel.value;
+                that.option.city=selOpts[0];
             }
         }
-        that.citySel.innerHTML=options;
-        that.citySel.value=defCity||that.option.cityProm;
-        DOM.addEvent(that.citySel,"change",checkCity);
-    },
-    conbOpt:function(arr,prompt){
-        var ops=[];
-        $.each(arr,function(item,idx){
-            ops.unshift("<option value='"+item+"'>"+item+"</option>");
+        UITools.select.show({
+            useMask:false,
+            options:show_next_flod(that.option.prov)||[],
+            defOptions:[that.option.city||that.option.cityProm],
+            onConfirm:checkCity
         });
-        ops.unshift("<option value='"+prompt+"'>"+prompt+"</option>");
-        return ops.join("");
     },
     confirm:function(){
         var that=this;
@@ -583,7 +578,7 @@ UITools.select=extend({},UITools.popLayer,{
         var that=this,
             check=that.option.onConfirm&&that.option.onConfirm(that.option.selOptions);
         
-        check&&that.hide();
+        (check||!that.option.multi)&&that.hide();
     },
     cancel:function(){
         var that=this;

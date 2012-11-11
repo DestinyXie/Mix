@@ -87,7 +87,7 @@ body {
 	content:"";
 	display:table;
 }
-.clearfix:after {
+.clearfix:after,.clearfix:before {
 	clear:both;
 }
 .clearfix {
@@ -227,6 +227,7 @@ to {
 	padding: .5em 6px;
 }
 .Forget {
+	float: right;
 	padding:.3em;
 }
 .loginButton {
@@ -1110,27 +1111,55 @@ li .comment{
 	position:absolute;
 	z-index:101;
 	width:90%;
+	height:7em;
 	left:5%;
 	top:2em;
 	background:#fff;
 	-webkit-box-shadow:0 0 10px #000;
 	-webkit-border-radius:6px;
-	padding:3%;
+	padding:.5em 3%;
 }
 .regionLayer .selectWrap{
 	width:100%;
-	padding:0 0 1em 2%;
+	padding-bottom:1em;
 }
-.regionLayer .selectWrap select{
+.regionLayer .selectWrap label{
+	position: relative;
 	height:2.5em;
+	line-height:2.3em;
 	float:left;
 	width:45%;
 	margin-right:5%;
-	padding:2px 0;
+	padding:2px 1.5em 2px 0;
 	text-indent: .5em;
+	border:1px solid rgba(0,0,0,.2);
 }
-.regionLayer .chooseWrap{
-	padding-left:2%;
+.regionLayer .selectWrap label.active{
+	background-color: rgba(0,0,0,.3);
+	-webkit-box-shadow:0 0 10px rgba(0,0,0,.5) inset;
+}
+.regionLayer .selectWrap label:after{
+	position: absolute;
+	content:"◢";
+	text-indent: .5em;
+	line-height: 4em;
+	width:1.5em;
+	height: 2.5em;
+	right:0;
+	bottom:0;
+}
+
+.chooseWrap{
+	position: absolute;
+	background: #fff;
+	width: 100%;
+	padding: .5em;
+	left: 0;
+	bottom: 0;
+	box-shadow: 0 -1px 5px rgba(0,0,0,.3);
+	background-color: #eee;
+	border-bottom-left-radius: .45em;
+	border-bottom-right-radius: .45em;
 }
 .chooseWrap a{
 	float:left;
@@ -1174,6 +1203,7 @@ li .comment{
 	border-bottom: 1px solid #ddd;
 }
 .selectLayer .optWrap li.active{
+	-webkit-box-shadow:0 0 10px rgba(0,0,0,.5) inset;
 	background: -webkit-linear-gradient(top, #ddd, #ccc);
 	background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ccc))
 }
@@ -1200,16 +1230,6 @@ li .comment{
 }
 .selectLayer .chooseWrap{
 	display: none;
-	position: absolute;
-	background: #fff;
-	width: 100%;
-	padding: .5em;
-	left: 0;
-	bottom: 0;
-	box-shadow: 0 -1px 5px rgba(0,0,0,.3);
-	background-color: #eee;
-	border-bottom-left-radius: .45em;
-	border-bottom-right-radius: .45em;
 }
 .selectLayer.multiSelect .chooseWrap{
 	display:block;
