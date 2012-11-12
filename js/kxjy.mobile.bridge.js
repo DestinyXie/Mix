@@ -1,32 +1,30 @@
 /*手机接口调用*/
 ;var Device={
     /*手机初始化*/
-    hasBridge:function(){
+    isMobi:function(){
         if(WIN["uexWindow"]){
             return true;
         }
         return false;
     },
-    isMobi:function(){
-        return Device.hasBridge();
-    },
-    isLoaded:false,
-    loadEventBinded:false,
-    loadQueue:[],
+    hasLoaded:false,
+    /*操作ID，AppCan专有*/
     opCode:1,
+    /*设备初始化完毕，只调用一次*/
     onLoad:function(loadFn){
         function load(){
-            if(Device.isLoaded){
+            if(Device.hasLoaded){
                 return;
             }
-            for(var i=0,dl=Device.loadQueue,len=dl.length;i<len;i++){
-                dl[i].call(null);
-            }
-            Device.isLoaded=true;
+            loadFn();
+            Device.hasLoaded=true;
         }
 
         function PCload(){
-            setTimeout(function(){//appcan对象初始化延迟
+            /*appCan对象初始化比window.onload慢
+            * 等待1秒如果appCan的onload还没启动再执行DOMContentLoaded的监听方法
+            */
+            setTimeout(function(){
                 if(!WIN["uexWindow"]){
                     //PC test
                     load();
@@ -34,21 +32,17 @@
             },1000);
         }
 
-        Device.loadQueue.push(loadFn);
-
-        if(Device.loadEventBinded)
-            return;
-
-        //appCan对象初始化比window.onload慢
+        
         window.uexOnload=load;
         DOM.addEvent(DOC,'DOMContentLoaded',PCload);
-
-        Device.loadEventBinded=true;
     },
     destroy:function(){//关掉一些东西，比如上传
         if(!Device.isMobi()){return;}
-        //减1因为拍照时会取文件尺寸 Device.opCode 会比上传的加1
-        uexXmlHttpMgr.close(Device.opCode-1);
+        /*停止上传*/
+        if(Device.xmlHttp.isSending){
+            Device.xmlHttp.close();
+        }
+        /*关闭toast*/
         uexWindow.closeToast();
     },
     exit:function(){//退出应用
@@ -298,49 +292,60 @@
         // }
         uexDownloaderMgr.createDownloader(inOpCode);
     },
-    xmlHttp:function(customObj){//跨域异步请求数据的方法
-        /* param:customObj{object}:
-        src 请求地址
-        method 请求方法
-        plainPara 简单参数
-        sourcePara 资源参数
-        progressCb 进度回调
-        secCb 请求成功回调
-        failCb 请求失败回调
-        */
-        if(!customObj['src']){
-            Device.toast('缺少xmlHttp请求地址。');
-            return;
+    xmlHttp:{
+        isSending:false,
+        send:function(customObj){//跨域异步请求数据的方法
+            /* param:customObj{object}:
+            src 请求地址
+            method 请求方法
+            plainPara 简单参数
+            sourcePara 资源参数
+            progressCb 进度回调
+            secCb 请求成功回调
+            failCb 请求失败回调
+            */
+            if(!customObj['src']){
+                Device.toast('缺少xmlHttp请求地址。');
+                return;
+            }
+
+            var option={
+                opCode:Device.opCode++,
+                method:'POST',
+                timeout:0//请求超时
+            }
+            extend(option,customObj);
+
+            function sendParam(paramStr,isSource){
+                var params=paramStr.split('&'),tmpArr;
+                for (var i = params.length - 1; i >= 0; i--) {
+                    tmpArr=params[i].split('=');
+                    if(2===tmpArr.length){
+                        uexXmlHttpMgr.setPostData(option.opCode, !isSource?"0":"1", tmpArr[0], tmpArr[1]);
+                    }
+                };
+            }
+            
+            uexXmlHttpMgr.onPostProgress=option.progressCb;
+            uexXmlHttpMgr.onData = option.secCb;
+            uexXmlHttpMgr.open(option.opCode, option.method.toUpperCase(), option.src, option.timeout);
+
+            sendParam(option['plainPara'],false);
+            sendParam(option['sourcePara'],true);
+
+            Device.xmlHttp.isSending=true;
+            Device.xmlHttp.opCode=option.opCode;
+
+            uexXmlHttpMgr.send(option.opCode);
+        },
+        close:function(){
+            if(!Device.xmlHttp.isSending){
+                return;
+            }
+            var opCode=Device.xmlHttp.opCode;
+            uexXmlHttpMgr.close(opCode);
+            Device.xmlHttp.isSending=false;
         }
-
-        var option={
-            opCode:Device.opCode++,
-            method:'POST',
-            timeout:0//请求超时
-        }
-        extend(option,customObj);
-
-        function sendParam(paramStr,isSource){
-            var params=paramStr.split('&'),tmpArr;
-            for (var i = params.length - 1; i >= 0; i--) {
-                tmpArr=params[i].split('=');
-                if(2===tmpArr.length){
-                    uexXmlHttpMgr.setPostData(option.opCode, !isSource?"0":"1", tmpArr[0], tmpArr[1]);
-                }
-            };
-        }
-        
-        uexXmlHttpMgr.onPostProgress=option.progressCb;
-        uexXmlHttpMgr.onData = option.secCb;
-        uexXmlHttpMgr.open(option.opCode, option.method.toUpperCase(), option.src, option.timeout);
-
-        sendParam(option['plainPara'],false);
-        sendParam(option['sourcePara'],true);
-
-        uexXmlHttpMgr.send(option.opCode);
-    },
-    xmlHttpClose:function(opCode){
-        uexXmlHttpMgr.close(opCode);
     },
     /*取得文件大小*/
     getFileSize:function(path,cb){
@@ -359,12 +364,14 @@
         uexFileMgr.closeFile(inOpCode);
     },
     camera:function(cb){//拍照
+        if(!Device.isMobi()){return;}
         uexCamera.cbOpen=function(opId,dataType,data){
             cb(opId,dataType,data);
         };
         uexCamera.open();
     },
     imageBrowser:function(cb){//浏览照片
+        if(!Device.isMobi()){return;}
         uexImageBrowser.cbPick=function (opCode,dataType,data){
             cb(opCode,dataType,data);
         };

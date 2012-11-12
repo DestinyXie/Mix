@@ -203,7 +203,7 @@ var actionSheet={
                     }else{
                         toast("上传出错",2);
                     }
-                    Device.xmlHttpClose(uopCode);
+                    Device.xmlHttp.close();
                 }
 
                 var sendObj={
@@ -221,7 +221,7 @@ var actionSheet={
                 if(imgurl){
                     sendObj.sourcePara="image="+imgurl;
                 }
-                Device.xmlHttp(sendObj);
+                Device.xmlHttp.send(sendObj);
             }
             switch(data*1){
                 case 0:

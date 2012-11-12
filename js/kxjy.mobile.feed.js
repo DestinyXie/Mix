@@ -775,46 +775,46 @@ var Feed={
     compileMood:function(tmpl,data,idx){//拼装心情列表
         var pageName=this.page;
         var moodLiStr=Tools.compiTpl(tmpl,data,function(o,t){//模板回调函数
-                    switch(t[1]){
-                        case 'siteurl':
-                            return StorMgr.siteUrl;
-                            break;
-                        case 'mood':
-                            if(o.havemood*1==0){
-                                var str=(o.sex||'性别不详')+"|"+(o.age||'年龄不详');
-                                return str;
-                            }
-                            return o.mood;
-                            break;
-                        case 'mood_icon_id':
-                            return (o.mood_icon_id==0)?3:o.mood_icon_id;
-                            break;
-                        case 'time':
-                            return o.update_time.split(" ")[1]||"";
-                            break;
-                        case 'colorPng':
-                            return (!o.colorPng)?"":'<img src="'+o.colorPng+'" alt="">';
-                            break;
-                        case 'fileimg':
-                            return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
-                            break;
-                        case 'islove':
-                            return (o.islove==1)?"active":"";
-                            break;
-                        case 'lovemood':
-                            return (o.lovemood==1)?"active":"";
-                            break;
-                        case 'lovecount':
-                            return o.lovecount||0;
-                            break;
-                        case 'commentcount':
-                            return o.commentcount||0;
-                            break;
-                        case 'reportcount':
-                            return o.reportcount||0;
-                            break;
-                    }
-                },idx);
+                switch(t[1]){
+                    case 'siteurl':
+                        return StorMgr.siteUrl;
+                        break;
+                    case 'mood':
+                        if(o.havemood*1==0){
+                            var str=(o.sex||'性别不详')+"|"+(o.age||'年龄不详');
+                            return str;
+                        }
+                        return o.mood;
+                        break;
+                    case 'mood_icon_id':
+                        return (o.mood_icon_id==0)?3:o.mood_icon_id;
+                        break;
+                    case 'time':
+                        return o.update_time.split(" ")[1]||"";
+                        break;
+                    case 'colorPng':
+                        return (!o.colorPng)?"":'<img src="'+o.colorPng+'" alt="">';
+                        break;
+                    case 'fileimg':
+                        return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
+                        break;
+                    case 'islove':
+                        return (o.islove==1)?"active":"";
+                        break;
+                    case 'lovemood':
+                        return (o.lovemood==1)?"active":"";
+                        break;
+                    case 'lovecount':
+                        return o.lovecount||0;
+                        break;
+                    case 'commentcount':
+                        return o.commentcount||0;
+                        break;
+                    case 'reportcount':
+                        return o.reportcount||0;
+                        break;
+                }
+            },idx);
         return moodLiStr;
     },
     removeFeed:function(node){
