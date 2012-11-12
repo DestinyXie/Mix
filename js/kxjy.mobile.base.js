@@ -3,10 +3,12 @@
 
 /*常量设置*/
 var isTouch = ('ontouchstart' in WIN),
-START_EVENT = isTouch ? 'touchstart' : 'mousedown',
-MOVE_EVENT = isTouch ? 'touchmove' : 'mousemove',
-END_EVENT = isTouch ? 'touchend' : 'mouseup',
-CLICK_EVENT = isTouch ? 'touchend' : 'click';
+START_EV = isTouch ? 'touchstart' : 'mousedown',
+MOVE_EV = isTouch ? 'touchmove' : 'mousemove',
+END_EV = isTouch ? 'touchend' : 'mouseup',
+CLICK_EV = isTouch ? 'touchend' : 'click',
+CANCEL_EV = isTouch ? 'touchcancel' : 'mouseup',
+RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';
 
 /*扩展一个Object对象*/
 function extend(d, s ,o) {
@@ -80,6 +82,7 @@ extend($,{
         }
     },
     isFunc: function(obj){
+        /*window.toString.call(function)会返回[object Object]*/
         return DOC.toString.call(obj)==="[object Function]";
     },
     isStr:function(obj){
@@ -115,8 +118,9 @@ var Event = function(e) {
     }
 };
 Event.prototype = {
-    /*阻止事件传递*/
+    /*事件停止标记*/
     stoped:false,
+    /*阻止事件传递*/
     stop: function() {
         if (e = this.event) {
             this.stoped=true;
@@ -145,7 +149,7 @@ var DOM = {
         if (attributes) {
             if (attributes.style) {
                 DOM.setStyles(el, attributes.style);
-                attributes.style = null;
+                delete attributes.style;
             }
             extend(el, attributes);
         }
@@ -260,16 +264,16 @@ var Delegate = {
     /*初始化函数*/
     init: function() {
         var events = {
-            start: START_EVENT,
-            // move: MOVE_EVENT,//start后再注册
-            end: END_EVENT,
+            start: START_EV,
+            // move: MOVE_EV,//start后再注册
+            end: END_EV,
             onclick: 'click'
         }
         for (type in events) {
             Delegate[events[type]] = [];
             DOM.addEvent(DOC, events[type], Delegate[type], true);
         }
-        Delegate[CLICK_EVENT] = [];
+        Delegate[CLICK_EV] = [];
     },
     /*@private触摸事件开始*/
     start: function(e) {
@@ -277,7 +281,7 @@ var Delegate = {
             Delegate.end(e);
         }
 
-        DOC.addEventListener(MOVE_EVENT, Delegate['move'],false);//start后再注册
+        DOC.addEventListener(MOVE_EV, Delegate['move'],false);//start后再注册
 
         Delegate.startEvent = e;
         Delegate.isClick    = true;
@@ -295,7 +299,7 @@ var Delegate = {
             }
         }
 
-        for (var events = Delegate[START_EVENT], l = events.length; l--;) {
+        for (var events = Delegate[START_EV], l = events.length; l--;) {
             events[l].call(null, e);
         }
     },
@@ -308,12 +312,17 @@ var Delegate = {
             }
         });
     },
-    /*@private手指移动事件*/
+    /*@private手指移动事件
+    * 因为该方法中e没有调用扩展的Event的方法 
+    * 所以e既可以是传事件对象本身 也可以是new Event(事件对象),
+    * 因此可以使用DOC.addEventListener添加事件监听
+    * 这样也就可以用DOC.removeEventListener移除监听
+    */
     move: function(e) {
         if (!Delegate.startEvent)
             return;
         var sp = Delegate.startPoint, cp = [e.pageX, e.pageY];
-        var dis = Tools.calculPy(cp[0] - sp[0],cp[1] - sp[1]);
+        var dis = BaseTools.calculPy(cp[0] - sp[0],cp[1] - sp[1]);
         if (dis > 15) {
             Delegate.isClick = false;
             Delegate.removeHover();
@@ -350,18 +359,18 @@ var Delegate = {
                     }
                 }
                 if(e.stoped.toString()!="true"){
-                    for (var events = Delegate[CLICK_EVENT], l = events.length; l--;) {
+                    for (var events = Delegate[CLICK_EV], l = events.length; l--;) {
                         events[l].call(null, e);
                     }
                 }
             }
 
-            for (var events = Delegate[END_EVENT], l = events.length; l--;) {
+            for (var events = Delegate[END_EV], l = events.length; l--;) {
                 events[l].call(null, e);
             }
         }
         e.stoped=false;
-        DOC.removeEventListener(MOVE_EVENT, Delegate['move'],false);//end后注销move
+        DOC.removeEventListener(MOVE_EV, Delegate['move'],false);//end后注销move
         Delegate.isClick    = false;
         Delegate.startEvent = null;
         Delegate.startPoint = [0, 0];
@@ -371,16 +380,10 @@ var Delegate = {
 
 Delegate.init();
 
-/*工具*/
-var Tools={
-    /*清除缓存和一些记录的变量值,用户退出时需要*/
-    refresh:function(){
-        // Tools.storage.clear();//gps等信息
-        Tools.storage.clear('session');
-        Tools.sidUidParam=null;
-        StorMgr.destroy();
-    },
-    sameObj:function(obj1,obj2,except){//比较两个对象是否一样,除了except数组中的属性
+/*基本的一些工具类*/
+var BaseTools={
+    /*比较两个对象是否一样,除了except数组中的对象属性*/
+    sameObj:function(obj1,obj2,except){
         if(!obj1||!obj2||JSON.stringify(obj1).length!=JSON.stringify(obj2).length){
             return false;
         }
@@ -399,51 +402,6 @@ var Tools={
     /*计算直角边*/
     calculPy:function(l,w){
         return Math.sqrt(Math.pow(l, 2) + Math.pow(w, 2));
-    },
-    /*取sid和uid参数字符串*/
-    getSidUidParams:function(gotoUrl,setParams){
-        var paramStr;
-        if(Tools.sidUidParam){
-            return Tools.sidUidParam;
-        }
-
-        if(StorMgr.uid&&StorMgr.userKey){
-            paramStr="sid="+StorMgr.sid+"&uid="+StorMgr.uid+"&userKey="+StorMgr.userKey;
-            Tools.sidUidParam=paramStr;
-        }else{
-            paramStr="sid="+StorMgr.sid;
-        }
-        return paramStr;
-    },
-    /*从临时变量ViewMgr.tmpParams取参数值*/
-    getParamVal:function(paramKey){
-        var value="",
-            params=ViewMgr.tmpParams.split('&');
-
-        if(0!=params.length){
-            $.each(params,function(pa){
-                var rg=new RegExp(paramKey+"=(.*)");
-                if(rg.test(pa)){
-                    value=rg.exec(pa)[1];
-                }
-            });
-        }
-
-        //多次跳转页面会丢失ViewMgr.tmpParams中user_id参数
-        if('user_id'==paramKey&&""==value)
-            value=hisInfo['curId'];
-
-        return value;
-    },
-    /*替换Url中的${param}变量*/
-    compileUrl:function(url){
-        var reUrl=url.replace(/\$\{(\w+)\}/g,
-            function(m,c){
-                if(['uid','sid','userKey'].has(c))
-                    return StorMgr[c];
-                return Tools.getParamVal(c);
-            });
-        return reUrl;
     },
     /*在当前对象光标处插入指定的内容*/
     insertAtCaret:function(ipt,textFeildValue){
@@ -470,7 +428,7 @@ var Tools={
     cookie: function(name,value,expiredays) {
         var dc=document.cookie,cs,ce;
         if(value===null||value=="") {
-            var exdate=new Date(),cv=Tools.cookie(name);
+            var exdate=new Date(),cv=BaseTools.cookie(name);
             exdate.setTime(exdate.getTime()-1);
             if(cv)
                 document.cookie=name+"="+escape(cv)+";expires="+exdate.toGMTString();
@@ -501,13 +459,13 @@ var Tools={
     /*使用cookie模拟localStorage或sessionStorage的存储接口*/
     cookieStor:{
         getItem: function(name) {
-            return Tools.cookie(name);
+            return BaseTools.cookie(name);
         },
         setItem: function(name,value) {
-            Tools.cookie(name,value);
+            BaseTools.cookie(name,value);
         },
         removeItem: function(name) {
-            Tools.cookie(name,null);
+            BaseTools.cookie(name,null);
         },
         clear:function(){//待实现
             var dc=document.cookie,items,name;
@@ -548,10 +506,6 @@ var Tools={
             }
         };
     })(),
-    /*表情字符串正则转换图片*/
-    filterMsgFace:function(str){
-        if(str){return str = str.replace(/\[(face(\d+))\]/g, "<img src='"+StorMgr.siteUrl+"/images/face/$1.gif' />");}
-    },
     /*转换字符串中的html特殊字符串*/
     htmlEncode:function(str){
         if(str){
@@ -572,44 +526,13 @@ var Tools={
     htmlEncodeObj:function(obj){
         for(key in obj){
             if(obj.hasOwnProperty(key)&&(typeof obj[key]=="string")){
-                obj[key]=Tools.htmlEncode(obj[key]);//转换js中的HTML特殊字符串
+                obj[key]=BaseTools.htmlEncode(obj[key]);//转换js中的HTML特殊字符串
             }
         }
         return obj;
     },
-    /*选择表情Icon*/
-    setIconId:function(node,setNum){
-        var node=node||$('.showMoodList'),
-            imgs=$$("img",node);
-
-        if(setNum){//设置
-            setNum=("0"==setNum)?3:setNum;
-            node.setAttribute('iconid',setNum);
-            imgs[setNum-1].parentNode.appendChild($('.MoodSelect',node));
-            return;
-        }
-
-        var evt=node.event,
-            imgArr=[],
-            tarImg=evt.getTargets('img')[0];
-
-        $.each(imgs,function(img){
-            imgArr.unshift(img);
-        });
-
-        var idx=imgArr.indexOf(tarImg);
-
-        if(idx<0)
-            return;
-
-        tarImg.parentNode.appendChild($('.MoodSelect',node));
-        node.setAttribute('iconid',idx+1);
-    },
     /*将数据加入模板生成html*/
     compiTpl:function(tpl,data,cb,idx){
-        if('sysNotice'!=Feed.page){//通知里面是需要显示html标签的
-            data=Tools.htmlEncodeObj(data);
-        }
         /*简易模板实现(改自zy_tmpl.js)*/
         return tpl.replace(/\$\{([^\}]*)\}/g,function(m,c){
             if(c.match(/index:/)){
@@ -620,118 +543,5 @@ var Tools={
             }
             return data[c]||"";
         });
-    },
-    /*initArea弹出地区选择框*/
-    initArea:function(type,defProv,defCity){
-        function done(prov,city) {
-            if(!prov){
-                toast('未选择地区',2);
-                return;
-            }
-
-            if(type&&["rank","photo"].has(type)){
-                Feed.addParams="reside_province="+prov+"&reside_city="+city;
-                Feed.refresh();
-                if("rank"==type){
-                    $(".rankAddress span").innerHTML=prov+' '+city;
-                }
-            }else{
-                val=prov+' '+city;
-                Page.setEditVal("area",val);
-            }
-        }
-        var regObj={
-            useMask:true,
-            onConfirm:function(prov,city){
-                done(prov,city);
-            },
-            onShow:function(regSel){
-                Device.backFunc=function(){regSel.hide();}
-            },
-            hideEnd:function(regSel){
-                Device.backFunc=function(){ViewMgr.back();}
-            }
-        };
-
-        if(defProv){
-            regObj.prov=defProv;
-        }
-        if(defCity){
-            regObj.city=defCity;
-        }
-        UITools.regionLayer.show(regObj);
-        return;
-    },
-    /*初始化目的,婚姻状况,兴趣选项*/
-    initSelect:function(ipt,mul){
-        var selectObj={
-            multi:!!mul,
-            options:dataArray[ipt],
-            defOptions:$("#"+ipt).innerHTML.trim().split(' '),
-            onConfirm:function(selOpts){
-                if(mul){
-                    if(selOpts.length<1){
-                        alert('至少选择一项');
-                        return false;
-                    }
-                    if(selOpts.length>4){
-                        alert('最多只能选4项')
-                        return false;
-                    }
-                }
-                Page.setEditVal(ipt,selOpts.join(" "));
-                return true;
-            },
-            onShow:function(regSel){
-                Device.backFunc=function(){regSel.hide();}
-            },
-            hideEnd:function(regSel){
-                Device.backFunc=function(){ViewMgr.back();}
-            }
-        };
-
-        UITools.select.show(selectObj);
-    },
-    /*获得用户所在地址,解析地址为省,市*/
-    getGpsInfo:function(cb){
-        StorMgr.gpsInfo=Tools.storage.get("kxjy_my_gpsInfo");
-        function parseAddr(addr){
-            var prov,city,addrArr,
-                provReg=/([\u4E00-\u56FC\u56FE-\u9FA3]{2,})省/,
-                cityReg=/([\u4E00-\u56FC\u56FE-\u7700\u7702-\u9FA3]{2,})市/,
-                areaReg=/([\u4E00-\u5E01\u5e03-\u9FA3]{2,})区/;
-            if(/北京|上海|重庆|天津/.test(addr)){
-                prov=cityReg.exec(addr)[1];
-                city=areaReg.exec(addr)[1];
-            }else{
-                prov=provReg.exec(addr)[1];
-                city=cityReg.exec(addr)[1];
-            }
-            addrArr=[prov||"",city||""];
-            return addrArr;
-        }
-        Device.getLocation(
-            function(lat,log){
-                var secCb=function(addr){
-                        var addrArr=parseAddr(addr),
-                            gpsInfo={
-                                lat:lat,
-                                log:log,
-                                prov:addrArr[0],
-                                city:addrArr[1]
-                            }
-                        StorMgr.gpsInfo=gpsInfo;
-                        Tools.storage.set("kxjy_my_gpsInfo",gpsInfo);
-
-                        if($.isFunc(cb)){
-                            cb();
-                        }
-                    },
-                    errCb=function(){
-                        alert("不能取得具体地址");
-                    }
-                Device.getAddress(lat,log,secCb,errCb);
-            }
-        );
-    }
+    }    
 }

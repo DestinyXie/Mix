@@ -152,7 +152,7 @@ var actionSheet={
                     Feed.refresh();
                     break;
                 case 3:
-                    Tools.initArea('photo');
+                    UserTools.initArea('photo');
                     break;
             }
         }],
@@ -292,7 +292,7 @@ var Tips={
             contain.appendChild(Tips.tipD);
             DOM.addClass(Tips.tipD,'tipsShow');
             Tips.hasTip=true;
-            DOM.addEvent(Tips.tipD,CLICK_EVENT,function(){Tips.hide();});
+            DOM.addEvent(Tips.tipD,CLICK_EV,function(){Tips.hide();});
         }
         var tipsDiv=Tips.tipD;
         tipsDiv.innerHTML=s;
@@ -338,7 +338,7 @@ UITools.mask={
         }
 
         if(option.maskClickCb){
-            DOM.addEvent(that.maskDom,CLICK_EVENT,option.maskClickCb);
+            DOM.addEvent(that.maskDom,CLICK_EV,option.maskClickCb);
         }
     },
     hide:function(){

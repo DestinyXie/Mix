@@ -9,7 +9,7 @@
     // DOM.loadJs("http://192.168.40.28:8081/target/target-script.js",function(){alert('weinre test ok!')});
     
     /*取得GPS信息*/
-    Tools.getGpsInfo();
+    UserTools.getGpsInfo();
     
     /*页面历史管理初始化*/
     ViewMgr.init();
@@ -39,12 +39,12 @@ var ViewMgr={
         WIN['pageEngine']=new PageEngine();
         ViewMgr.views=['login'];
 
-        var storEmail=Tools.storage.get('kxjy_my_email'),
-            storPwd=Tools.storage.get('kxjy_my_pwd'),
+        var storEmail=BaseTools.storage.get('kxjy_my_email'),
+            storPwd=BaseTools.storage.get('kxjy_my_pwd'),
             ok=null,
             fail=function(){
                 pageEngine.initPage('login');
-                Tools.storage.remove("kxjy_view_history","session");
+                BaseTools.storage.remove("kxjy_view_history","session");
             };
         if(storEmail&&storPwd){
             UserAction.sendLogin(storEmail,storPwd,null,ok,fail);
@@ -73,7 +73,7 @@ var ViewMgr={
                 that.views.shift(1);
             that.views.push(page);
         }
-        Tools.storage.set("kxjy_view_history",ViewMgr.views,"session");
+        BaseTools.storage.set("kxjy_view_history",ViewMgr.views,"session");
         
         try{
             if(1==that.views.length){//设置返回按钮为历史回退
@@ -168,7 +168,7 @@ var ViewMgr={
                     ViewMgr.addTips(data.feed_flow);
                     ViewMgr.showMsg(data.centerInfo);
                     if(init){//初始时取个人信息
-                        var encodeInfo=Tools.htmlEncodeObj(data.myInfo);
+                        var encodeInfo=BaseTools.htmlEncodeObj(data.myInfo);
                         StorMgr.setMyInfo(encodeInfo);
                     }
                     cb&&cb();
@@ -272,7 +272,7 @@ var StorMgr={
         }
 
         if(!this.gpsInfo){
-            this.gpsInfo=Tools.storage.get("kxjy_my_gpsInfo");
+            this.gpsInfo=BaseTools.storage.get("kxjy_my_gpsInfo");
         }
     },
     getMyInfo:function(cb){//取得我的信息并保存
@@ -284,16 +284,16 @@ var StorMgr={
         });
     },
     setMyInfo:function(o){
-        Tools.storage.set("kxjy_my_myInfo",o,"session");
+        BaseTools.storage.set("kxjy_my_myInfo",o,"session");
         this.myInfo=o;
     },
     setInfoCenter:function(o){
-        if(Tools.sameObj(StorMgr.infoCenter,o)){
+        if(BaseTools.sameObj(StorMgr.infoCenter,o)){
             this.infoCenterChange=false;
             return;
         }
         this.infoCenterChange=true;
-        Tools.storage.set("kxjy_my_infoCenter",o,"session");
+        BaseTools.storage.set("kxjy_my_infoCenter",o,"session");
         this.infoCenter=o;
     }
 }
@@ -347,7 +347,7 @@ var InfoCenter={
         if(!this.clearUrl[page])
             return;
 
-        var clearUrl=InfoCenter.clearUrl[page].replace(/\$\{siduid\}/,Tools.getSidUidParams()),
+        var clearUrl=InfoCenter.clearUrl[page].replace(/\$\{siduid\}/,UserTools.getSidUidParams()),
             url=StorMgr.siteUrl+clearUrl;
 
         UserAction.sendAction(url,"",'get',cb,ecb);
@@ -363,26 +363,26 @@ var hisInfo={
     storMoods:{},
     init:function(){
         var that=hisInfo,
-            storId=Tools.storage.get("kxjy_his_storId");
+            storId=BaseTools.storage.get("kxjy_his_storId");
         that.storIDs=storId?storId:[];
-        that.curId=Tools.getParamVal("user_id")||that.storIDs[0];
+        that.curId=UserTools.getParamVal("user_id")||that.storIDs[0];
 
         //只取当前的,提升效率
         that.storInfos[that.curId]=that.get(that.curId);
     },
     get:function(id){
-        var retObj=this.storInfos[id]||Tools.storage.get("kxjy_his_info_"+id);
+        var retObj=this.storInfos[id]||BaseTools.storage.get("kxjy_his_info_"+id);
         return retObj;
     },
     set:function(id,data){
         var that=hisInfo;
-        Tools.storage.set("kxjy_his_info_"+id,data);
+        BaseTools.storage.set("kxjy_his_info_"+id,data);
         that.storInfos[id]=data;
 
         var popId=that.storIDs[that.storIDs.length-1];
         if(that.storIDs.length>that.maxLength&&popId!=id){
             that.storIDs.pop(1);
-            Tools.storage.remove("kxjy_his_info_"+popId);
+            BaseTools.storage.remove("kxjy_his_info_"+popId);
             delete that.storInfos[that.curId];
             delete hisInfo.storPics[that.curId];
             delete hisInfo.storMoods[that.curId];
@@ -390,7 +390,7 @@ var hisInfo={
 
         that.storIDs.remove(id);
         that.storIDs.unshift(id);
-        Tools.storage.set("kxjy_his_storId",that.storIDs);
+        BaseTools.storage.set("kxjy_his_storId",that.storIDs);
     }
 }
 
@@ -566,7 +566,7 @@ var Page={
             }else{
                 that.editedValues.remove(id);
             }
-            ipt.innerHTML=Tools.htmlEncode(value);
+            ipt.innerHTML=BaseTools.htmlEncode(value);
         }
     },
     submitEditInfo:function(){
@@ -733,11 +733,11 @@ var Page={
                     extend(that.userData,a.moodContent);
                 }
 
-                that.userData=Tools.htmlEncodeObj(that.userData);//html,js转义
+                that.userData=BaseTools.htmlEncodeObj(that.userData);//html,js转义
 
                 if(['hisPhoto','hisList'].has(that.name)){
                     extend(that.userData,{myRank:a.myRank,isBlocked:a.isBlocked});
-                    if(Tools.sameObj(that.userData,hisInfo.get(hisInfo.curId),['update_time','lastlogintime'])){
+                    if(BaseTools.sameObj(that.userData,hisInfo.get(hisInfo.curId),['update_time','lastlogintime'])){
                         return;
                     }
                     hisInfo.set(hisInfo.curId,that.userData);
@@ -752,13 +752,13 @@ var Page={
         if(['myPhoto','myList','editInfo'].has(that.name)){
             that.userData=StorMgr.myInfo;
             StorMgr.getMyInfo(function(data){
-                if(!Tools.sameObj(data,that.userData,['update_time','lastlogintime'])){
+                if(!BaseTools.sameObj(data,that.userData,['update_time','lastlogintime'])){
                     that.userData=data;
                     that.fullFillInfo();
                 }
             },true);
         }else{
-            dataUrl=StorMgr.siteUrl+Tools.compileUrl(that.dataUrlObj[that.name]);
+            dataUrl=StorMgr.siteUrl+UserTools.compileUrl(that.dataUrlObj[that.name]);
             that.dataXhr=UserAction.sendAction(dataUrl,"","get",secCb,errCb);
         }
 
@@ -799,7 +799,7 @@ var regExpObj={
     email:/^.+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
 }
 
-/*用户执行动作*/
+/*用户执行的一些服务器请求*/
 var UserAction={
     x:null,
     stop:function(){
@@ -854,7 +854,6 @@ var UserAction={
             toast('发布成功!',1.5);
             imgDom.innerHTML="";
             moodDom.value="";
-            // Tools.setIconId(null,true);
             setTimeout(function(){
                 ViewMgr.gotoPage('myList');//秀心情成功后返回个人主页-心情
                 UserAction.sendingMood=false;
@@ -875,7 +874,7 @@ var UserAction={
         if(UserAction.sendingDelete){//防止重复发送
             return;
         }
-        var actionUrl=StorMgr.siteUrl+"/weibo.php?"+Tools.getSidUidParams(),
+        var actionUrl=StorMgr.siteUrl+"/weibo.php?"+UserTools.getSidUidParams(),
             params="",secCb,errCb,paraLi,msg,doneMsg;
         if(type=="pic"){
             msg='确定删除该照片么?';
@@ -889,7 +888,7 @@ var UserAction={
                 paraLi=DOM.findParent(node,'.DynamicMoodBox',true);
                 params="action=del&type=2&wid="+wid;
             }else{
-                params="action=del&type=2&wid="+Tools.getParamVal('wid');
+                params="action=del&type=2&wid="+UserTools.getParamVal('wid');
             }
         }else if(type=="comment"){
             msg='确定删除该评论么?';
@@ -938,7 +937,7 @@ var UserAction={
     /*举报*/
     reportData:function(type,node,wid){
         var actionUrl=StorMgr.siteUrl+"/weibo.php",
-            params="sid="+StorMgr.sid+"&action=report&wid="+(wid||Tools.getParamVal('wid')),
+            params="sid="+StorMgr.sid+"&action=report&wid="+(wid||UserTools.getParamVal('wid')),
             reportDom=node.lastChild,
             secCb=function(){
                 toast('举报心情操作成功!',2);
@@ -968,7 +967,7 @@ var UserAction={
             if(DOM.hasClass(loveIcon,"active")){
                 toast('你已经心过这条心情!',2);
             }else{
-                actionUrl=StorMgr.siteUrl+"/weibo.php?action=love&sid="+StorMgr.sid+"&wid="+(wid||Tools.getParamVal('wid'));
+                actionUrl=StorMgr.siteUrl+"/weibo.php?action=love&sid="+StorMgr.sid+"&wid="+(wid||UserTools.getParamVal('wid'));
                 loveDom=node.lastChild;
                 secCb=function(){
                     var loveNum=loveDom.wholeText;
@@ -991,7 +990,7 @@ var UserAction={
 
         if(type=='people'){//心人
             actionUrl=StorMgr.siteUrl+"/do.php";
-            params="sid="+StorMgr.sid+"&user_id="+Tools.getParamVal('user_id');
+            params="sid="+StorMgr.sid+"&user_id="+UserTools.getParamVal('user_id');
             loveDom=$("#footer-love .ulev-2");
 
             if(!userInfo)
@@ -1101,14 +1100,14 @@ var UserAction={
             });
         }else{
             if(DOM.hasClass(node,"select")){
-                params+="&user_id="+Tools.getParamVal('user_id')+"&type=del&action=block_user&id="+Tools.getParamVal('user_id');
+                params+="&user_id="+UserTools.getParamVal('user_id')+"&type=del&action=block_user&id="+UserTools.getParamVal('user_id');
                 Device.confirm('确认取消屏蔽?',function(){
                     UserAction.sendingShield=true;
                     UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
                 });
                 
             }else{
-                params+="&user_id="+Tools.getParamVal('user_id')+"&action=block_user";
+                params+="&user_id="+UserTools.getParamVal('user_id')+"&action=block_user";
                 Device.confirm(msg,function(){
                     UserAction.sendingShield=true;
                     UserAction.sendAction(actionUrl,params,"get",secCb,errCb);
@@ -1153,10 +1152,10 @@ var UserAction={
                     return;
                 }
 
-                Tools.refresh();//刷新数据check
+                UserTools.refresh();//刷新数据check
 
-                Tools.storage.set('kxjy_my_email',mail);
-                Tools.storage.set('kxjy_my_pwd',pwd);
+                BaseTools.storage.set('kxjy_my_email',mail);
+                BaseTools.storage.set('kxjy_my_pwd',pwd);
 
                 StorMgr.uid=a.uid;
                 StorMgr.userKey=a.userKey;
@@ -1354,8 +1353,8 @@ var UserAction={
         if(!['myPhoto','myList','hisPhoto','hisList'].has(page)){
             return;
         }
-        var picUrl=Tools.compileUrl(pageFeedUrl[page].replace(/&type=\d+/,'&type=1')),
-            moodUrl=Tools.compileUrl(pageFeedUrl[page].replace(/&type=\d+/,'&type=2')),
+        var picUrl=UserTools.compileUrl(pageFeedUrl[page].replace(/&type=\d+/,'&type=1')),
+            moodUrl=UserTools.compileUrl(pageFeedUrl[page].replace(/&type=\d+/,'&type=2')),
             sendUrl,
             secCb=function(a){
                 if('myList'==page){
@@ -1501,8 +1500,8 @@ var UserAction={
     /*用户退出*/
     logOut:function(){
         Device.confirm('确定注销用户？',function(){
-            Tools.refresh();
-            Tools.storage.clear();
+            UserTools.refresh();
+            BaseTools.storage.clear();
             ViewMgr.init();
             Device.disetMenuBtn();
         },null,null,'注销提示');
@@ -1529,5 +1528,206 @@ var UserAction={
         x.send(url,data);
         this.x=x;
         return x;
+    }
+}
+
+/*涉及到应用的一些工具类*/
+var UserTools={
+    /*清除缓存和一些记录的变量值,用户退出时需要*/
+    refresh:function(){
+        // BaseTools.storage.clear();//gps等信息
+        BaseTools.storage.clear('session');
+        UserTools.sidUidParam=null;
+        StorMgr.destroy();
+    },
+    /*取sid和uid参数字符串*/
+    getSidUidParams:function(gotoUrl,setParams){
+        var paramStr;
+        if(UserTools.sidUidParam){
+            return UserTools.sidUidParam;
+        }
+
+        if(StorMgr.uid&&StorMgr.userKey){
+            paramStr="sid="+StorMgr.sid+"&uid="+StorMgr.uid+"&userKey="+StorMgr.userKey;
+            UserTools.sidUidParam=paramStr;
+        }else{
+            paramStr="sid="+StorMgr.sid;
+        }
+        return paramStr;
+    },
+    /*从临时变量ViewMgr.tmpParams取参数值*/
+    getParamVal:function(paramKey){
+        var value="",
+            params=ViewMgr.tmpParams.split('&');
+
+        if(0!=params.length){
+            $.each(params,function(pa){
+                var rg=new RegExp(paramKey+"=(.*)");
+                if(rg.test(pa)){
+                    value=rg.exec(pa)[1];
+                }
+            });
+        }
+
+        //多次跳转页面会丢失ViewMgr.tmpParams中user_id参数
+        if('user_id'==paramKey&&""==value)
+            value=hisInfo['curId'];
+
+        return value;
+    },
+    /*替换Url中的${param}变量*/
+    compileUrl:function(url){
+        var reUrl=url.replace(/\$\{(\w+)\}/g,
+            function(m,c){
+                if(['uid','sid','userKey'].has(c))
+                    return StorMgr[c];
+                return UserTools.getParamVal(c);
+            });
+        return reUrl;
+    },
+    /*表情字符串正则转换图片*/
+    filterMsgFace:function(str){
+        if(str){return str = str.replace(/\[(face(\d+))\]/g, "<img src='"+StorMgr.siteUrl+"/images/face/$1.gif' />");}
+    },
+    /*选择表情Icon*/
+    setIconId:function(node,setNum){
+        var node=node||$('.showMoodList'),
+            imgs=$$("img",node);
+
+        if(setNum){//设置
+            setNum=("0"==setNum)?3:setNum;
+            node.setAttribute('iconid',setNum);
+            imgs[setNum-1].parentNode.appendChild($('.MoodSelect',node));
+            return;
+        }
+
+        var evt=node.event,
+            imgArr=[],
+            tarImg=evt.getTargets('img')[0];
+
+        $.each(imgs,function(img){
+            imgArr.unshift(img);
+        });
+
+        var idx=imgArr.indexOf(tarImg);
+
+        if(idx<0)
+            return;
+
+        tarImg.parentNode.appendChild($('.MoodSelect',node));
+        node.setAttribute('iconid',idx+1);
+    },
+    /*initArea弹出地区选择框*/
+    initArea:function(type,defProv,defCity){
+        function done(prov,city) {
+            if(!prov){
+                toast('未选择地区',2);
+                return;
+            }
+
+            if(type&&["rank","photo"].has(type)){
+                Feed.addParams="reside_province="+prov+"&reside_city="+city;
+                Feed.refresh();
+                if("rank"==type){
+                    $(".rankAddress span").innerHTML=prov+' '+city;
+                }
+            }else{
+                val=prov+' '+city;
+                Page.setEditVal("area",val);
+            }
+        }
+        var regObj={
+            useMask:true,
+            onConfirm:function(prov,city){
+                done(prov,city);
+            },
+            onShow:function(regSel){
+                Device.backFunc=function(){regSel.hide();}
+            },
+            hideEnd:function(regSel){
+                Device.backFunc=function(){ViewMgr.back();}
+            }
+        };
+
+        if(defProv){
+            regObj.prov=defProv;
+        }
+        if(defCity){
+            regObj.city=defCity;
+        }
+        UITools.regionLayer.show(regObj);
+        return;
+    },
+    /*初始化目的,婚姻状况,兴趣选项*/
+    initSelect:function(ipt,mul){
+        var selectObj={
+            multi:!!mul,
+            options:dataArray[ipt],
+            defOptions:$("#"+ipt).innerHTML.trim().split(' '),
+            onConfirm:function(selOpts){
+                if(mul){
+                    if(selOpts.length<1){
+                        alert('至少选择一项');
+                        return false;
+                    }
+                    if(selOpts.length>4){
+                        alert('最多只能选4项')
+                        return false;
+                    }
+                }
+                Page.setEditVal(ipt,selOpts.join(" "));
+                return true;
+            },
+            onShow:function(UIselect){
+                Device.backFunc=function(){UIselect.hide();}
+            },
+            hideEnd:function(UIselect){
+                Device.backFunc=function(){ViewMgr.back();}
+            }
+        };
+
+        UITools.select.show(selectObj);
+    },
+    /*获得用户所在地址,解析地址为省,市*/
+    getGpsInfo:function(cb){
+        StorMgr.gpsInfo=BaseTools.storage.get("kxjy_my_gpsInfo");
+        function parseAddr(addr){
+            var prov,city,addrArr,
+                provReg=/([\u4E00-\u56FC\u56FE-\u9FA3]{2,})省/,
+                cityReg=/([\u4E00-\u56FC\u56FE-\u7700\u7702-\u9FA3]{2,})市/,
+                areaReg=/([\u4E00-\u5E01\u5e03-\u9FA3]{2,})区/;
+            if(/北京|上海|重庆|天津/.test(addr)){
+                prov=cityReg.exec(addr)[1];
+                city=areaReg.exec(addr)[1];
+            }else{
+                prov=provReg.exec(addr)[1];
+                city=cityReg.exec(addr)[1];
+            }
+            addrArr=[prov||"",city||""];
+            return addrArr;
+        }
+        Device.getLocation(
+            function(lat,log){
+                var secCb=function(addr){
+                        var addrArr=parseAddr(addr),
+                            gpsInfo={
+                                lat:lat,
+                                log:log,
+                                prov:addrArr[0],
+                                city:addrArr[1]
+                            }
+                        StorMgr.gpsInfo=gpsInfo;
+                        BaseTools.storage.set("kxjy_my_gpsInfo",gpsInfo);
+
+                        if($.isFunc(cb)){
+                            cb();
+                        }
+                    },
+                    errCb=function(){
+                        alert("不能取得具体地址");
+                    }
+                Device.getAddress(lat,log,secCb,errCb);
+            }
+        );
     }
 }
