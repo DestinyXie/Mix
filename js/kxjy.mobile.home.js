@@ -586,7 +586,7 @@ var Page={
         for(var len=editedIds.length;len--;){
             var id=editedIds[len],
                 ipt=$("#"+id),
-                iptVal=encodeURIComponent(Tools.htmlDecode(ipt.innerHTML));
+                iptVal=encodeURIComponent(BaseTools.htmlDecode(ipt.innerHTML));
             switch(id){
                 case 'nickname':
                 case 'note':

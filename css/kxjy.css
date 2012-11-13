@@ -1188,13 +1188,13 @@ li .comment{
 	background:#fff;
 	-webkit-box-shadow:0 0 10px #000;
 	-webkit-border-radius:6px;
-	padding:3%;
+	padding:.5em .5em 0;
 }
 .selectLayer.multiSelect .optWrap{
 	padding-bottom:4.5em;
 }
 .selectLayer .optWrap{
-	padding-bottom: .5em;
+	padding-bottom: 1em;
 }
 .selectLayer .optWrap li{
 	position: relative;

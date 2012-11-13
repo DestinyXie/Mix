@@ -608,7 +608,7 @@ UITools.select=extend({},UITools.popLayer,{
         });
         $('.optWrap',that.layerDom).innerHTML=optStr.join('');
 
-        if(that.layerDom.offsetHeight<=BODY.offsetHeight*0.9){
+        if(that.layerDom.offsetHeight-BODYFS*.5>=$('ul',that.layerDom).offsetHeight){
             that.option.canScroll=false;
         }
 

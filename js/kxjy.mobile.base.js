@@ -315,7 +315,7 @@ var Delegate = {
         for (var l = targets.length, el; l--;) {
             el = targets[l];
             if (el.getAttribute('_click') || ['A', 'INPUT'].has(el.nodeName) ) {
-                Delegate.targets.push(el);
+                Delegate.targets.unshift(el);
                 // break;
             }
         }
