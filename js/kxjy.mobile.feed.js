@@ -127,7 +127,7 @@
             '<span>&diams;</span>',
         '</div>',
     '</div>'].join(''),
-    attract:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.disadmire(\'people\',this,\'${uid}\');this.event.stop();"></span></div>',
+    attract:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.disadmire(\'people\',this,\'${uid}\');"></span></div>',
     commentMe:['<div class="commentList ub clearfix">',
         '<div class="commentListAvatar" _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')"><img src="${avatar_url}" alt="" /></div>',
         '<div class="commentListText ub-f1">',
@@ -146,7 +146,7 @@
         '</div>',
         '<strong class="DynamicMore" _click="ViewMgr.gotoPage(${cb:isselfDetail},\'wid=${parentid}\')">></strong>',
     '</div>'].join(''),
-    blackList:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');this.event.stop();"></span></div>',
+    blackList:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');"></span></div>',
     rank:['<div class="rankList uc-t ub b-gra ub-ac umh4 lis">',
             '<div class="topRank">${index:}</div>',
             '<div class="commentListAvatar" ${cb:isself}>',
@@ -475,7 +475,7 @@ var Feed={
     },
     getUrl:function(){
         var that=this,
-            feedUrl=Tools.compileUrl(pageFeedUrl[that.page]);
+            feedUrl=UserTools.compileUrl(pageFeedUrl[that.page]);
 
         if('mainPhoto'==that.page&&StorMgr.gpsInfo){//附近的人加入经纬度
             feedUrl+="&latitude="+StorMgr.gpsInfo['lat']+"&longitude="+StorMgr.gpsInfo['log'];
@@ -568,9 +568,14 @@ var Feed={
             tmpl=feedTemplate[pageFeedTmpl[that.page]],
             idx=(that.onePageNum*(that.index-1))+i+1,
             tmplStr="";
+
+        if('sysNotice'!=that.page){//通知里面是需要显示html标签的
+            data=BaseTools.htmlEncodeObj(data);
+        }
+
         switch(that.page){
             case "mainPhoto":
-                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="isself"){
                         if(o.uid==StorMgr.uid){
                             return "'myPhoto'";
@@ -583,7 +588,7 @@ var Feed={
             case "myPhoto":
             case "hisPhoto":
                 if(data.havemood*1!=0&&(!data.filetype||data.filetype=="img"))
-                    tmplStr=Tools.compiTpl(tmpl,data,null,idx);
+                    tmplStr=BaseTools.compiTpl(tmpl,data,null,idx);
                 break;
             case "mainList":
             case "myList":
@@ -600,9 +605,9 @@ var Feed={
                 break;
             case "myDetail":
             case "hisDetail":
-                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="commentMood"){
-                        return Tools.filterMsgFace(o.mood);
+                        return UserTools.filterMsgFace(o.mood);
                     }
                     if(t[1]=="childClass"&&o.parentnode!=""&&o.parentnode!=o.parentid){//check
                         return "commentListMl";
@@ -626,7 +631,7 @@ var Feed={
                 },idx);
                 break;
             case "chatList":
-                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="hasMsg"&&o.hasMsg*1==1){
                         return "<span class='amount'></span>";
                     }
@@ -637,10 +642,10 @@ var Feed={
                 if(""==data.content){
                     return "";
                 }
-                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="who"&&o.fid==StorMgr.uid){return " chatContent-r ub-rev"}
                     if(t[1]=="content"){
-                        return Tools.filterMsgFace(o.content)||"";
+                        return UserTools.filterMsgFace(o.content)||"";
                     }
                     if(t[1]=="avatar"){
                         var myInfo=StorMgr.myInfo,
@@ -660,9 +665,9 @@ var Feed={
                 },idx);
                 break;
             case "sysNotice":
-                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="content"){
-                        return Tools.filterMsgFace(o.content);
+                        return UserTools.filterMsgFace(o.content);
                     }
                     if(t[1]=="avatar"){
                         return "";
@@ -672,7 +677,7 @@ var Feed={
                 break;
             case "commentMe":
             case "sendComment":
-                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="urlType"){
                         switch(o.parentType*1){
                             case 1:
@@ -695,10 +700,10 @@ var Feed={
                         }
                     }
                     if(t[1]=="title"){
-                        return Tools.filterMsgFace(o.title);
+                        return UserTools.filterMsgFace(o.title);
                     }
                     if(t[1]=="parentTitle"){
-                        return Tools.filterMsgFace(o.parentTitle);
+                        return UserTools.filterMsgFace(o.parentTitle);
                     }
                     if(t[1]=="isself"){
                         if("sendComment"==that.page){
@@ -719,7 +724,7 @@ var Feed={
                 },idx);
                 break;
             case "rank":
-                tmplStr=Tools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
                     switch(t[1]){
                         case "isself":
                             if(o.uid==StorMgr.uid){
@@ -768,53 +773,54 @@ var Feed={
                 },idx);
                 break;
             default:
-                tmplStr=Tools.compiTpl(tmpl,data,null,idx);
+                tmplStr=BaseTools.compiTpl(tmpl,data,null,idx);
         }
         return tmplStr;
     },
     compileMood:function(tmpl,data,idx){//拼装心情列表
-        var pageName=this.page;
-        var moodLiStr=Tools.compiTpl(tmpl,data,function(o,t){//模板回调函数
-                switch(t[1]){
-                    case 'siteurl':
-                        return StorMgr.siteUrl;
-                        break;
-                    case 'mood':
-                        if(o.havemood*1==0){
-                            var str=(o.sex||'性别不详')+"|"+(o.age||'年龄不详');
-                            return str;
-                        }
-                        return o.mood;
-                        break;
-                    case 'mood_icon_id':
-                        return (o.mood_icon_id==0)?3:o.mood_icon_id;
-                        break;
-                    case 'time':
-                        return o.update_time.split(" ")[1]||"";
-                        break;
-                    case 'colorPng':
-                        return (!o.colorPng)?"":'<img src="'+o.colorPng+'" alt="">';
-                        break;
-                    case 'fileimg':
-                        return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
-                        break;
-                    case 'islove':
-                        return (o.islove==1)?"active":"";
-                        break;
-                    case 'lovemood':
-                        return (o.lovemood==1)?"active":"";
-                        break;
-                    case 'lovecount':
-                        return o.lovecount||0;
-                        break;
-                    case 'commentcount':
-                        return o.commentcount||0;
-                        break;
-                    case 'reportcount':
-                        return o.reportcount||0;
-                        break;
-                }
-            },idx);
+        data=BaseTools.htmlEncodeObj(data);
+
+        var moodLiStr=BaseTools.compiTpl(tmpl,data,function(o,t){//模板回调函数
+                    switch(t[1]){
+                        case 'siteurl':
+                            return StorMgr.siteUrl;
+                            break;
+                        case 'mood':
+                            if(o.havemood*1==0){
+                                var str=(o.sex||'性别不详')+"|"+(o.age||'年龄不详');
+                                return str;
+                            }
+                            return o.mood;
+                            break;
+                        case 'mood_icon_id':
+                            return (o.mood_icon_id==0)?3:o.mood_icon_id;
+                            break;
+                        case 'time':
+                            return o.update_time.split(" ")[1]||"";
+                            break;
+                        case 'colorPng':
+                            return (!o.colorPng)?"":'<img src="'+o.colorPng+'" alt="">';
+                            break;
+                        case 'fileimg':
+                            return (!o.fileimg)?"":'<img src="'+o.fileimg+'" alt="" />';
+                            break;
+                        case 'islove':
+                            return (o.islove==1)?"active":"";
+                            break;
+                        case 'lovemood':
+                            return (o.lovemood==1)?"active":"";
+                            break;
+                        case 'lovecount':
+                            return o.lovecount||0;
+                            break;
+                        case 'commentcount':
+                            return o.commentcount||0;
+                            break;
+                        case 'reportcount':
+                            return o.reportcount||0;
+                            break;
+                    }
+                },idx);
         return moodLiStr;
     },
     removeFeed:function(node){
@@ -851,7 +857,7 @@ var ChatListFeed=extend({},Feed,{
     },
     getCacheData:function(){//对方清除记录，只能从cashe中获得数据
         var that=this,
-            cacheUrl=StorMgr.chatPath+Tools.compileUrl(pageFeedUrl['sysNotice']),
+            cacheUrl=StorMgr.chatPath+UserTools.compileUrl(pageFeedUrl['sysNotice']),
             secCb=function(a){
                 function hasFid(fid){
                     var lists=that.listDB;
@@ -879,7 +885,7 @@ var ChatListFeed=extend({},Feed,{
     cacheCallback:function(){
         var that=this;
         //记住头像
-        Tools.storage.set("kxjy_my_chatList",that.listDB,"session");
+        BaseTools.storage.set("kxjy_my_chatList",that.listDB,"session");
         that.dataCount=that.listDB.length;
         that.totalPage=Math.ceil(that.dataCount/that.onePageNum)||0;
         var firstList=that.listDB.slice((that.index-1)*that.onePageNum,that.index*that.onePageNum);
@@ -949,7 +955,7 @@ var ChatFeed=extend({},Feed,{
         this.ingterCount=0;
     },
     getUrl:function(){
-        var feedUrl=Tools.compileUrl(pageFeedUrl['chat']);
+        var feedUrl=UserTools.compileUrl(pageFeedUrl['chat']);
 
         var url=feedUrl+"&sid="+StorMgr.sid;
 
@@ -1098,9 +1104,9 @@ var Comment={
         if(DOM.hasClass(that.input.parentNode,"wrong")){
             that.resetErr();
         }
-        if(node){
-            node.event.event.stopPropagation();
-        }
+        // if(node){
+        //     node.event.event.stopPropagation();
+        // }
     },
     sendComment:function(cb,type){
         var that=this;
@@ -1166,7 +1172,7 @@ var Comment={
             msg=that.transMotion(that.commTxt);
 
         if(type&&type=="chat"){
-            sendUrl="/send_msg.php?callback=?&sid="+StorMgr.sid+"&fid="+StorMgr.uid+"&tid="+Tools.getParamVal('user_id')+"&msg="+encodeURIComponent(msg)+"&i="+StorMgr.uid+"&k="+StorMgr.userKey;
+            sendUrl="/send_msg.php?callback=?&sid="+StorMgr.sid+"&fid="+StorMgr.uid+"&tid="+UserTools.getParamVal('user_id')+"&msg="+encodeURIComponent(msg)+"&i="+StorMgr.uid+"&k="+StorMgr.userKey;
 
             var nd=new Date(),
                 ndS=nd.getFullYear()+"-"+(nd.getMonth()+1)+"-"+nd.getDate()+" "+nd.toLocaleTimeString();
@@ -1178,7 +1184,7 @@ var Comment={
 
             sendUrl=StorMgr.chatPath+sendUrl;
         }else{
-            sendUrl=StorMgr.siteUrl+"/weibo.php?action=comment&type=4&sid="+StorMgr.sid+"&parentid="+Tools.getParamVal('wid');
+            sendUrl=StorMgr.siteUrl+"/weibo.php?action=comment&type=4&sid="+StorMgr.sid+"&parentid="+UserTools.getParamVal('wid');
 
             params="title="+encodeURIComponent(msg);
             if(that.parenNode){
@@ -1277,9 +1283,9 @@ var Comment={
         if(typeof idx=="number"&&idx>=0){
             if(DOM.hasClass(that.input.parentNode,"wrong"))
                 that.resetErr();
-            Tools.insertAtCaret(that.input,that.motions[idx]);
+            BaseTools.insertAtCaret(that.input,that.motions[idx]);
         }
-        evt.stop();
+        // evt.stop();
     },
     switchMoodBox:function(node){
         var that=this;
@@ -1288,7 +1294,7 @@ var Comment={
         }else{
             that.hideMoodBox();
         }
-        node.event.stop();
+        // node.event.stop();
     },
     showMoodBox:function(){
         var that=this;

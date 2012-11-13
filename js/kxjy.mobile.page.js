@@ -237,7 +237,7 @@ var contentTmpl={
           '<div class="t-org umar-t color777 fr" id="sex"></div>',
           '<div class="umar-t">性别</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="var defVal=$(\'#area\').innerHTML.split(\' \');Tools.initArea(null,defVal[0],defVal[1]);">',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="var defVal=$(\'#area\').innerHTML.split(\' \');UserTools.initArea(null,defVal[0],defVal[1]);">',
           '<div class="umar-t">地区</div>',
           '<div class="t-org umar-t color777" id="area"></div>',
         '</div>',
@@ -245,11 +245,11 @@ var contentTmpl={
           '<div class="t-org umar-t color777 fr" id="birthDay"></div>',
           '<div class="umar-t">生日</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Tools.initSelect(\'marry\');">',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="UserTools.initSelect(\'marry\');">',
           '<div class="t-org umar-t color777 fr" id="marry"></div>',
           '<div class="umar-t">婚姻状况</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Tools.initSelect(\'target\');">',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="UserTools.initSelect(\'target\');">',
           '<div class="t-org umar-t color777 fr" id="target"></div>',
           '<div class="umar-t">交友目的</div>',
         '</div>',
@@ -265,7 +265,7 @@ var contentTmpl={
           '<div class="t-org umar-t color777 fr" id="mobile"></div>',
           '<div class="umar-t">手机</div>',
         '</div>',
-        '<div class="uc-b ub-f1 lis editinfoList infoList clearfix" _click="Tools.initSelect(\'interest\',true);">',
+        '<div class="uc-b ub-f1 lis editinfoList infoList clearfix" _click="UserTools.initSelect(\'interest\',true);">',
           '<div class="umar-t">兴趣爱好</div>',
           '<div class="t-org umar-t color777" id="interest"></div>',
         '</div>',
@@ -501,7 +501,7 @@ var contentTmpl={
     '<div id="wrapper" class="fixWrapperLeft bg">',
     '<div>',
         '<div class="showMoodPlus" _click="actionSheet.show(\'photo\');"></div>',
-        '<div class="showMoodList ub" _click="Tools.setIconId(this);" iconid="3">',
+        '<div class="showMoodList ub" _click="UserTools.setIconId(this);" iconid="3">',
             '<div class="showMoodImg ub-f1"><img src="${siteurl}/template/mobile/css/images/f_1.png" alt="表情" /></div>',
             '<div class="showMoodImg ub-f1"><img src="${siteurl}/template/mobile/css/images/f_2.png" alt="表情" /></div>',
             '<div class="showMoodImg ub-f1">',
@@ -796,7 +796,7 @@ var contentTmpl={
     '<!--列表开始-->',
     '<div class="rankBox">',
         '<div class="rankAddress">',
-            '所在地区：<span _click="Tools.initArea(\'rank\');" id="area"></span>',
+            '所在地区：<span _click="UserTools.initArea(\'rank\');" id="area"></span>',
             '<p>我今日的人气值为：<label id="expToday"></label><label id="curPos"></label></p>',
         '</div>',
         '<div class="uba b-gra us listBg">',
@@ -1011,8 +1011,8 @@ var pageConfig={
             UserAction.checkLogin('#email','#password',$('#loginBtn'));
         }
     });
-    var storEmail=Tools.storage.get('kxjy_my_email'),
-        storPwd=Tools.storage.get('kxjy_my_pwd');
+    var storEmail=BaseTools.storage.get('kxjy_my_email'),
+        storPwd=BaseTools.storage.get('kxjy_my_pwd');
     if(storEmail&&storPwd){
         $('#email').value=storEmail;
         $('#password').value=storPwd;
@@ -1052,7 +1052,7 @@ var pageConfig={
     if(StorMgr.myInfo){
         lastIconId=StorMgr.myInfo['mood_icon_id']||3;
     }
-    Tools.setIconId(null,StorMgr.myInfo['mood_icon_id']||3);
+    UserTools.setIconId(null,StorMgr.myInfo['mood_icon_id']||3);
 
     var wrapEl=$('#pageWraper'),//输入框设置
         oriHeight=wrapEl.offsetHeight;
@@ -1079,7 +1079,7 @@ var pageConfig={
 'chat':[false,false,false,true,function(){
     hisInfo.init();
     //判断从他们主页过来还是聊天列表过来
-    var cl=Tools.storage.get("kxjy_my_chatList","session"),
+    var cl=BaseTools.storage.get("kxjy_my_chatList","session"),
         nickname="TA";
     if(pageEngine.prePage=="chatList"&&!!cl){
         var hisId=hisInfo.curId;
@@ -1120,7 +1120,7 @@ var pageConfig={
     //取今日人气值
     var todayExp=StorMgr.myTodayExp;
     if(!todayExp){
-        var url=StorMgr.siteUrl+"/starPromotion.php?"+Tools.getSidUidParams()+"&ajax=1";
+        var url=StorMgr.siteUrl+"/starPromotion.php?"+UserTools.getSidUidParams()+"&ajax=1";
         function secCb(a){
             if($("#expToday").length!=0){
                 $("#expToday").innerHTML=a.today_pop;
@@ -1231,7 +1231,7 @@ PageEngine.prototype={
         }
         Page.destroy();//撤销页面载入
         UserAction.stop();//撤销用户动作
-        Tips.destroy();//Tips
+        UITools.tips.destroy();//Tips
         Comment.destroy();//撤销评论对象
         Device.destroy();//撤销如上传等手机正在执行的动作
     },

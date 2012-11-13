@@ -152,7 +152,7 @@ var actionSheet={
                     Feed.refresh();
                     break;
                 case 3:
-                    Tools.initArea('photo');
+                    UserTools.initArea('photo');
                     break;
             }
         }],
@@ -264,61 +264,85 @@ function toast(s,t){
     if(Device.isMobi()){
         Device.toast(s,t);
     }else{
-        Tips.show(s,null,t*1000||3000);
-    }
-}
-
-/*Tips类*/
-var Tips={
-    hasTip:false,
-    container:'#content',
-    tipH:0,
-    timer:null,
-    destroy:function(){
-        var that=this;
-        if(that.hasTip){
-            that.hasTip=false;
-            that.tipD.parentNode.removeChild(that.tipD);
-            delete that.tipD;
-        }
-        clearTimeout(that.timer);
-        Tips.timer=null;
-    },
-    show:function(s,cont,hideT){
-        if(!Tips.hasTip){
-            Tips.tipD=DOM.create('div');
-            var contain=$(cont||Tips.container)||$("#pageWraper");
-            contain=contain?contain:BODY;
-            contain.appendChild(Tips.tipD);
-            DOM.addClass(Tips.tipD,'tipsShow');
-            Tips.hasTip=true;
-            DOM.addEvent(Tips.tipD,CLICK_EVENT,function(){Tips.hide();});
-        }
-        var tipsDiv=Tips.tipD;
-        tipsDiv.innerHTML=s;
-        tipsDiv.style.display="block";
-        Tips.tipH=tipsDiv.offsetHeight;
-        clearTimeout(Tips.timer);
-        Tips.timer=null;
-        setTimeout(function(){tipsDiv.style.bottom="0px";},0);
-        if (hideT) {
-            Tips.timer=setTimeout(function(){Tips.hide();},hideT);
-        }
-    },
-    hide:function(){
-        try{
-            var tipsDiv=Tips.tipD;
-            tipsDiv.style.bottom="-"+Tips.tipH+"px";
-            Tips.timer=setTimeout(function(){
-                Tips.timer=null;
-                tipsDiv.style.display="none";
-            },600);
-        }catch(e){}
+        UITools.tips.show({
+            msg:s,
+            contSel:"#content",
+            hideT:t*1000||3000
+        });
     }
 }
 
 /**UI工具类**/
 var UITools={};
+
+/*tips提示类*/
+UITools.tips={
+    destroy:function(){
+        var that=this;
+
+        if(that.hasTip){
+            that.container.removeChild(that.tipDom);
+            delete that.hasTip;
+            delete that.container;
+            delete that.tipDom;
+        }
+        
+        that.reset();
+    },
+    reset:function(){
+        var that=this;
+        that.option={
+            msg:'',
+            contSel:'#content',
+            tipH:0,
+            hideT:5000
+        };
+        if(that.timer){
+            clearTimeout(that.timer);
+            delete that.timer;
+        }
+    },
+    show:function(cusOption){
+        var that=this;
+        that.reset();
+        !!cusOption&&extend(that.option,cusOption);
+
+        if(!that.option.msg){
+            return;
+        }
+
+        if(!that.hasTip){
+            that.tipDom=DOM.create('div');
+            that.container=$(that.option.contSel)||BODY;
+            that.container.appendChild(that.tipDom);
+            DOM.addClass(that.tipDom,'tipsShow');
+            that.hasTip=true;
+            DOM.addEvent(that.tipDom,CLICK_EV,function(){that.hide();});
+        }
+        that.tipDom.innerHTML=that.option.msg;
+        that.tipDom.style.display="block";
+        that.option.tipH=that.tipDom.offsetHeight;
+        setTimeout(function(){that.tipDom.style.bottom="0px";},0);
+        if (that.option.hideT) {
+            that.timer=setTimeout(function(){that.hide();},that.option.hideT);
+        }
+    },
+    hide:function(){
+        var that=this;
+        try{
+            that.tipDom.style.bottom="-"+that.option.tipH+"px";
+            that.reset();
+            that.timer=setTimeout(function(){
+                delete that.timer;
+                that.tipDom.style.display="none";
+            },600);
+        }catch(e){
+            BaseTools.logErr(e,'UITools.tips.hide');
+        }
+    }
+}
+
+
 /*背景遮罩*/
 UITools.mask={
     /*option{cont}*/
@@ -338,7 +362,7 @@ UITools.mask={
         }
 
         if(option.maskClickCb){
-            DOM.addEvent(that.maskDom,CLICK_EVENT,option.maskClickCb);
+            DOM.addEvent(that.maskDom,CLICK_EV,option.maskClickCb);
         }
     },
     hide:function(){
@@ -365,7 +389,7 @@ UITools.popLayer={
             onShow:null,//params:this{object}
             hideEnd:null//params:void
         }
-        delete that.regionDom;
+        delete that.layerDom;
         delete that.container;
         if(that.scroller){
             that.scroller.destroy();
@@ -376,16 +400,16 @@ UITools.popLayer={
     show:function(cusOption){
         var that=this;
         that.reset();
-        if(cusOption){
-            extend(that.option,cusOption);
-        }
+
+        !!cusOption&&extend(that.option,cusOption);
+
         if($("#"+that.option.domId)){
             return;
         }
 
         that.option.onShow&&that.option.onShow.call(null,that);
-        that.regionDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
-        that.regionDom.innerHTML=that.domStr.join('');
+        that.layerDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
+        that.layerDom.innerHTML=that.domStr.join('');
 
         if(that.option.useMask){
             var maskOpt={};
@@ -401,7 +425,9 @@ UITools.popLayer={
         }else{
             that.container=$(that.option.contSel);
         }
-        that.container.appendChild(that.regionDom);
+        that.container.appendChild(that.layerDom);
+
+        that.subShow&&that.subShow();//执行子类的show方法
 
         if(that.option.canScroll){
             setTimeout(function(){
@@ -409,13 +435,11 @@ UITools.popLayer={
             },0);
             
         }
-
-        that.subShow&&that.subShow();//执行子类的show方法
     },
     hide:function(){
         var that=this;
 
-        that.container.removeChild(that.regionDom);
+        that.container.removeChild(that.layerDom);
         that.option.useMask&&UITools.mask.hide();
 
         that.option.hideEnd&&that.option.hideEnd.call(null);
@@ -423,6 +447,35 @@ UITools.popLayer={
         that.reset();
     }
 }
+
+/*菜单类*/
+UITools.menu=extend({},UITools.popLayer,{
+    subReset:function(){
+        var that=this,
+            option={
+                pos:'bottom',
+                anchor:null,
+                useMask:false,
+                menuStr:""
+            }
+        extend(that.option,option);
+    },
+    subShow:function(cusOption){
+        var that=this;
+        extend(that.option,cusOption);
+
+        var opts=that.option;
+        if(!opts.menuStr){
+            return;
+        }
+
+        that.munuDom=DOM.create('div',{className:'menuLayer'});
+        if(opts.anchor){
+            that.ancEl=$(opts.anchor);
+        }
+
+    }
+});
 
 /*地区选择(extend UITools.popLayer)*/
 UITools.regionLayer=extend({},UITools.popLayer,{
@@ -459,8 +512,8 @@ UITools.regionLayer=extend({},UITools.popLayer,{
     subShow:function(){
         var that=this;
         
-        that.provSel=$('.provSel',that.regionDom);
-        that.citySel=$('.citySel',that.regionDom);
+        that.provSel=$('.provSel',that.layerDom);
+        that.citySel=$('.citySel',that.layerDom);
         that.provSel.innerHTML=that.option.prov||that.option.provProm;
         that.citySel.innerHTML=that.option.city||that.option.cityProm;
     },
@@ -541,7 +594,7 @@ UITools.select=extend({},UITools.popLayer,{
             return;
         }
         if(that.option.multi){
-            DOM.addClass(that.regionDom,"multiSelect");
+            DOM.addClass(that.layerDom,"multiSelect");
         }
         if(that.option.defOptions){
             that.option.selOptions=that.option.defOptions;
@@ -553,7 +606,11 @@ UITools.select=extend({},UITools.popLayer,{
             }
             optStr.unshift('<li'+clsStr+' _click="UITools.select.select(this,'+idx+')">'+opt+'</li>');
         });
-        $('.optWrap',that.regionDom).innerHTML=optStr.join('');
+        $('.optWrap',that.layerDom).innerHTML=optStr.join('');
+
+        if(that.layerDom.offsetHeight<=BODY.offsetHeight*0.9){
+            that.option.canScroll=false;
+        }
 
     },
     select:function(item,idx){
@@ -561,7 +618,7 @@ UITools.select=extend({},UITools.popLayer,{
             selVal=that.option.options[idx];
 
         if(!that.option.multi){
-            DOM.removeClass($$('.optWrap li',that.regionDom),'selected');
+            DOM.removeClass($$('.optWrap li',that.layerDom),'selected');
             this.option.selOptions=[selVal];
             that.confirm();
         }else{
