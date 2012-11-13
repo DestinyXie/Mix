@@ -389,7 +389,7 @@ UITools.popLayer={
             onShow:null,//params:this{object}
             hideEnd:null//params:void
         }
-        delete that.regionDom;
+        delete that.layerDom;
         delete that.container;
         if(that.scroller){
             that.scroller.destroy();
@@ -408,8 +408,8 @@ UITools.popLayer={
         }
 
         that.option.onShow&&that.option.onShow.call(null,that);
-        that.regionDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
-        that.regionDom.innerHTML=that.domStr.join('');
+        that.layerDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
+        that.layerDom.innerHTML=that.domStr.join('');
 
         if(that.option.useMask){
             var maskOpt={};
@@ -425,7 +425,9 @@ UITools.popLayer={
         }else{
             that.container=$(that.option.contSel);
         }
-        that.container.appendChild(that.regionDom);
+        that.container.appendChild(that.layerDom);
+
+        that.subShow&&that.subShow();//执行子类的show方法
 
         if(that.option.canScroll){
             setTimeout(function(){
@@ -433,13 +435,11 @@ UITools.popLayer={
             },0);
             
         }
-
-        that.subShow&&that.subShow();//执行子类的show方法
     },
     hide:function(){
         var that=this;
 
-        that.container.removeChild(that.regionDom);
+        that.container.removeChild(that.layerDom);
         that.option.useMask&&UITools.mask.hide();
 
         that.option.hideEnd&&that.option.hideEnd.call(null);
@@ -447,6 +447,35 @@ UITools.popLayer={
         that.reset();
     }
 }
+
+/*菜单类*/
+UITools.menu=extend({},UITools.popLayer,{
+    subReset:function(){
+        var that=this,
+            option={
+                pos:'bottom',
+                anchor:null,
+                useMask:false,
+                menuStr:""
+            }
+        extend(that.option,option);
+    },
+    subShow:function(cusOption){
+        var that=this;
+        extend(that.option,cusOption);
+
+        var opts=that.option;
+        if(!opts.menuStr){
+            return;
+        }
+
+        that.munuDom=DOM.create('div',{className:'menuLayer'});
+        if(opts.anchor){
+            that.ancEl=$(opts.anchor);
+        }
+
+    }
+});
 
 /*地区选择(extend UITools.popLayer)*/
 UITools.regionLayer=extend({},UITools.popLayer,{
@@ -483,8 +512,8 @@ UITools.regionLayer=extend({},UITools.popLayer,{
     subShow:function(){
         var that=this;
         
-        that.provSel=$('.provSel',that.regionDom);
-        that.citySel=$('.citySel',that.regionDom);
+        that.provSel=$('.provSel',that.layerDom);
+        that.citySel=$('.citySel',that.layerDom);
         that.provSel.innerHTML=that.option.prov||that.option.provProm;
         that.citySel.innerHTML=that.option.city||that.option.cityProm;
     },
@@ -565,7 +594,7 @@ UITools.select=extend({},UITools.popLayer,{
             return;
         }
         if(that.option.multi){
-            DOM.addClass(that.regionDom,"multiSelect");
+            DOM.addClass(that.layerDom,"multiSelect");
         }
         if(that.option.defOptions){
             that.option.selOptions=that.option.defOptions;
@@ -577,7 +606,11 @@ UITools.select=extend({},UITools.popLayer,{
             }
             optStr.unshift('<li'+clsStr+' _click="UITools.select.select(this,'+idx+')">'+opt+'</li>');
         });
-        $('.optWrap',that.regionDom).innerHTML=optStr.join('');
+        $('.optWrap',that.layerDom).innerHTML=optStr.join('');
+
+        if(that.layerDom.offsetHeight<=BODY.offsetHeight*0.9){
+            that.option.canScroll=false;
+        }
 
     },
     select:function(item,idx){
@@ -585,7 +618,7 @@ UITools.select=extend({},UITools.popLayer,{
             selVal=that.option.options[idx];
 
         if(!that.option.multi){
-            DOM.removeClass($$('.optWrap li',that.regionDom),'selected');
+            DOM.removeClass($$('.optWrap li',that.layerDom),'selected');
             this.option.selOptions=[selVal];
             that.confirm();
         }else{

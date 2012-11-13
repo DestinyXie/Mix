@@ -351,7 +351,7 @@ var Delegate = {
             Delegate.isClick = false;
             Delegate.removeHover();
             Delegate.targets=[];
-            Delegate.end();
+            Delegate.end(e);
         }
     },
     /*@private 手指移出点击对象时 去掉hover样式*/
