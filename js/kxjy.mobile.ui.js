@@ -264,61 +264,85 @@ function toast(s,t){
     if(Device.isMobi()){
         Device.toast(s,t);
     }else{
-        Tips.show(s,null,t*1000||3000);
-    }
-}
-
-/*Tips类*/
-var Tips={
-    hasTip:false,
-    container:'#content',
-    tipH:0,
-    timer:null,
-    destroy:function(){
-        var that=this;
-        if(that.hasTip){
-            that.hasTip=false;
-            that.tipD.parentNode.removeChild(that.tipD);
-            delete that.tipD;
-        }
-        clearTimeout(that.timer);
-        Tips.timer=null;
-    },
-    show:function(s,cont,hideT){
-        if(!Tips.hasTip){
-            Tips.tipD=DOM.create('div');
-            var contain=$(cont||Tips.container)||$("#pageWraper");
-            contain=contain?contain:BODY;
-            contain.appendChild(Tips.tipD);
-            DOM.addClass(Tips.tipD,'tipsShow');
-            Tips.hasTip=true;
-            DOM.addEvent(Tips.tipD,CLICK_EV,function(){Tips.hide();});
-        }
-        var tipsDiv=Tips.tipD;
-        tipsDiv.innerHTML=s;
-        tipsDiv.style.display="block";
-        Tips.tipH=tipsDiv.offsetHeight;
-        clearTimeout(Tips.timer);
-        Tips.timer=null;
-        setTimeout(function(){tipsDiv.style.bottom="0px";},0);
-        if (hideT) {
-            Tips.timer=setTimeout(function(){Tips.hide();},hideT);
-        }
-    },
-    hide:function(){
-        try{
-            var tipsDiv=Tips.tipD;
-            tipsDiv.style.bottom="-"+Tips.tipH+"px";
-            Tips.timer=setTimeout(function(){
-                Tips.timer=null;
-                tipsDiv.style.display="none";
-            },600);
-        }catch(e){}
+        UITools.tips.show({
+            msg:s,
+            contSel:"#content",
+            hideT:t*1000||3000
+        });
     }
 }
 
 /**UI工具类**/
 var UITools={};
+
+/*tips提示类*/
+UITools.tips={
+    destroy:function(){
+        var that=this;
+
+        if(that.hasTip){
+            that.container.removeChild(that.tipDom);
+            delete that.hasTip;
+            delete that.container;
+            delete that.tipDom;
+        }
+        
+        that.reset();
+    },
+    reset:function(){
+        var that=this;
+        that.option={
+            msg:'',
+            contSel:'#content',
+            tipH:0,
+            hideT:5000
+        };
+        if(that.timer){
+            clearTimeout(that.timer);
+            delete that.timer;
+        }
+    },
+    show:function(cusOption){
+        var that=this;
+        that.reset();
+        !!cusOption&&extend(that.option,cusOption);
+
+        if(!that.option.msg){
+            return;
+        }
+
+        if(!that.hasTip){
+            that.tipDom=DOM.create('div');
+            that.container=$(that.option.contSel)||BODY;
+            that.container.appendChild(that.tipDom);
+            DOM.addClass(that.tipDom,'tipsShow');
+            that.hasTip=true;
+            DOM.addEvent(that.tipDom,CLICK_EV,function(){that.hide();});
+        }
+        that.tipDom.innerHTML=that.option.msg;
+        that.tipDom.style.display="block";
+        that.option.tipH=that.tipDom.offsetHeight;
+        setTimeout(function(){that.tipDom.style.bottom="0px";},0);
+        if (that.option.hideT) {
+            that.timer=setTimeout(function(){that.hide();},that.option.hideT);
+        }
+    },
+    hide:function(){
+        var that=this;
+        try{
+            that.tipDom.style.bottom="-"+that.option.tipH+"px";
+            that.reset();
+            that.timer=setTimeout(function(){
+                delete that.timer;
+                that.tipDom.style.display="none";
+            },600);
+        }catch(e){
+            BaseTools.logErr(e,'UITools.tips.hide');
+        }
+    }
+}
+
+
 /*背景遮罩*/
 UITools.mask={
     /*option{cont}*/
@@ -376,9 +400,9 @@ UITools.popLayer={
     show:function(cusOption){
         var that=this;
         that.reset();
-        if(cusOption){
-            extend(that.option,cusOption);
-        }
+
+        !!cusOption&&extend(that.option,cusOption);
+
         if($("#"+that.option.domId)){
             return;
         }

@@ -127,7 +127,7 @@
             '<span>&diams;</span>',
         '</div>',
     '</div>'].join(''),
-    attract:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.disadmire(\'people\',this,\'${uid}\');this.event.stop();"></span></div>',
+    attract:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.disadmire(\'people\',this,\'${uid}\');"></span></div>',
     commentMe:['<div class="commentList ub clearfix">',
         '<div class="commentListAvatar" _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')"><img src="${avatar_url}" alt="" /></div>',
         '<div class="commentListText ub-f1">',
@@ -146,7 +146,7 @@
         '</div>',
         '<strong class="DynamicMore" _click="ViewMgr.gotoPage(${cb:isselfDetail},\'wid=${parentid}\')">></strong>',
     '</div>'].join(''),
-    blackList:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');this.event.stop();"></span></div>',
+    blackList:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');"></span></div>',
     rank:['<div class="rankList uc-t ub b-gra ub-ac umh4 lis">',
             '<div class="topRank">${index:}</div>',
             '<div class="commentListAvatar" ${cb:isself}>',
@@ -1104,9 +1104,9 @@ var Comment={
         if(DOM.hasClass(that.input.parentNode,"wrong")){
             that.resetErr();
         }
-        if(node){
-            node.event.event.stopPropagation();
-        }
+        // if(node){
+        //     node.event.event.stopPropagation();
+        // }
     },
     sendComment:function(cb,type){
         var that=this;
@@ -1285,7 +1285,7 @@ var Comment={
                 that.resetErr();
             BaseTools.insertAtCaret(that.input,that.motions[idx]);
         }
-        evt.stop();
+        // evt.stop();
     },
     switchMoodBox:function(node){
         var that=this;
@@ -1294,7 +1294,7 @@ var Comment={
         }else{
             that.hideMoodBox();
         }
-        node.event.stop();
+        // node.event.stop();
     },
     showMoodBox:function(){
         var that=this;

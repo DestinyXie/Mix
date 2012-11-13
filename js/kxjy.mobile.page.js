@@ -1231,7 +1231,7 @@ PageEngine.prototype={
         }
         Page.destroy();//撤销页面载入
         UserAction.stop();//撤销用户动作
-        Tips.destroy();//Tips
+        UITools.tips.destroy();//Tips
         Comment.destroy();//撤销评论对象
         Device.destroy();//撤销如上传等手机正在执行的动作
     },

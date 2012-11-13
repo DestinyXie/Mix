@@ -138,6 +138,7 @@ var ViewMgr={
 
         if(that.getDataXhr){
             that.getDataXhr.abort();
+            delete that.getDataXhr;
         }
 
         ViewMgr.isIniting=false;
@@ -242,7 +243,10 @@ var ViewMgr={
         var msg=that.tipsArray.shift();
         if(msg){
             that.showingTips=true;
-            Tips.show('<img _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" style="height:2.5em" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,null,5000);
+            UITools.tips.show({
+                msg:'<img _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" style="height:2.5em" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,
+                contSel:"#content",
+                hideT:5000});
             that.showTipsTimeout=setTimeout(function(){ViewMgr.showTips();},2000);
         }
     }
