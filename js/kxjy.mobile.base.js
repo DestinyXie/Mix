@@ -7,8 +7,10 @@ START_EV = isTouch ? 'touchstart' : 'mousedown',
 MOVE_EV = isTouch ? 'touchmove' : 'mousemove',
 END_EV = isTouch ? 'touchend' : 'mouseup',
 CLICK_EV = isTouch ? 'touchend' : 'click',
-CANCEL_EV = isTouch ? 'touchcancel' : 'mouseup',
-RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+CANCEL_EV = isTouch ? 'touchcancel' : 'mouseup';
+
+/*考虑使用观察者模式 添加相应的响应函数来重绘正在显示的各个组件*/
+// RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';
 
 /*扩展一个Object对象*/
 function extend(d, s ,o) {
@@ -37,7 +39,11 @@ extend(Array.prototype,{
         var idx=this.indexOf(value);
         this.splice(idx,1);
         return this;
-    }
+    },
+    /*数组是应用赋值,实现数组克隆可用该方法 slice不会修改数组*/
+    clone:function(){
+       return this.slice(0);  
+    }  
 });
 
 /*字符串去空*/
@@ -192,6 +198,37 @@ var DOM = {
             } catch(e) {
             }
         }
+    },
+    /*计算给定DOM元素的宽高*/
+    getSize:function(el){
+        var size=[parseInt(getComputedStyle(el).width),parseInt(getComputedStyle(el).height)];
+        return size;
+    },
+    /*计算给定DOM元素的位置
+    * relEl:相对于哪个元素 default为body元素
+    */
+    getPos:function(el,relEl){
+        var relEl=relEl||BODY,
+            pos=[el.offsetLeft,el.offsetTop],
+            offsetP=DOM.offsetParent(el);
+
+        while(offsetP!=relEl&&offsetP!=BODY){
+            pos=[pos[0]+offsetP.offsetLeft,pos[1]+offsetP.offsetTop];
+            offsetP=DOM.offsetParent(offsetP);
+        }
+        return pos;
+    },
+    /*取得最近的定位元素*/
+    offsetParent:function(el){
+        while(el=el.parentNode){
+            if(/body/i.test(el.nodeName)){
+                return BODY;
+            }
+            if(['relative','absolute'].has(getComputedStyle(el).position)){
+                return el;
+            }
+        }
+        return BODY;
     },
     /*判断DOM对象是否包含某个class名称*/
     hasClass: function(el, className) {

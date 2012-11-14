@@ -312,16 +312,16 @@ UITools.tips={
         }
 
         if(!that.hasTip){
-            that.tipDom=DOM.create('div');
+            that.tipDom=DOM.create('div',{className:'tipsShow'});
             that.container=$(that.option.contSel)||BODY;
             that.container.appendChild(that.tipDom);
-            DOM.addClass(that.tipDom,'tipsShow');
             that.hasTip=true;
             DOM.addEvent(that.tipDom,CLICK_EV,function(){that.hide();});
         }
         that.tipDom.innerHTML=that.option.msg;
         that.tipDom.style.display="block";
-        that.option.tipH=that.tipDom.offsetHeight;
+        that.option.tipH=that.tipDom.offsetHeight;//intresting set
+        
         setTimeout(function(){that.tipDom.style.bottom="0px";},0);
         if (that.option.hideT) {
             that.timer=setTimeout(function(){that.hide();},that.option.hideT);
@@ -375,6 +375,7 @@ UITools.mask={
 
 /*@private所有弹出层的公共类*/
 UITools.popLayer={
+    className:'popLayer',//当前UI工具类名
     domStr:['<div class="">',
             '</div>'],
     reset:function(){
@@ -382,6 +383,8 @@ UITools.popLayer={
         that.option={
             domId:'layerSel',//弹出层DOM id
             domCls:'layerSelWrap',//弹出层DOM class
+            hasTitle:false,//是否有标题
+            hasConfirm:false,//是否有确认按钮
             useMask:true,//是否显示背景遮罩
             clickMaskHide:true,//是否点击背景遮罩隐藏
             canScroll:false,//弹出层内容是否可以滚动
@@ -398,18 +401,27 @@ UITools.popLayer={
         that.subReset&&that.subReset();//执行子类的reset方法
     },
     show:function(cusOption){
-        var that=this;
+        var that=this,
+            domStrArr=that.domStr.clone();
         that.reset();
 
         !!cusOption&&extend(that.option,cusOption);
 
+        that.preShow&&that.preShow();//执行子类的preShow方法
+        
         if($("#"+that.option.domId)){
-            return;
+            $("#"+that.option.domId).parentNode.removeChild($("#"+that.option.domId));
+        }
+        if('popLayer'!=that.className&&that.option.hasConfirm){
+            domStrArr.push('<div class="chooseWrap clearfix">',
+                '<a class="confirm" _click="UITools.'+that.className+'.confirm()">确认</a>',
+                '<a class="cancel" _click="UITools.'+that.className+'.cancel()">取消</a>',
+            '</div>');
         }
 
         that.option.onShow&&that.option.onShow.call(null,that);
         that.layerDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
-        that.layerDom.innerHTML=that.domStr.join('');
+        that.layerDom.innerHTML=domStrArr.join('');
 
         if(that.option.useMask){
             var maskOpt={};
@@ -425,15 +437,16 @@ UITools.popLayer={
         }else{
             that.container=$(that.option.contSel);
         }
+
+        that.layerDom.style.display='none';//减少repaint和reflow
+
         that.container.appendChild(that.layerDom);
 
         that.subShow&&that.subShow();//执行子类的show方法
-
+        
+        that.layerDom.style.display='block';
         if(that.option.canScroll){
-            setTimeout(function(){
-                that.scroller=new iScroll(that.option.domId,{vScrollbar:true});
-            },0);
-            
+            that.scroller=new iScroll(that.option.domId,{vScrollbar:true});
         }
     },
     hide:function(){
@@ -450,44 +463,108 @@ UITools.popLayer={
 
 /*菜单类*/
 UITools.menu=extend({},UITools.popLayer,{
+    className:'menu',
+    domStr:['<div class="">',
+            '</div>'],
     subReset:function(){
         var that=this,
             option={
-                pos:'bottom',
+                domId:'menuSel',//选择框DOM id
+                domCls:'menuLayer',//选择框DOM class
+                pos:'left bottom',
                 anchor:null,
-                useMask:false,
-                menuStr:""
+                hasTitle:false,
+                useMask:true,
+                items:[],//菜单项
+                direct:'horizon'//菜单项排列方向horizon,vertical
             }
+        delete that.ancEl;
         extend(that.option,option);
     },
     subShow:function(cusOption){
-        var that=this;
-        extend(that.option,cusOption);
-
-        var opts=that.option;
-        if(!opts.menuStr){
+        var that=this,
+            opts=that.option,
+            itemsStr=[];
+        if(opts.items.length<1){
             return;
         }
 
-        that.munuDom=DOM.create('div',{className:'menuLayer'});
         if(opts.anchor){
             that.ancEl=$(opts.anchor);
         }
 
+        $.each(that.option.items,function(item,idx){
+            itemsStr.unshift('<i _click="UITools.menu.select(this,'+idx+')">'+item+'</i>');
+        });
+        $('div',that.layerDom).innerHTML=itemsStr.join('');
+
+        that.setSizePos();
+    },
+    setSizePos:function(){
+        var that=this,
+            opts=that.option,
+            hasAnc=opts.anchor,
+            vertiDire=('vertical'==that.option.direct),
+            itemWidth,
+            contW=DOM.getSize(that.container)[0],
+            contH=DOM.getSize(that.container)[1],
+            layerDom=that.layerDom,
+            layerPos,
+            layerSize,
+            layerDomStyle=layerDom.style,
+            itemsDom=$$('i',that.layerDom),
+            itemLen=opts.items.length,
+            midItemIdx=Math.ceil(itemLen/2),
+            perItemW;
+
+        if(vertiDire){
+            DOM.addClass(that.layerDom,'vertiDirect');
+        }
+
+        if(!hasAnc){
+            layerDomStyle['width']=contW+"px";
+            if(!vertiDire){
+                perItemW=Math.floor(contW/itemLen);
+                $.each(itemsDom,function(item,idx){
+                    item.style.width=perItemW+"px";
+                });
+                itemsDom[midItemIdx].style.width=(contW-perItemW*(itemLen-1))+"px";
+            }
+            try{
+                layerDomStyle[opts['pos'].split(' ')[0]]=0;
+                layerDomStyle[opts['pos'].split(' ')[1]]=0;
+            }catch(e){
+                BaseTools.logErr(e,'UITools.menu.setSizePos');
+            }
+            
+        }else{
+            if(vertiDire){
+
+            }else{
+
+            }
+        }
+        that.layerDom.style.display='block';
+        if(layerDom.offsetHeight>contH){
+            layerDomStyle['height']=contH+"px";
+            that.option.canScroll=true;
+        }
+    },
+    select:function(item,idx){
+        var that=this;
+        that.option.onSelect&&that.option.onSelect(idx);
+        that.hide();
     }
 });
 
 /*地区选择(extend UITools.popLayer)*/
 UITools.regionLayer=extend({},UITools.popLayer,{
+    className:'regionLayer',
     domStr:['<div class="selectWrap clearfix">',
             '<label class="provSel" _click="UITools.regionLayer.chooseProv()">',
             '</label>',
             '<label class="citySel" _click="UITools.regionLayer.chooseCity()">',
             '</label>',
-            '</div>',
-            '<div class="chooseWrap clearfix">',
-                '<a class="confirm" _click="UITools.regionLayer.confirm()">确认</a>',
-                '<a class="cancel" _click="UITools.regionLayer.cancel()">取消</a>',
             '</div>'],
     subReset:function(){//重置地区选择对象和option值
         var that=this,
@@ -496,6 +573,7 @@ UITools.regionLayer=extend({},UITools.popLayer,{
                 city:"",//城市
                 domId:'regionSel',//选择框DOM id
                 domCls:'regionLayer',//选择框DOM class
+                hasConfirm:true,
                 provProm:'选择省份',//省份选择提示
                 cityProm:'选择城市',//城市选择提示
                 clickMaskHide:false,
@@ -568,16 +646,14 @@ UITools.regionLayer=extend({},UITools.popLayer,{
 
 /*单选、多选框(extend UITools.popLayer)*/
 UITools.select=extend({},UITools.popLayer,{
-    domStr:['<div><ul class="optWrap"></ul></div>',
-            '<div class="chooseWrap clearfix">',
-                '<a class="confirm" _click="UITools.select.confirm()">确认</a>',
-                '<a class="cancel" _click="UITools.select.cancel()">取消</a>',
-            '</div>'],
+    className:'select',
+    domStr:['<div><ul class="optWrap"></ul></div>'],
     subReset:function(){
         var that=this,
             option={
             domId:'selectSel',//选择框DOM id
             domCls:'selectLayer',//选择框DOM class
+            hasConfirm:false,
             options:[],//选项集合
             defOptions:[],//默认选项集合
             selOptions:[],//选中项集合
@@ -585,6 +661,11 @@ UITools.select=extend({},UITools.popLayer,{
             canScroll:true//可以滚动
         }
         extend(that.option,option);
+    },
+    preShow:function(){
+        if(this.option.multi){
+            this.option.hasConfirm=true;
+        }
     },
     subShow:function(){
         var that=this,
@@ -607,6 +688,8 @@ UITools.select=extend({},UITools.popLayer,{
             optStr.unshift('<li'+clsStr+' _click="UITools.select.select(this,'+idx+')">'+opt+'</li>');
         });
         $('.optWrap',that.layerDom).innerHTML=optStr.join('');
+
+        that.layerDom.style.display='block';
 
         if(that.layerDom.offsetHeight-BODYFS*.5>=$('ul',that.layerDom).offsetHeight){
             that.option.canScroll=false;

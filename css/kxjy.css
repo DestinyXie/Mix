@@ -1105,6 +1105,36 @@ li .comment{
 	background-color:rgba(0,0,0,0.5);
 	z-index:100;
 }
+/*menuLayer菜单*/
+.menuLayer{
+	position: absolute;
+	z-index:101;
+	background-color:#333;
+	-webkit-box-shadow:0 0 10px #000;
+}
+.menuLayer i{
+	font-style:normal;
+	float:left;
+	color:#fff;
+	padding:1em;
+	line-height: 2em;
+	text-align: center;
+	width:100%;
+	border-right: 1px solid #444;
+}
+.menuLayer i:last-child{
+	border-width: none;
+}
+.menuLayer.vertiDirect i{
+	display: block;
+	float:none;
+	padding:.5em;
+	border-bottom: 1px solid #444;
+	border-right: none;
+}
+.menuLayer i.active{
+	-webkit-box-shadow:0 0 15px rgba(0,0,0,1) inset;
+}
 
 /*regionLayer地区选择*/
 .regionLayer{
@@ -1227,10 +1257,4 @@ li .comment{
 }
 .selectLayer .optWrap li.selected:after{
 	background-color: #666;
-}
-.selectLayer .chooseWrap{
-	display: none;
-}
-.selectLayer.multiSelect .chooseWrap{
-	display:block;
 }
