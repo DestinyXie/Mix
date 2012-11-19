@@ -187,16 +187,19 @@ var DOM = {
     },
     /*给DOM对象设置样式*/
     setStyles: function(el, styles) {
-        var value;
+        var styleStr="",
+            value;
         for (var name in styles) {
             value = styles[name];
             if (value !== '' && !isNaN(value) && name!=='zoom') {
                 value += 'px';
             }
-            try {
-                el.style[name] = value;
-            } catch(e) {
-            }
+            styleStr+=(name+":"+value+";");
+        }
+        try {
+            el.style.cssText+=styleStr;
+        } catch(e) {
+            BaseTools.logErr(e,'DOM.setStyles');
         }
     },
     /*计算给定DOM元素的宽高
@@ -303,6 +306,7 @@ var DOM = {
         sc.src=src;
         HEAD.appendChild(sc);
         sc.onload=function(){
+            HEAD.removeChild(sc);
             cb&&cb();
         }
     }
@@ -415,8 +419,9 @@ var Delegate = {
                     DOM.removeClass(el, 'active');
                 });
 
-                var target=targets[0];
-                if (evt = target.getAttribute('_click')) {
+                var target=targets[0],
+                    evt=target.getAttribute('_click');
+                if (evt) {
                     target.event = e;
                     var fn = new Function(evt);
                     fn.call(target);
