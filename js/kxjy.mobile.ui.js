@@ -125,140 +125,6 @@ function initDockScroll(dockSel,wrapperID,listEl){
     return myScroll;
 }
 
-/*appcan模拟ios actionSheet弹出框接口*/
-var actionSheet={
-    show:function(action){
-        if(!Device.isMobi()){
-            toast("不支持手机原生弹出窗，因为你不是webapp",4);
-            return;
-        }else{
-            var ao=this.actionObj[action];
-            Device.actionSheet(ao);
-        }
-    },
-    actionObj:{
-        "search":['搜索','取消',['显示全部','只显示男','只显示女','更换地区'],function(opId,dataType,data){
-            switch(data*1){
-                case 0:
-                    Feed.addParams="sex=2";
-                    Feed.refresh();
-                    break;
-                case 1:
-                    Feed.addParams="sex=0";
-                    Feed.refresh();
-                    break;
-                case 2:
-                    Feed.addParams="sex=1";
-                    Feed.refresh();
-                    break;
-                case 3:
-                    UserTools.initArea('photo');
-                    break;
-            }
-        }],
-        "moodPhoto":[],
-        "photo":['添加照片','取消',["从相册中选择","拍照"],function(opId,dataType,data){
-            Device.opCode++;
-            var imgurl,
-                uopCode=Device.opCode,
-                uploadUrl="http://"+StorMgr.siteHost+StorMgr.siteUrl+"/photo.php",
-                isMyPhoto=/myPhoto/.test(pageEngine.curPage);
-
-            function xmlHttpPost(size){
-                if(StorMgr.filesAllowed<=0){
-                    alert("您上传的照片数量已经达到上限！");
-                    return;
-                }
-                if(!/\.jpg$|\.jpeg$|\.gif$/.test(imgurl)){
-                    alert("只能上传jpg，jpeg，gif格式的照片");
-                    return;
-                }
-                if(size>1024*3){
-                    alert("上传单个文件最大尺寸为3MB，请重新选择");
-                    return;
-                }
-
-                function onProgress(uopCode,p){
-                    if(p==100){
-                        toast("上传结束！",1);
-                        return;
-                    }
-                    toast("已上传"+p+"%",10);
-                }
-
-                function httpSuccess(uopCode,status,result){
-                    if(status==1){
-                        if(!/^FILEID:/.test(result)){
-                            alert(result);
-                        }else{
-                            StorMgr.filesAllowed--;
-                            if(isMyPhoto){
-                                Feed.refresh();
-                            }else{
-                                var img=DOM.create("img");
-                                img.src=result.replace("FILEID:","");
-                                $(".showMoodPlus").appendChild(img);
-                            }
-                        }
-                    }else{
-                        toast("上传出错",2);
-                    }
-                    Device.xmlHttp.close();
-                }
-
-                var sendObj={
-                    'opCode':uopCode,
-                    'src':uploadUrl,
-                    'method':"POST",
-                    'plainPara':"upload=1&sid="+StorMgr.sid+"&uid="+StorMgr.uid,
-                    'progressCb':onProgress,
-                    'secCb':httpSuccess
-                };
-                
-                if(!isMyPhoto){
-                    sendObj.plainPara+="&type=1";
-                }
-                if(imgurl){
-                    sendObj.sourcePara="image="+imgurl;
-                }
-                Device.xmlHttp.send(sendObj);
-            }
-            switch(data*1){
-                case 0:
-                    function imageBrowserCb(opCode,dataType,data){
-                        imgurl=data;
-                        Device.getFileSize(data,xmlHttpPost);
-                    }
-                    Device.imageBrowser(imageBrowserCb);
-                    break;
-                case 1:
-                    function cameraCb(opId,dataType,data){
-                        if(dataType==0){
-                            imgurl=data;
-                            Device.getFileSize(data,xmlHttpPost);
-                        }
-                    }
-                    Device.camera(cameraCb);
-                    break;
-                case 3:
-                    if(!isMyPhoto)
-                        $("#mood").focus();
-                    break;
-            }
-        }],
-        "menu":['','取消',['注销用户','退出应用'],function(opId,dataType,data){
-            switch(data*1){
-                case 0:
-                    UserAction.logOut();
-                    break;
-                case 1:
-                    Device.exit();
-                    break;
-            }
-        }]
-    }
-}
-
 /*原生提示信息，默认2,3秒消失*/
 function toast(s,t){
     if(Device.isMobi()){
@@ -344,7 +210,11 @@ UITools.tips={
 
 
 /*背景遮罩*/
-UITools.mask={
+UITools.mask=function(opts){
+    this.show(opts);
+}
+
+UITools.mask.prototype={
     /*option{cont}*/
     show:function(){
         var that=this,
@@ -355,11 +225,10 @@ UITools.mask={
         if(arguments.length>0){
             extend(option,arguments[0]);
         }
-        if(!$('.pageMask')){
-            that.container=$(option.cont),
-            that.maskDom=DOM.create('div',{className:'pageMask'});
-            that.container.appendChild(that.maskDom);
-        }
+
+        that.container=$(option.cont),
+        that.maskDom=DOM.create('div',{className:'pageMask'});
+        that.container.appendChild(that.maskDom);
 
         if(option.maskClickCb){
             DOM.addEvent(that.maskDom,CLICK_EV,option.maskClickCb);
@@ -384,6 +253,7 @@ UITools.popLayer={
             domId:'layerSel',//弹出层DOM id
             domCls:'layerSelWrap',//弹出层DOM class
             hasTitle:false,//是否有标题
+            titleMsg:'title',
             hasConfirm:false,//是否有确认按钮
             useMask:true,//是否显示背景遮罩
             clickMaskHide:true,//是否点击背景遮罩隐藏
@@ -411,9 +281,15 @@ UITools.popLayer={
         
         if($("#"+that.option.domId)){
             $("#"+that.option.domId).parentNode.removeChild($("#"+that.option.domId));
+            that.option.useMask&&that.mask.hide();
+        }
+        if(that.option.hasTitle){
+            domStrArr.push('<h3 class="pop_title">',
+                that.option.titleMsg,
+            '</h3>');
         }
         if('popLayer'!=that.className&&that.option.hasConfirm){
-            domStrArr.push('<div class="chooseWrap clearfix">',
+            domStrArr.push('<div class="pop_confirm clearfix">',
                 '<a class="confirm" _click="UITools.'+that.className+'.confirm()">确认</a>',
                 '<a class="cancel" _click="UITools.'+that.className+'.cancel()">取消</a>',
             '</div>');
@@ -421,24 +297,25 @@ UITools.popLayer={
 
         that.option.onShow&&that.option.onShow.call(null,that);
         that.layerDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
+        DOM.addClass(that.layerDom,'pop_layer');//公用类
         that.layerDom.innerHTML=domStrArr.join('');
 
         if(that.option.useMask){
             var maskOpt={};
             if(that.option.clickMaskHide){
                 maskOpt={maskClickCb:function(ev){
-                    if(ev.target==UITools.mask.maskDom)
+                    if(ev.target==that.mask.maskDom)
                         that.hide();
                 }}
             }
-            UITools.mask.show(maskOpt);
-            that.container=UITools.mask.maskDom;
+            that.mask=new UITools.mask(maskOpt);
+            that.container=that.mask.maskDom;
 
         }else{
             that.container=$(that.option.contSel);
         }
 
-        that.layerDom.style.display='none';//减少repaint和reflow
+        that.layerDom.style.display='none';//减少repaint/reflow
 
         that.container.appendChild(that.layerDom);
 
@@ -453,11 +330,10 @@ UITools.popLayer={
         var that=this;
 
         that.container.removeChild(that.layerDom);
-        that.option.useMask&&UITools.mask.hide();
+        that.option.useMask&&that.mask.hide();
 
         that.option.hideEnd&&that.option.hideEnd.call(null);
         that.subHide&&that.subHide();//执行子类的hide方法
-        that.reset();
     }
 }
 
@@ -471,7 +347,7 @@ UITools.menu=extend({},UITools.popLayer,{
             option={
                 domId:'menuSel',//选择框DOM id
                 domCls:'menuLayer',//选择框DOM class
-                pos:'left bottom',
+                pos:'left bottom',//菜单箭头的位置
                 anchor:null,
                 hasTitle:false,
                 useMask:true,
@@ -489,7 +365,7 @@ UITools.menu=extend({},UITools.popLayer,{
             return;
         }
 
-        if(opts.anchor){
+        if(opts.anchor){//暂不实现
             that.ancEl=$(opts.anchor);
         }
 
@@ -503,7 +379,7 @@ UITools.menu=extend({},UITools.popLayer,{
     setSizePos:function(){
         var that=this,
             opts=that.option,
-            hasAnc=opts.anchor,
+            hasAnc=opts.anchor,//暂不实现
             vertiDire=('vertical'==that.option.direct),
             itemWidth,
             contW=DOM.getSize(that.container)[0],
@@ -511,18 +387,20 @@ UITools.menu=extend({},UITools.popLayer,{
             layerDom=that.layerDom,
             layerPos,
             layerSize,
-            layerDomStyle=layerDom.style,
+            layerDomStyle="",
             itemsDom=$$('i',that.layerDom),
             itemLen=opts.items.length,
+            //相对中间的那个选项在宽度无法均分时设置其宽度相对最大
             midItemIdx=Math.ceil(itemLen/2),
-            perItemW;
+            perItemW,
+            ancCls="left_bottom";
 
         if(vertiDire){
             DOM.addClass(that.layerDom,'vertiDirect');
         }
 
-        if(!hasAnc){
-            layerDomStyle['width']=contW+"px";
+        if(!hasAnc||!that.ancEl){
+            layerDomStyle+="width:"+contW+"px;";
             if(!vertiDire){
                 perItemW=Math.floor(contW/itemLen);
                 $.each(itemsDom,function(item,idx){
@@ -531,29 +409,41 @@ UITools.menu=extend({},UITools.popLayer,{
                 itemsDom[midItemIdx].style.width=(contW-perItemW*(itemLen-1))+"px";
             }
             try{
-                layerDomStyle[opts['pos'].split(' ')[0]]=0;
-                layerDomStyle[opts['pos'].split(' ')[1]]=0;
+                layerDomStyle+=opts['pos'].split(' ')[0]+":0;";
+                layerDomStyle+=opts['pos'].split(' ')[1]+":0;";
             }catch(e){
                 BaseTools.logErr(e,'UITools.menu.setSizePos');
             }
-            
-        }else{
+        }else{//暂不实现
+            DOM.addClass(that.layerDom,'hasAnchor');
+            if(['left top','top left'].has(opts['pos'])){
+                ancCls="left_top";
+            }
+            if(['right bottom','bottom right'].has(opts['pos'])){
+                ancCls="right_bottom";
+            }
+            if(['right top','top right'].has(opts['pos'])){
+                ancCls="right_top";
+            }
+
+            var anchorPos=DOM.getPos(that.ancEl),
+                anchorSize=DOM.getSize(that.ancEl);
             if(vertiDire){
-
             }else{
-
             }
         }
-        that.layerDom.style.display='block';
+        layerDomStyle+='display:block;';
+        layerDom.style.cssText=layerDomStyle;
+
         if(layerDom.offsetHeight>contH){
-            layerDomStyle['height']=contH+"px";
+            layerDom.style.height=contH+"px";
             that.option.canScroll=true;
         }
     },
     select:function(item,idx){
         var that=this;
-        that.option.onSelect&&that.option.onSelect(idx);
         that.hide();
+        that.option.onSelect&&that.option.onSelect(idx);
     }
 });
 
@@ -634,13 +524,13 @@ UITools.regionLayer=extend({},UITools.popLayer,{
     },
     confirm:function(){
         var that=this;
-        that.option.onConfirm&&that.option.onConfirm(that.option.prov,that.option.city);
         that.hide();
+        that.option.onConfirm&&that.option.onConfirm(that.option.prov,that.option.city);
     },
     cancel:function(){
         var that=this;
-        that.option.onCancel&&that.option.onCancel();
         that.hide();
+        that.option.onCancel&&that.option.onCancel();
     }
 });
 
@@ -722,7 +612,7 @@ UITools.select=extend({},UITools.popLayer,{
     },
     cancel:function(){
         var that=this;
-        that.option.onCancel&&that.option.onCancel();
         that.hide();
+        that.option.onCancel&&that.option.onCancel();
     }
 });

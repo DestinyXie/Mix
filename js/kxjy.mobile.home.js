@@ -16,7 +16,7 @@
 
     /*设置menu键*/
     Device.menuFunc=function(){
-        actionSheet.show('menu');
+        UserMenus('menuBtn');
     }
 }
 
@@ -1675,7 +1675,7 @@ var UserTools={
                         return false;
                     }
                     if(selOpts.length>4){
-                        alert('最多只能选4项')
+                        alert('最多只能选4项');
                         return false;
                     }
                 }
@@ -1734,4 +1734,153 @@ var UserTools={
             }
         );
     }
+}
+
+/*用到的菜单*/
+function UserMenus(name){
+    var menuObj={
+            onShow:function(UImenu){
+                Device.backFunc=function(){UImenu.hide();}
+            },
+            hideEnd:function(UImenu){
+                Device.backFunc=function(){ViewMgr.back();}
+            }            
+        };
+
+    switch(name){
+        case 'menuBtn':
+            menuObj.items=['注销用户','退出应用'];
+            menuObj.onSelect=function(idx){
+                switch(idx*1){
+                    case 0:
+                        UserAction.logOut();
+                        break;
+                    case 1:
+                        Device.exit();
+                        break;
+                }
+            };
+            break;
+        case 'search':
+            menuObj.direct="vertical";
+            menuObj.items=['显示全部','只显示男','只显示女','更换地区'];
+            menuObj.onSelect=function(idx){
+                switch(idx*1){
+                    case 0:
+                        Feed.addParams="sex=2";
+                        Feed.refresh();
+                        break;
+                    case 1:
+                        Feed.addParams="sex=0";
+                        Feed.refresh();
+                        break;
+                    case 2:
+                        Feed.addParams="sex=1";
+                        Feed.refresh();
+                        break;
+                    case 3:
+                        UserTools.initArea('photo');
+                        break;
+                }
+            };
+            break;
+        case 'photo':
+            menuObj.direct="vertical";
+            menuObj.items=["从相册中选择","拍照","取消"];
+            menuObj.onSelect=function(idx){
+                Device.opCode++;
+                var imgurl,
+                    uopCode=Device.opCode,
+                    uploadUrl="http://"+StorMgr.siteHost+StorMgr.siteUrl+"/photo.php",
+                    isMyPhoto=/myPhoto/.test(pageEngine.curPage);
+
+                function xmlHttpPost(size){
+                    if(StorMgr.filesAllowed<=0){
+                        alert("您上传的照片数量已经达到上限！");
+                        return;
+                    }
+                    if(!/\.jpg$|\.jpeg$|\.gif$/.test(imgurl)){
+                        alert("只能上传jpg，jpeg，gif格式的照片");
+                        return;
+                    }
+                    if(size>1024*3){
+                        alert("上传单个文件最大尺寸为3MB，请重新选择");
+                        return;
+                    }
+
+                    function onProgress(uopCode,p){
+                        if(p==100){
+                            toast("上传结束！",1);
+                            return;
+                        }
+                        toast("已上传"+p+"%",10);
+                    }
+
+                    function httpSuccess(uopCode,status,result){
+                        if(status==1){
+                            if(!/^FILEID:/.test(result)){
+                                alert(result);
+                            }else{
+                                StorMgr.filesAllowed--;
+                                if(isMyPhoto){
+                                    Feed.refresh();
+                                }else{
+                                    var img=DOM.create("img");
+                                    img.src=result.replace("FILEID:","");
+                                    $(".showMoodPlus").appendChild(img);
+                                }
+                            }
+                        }else{
+                            toast("上传出错",2);
+                        }
+                        Device.xmlHttp.close();
+                    }
+
+                    var sendObj={
+                        'opCode':uopCode,
+                        'src':uploadUrl,
+                        'method':"POST",
+                        'plainPara':"upload=1&sid="+StorMgr.sid+"&uid="+StorMgr.uid,
+                        'progressCb':onProgress,
+                        'secCb':httpSuccess
+                    };
+                    
+                    if(!isMyPhoto){
+                        sendObj.plainPara+="&type=1";
+                    }
+                    if(imgurl){
+                        sendObj.sourcePara="image="+imgurl;
+                    }
+                    Device.xmlHttp.send(sendObj);
+                }
+                switch(idx*1){
+                    case 0:
+                        function imageBrowserCb(opCode,dataType,data){
+                            imgurl=data;
+                            Device.getFileSize(data,xmlHttpPost);
+                        }
+                        setTimeout(function(){
+                            Device.imageBrowser(imageBrowserCb);
+                        },0);
+                        break;
+                    case 1:
+                        function cameraCb(opId,dataType,data){
+                            if(dataType==0){
+                                imgurl=data;
+                                Device.getFileSize(data,xmlHttpPost);
+                            }
+                        }
+                        setTimeout(function(){
+                            Device.camera(cameraCb);
+                        },0);
+                        break;
+                    case 2:
+                        if(!isMyPhoto)
+                            $("#mood").focus();
+                        break;
+                }
+            };
+            break;
+    }
+    UITools.menu.show(menuObj);
 }

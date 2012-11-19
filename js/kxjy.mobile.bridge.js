@@ -125,7 +125,7 @@
             }
         }
     },
-    actionSheet:function(ao){
+    actionSheet:function(ao){//不再用它
         uexWindow.cbActionSheet=ao[3];
         uexWindow.actionSheet(ao[0],ao[1],ao[2]);
     },

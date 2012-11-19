@@ -40,7 +40,7 @@ extend(Array.prototype,{
         this.splice(idx,1);
         return this;
     },
-    /*数组是应用赋值,实现数组克隆可用该方法 slice不会修改数组*/
+    /*数组是引用赋值,实现数组克隆可用该方法 slice不会修改数组本身而是返回一个新数组*/
     clone:function(){
        return this.slice(0);  
     }  
@@ -199,13 +199,16 @@ var DOM = {
             }
         }
     },
-    /*计算给定DOM元素的宽高*/
+    /*计算给定DOM元素的宽高
+    * return:[width,height]
+    */
     getSize:function(el){
         var size=[parseInt(getComputedStyle(el).width),parseInt(getComputedStyle(el).height)];
         return size;
     },
     /*计算给定DOM元素的位置
     * relEl:相对于哪个元素 default为body元素
+    * return:[left,top]
     */
     getPos:function(el,relEl){
         var relEl=relEl||BODY,
@@ -414,6 +417,7 @@ var Delegate = {
 
                 var target=targets[0];
                 if (evt = target.getAttribute('_click')) {
+                    target.event = e;
                     var fn = new Function(evt);
                     fn.call(target);
                 }

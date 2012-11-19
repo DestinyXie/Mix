@@ -1105,12 +1105,58 @@ li .comment{
 	background-color:rgba(0,0,0,0.5);
 	z-index:100;
 }
-/*menuLayer菜单*/
-.menuLayer{
+
+/*popLayer弹出层公用组件*/
+.pop_layer{
 	position: absolute;
 	z-index:101;
+	background-color:#fff;
+	-webkit-box-shadow:0 0 10px #000;
+	-webkit-border-radius:6px;
+	padding:.5em 3%;
+}
+.pop_title{
+	position: absolute;
+	left:0;
+	top:0;
+	background: #ddd;
+
+}
+
+.pop_confirm{
+	position: absolute;
+	background: #fff;
+	width: 100%;
+	padding: .5em;
+	left: 0;
+	bottom: 0;
+	box-shadow: 0 -1px 5px rgba(0,0,0,.3);
+	background-color: #eee;
+	border-bottom-left-radius: .45em;
+	border-bottom-right-radius: .45em;
+}
+.pop_confirm a{
+	float:left;
+	margin-right:1em;
+	padding:.5em .8em;
+	-webkit-border-radius:6px;
+	-webkit-box-shadow:1px 1px 5px #999;
+	background:#fff;
+}
+.pop_confirm a.active{
+	color:#fff;
+	text-shadow:-1px -1px 0px #333;
+	background:-webkit-linear-gradient(top, #e70485, #c40370);
+	background:-webkit-gradient(linear, left top, left bottom, from(#e70485), to(#c40370));
+	-webkit-box-shadow:1px 1px 5px #666 inset;
+}
+
+/*menuLayer菜单*/
+.menuLayer{
 	background-color:#333;
 	-webkit-box-shadow:0 0 10px #000;
+	-webkit-border-radius:0;
+	padding:0;
 }
 .menuLayer i{
 	font-style:normal;
@@ -1121,6 +1167,8 @@ li .comment{
 	text-align: center;
 	width:100%;
 	border-right: 1px solid #444;
+	border-top: 1px solid #555;
+	text-shadow:-1px -1px 0px #000;
 }
 .menuLayer i:last-child{
 	border-width: none;
@@ -1129,8 +1177,12 @@ li .comment{
 	display: block;
 	float:none;
 	padding:.5em;
+	border-top:0 none;
 	border-bottom: 1px solid #444;
 	border-right: none;
+}
+.menuLayer.vertiDirect i:first-child{
+	border-top: 1px solid #555;
 }
 .menuLayer i.active{
 	-webkit-box-shadow:0 0 15px rgba(0,0,0,1) inset;
@@ -1138,16 +1190,10 @@ li .comment{
 
 /*regionLayer地区选择*/
 .regionLayer{
-	position:absolute;
-	z-index:101;
 	width:90%;
 	height:7em;
 	left:5%;
 	top:2em;
-	background:#fff;
-	-webkit-box-shadow:0 0 10px #000;
-	-webkit-border-radius:6px;
-	padding:.5em 3%;
 }
 .regionLayer .selectWrap{
 	width:100%;
@@ -1179,46 +1225,12 @@ li .comment{
 	bottom:0;
 }
 
-.chooseWrap{
-	position: absolute;
-	background: #fff;
-	width: 100%;
-	padding: .5em;
-	left: 0;
-	bottom: 0;
-	box-shadow: 0 -1px 5px rgba(0,0,0,.3);
-	background-color: #eee;
-	border-bottom-left-radius: .45em;
-	border-bottom-right-radius: .45em;
-}
-.chooseWrap a{
-	float:left;
-	margin-right:1em;
-	padding:.5em .8em;
-	-webkit-border-radius:6px;
-	-webkit-box-shadow:1px 1px 5px #999;
-	background:#fff;
-}
-.chooseWrap a.active{
-	color:#fff;
-	text-shadow:-1px -1px 0px #333;
-	background:-webkit-linear-gradient(top, #e70485, #c40370);
-	background:-webkit-gradient(linear, left top, left bottom, from(#e70485), to(#c40370));
-	-webkit-box-shadow:1px 1px 5px #666 inset;
-}
-
 /*select单选、多选框*/
 .selectLayer{
-	position:absolute;
-	z-index:101;
 	width:90%;
 	max-height:90%;
 	left:5%;
 	top:5%;
-	background:#fff;
-	-webkit-box-shadow:0 0 10px #000;
-	-webkit-border-radius:6px;
-	padding:.5em .5em 0;
 }
 .selectLayer.multiSelect .optWrap{
 	padding-bottom:4.5em;

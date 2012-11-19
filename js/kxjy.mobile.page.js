@@ -11,7 +11,7 @@ var headerBack=['<!--header开始-->',
     headerSearch=['<!--header开始-->',
     '<div id="header" class="uh">',
         '<div class="kxjy-hd">',
-            '<div _click="actionSheet.show(\'search\')" class="btn btn-l kxjy-btn ub ub-ac ">',
+            '<div _click="UserMenus(\'search\')" class="btn btn-l kxjy-btn ub ub-ac ">',
                 '<span class="header-ico hd-search"></span>',
             '</div>'].join(''),
     photoContTmpl=['<!--content开始-->',
@@ -156,7 +156,7 @@ var contentTmpl={
             '<li id="myInfo-3"></li>',
         '</ul>',
         '<div id="feedCont" class="mainListBox clearfix">',
-            '<div class="myPhotoBox myPhotoBox-last fl" _click="actionSheet.show(\'photo\')">',
+            '<div class="myPhotoBox myPhotoBox-last fl" _click="UserMenus(\'photo\')">',
                 '<img src="${siteurl}/template/mobile/css/images/plus.gif" alt="添加" />',
             '</div>',
         '</div>',
@@ -500,7 +500,7 @@ var contentTmpl={
     '<div id="content" class="ub-f1 tx-l t-bla ub-img6">',
     '<div id="wrapper" class="fixWrapperLeft bg">',
     '<div>',
-        '<div class="showMoodPlus" _click="actionSheet.show(\'photo\');"></div>',
+        '<div class="showMoodPlus" _click="UserMenus(\'photo\');"></div>',
         '<div class="showMoodList ub" _click="UserTools.setIconId(this);" iconid="3">',
             '<div class="showMoodImg ub-f1"><img src="${siteurl}/template/mobile/css/images/f_1.png" alt="表情" /></div>',
             '<div class="showMoodImg ub-f1"><img src="${siteurl}/template/mobile/css/images/f_2.png" alt="表情" /></div>',
@@ -1043,7 +1043,7 @@ var pageConfig={
     }
 
     setTimeout(function(){
-        actionSheet.show('photo');
+        UserMenus('photo');
         setMoodH();
     },100);
 

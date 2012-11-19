@@ -1104,9 +1104,6 @@ var Comment={
         if(DOM.hasClass(that.input.parentNode,"wrong")){
             that.resetErr();
         }
-        // if(node){
-        //     node.event.event.stopPropagation();
-        // }
     },
     sendComment:function(cb,type){
         var that=this;
