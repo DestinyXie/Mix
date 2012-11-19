@@ -52,7 +52,7 @@ var ViewMgr={
             fail();
         }
 
-        Device.backFunc=function(){ViewMgr.back();}
+        Device.backFunc=[function(){ViewMgr.back();}];
     },
     gotoPage:function(page,params){
         var isBack=false,
@@ -1646,10 +1646,13 @@ var UserTools={
                 done(prov,city);
             },
             onShow:function(regSel){
-                Device.backFunc=function(){regSel.hide();}
+                Device.backFunc.unshift(function(){regSel.hide();});
             },
             hideEnd:function(regSel){
-                Device.backFunc=function(){ViewMgr.back();}
+                Device.backFunc.shift(0);
+                if(Device.backFunc.length<=0){
+                    Device.backFunc=[function(){ViewMgr.back();}];
+                }
             }
         };
 
@@ -1683,10 +1686,13 @@ var UserTools={
                 return true;
             },
             onShow:function(UIselect){
-                Device.backFunc=function(){UIselect.hide();}
+                Device.backFunc.unshift(function(){UIselect.hide();});
             },
             hideEnd:function(UIselect){
-                Device.backFunc=function(){ViewMgr.back();}
+                Device.backFunc.shift(0);
+                if(Device.backFunc.length<=0){
+                    Device.backFunc=[function(){ViewMgr.back();}];
+                }
             }
         };
 
@@ -1740,11 +1746,14 @@ var UserTools={
 function UserMenus(name){
     var menuObj={
             onShow:function(UImenu){
-                Device.backFunc=function(){UImenu.hide();}
+                Device.backFunc.unshift(function(){UImenu.hide();});
             },
             hideEnd:function(UImenu){
-                Device.backFunc=function(){ViewMgr.back();}
-            }            
+                Device.backFunc.shift(0);
+                if(Device.backFunc.length<=0){
+                    Device.backFunc=[function(){ViewMgr.back();}];
+                }
+            }
         };
 
     switch(name){

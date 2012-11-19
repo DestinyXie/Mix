@@ -502,7 +502,16 @@ UITools.regionLayer=extend({},UITools.popLayer,{
             useMask:false,
             options:provinces,
             defOptions:[that.option.prov||that.option.provProm],
-            onConfirm:checkProv
+            onConfirm:checkProv,
+            onShow:function(UIselect){
+                Device.backFunc.unshift(function(){UIselect.hide();});
+            },
+            hideEnd:function(UIselect){
+                Device.backFunc.shift(0);
+                if(Device.backFunc.length<=0){
+                    Device.backFunc=[function(){ViewMgr.back();}];
+                }
+            }
         });
     },
     chooseCity:function() {
@@ -519,7 +528,16 @@ UITools.regionLayer=extend({},UITools.popLayer,{
             useMask:false,
             options:show_next_flod(that.option.prov)||[],
             defOptions:[that.option.city||that.option.cityProm],
-            onConfirm:checkCity
+            onConfirm:checkCity,
+            onShow:function(UIselect){
+                Device.backFunc.unshift(function(){UIselect.hide();});
+            },
+            hideEnd:function(UIselect){
+                Device.backFunc.shift(0);
+                if(Device.backFunc.length<=0){
+                    Device.backFunc=[function(){ViewMgr.back();}];
+                }
+            }
         });
     },
     confirm:function(){

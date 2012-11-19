@@ -129,13 +129,13 @@
         uexWindow.cbActionSheet=ao[3];
         uexWindow.actionSheet(ao[0],ao[1],ao[2]);
     },
-    backFunc:null,
+    backFunc:[],
     menuFunc:null,
     setKeyPress:function(){
         uexWindow.onKeyPressed=function(code){
             if(0===code*1){
-                if($.isFunc(Device.backFunc)){
-                    Device.backFunc.call(null);
+                if(Device.backFunc.length>0){
+                    Device.backFunc[0].call(null);
                 }
             }else if(1===code*1){
                 if($.isFunc(Device.menuFunc)){
