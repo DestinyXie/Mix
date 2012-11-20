@@ -1234,17 +1234,19 @@ li .comment{
 }
 .regionLayer .selectWrap label.active{
 	background-color: rgba(0,0,0,.3);
-	-webkit-box-shadow:0 0 10px rgba(0,0,0,.5) inset;
+	-webkit-box-shadow:0 0 5px rgba(0,0,0,.5) inset;
 }
 .regionLayer .selectWrap label:after{
 	position: absolute;
 	content:"◢";
+	font-size:1em;
+	color:#666;
 	text-indent: .5em;
 	line-height: 4em;
 	width:1.5em;
 	height: 2.5em;
-	right:0;
-	bottom:0;
+	right:2px;
+	bottom:2px;
 }
 
 /*select单选、多选框*/

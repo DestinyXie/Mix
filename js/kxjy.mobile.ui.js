@@ -185,14 +185,12 @@ Mix.ui.popLayer={
         var scrollOpt={vScrollbar:true};
         if(that.option.title){
             var offsetTop=$('.pop_title',that.layerDom).offsetHeight;
-            scrollOpt.topOffset=offsetTop;
+            scrollOpt.topOffset=-offsetTop;
             $('div',that.layerDom).style.paddingTop=offsetTop+"px";
         }
 
 
         if(that.option.canScroll){
-            
-            
             that.scroller=new iScroll(that.option.domId,scrollOpt);
         }
     },
@@ -361,6 +359,10 @@ Mix.ui.region=extend({},Mix.ui.popLayer,{
             }else{
                 that.option.city=selOpts[0];
             }
+        }
+        if(!that.option.prov){
+            toast("需先选择省份");
+            return;
         }
         Mix.ui.select.show({
             useMask:false,
