@@ -1,5 +1,5 @@
 /* Ajax */
-;var X = function(options) {
+;Mix.x = function(options) {
 	var that=this;
 	that.options = {
 		varsEncode: false,
@@ -11,7 +11,7 @@
 	return that.reset();
 };
 
-X.prototype = {
+Mix.x.prototype = {
 	reset: function() {
 		clearTimeout(this.timer); 
 		this.loading = false;

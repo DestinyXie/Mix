@@ -229,7 +229,7 @@ var contentTmpl={
     '<div id="wrapper" class="fixWrapperLeft bg">',
     '<div>',
     '<div class="uba  b-gra c-wh us listBg">',
-        '<div class="uc-t ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入昵称\',function(txt){Page.setEditVal(\'nickname\',txt);},null,[\'确定\',\'取消\'],BaseTools.htmlDecode($(\'#nickname\').innerHTML))">',
+        '<div class="uc-t ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入昵称\',function(txt){Page.setEditVal(\'nickname\',txt);},null,[\'确定\',\'取消\'],Mix.base.htmlDecode($(\'#nickname\').innerHTML))">',
           '<div class="t-org umar-t color777 fr" id="nickname"></div>',
           '<div class="umar-t">昵称</div>',
         '</div>',
@@ -253,15 +253,15 @@ var contentTmpl={
           '<div class="t-org umar-t color777 fr" id="target"></div>',
           '<div class="umar-t">交友目的</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入个人描述\',function(txt){Page.setEditVal(\'note\',txt)},null,[\'确定\',\'取消\'],BaseTools.htmlDecode($(\'#note\').innerHTML))">',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入个人描述\',function(txt){Page.setEditVal(\'note\',txt)},null,[\'确定\',\'取消\'],Mix.base.htmlDecode($(\'#note\').innerHTML))">',
           '<div class="umar-t">个人描述</div>',
           '<div class="t-org umar-t color777" id="note"></div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入QQ号\',function(txt){Page.setEditVal(\'qq\',txt)},null,[\'确定\',\'取消\'],BaseTools.htmlDecode($(\'#qq\').innerHTML))">',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入QQ号\',function(txt){Page.setEditVal(\'qq\',txt)},null,[\'确定\',\'取消\'],Mix.base.htmlDecode($(\'#qq\').innerHTML))">',
           '<div class="t-org umar-t color777 fr" id="qq"></div>',
           '<div class="umar-t">QQ</div>',
         '</div>',
-        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入手机号\',function(txt){Page.setEditVal(\'mobile\',txt)},null,[\'确定\',\'取消\'],BaseTools.htmlDecode($(\'#mobile\').innerHTML))">',
+        '<div class="ub-f1 lis editinfoList infoList clearfix" _click="Device.prompt(\'请输入手机号\',function(txt){Page.setEditVal(\'mobile\',txt)},null,[\'确定\',\'取消\'],Mix.base.htmlDecode($(\'#mobile\').innerHTML))">',
           '<div class="t-org umar-t color777 fr" id="mobile"></div>',
           '<div class="umar-t">手机</div>',
         '</div>',
@@ -1006,13 +1006,13 @@ var footerTmple={
 var pageConfig={
 'login':[false,false,false,false,function(){
     DOM.addEvent($('#password'),'keypress',function(e){
-        if(13==e.event.keyCode){
+        if(13==e.keyCode){
             $('#password').blur();
             UserAction.checkLogin('#email','#password',$('#loginBtn'));
         }
     });
-    var storEmail=BaseTools.storage.get('kxjy_my_email'),
-        storPwd=BaseTools.storage.get('kxjy_my_pwd');
+    var storEmail=Mix.base.storage.get('kxjy_my_email'),
+        storPwd=Mix.base.storage.get('kxjy_my_pwd');
     if(storEmail&&storPwd){
         $('#email').value=storEmail;
         $('#password').value=storPwd;
@@ -1079,7 +1079,7 @@ var pageConfig={
 'chat':[false,false,false,true,function(){
     hisInfo.init();
     //判断从他们主页过来还是聊天列表过来
-    var cl=BaseTools.storage.get("kxjy_my_chatList","session"),
+    var cl=Mix.base.storage.get("kxjy_my_chatList","session"),
         nickname="TA";
     if(pageEngine.prePage=="chatList"&&!!cl){
         var hisId=hisInfo.curId;
@@ -1095,7 +1095,7 @@ var pageConfig={
     $('#nickName').innerHTML=nickname||"&nbsp;";
     
     DOM.addEvent($('#enterInput input'),'keypress',function(e){
-        e.event.stopPropagation();
+        e.stopPropagation();
     });
 }],
 'sysNotice':[false,false,false,true],
@@ -1231,7 +1231,7 @@ PageEngine.prototype={
         }
         Page.destroy();//撤销页面载入
         UserAction.stop();//撤销用户动作
-        UITools.tips.destroy();//Tips
+        Mix.ui.tips.destroy();//Tips
         Comment.destroy();//撤销评论对象
         Device.destroy();//撤销如上传等手机正在执行的动作
     },

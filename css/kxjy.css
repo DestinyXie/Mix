@@ -1110,17 +1110,30 @@ li .comment{
 .pop_layer{
 	position: absolute;
 	z-index:101;
+	width:90%;
+	max-height:90%;
+	left:5%;
+	top:2em;
+	padding:.5em 3%;
 	background-color:#fff;
 	-webkit-box-shadow:0 0 10px #000;
 	-webkit-border-radius:6px;
-	padding:.5em 3%;
 }
 .pop_title{
 	position: absolute;
 	left:0;
 	top:0;
+	width:100%;
+	color:#fff;
 	background: #ddd;
-
+	padding:1em;
+	margin:0;
+	text-align: center;
+	line-height: 1em;
+	text-shadow: 0 -1px 5px rgba(0,0,0,.3);
+	background-color: #111;
+	border-bottom:1px solid #000;
+	-webkit-box-shadow:0 0 5px #0a0a0a;
 }
 
 .pop_confirm{
@@ -1130,7 +1143,7 @@ li .comment{
 	padding: .5em;
 	left: 0;
 	bottom: 0;
-	box-shadow: 0 -1px 5px rgba(0,0,0,.3);
+	-webkit-box-shadow: 0 -1px 5px rgba(0,0,0,.3);
 	background-color: #eee;
 	border-bottom-left-radius: .45em;
 	border-bottom-right-radius: .45em;
@@ -1153,10 +1166,27 @@ li .comment{
 
 /*menuLayer菜单*/
 .menuLayer{
+	width: 100%;
+	left:0;
 	background-color:#333;
 	-webkit-box-shadow:0 0 10px #000;
 	-webkit-border-radius:0;
 	padding:0;
+}
+.menuLayer.top{
+	top:0;
+	border-bottom: 1px solid #555;
+}
+.menuLayer.middle{
+	width:90%;
+	top:2em;
+	left:5%;
+	border: 1px solid #555;
+}
+.menuLayer.bottom{
+	top:auto;
+	bottom:0;
+	border-top: 1px solid #555;
 }
 .menuLayer i{
 	font-style:normal;
@@ -1167,22 +1197,17 @@ li .comment{
 	text-align: center;
 	width:100%;
 	border-right: 1px solid #444;
-	border-top: 1px solid #555;
 	text-shadow:-1px -1px 0px #000;
-}
-.menuLayer i:last-child{
-	border-width: none;
 }
 .menuLayer.vertiDirect i{
 	display: block;
 	float:none;
 	padding:.5em;
-	border-top:0 none;
 	border-bottom: 1px solid #444;
 	border-right: none;
 }
-.menuLayer.vertiDirect i:first-child{
-	border-top: 1px solid #555;
+.menuLayer i:last-child,.menuLayer.vertiDirect i:last-child{
+	border-width: none;
 }
 .menuLayer i.active{
 	-webkit-box-shadow:0 0 15px rgba(0,0,0,1) inset;
@@ -1190,10 +1215,7 @@ li .comment{
 
 /*regionLayer地区选择*/
 .regionLayer{
-	width:90%;
 	height:7em;
-	left:5%;
-	top:2em;
 }
 .regionLayer .selectWrap{
 	width:100%;
@@ -1226,12 +1248,6 @@ li .comment{
 }
 
 /*select单选、多选框*/
-.selectLayer{
-	width:90%;
-	max-height:90%;
-	left:5%;
-	top:5%;
-}
 .selectLayer.multiSelect .optWrap{
 	padding-bottom:4.5em;
 }

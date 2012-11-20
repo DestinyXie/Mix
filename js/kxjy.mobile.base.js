@@ -1,5 +1,6 @@
 ﻿/*保存常用DOM及其属性值的全局变量BODYFS=BODY.style.fontSize*/
-;var HEAD, BODY, BODYFS, DOC = document, WIN = window;
+;var HEAD, BODY, BODYFS, DOC = document, WIN = window,
+Mix={};//库名称
 
 /*常量设置*/
 var isTouch = ('ontouchstart' in WIN),
@@ -12,7 +13,7 @@ CANCEL_EV = isTouch ? 'touchcancel' : 'mouseup';
 /*考虑使用观察者模式 添加相应的响应函数来重绘正在显示的各个组件*/
 // RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';
 
-/*扩展一个Object对象*/
+/*扩展一个Object对象(s或o为实例化的对象时不能使用该方法)*/
 function extend(d, s ,o) {
     var k;
     for (k in s) {
@@ -66,6 +67,7 @@ _$ = DOC.querySelectorAll ? function (selector, root) {
 } : function(selector, root) {
     alert('Selector not implemented');
 };
+
 /*返回指定选择符的DOM集合*/
 $$ = function(selector, root) {
     root = root || DOC;
@@ -79,6 +81,7 @@ $ = function(selector, root) {
 };
 
 /*给$扩展方法*/
+var toStr=Object.prototype.toString;
 extend($,{
     each:function(obj, callback) {
         if (obj.nodeType)
@@ -89,16 +92,16 @@ extend($,{
     },
     isFunc: function(obj){
         /*window.toString.call(function)会返回[object Object]*/
-        return DOC.toString.call(obj)==="[object Function]";
+        return toStr.call(obj)==="[object Function]";
     },
     isStr:function(obj){
-        return toString.call(obj)==="[object String]";
+        return toStr.call(obj)==="[object String]";
     },
     isArray:function(obj){
-        return toString.call(obj)==="[object Array]";
+        return toStr.call(obj)==="[object Array]";
     },
     isPlainObject:function(obj){
-        if(!obj||toString.call(obj)!=="[object Object]"||obj.nodeType||obj.setInterval)
+        if(!obj||toStr.call(obj)!=="[object Object]"||obj.nodeType||obj.setInterval)
             return false;
         
         try{
@@ -116,6 +119,10 @@ extend($,{
 var Event = function(e) {
     if (!e)
         return null;
+
+    if(e.stop)
+        return e;
+
     this.event = e;
     var changedTouches = e.changedTouches,
     ee = (changedTouches && changedTouches.length > 0) ? changedTouches[0] : e;
@@ -123,13 +130,10 @@ var Event = function(e) {
         this[att[l]] = ee[att[l]];
     }
 };
-Event.prototype = {  
-    /*事件停止标记*/
-    // stoped:false,
+Event.prototype = {
     /*阻止事件传递*/
     stop: function() {
         if (e = this.event) {
-            // this.stoped=true;
             e.preventDefault();
             e.stopPropagation();
         }
@@ -196,11 +200,7 @@ var DOM = {
             }
             styleStr+=(name+":"+value+";");
         }
-        try {
-            el.style.cssText+=styleStr;
-        } catch(e) {
-            BaseTools.logErr(e,'DOM.setStyles');
-        }
+        el.style.cssText+=styleStr;
     },
     /*计算给定DOM元素的宽高
     * return:[width,height]
@@ -319,6 +319,8 @@ var DOM = {
 */
 var Delegate = {
     /*初始化函数*/
+    longTapTime:2000,//长按时间设置
+    longTapInter:null,//长按监听
     init: function() {
         // var events = {
         //     start: START_EV,
@@ -344,29 +346,41 @@ var Delegate = {
             Delegate.end(e);
         }
 
-        e=new Event(e);
-
-        DOM.addEvent(DOC, MOVE_EV, Delegate['move']);//start后再注册
-        DOM.addEvent(DOC, END_EV, Delegate['end']);//start后再注册
+        var oe=new Event(e),
+            targets = oe.getTargets();
 
         Delegate.startEvent = e;
         Delegate.isClick    = true;
-        Delegate.startPoint = [e.pageX, e.pageY];
+        Delegate.startPoint = [oe.pageX, oe.pageY];
         Delegate.targets    = [];
-        var targets = e.getTargets();
+        Delegate.startTime  = e.timeStamp || Date.now();
+        Delegate.hasLongTap = false;
 
         /*给触发点击事件的所有对象加上"active"的className, 模仿mouseover样式 */
         for (var l = targets.length, el; l--;) {
             el = targets[l];
-            if (el.getAttribute('_click') || ['A', 'INPUT'].has(el.nodeName) ) {
+            if (el.getAttribute('_click') || el.getAttribute('_longTap') || ['A', 'INPUT'].has(el.nodeName) ) {
                 Delegate.targets.unshift(el);
-                // break;
+            }
+            if(el.getAttribute('_longTap')){
+                Delegate.hasLongTap=true;
+                el.event=e;
             }
         }
-        if(Delegate.targets.length>0){
+
+        if(Delegate.targets.length>0){//有需要触发事件的元素
             DOM.addClass(Delegate.targets[0], 'active');
+
+            //start后并且需要监听触发事件时再注册
+            DOM.addEvent(DOC, MOVE_EV, Delegate['move']);
+            DOM.addEvent(DOC, END_EV, Delegate['end']);
         }
 
+        if(Delegate.hasLongTap){//是长按
+            Delegate.longTapInter=setTimeout(function(){
+                Delegate.longTap();
+            },Delegate.longTapTime);
+        }
         // for (var events = Delegate[START_EV], l = events.length; l--;) {
         //     events[l].call(null, e);
         // }
@@ -389,8 +403,11 @@ var Delegate = {
     move: function(e) {
         if (!Delegate.startEvent)
             return;
-        var sp = Delegate.startPoint, cp = [e.pageX, e.pageY];
-        var dis = BaseTools.calculPy(cp[0] - sp[0],cp[1] - sp[1]);
+        var oe=new Event(e),
+            sp = Delegate.startPoint,
+            cp = [oe.pageX, oe.pageY],
+            dis = Mix.base.calculPy(cp[0] - sp[0],cp[1] - sp[1]);
+
         if (dis > 15) {
             Delegate.isClick = false;
             Delegate.removeHover();
@@ -405,19 +422,32 @@ var Delegate = {
             DOM.removeClass(el,'active');
         });
     },
+    /*@private 长按按钮处理*/
+    longTap:function(){
+        var targets=Delegate.targets;
+        for (var l = targets.length, el; l--;) {
+            el = targets[l],
+            fnAttr=el.getAttribute('_longTap');
+            if (fnAttr) {
+                var fn=new Function(fnAttr);
+                fn.call(el);
+                Delegate.isClick=false;
+                Delegate.end(el.event);
+            }
+        }
+    },
     /*@private 触摸事件结束，触发模拟点击事件*/
     end: function(e) {
-        e=new Event(e);
-        // e.stop();
-        e.event.stopPropagation();
+        if(Delegate.hasLongTap){
+            clearTimeout(Delegate.longTapInter);
+        }
+        e.stopPropagation();
+        Delegate.removeHover();
+
         var targets = Delegate.targets;
         if (targets.length>0) {
             //触发点击事件
             if (Delegate.isClick) {
-
-                targets.forEach( function(el) {
-                    DOM.removeClass(el, 'active');
-                });
 
                 var target=targets[0],
                     evt=target.getAttribute('_click');
@@ -435,14 +465,9 @@ var Delegate = {
                 //         var fn = new Function(evt);
                 //         fn.call(target);
                 //     }
-                //     // if(e.stoped){
-                //     //     break;
-                //     // }
                 // }
-                // if(e.stoped.toString()!="true"){
-                //     for (var events = Delegate[CLICK_EV], l = events.length; l--;) {
-                //         events[l].call(null, e);
-                //     }
+                // for (var events = Delegate[CLICK_EV], l = events.length; l--;) {
+                //     events[l].call(null, e);
                 // }
             }
 
@@ -450,20 +475,19 @@ var Delegate = {
             //     events[l].call(null, e);
             // }
         }
-        // e.stoped=false;
         DOM.removeEvent(DOC, MOVE_EV, Delegate['move']);//end后注销move
         DOM.removeEvent(DOC, END_EV, Delegate['end']);//end后注销end
         Delegate.isClick    = false;
         Delegate.startEvent = null;
         Delegate.startPoint = [0, 0];
         Delegate.targets    = [];
+        Delegate.startTime  = null;
     }
 };
-
 Delegate.init();
 
 /*基本的一些工具类*/
-var BaseTools={
+Mix.base={
     /*比较两个对象是否一样,除了except数组中的对象属性*/
     sameObj:function(obj1,obj2,except){
         if(!obj1||!obj2||JSON.stringify(obj1).length!=JSON.stringify(obj2).length){
@@ -510,8 +534,8 @@ var BaseTools={
     cookie: function(name,value,expiredays) {
         var dc=document.cookie,cs,ce;
         if(value===null||value=="") {
-            var exdate=new Date(),cv=BaseTools.cookie(name);
-            exdate.setTime(exdate.getTime()-1);
+            var exdate=new Date(),cv=Mix.base.cookie(name);
+            exdate.setTime(Date.now()-1);
             if(cv)
                 document.cookie=name+"="+escape(cv)+";expires="+exdate.toGMTString();
             return false;
@@ -519,7 +543,7 @@ var BaseTools={
         if(arguments.length>1) {
             var exdate=new Date(),
             days=expiredays||3000;
-            exdate.setTime(exdate.getTime()+days*24*60*60*1000);
+            exdate.setTime(Date.now()+days*24*60*60*1000);
             document.cookie=name+"="+escape(value)+";expires="+exdate.toGMTString();
         } else {
             if(dc.length>0) {
@@ -541,13 +565,13 @@ var BaseTools={
     /*使用cookie模拟localStorage或sessionStorage的存储接口*/
     cookieStor:{
         getItem: function(name) {
-            return BaseTools.cookie(name);
+            return Mix.base.cookie(name);
         },
         setItem: function(name,value) {
-            BaseTools.cookie(name,value);
+            Mix.base.cookie(name,value);
         },
         removeItem: function(name) {
-            BaseTools.cookie(name,null);
+            Mix.base.cookie(name,null);
         },
         clear:function(){//待实现
             var dc=document.cookie,items,name;
@@ -608,7 +632,7 @@ var BaseTools={
     htmlEncodeObj:function(obj){
         for(key in obj){
             if(obj.hasOwnProperty(key)&&(typeof obj[key]=="string")){
-                obj[key]=BaseTools.htmlEncode(obj[key]);//转换js中的HTML特殊字符串
+                obj[key]=Mix.base.htmlEncode(obj[key]);//转换js中的HTML特殊字符串
             }
         }
         return obj;

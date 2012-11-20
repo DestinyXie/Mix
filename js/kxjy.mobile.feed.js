@@ -570,12 +570,12 @@ var Feed={
             tmplStr="";
 
         if('sysNotice'!=that.page){//通知里面是需要显示html标签的
-            data=BaseTools.htmlEncodeObj(data);
+            data=Mix.base.htmlEncodeObj(data);
         }
 
         switch(that.page){
             case "mainPhoto":
-                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=Mix.base.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="isself"){
                         if(o.uid==StorMgr.uid){
                             return "'myPhoto'";
@@ -588,7 +588,7 @@ var Feed={
             case "myPhoto":
             case "hisPhoto":
                 if(data.havemood*1!=0&&(!data.filetype||data.filetype=="img"))
-                    tmplStr=BaseTools.compiTpl(tmpl,data,null,idx);
+                    tmplStr=Mix.base.compiTpl(tmpl,data,null,idx);
                 break;
             case "mainList":
             case "myList":
@@ -605,7 +605,7 @@ var Feed={
                 break;
             case "myDetail":
             case "hisDetail":
-                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=Mix.base.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="commentMood"){
                         return UserTools.filterMsgFace(o.mood);
                     }
@@ -631,7 +631,7 @@ var Feed={
                 },idx);
                 break;
             case "chatList":
-                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=Mix.base.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="hasMsg"&&o.hasMsg*1==1){
                         return "<span class='amount'></span>";
                     }
@@ -642,7 +642,7 @@ var Feed={
                 if(""==data.content){
                     return "";
                 }
-                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=Mix.base.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="who"&&o.fid==StorMgr.uid){return " chatContent-r ub-rev"}
                     if(t[1]=="content"){
                         return UserTools.filterMsgFace(o.content)||"";
@@ -665,7 +665,7 @@ var Feed={
                 },idx);
                 break;
             case "sysNotice":
-                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=Mix.base.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="content"){
                         return UserTools.filterMsgFace(o.content);
                     }
@@ -677,7 +677,7 @@ var Feed={
                 break;
             case "commentMe":
             case "sendComment":
-                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=Mix.base.compiTpl(tmpl,data,function(o,t){
                     if(t[1]=="urlType"){
                         switch(o.parentType*1){
                             case 1:
@@ -724,7 +724,7 @@ var Feed={
                 },idx);
                 break;
             case "rank":
-                tmplStr=BaseTools.compiTpl(tmpl,data,function(o,t){
+                tmplStr=Mix.base.compiTpl(tmpl,data,function(o,t){
                     switch(t[1]){
                         case "isself":
                             if(o.uid==StorMgr.uid){
@@ -773,14 +773,14 @@ var Feed={
                 },idx);
                 break;
             default:
-                tmplStr=BaseTools.compiTpl(tmpl,data,null,idx);
+                tmplStr=Mix.base.compiTpl(tmpl,data,null,idx);
         }
         return tmplStr;
     },
     compileMood:function(tmpl,data,idx){//拼装心情列表
-        data=BaseTools.htmlEncodeObj(data);
+        data=Mix.base.htmlEncodeObj(data);
 
-        var moodLiStr=BaseTools.compiTpl(tmpl,data,function(o,t){//模板回调函数
+        var moodLiStr=Mix.base.compiTpl(tmpl,data,function(o,t){//模板回调函数
                     switch(t[1]){
                         case 'siteurl':
                             return StorMgr.siteUrl;
@@ -885,7 +885,7 @@ var ChatListFeed=extend({},Feed,{
     cacheCallback:function(){
         var that=this;
         //记住头像
-        BaseTools.storage.set("kxjy_my_chatList",that.listDB,"session");
+        Mix.base.storage.set("kxjy_my_chatList",that.listDB,"session");
         that.dataCount=that.listDB.length;
         that.totalPage=Math.ceil(that.dataCount/that.onePageNum)||0;
         var firstList=that.listDB.slice((that.index-1)*that.onePageNum,that.index*that.onePageNum);
@@ -1083,7 +1083,7 @@ var Comment={
         var that=this;
         $('#pageWraper').setAttribute('_click','Comment.hideMoodBox()');
         DOM.addEvent(that.input,"keypress",function(e) {//按enter发送信息
-            var key=e.event.keyCode;
+            var key=e.keyCode;
             if(13!==key){
                 return;
             }
@@ -1268,8 +1268,7 @@ var Comment={
     },
     selectMood:function(node){
         var that=this,
-            evt=node.event,
-            li=evt.getTargets('li')[0],
+            li=new Event(node.event).getTargets('li')[0],
             lis=$$('li',that.moodBox),
             len=lis.length,
             liArr=[];
@@ -1280,9 +1279,8 @@ var Comment={
         if(typeof idx=="number"&&idx>=0){
             if(DOM.hasClass(that.input.parentNode,"wrong"))
                 that.resetErr();
-            BaseTools.insertAtCaret(that.input,that.motions[idx]);
+            Mix.base.insertAtCaret(that.input,that.motions[idx]);
         }
-        // evt.stop();
     },
     switchMoodBox:function(node){
         var that=this;
@@ -1291,7 +1289,6 @@ var Comment={
         }else{
             that.hideMoodBox();
         }
-        // node.event.stop();
     },
     showMoodBox:function(){
         var that=this;

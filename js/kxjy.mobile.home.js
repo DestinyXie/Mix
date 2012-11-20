@@ -39,12 +39,12 @@ var ViewMgr={
         WIN['pageEngine']=new PageEngine();
         ViewMgr.views=['login'];
 
-        var storEmail=BaseTools.storage.get('kxjy_my_email'),
-            storPwd=BaseTools.storage.get('kxjy_my_pwd'),
+        var storEmail=Mix.base.storage.get('kxjy_my_email'),
+            storPwd=Mix.base.storage.get('kxjy_my_pwd'),
             ok=null,
             fail=function(){
                 pageEngine.initPage('login');
-                BaseTools.storage.remove("kxjy_view_history","session");
+                Mix.base.storage.remove("kxjy_view_history","session");
             };
         if(storEmail&&storPwd){
             UserAction.sendLogin(storEmail,storPwd,null,ok,fail);
@@ -73,7 +73,7 @@ var ViewMgr={
                 that.views.shift(1);
             that.views.push(page);
         }
-        BaseTools.storage.set("kxjy_view_history",ViewMgr.views,"session");
+        Mix.base.storage.set("kxjy_view_history",ViewMgr.views,"session");
         
         try{
             if(1==that.views.length){//设置返回按钮为历史回退
@@ -169,7 +169,7 @@ var ViewMgr={
                     ViewMgr.addTips(data.feed_flow);
                     ViewMgr.showMsg(data.centerInfo);
                     if(init){//初始时取个人信息
-                        var encodeInfo=BaseTools.htmlEncodeObj(data.myInfo);
+                        var encodeInfo=Mix.base.htmlEncodeObj(data.myInfo);
                         StorMgr.setMyInfo(encodeInfo);
                     }
                     cb&&cb();
@@ -243,7 +243,7 @@ var ViewMgr={
         var msg=that.tipsArray.shift();
         if(msg){
             that.showingTips=true;
-            UITools.tips.show({
+            Mix.ui.tips.show({
                 msg:'<img _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id='+msg.fromuid+'\')" style="height:2.5em" src="'+msg.avatarPicUrl+'" alt="" /> '+msg.nickname+' '+msg.content,
                 contSel:"#content",
                 hideT:5000});
@@ -276,7 +276,7 @@ var StorMgr={
         }
 
         if(!this.gpsInfo){
-            this.gpsInfo=BaseTools.storage.get("kxjy_my_gpsInfo");
+            this.gpsInfo=Mix.base.storage.get("kxjy_my_gpsInfo");
         }
     },
     getMyInfo:function(cb){//取得我的信息并保存
@@ -288,16 +288,16 @@ var StorMgr={
         });
     },
     setMyInfo:function(o){
-        BaseTools.storage.set("kxjy_my_myInfo",o,"session");
+        Mix.base.storage.set("kxjy_my_myInfo",o,"session");
         this.myInfo=o;
     },
     setInfoCenter:function(o){
-        if(BaseTools.sameObj(StorMgr.infoCenter,o)){
+        if(Mix.base.sameObj(StorMgr.infoCenter,o)){
             this.infoCenterChange=false;
             return;
         }
         this.infoCenterChange=true;
-        BaseTools.storage.set("kxjy_my_infoCenter",o,"session");
+        Mix.base.storage.set("kxjy_my_infoCenter",o,"session");
         this.infoCenter=o;
     }
 }
@@ -367,7 +367,7 @@ var hisInfo={
     storMoods:{},
     init:function(){
         var that=hisInfo,
-            storId=BaseTools.storage.get("kxjy_his_storId");
+            storId=Mix.base.storage.get("kxjy_his_storId");
         that.storIDs=storId?storId:[];
         that.curId=UserTools.getParamVal("user_id")||that.storIDs[0];
 
@@ -375,18 +375,18 @@ var hisInfo={
         that.storInfos[that.curId]=that.get(that.curId);
     },
     get:function(id){
-        var retObj=this.storInfos[id]||BaseTools.storage.get("kxjy_his_info_"+id);
+        var retObj=this.storInfos[id]||Mix.base.storage.get("kxjy_his_info_"+id);
         return retObj;
     },
     set:function(id,data){
         var that=hisInfo;
-        BaseTools.storage.set("kxjy_his_info_"+id,data);
+        Mix.base.storage.set("kxjy_his_info_"+id,data);
         that.storInfos[id]=data;
 
         var popId=that.storIDs[that.storIDs.length-1];
         if(that.storIDs.length>that.maxLength&&popId!=id){
             that.storIDs.pop(1);
-            BaseTools.storage.remove("kxjy_his_info_"+popId);
+            Mix.base.storage.remove("kxjy_his_info_"+popId);
             delete that.storInfos[that.curId];
             delete hisInfo.storPics[that.curId];
             delete hisInfo.storMoods[that.curId];
@@ -394,7 +394,7 @@ var hisInfo={
 
         that.storIDs.remove(id);
         that.storIDs.unshift(id);
-        BaseTools.storage.set("kxjy_his_storId",that.storIDs);
+        Mix.base.storage.set("kxjy_his_storId",that.storIDs);
     }
 }
 
@@ -570,7 +570,7 @@ var Page={
             }else{
                 that.editedValues.remove(id);
             }
-            ipt.innerHTML=BaseTools.htmlEncode(value);
+            ipt.innerHTML=Mix.base.htmlEncode(value);
         }
     },
     submitEditInfo:function(){
@@ -586,7 +586,7 @@ var Page={
         for(var len=editedIds.length;len--;){
             var id=editedIds[len],
                 ipt=$("#"+id),
-                iptVal=encodeURIComponent(BaseTools.htmlDecode(ipt.innerHTML));
+                iptVal=encodeURIComponent(Mix.base.htmlDecode(ipt.innerHTML));
             switch(id){
                 case 'nickname':
                 case 'note':
@@ -737,11 +737,11 @@ var Page={
                     extend(that.userData,a.moodContent);
                 }
 
-                that.userData=BaseTools.htmlEncodeObj(that.userData);//html,js转义
+                that.userData=Mix.base.htmlEncodeObj(that.userData);//html,js转义
 
                 if(['hisPhoto','hisList'].has(that.name)){
                     extend(that.userData,{myRank:a.myRank,isBlocked:a.isBlocked});
-                    if(BaseTools.sameObj(that.userData,hisInfo.get(hisInfo.curId),['update_time','lastlogintime'])){
+                    if(Mix.base.sameObj(that.userData,hisInfo.get(hisInfo.curId),['update_time','lastlogintime'])){
                         return;
                     }
                     hisInfo.set(hisInfo.curId,that.userData);
@@ -756,7 +756,7 @@ var Page={
         if(['myPhoto','myList','editInfo'].has(that.name)){
             that.userData=StorMgr.myInfo;
             StorMgr.getMyInfo(function(data){
-                if(!BaseTools.sameObj(data,that.userData,['update_time','lastlogintime'])){
+                if(!Mix.base.sameObj(data,that.userData,['update_time','lastlogintime'])){
                     that.userData=data;
                     that.fullFillInfo();
                 }
@@ -1158,8 +1158,8 @@ var UserAction={
 
                 UserTools.refresh();//刷新数据check
 
-                BaseTools.storage.set('kxjy_my_email',mail);
-                BaseTools.storage.set('kxjy_my_pwd',pwd);
+                Mix.base.storage.set('kxjy_my_email',mail);
+                Mix.base.storage.set('kxjy_my_pwd',pwd);
 
                 StorMgr.uid=a.uid;
                 StorMgr.userKey=a.userKey;
@@ -1505,14 +1505,14 @@ var UserAction={
     logOut:function(){
         Device.confirm('确定注销用户？',function(){
             UserTools.refresh();
-            BaseTools.storage.clear();
+            Mix.base.storage.clear();
             ViewMgr.init();
             Device.disetMenuBtn();
         },null,null,'注销提示');
     },
     /*执行ajax请求*/
     sendAction:function(url,data,method,secCb,errCb){
-        var x=new X({
+        var x=new Mix.x({
             method:method||'get',
             dataType:'json'
         });
@@ -1539,8 +1539,8 @@ var UserAction={
 var UserTools={
     /*清除缓存和一些记录的变量值,用户退出时需要*/
     refresh:function(){
-        // BaseTools.storage.clear();//gps等信息
-        BaseTools.storage.clear('session');
+        // Mix.base.storage.clear();//gps等信息
+        Mix.base.storage.clear('session');
         UserTools.sidUidParam=null;
         StorMgr.destroy();
     },
@@ -1605,9 +1605,8 @@ var UserTools={
             return;
         }
 
-        var evt=node.event,
-            imgArr=[],
-            tarImg=evt.getTargets('img')[0];
+        var imgArr=[],
+            tarImg=new Event(node.event).getTargets('img')[0];
 
         $.each(imgs,function(img){
             imgArr.unshift(img);
@@ -1662,7 +1661,7 @@ var UserTools={
         if(defCity){
             regObj.city=defCity;
         }
-        UITools.regionLayer.show(regObj);
+        Mix.ui.region.show(regObj);
         return;
     },
     /*初始化目的,婚姻状况,兴趣选项*/
@@ -1696,11 +1695,11 @@ var UserTools={
             }
         };
 
-        UITools.select.show(selectObj);
+        Mix.ui.select.show(selectObj);
     },
     /*获得用户所在地址,解析地址为省,市*/
     getGpsInfo:function(cb){
-        StorMgr.gpsInfo=BaseTools.storage.get("kxjy_my_gpsInfo");
+        StorMgr.gpsInfo=Mix.base.storage.get("kxjy_my_gpsInfo");
         function parseAddr(addr){
             var prov,city,addrArr,
                 provReg=/([\u4E00-\u56FC\u56FE-\u9FA3]{2,})省/,
@@ -1727,7 +1726,7 @@ var UserTools={
                                 city:addrArr[1]
                             }
                         StorMgr.gpsInfo=gpsInfo;
-                        BaseTools.storage.set("kxjy_my_gpsInfo",gpsInfo);
+                        Mix.base.storage.set("kxjy_my_gpsInfo",gpsInfo);
 
                         if($.isFunc(cb)){
                             cb();
@@ -1745,6 +1744,7 @@ var UserTools={
 /*用到的菜单*/
 function UserMenus(name){
     var menuObj={
+            pos:"middle",
             onShow:function(UImenu){
                 Device.backFunc.unshift(function(){UImenu.hide();});
             },
@@ -1758,6 +1758,7 @@ function UserMenus(name){
 
     switch(name){
         case 'menuBtn':
+            menuObj.pos="bottom";
             menuObj.items=['注销用户','退出应用'];
             menuObj.onSelect=function(idx){
                 switch(idx*1){
@@ -1772,6 +1773,7 @@ function UserMenus(name){
             break;
         case 'search':
             menuObj.direct="vertical";
+            menuObj.title="筛选";
             menuObj.items=['显示全部','只显示男','只显示女','更换地区'];
             menuObj.onSelect=function(idx){
                 switch(idx*1){
@@ -1891,5 +1893,5 @@ function UserMenus(name){
             };
             break;
     }
-    UITools.menu.show(menuObj);
+    Mix.ui.menu.show(menuObj);
 }
