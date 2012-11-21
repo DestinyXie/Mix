@@ -394,7 +394,7 @@ var Delegate = {
     //         }
     //     });
     // },
-    /*@private手指移动事件
+    /*@private手指移动事件 一秒钟60次
     * 因为该方法中e没有调用扩展的Event的方法 
     * 所以e既可以是传事件对象本身 也可以是new Event(事件对象),
     * 因此可以使用DOC.addEventListener添加事件监听
