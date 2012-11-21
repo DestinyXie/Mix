@@ -225,6 +225,11 @@ Mix.ui.menu=extend({},Mix.ui.popLayer,{
         delete that.ancEl;
         extend(that.option,option);
     },
+    preShow:function(){
+        if($('#selectSel')){//如果有选择框在页面上，弹出其它框前先去掉选择框
+            Mix.ui.select.hide();
+        }
+    },
     subShow:function(){
         var that=this,
             opts=that.option,
