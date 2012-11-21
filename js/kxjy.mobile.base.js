@@ -61,59 +61,59 @@ String.prototype.chineseLen=function(){
     return Math.abs(Math.ceil(len));
 }
 
-/*返回选择符方法*/
-_$ = DOC.querySelectorAll ? function (selector, root) {
-    return root.querySelectorAll(selector);
-} : function(selector, root) {
-    alert('Selector not implemented');
-};
-
 /*返回指定选择符的DOM集合*/
-$$ = function(selector, root) {
+$$ = DOC.querySelectorAll? function(selector, root) {
     root = root || DOC;
-    return _$(selector, root);
+    return root.querySelectorAll(selector, root);
+}:function(selector, root) {
+    alert('querySelectorAll not implemented');
 };
 
 /*返回指定选择符的单个DOM对象(如果选择符匹配多个DOM对象，则只返回第一个)*/
-$ = function(selector, root) {
+$ = DOC.querySelector? function(selector, root) {
+    root = root || DOC;
+    return root.querySelector(selector, root);
+}:function(selector, root) {
     var els = $$(selector, root);
     return els.length > 0 ? els[0] : null;
 };
 
 /*给$扩展方法*/
-var toStr=Object.prototype.toString;
-extend($,{
-    each:function(obj, callback) {
-        if (obj.nodeType)
-            obj = [obj];
-        for (var i = obj.length; i--;) {
-            callback(obj[i], i);
-        }
-    },
-    isFunc: function(obj){
-        /*window.toString.call(function)会返回[object Object]*/
-        return toStr.call(obj)==="[object Function]";
-    },
-    isStr:function(obj){
-        return toStr.call(obj)==="[object String]";
-    },
-    isArray:function(obj){
-        return toStr.call(obj)==="[object Array]";
-    },
-    isPlainObject:function(obj){
-        if(!obj||toStr.call(obj)!=="[object Object]"||obj.nodeType||obj.setInterval)
-            return false;
-        
-        try{
-        if(obj.constructor&&!hasOwnProperty.call(obj,"constructor")&&!hasOwnProperty.call(obj.constructor.prototype,"isPrototypeOf"))
-            return false;
-        }catch(e){return false;}
+(function(){//包裹toStr
+    var toStr=Object.prototype.toString;
+    extend($,{
+        each:function(obj, callback) {
+            if (obj.nodeType)
+                obj = [obj];
+            for (var i = obj.length; i--;) {
+                callback(obj[i], i);
+            }
+        },
+        isFunc: function(obj){
+            /*window.toString.call(function)会返回[object Object]*/
+            return toStr.call(obj)==="[object Function]";
+        },
+        isStr:function(obj){
+            return toStr.call(obj)==="[object String]";
+        },
+        isArray:function(obj){
+            return toStr.call(obj)==="[object Array]";
+        },
+        isPlainObject:function(obj){
+            if(!obj||toStr.call(obj)!=="[object Object]"||obj.nodeType||obj.setInterval)
+                return false;
+            
+            try{
+            if(obj.constructor&&!hasOwnProperty.call(obj,"constructor")&&!hasOwnProperty.call(obj.constructor.prototype,"isPrototypeOf"))
+                return false;
+            }catch(e){return false;}
 
-        var key;
-        for(key in obj){}
-        return key===undefined||hasOwnProperty.call(obj,key);
-    }
-});
+            var key;
+            for(key in obj){}
+            return key===undefined||hasOwnProperty.call(obj,key);
+        }
+    });
+})();
 
 /*扩展事件中的默认Event对象*/
 var Event = function(e) {
@@ -270,31 +270,19 @@ var DOM = {
         }
         return false;
     },
-    /*为DOM对象绑定事件
-    * 不在此处扩展Event对象 扩展了就不能使用removeEventListener
-    */
-    // addEvent: DOC.addEventListener ? function(el, event, fn, init) {
+    /*为DOM对象绑定事件*/
     addEvent: DOC.addEventListener ? function(el, event, fn, capture) {
-        // //扩展默认的Event对象
-        // var _fn = function(e) {
-        //     fn.call(el, new Event(e));
-        // };
-        // //如果是document的事件则将其加入委托队列
-        // if (!init && el == DOC && event in Delegate) {
-        //     Delegate[event].push(_fn);
-        // } else {
-        //     el.addEventListener(event, _fn, !!capture);
-        // }
         el.addEventListener(event, fn, !!capture);
     } : function(el, event, fn) {
         el.attachEvent('on' + event, fn);
     },
+    /*移除DOM对象绑定事件*/
     removeEvent:DOC.removeEventListener ? function(el,event,fn,capture){
         el.removeEventListener(event,fn,!!capture);
     } : function(el, event, fn){
         el.detachEvent('on' + event,fn);
     },
-    /*触发某个元素的点击(或给定)事件*/
+    /*触发某个元素的点击(或给定)事件,测试*/
     fireClick:function(el,type){
         var ev = DOC.createEvent('MouseEvents');
         ev.initEvent(type||'click');
@@ -314,7 +302,7 @@ var DOM = {
 
 /*实现触屏的点击事件委托
 * 为了提升iscroll的效率 避免iscroll元素和DOC在手指move时同时执行各自方法
-* 该处只给加了_click属性的dom节点使用事件委托 
+* 该处只给加了_click和_longTap属性的dom节点使用事件委托 
 * 同时如果在该dom元素上移动距离超过了click的设定值 也移除DOC的move和end监听
 */
 var Delegate = {
@@ -322,22 +310,7 @@ var Delegate = {
     longTapTime:2000,//长按时间设置
     longTapInter:null,//长按监听
     init: function() {
-        // var events = {
-        //     start: START_EV,
-        //     // move: MOVE_EV,//start后再注册
-        //     end: END_EV,
-        //     onclick: 'click'
-        // }
-        // for (type in events) {
-        //     Delegate[events[type]] = [];
-        //     DOM.addEvent(DOC, events[type], Delegate[type], true);
-        // }
-
         DOM.addEvent(DOC, START_EV, Delegate['start']);
-        //一律使用_click属性实现点击 不在注册click事件
-        // DOM.addEvent(DOC, 'click', Delegate['onclick'], true);
-
-        // Delegate[CLICK_EV] = [];
     },
     /*@private触摸事件开始*/
     start: function(e) {
@@ -368,10 +341,9 @@ var Delegate = {
             }
         }
 
-        if(Delegate.targets.length>0){//有需要触发事件的元素
+        if(Delegate.targets.length>0){//有需要触发点击事件的元素
             DOM.addClass(Delegate.targets[0], 'active');
 
-            //start后并且需要监听触发事件时再注册
             DOM.addEvent(DOC, MOVE_EV, Delegate['move']);
             DOM.addEvent(DOC, END_EV, Delegate['end']);
         }
@@ -381,25 +353,8 @@ var Delegate = {
                 Delegate.longTap();
             },Delegate.longTapTime);
         }
-        // for (var events = Delegate[START_EV], l = events.length; l--;) {
-        //     events[l].call(null, e);
-        // }
     },
-    // onclick: function(e) {
-    //     var targets = e.getTargets();
-    //     targets.forEach( function(el) {
-    //         if (el.getAttribute('_click')) {
-    //             e.stop();
-    //             return;
-    //         }
-    //     });
-    // },
-    /*@private手指移动事件 一秒钟60次
-    * 因为该方法中e没有调用扩展的Event的方法 
-    * 所以e既可以是传事件对象本身 也可以是new Event(事件对象),
-    * 因此可以使用DOC.addEventListener添加事件监听
-    * 这样也就可以用DOC.removeEventListener移除监听
-    */
+    /*@private手指移动事件 一秒钟60次*/
     move: function(e) {
         if (!Delegate.startEvent)
             return;
@@ -445,35 +400,14 @@ var Delegate = {
         Delegate.removeHover();
 
         var targets = Delegate.targets;
-        if (targets.length>0) {
-            //触发点击事件
-            if (Delegate.isClick) {
-
-                var target=targets[0],
-                    evt=target.getAttribute('_click');
-                if (evt) {
-                    target.event = e;
-                    var fn = new Function(evt);
-                    fn.call(target);
-                }
-
-                // for (var target, l = targets.length; l--;) {
-                //     target = targets[l];
-                //     target.event = e;
-                //     /* 此处待加入缓存*/
-                //     if (evt = target.getAttribute('_click')) {
-                //         var fn = new Function(evt);
-                //         fn.call(target);
-                //     }
-                // }
-                // for (var events = Delegate[CLICK_EV], l = events.length; l--;) {
-                //     events[l].call(null, e);
-                // }
+        if (targets.length>0&&Delegate.isClick) {
+            var target=targets[0],
+                evt=target.getAttribute('_click');
+            if (evt) {
+                target.event = e;
+                var fn = new Function(evt);
+                fn.call(target);
             }
-
-            // for (var events = Delegate[END_EV], l = events.length; l--;) {
-            //     events[l].call(null, e);
-            // }
         }
         DOM.removeEvent(DOC, MOVE_EV, Delegate['move']);//end后注销move
         DOM.removeEvent(DOC, END_EV, Delegate['end']);//end后注销end

@@ -1517,7 +1517,7 @@ var UserAction={
     preLoadResource:function(cb){
         var progressDom=DOM.create('div',{style:{'position':'absolute','top':'1em','width':'90%','left':'5%','height':'1em','border':'1px solid rgba(0,0,0,.9)','background-color':'#aaa','-webkit-box-shadow':'0 2px 10px rgba(0,0,0,.8)','-webkit-border-radius':'.6em','-webkit-transition':'opacity 500ms linear','opacity':'1'}}),
             progressInte=DOM.create('div',{style:{'position':'absolute','top':'0','left':'o','height':'100%','width':'0','background-color':'#24C121','-webkit-transition':'width 100ms linear','-webkit-border-radius':'.6em','text-align':'center','overflow':'hidden','z-index':'1'}}),
-            proTxt=DOM.create('div',{style:{'position':'absolute','left':'48%','color':'#333','height':'100%','line-height':'1em','fontSize':'.8em','text-shadow':'1px 1px 0 #999','z-index':'2'}}),
+            proTxt=DOM.create('div',{style:{'position':'absolute','left':'48%','color':'#333','height':'100%','line-height':'1em','font-size':'.8em','text-shadow':'1px 1px 0 #999','z-index':'2'}}),
             loadDom=DOM.create('div',{style:{'position':'absolute','height':'0','left':'10000em'}}),
             imgDir1=StorMgr.siteUrl+'/template/mobile/css/images/',
             imgs1=['f_1.png','f_2.png','f_3.png','f_4.png','f_5.png','list.png','icon-search-black.png','love.png','love-act.png','mood.png','plus.gif','pull-icon@2x.png','photo.png','close.png','comment.png','delete.png','plus.png','yes.png','on-off.png'],
