@@ -9,10 +9,13 @@
     // DOM.loadJs("http://192.168.40.28:8081/target/target-script.js",function(){alert('weinre test ok!')});
     
     /*取得GPS信息*/
-    UserTools.getGpsInfo();
-    
-    /*页面历史管理初始化*/
-    ViewMgr.init();
+    Tools.getGpsInfo();
+
+    /*预加载所有图片资源*/
+    UserAction.preLoadResource(function(){
+        /*页面历史管理初始化*/
+        ViewMgr.init();
+    });
 
     /*设置menu键*/
     Device.menuFunc=function(){
@@ -1509,6 +1512,62 @@ var UserAction={
             ViewMgr.init();
             Device.disetMenuBtn();
         },null,null,'注销提示');
+    },
+    /*预加载资源图片*/
+    preLoadResource:function(cb){
+        var progressDom=DOM.create('div',{style:{'position':'absolute','top':'1em','width':'90%','left':'5%','height':'1em','border':'1px solid #852100','-webkit-box-shadow':'0 0 6px rgba(0,0,0,.6)'}}),
+            progressInte=DOM.create('div',{style:{'position':'absolute','top':'0','left':'o','height':'100%','width':'0','background-color':'#ED3B00','-webkit-transition':'width 100ms linear'}}),
+            loadDom=DOM.create('div',{style:{'position':'absolute','height':'0','left':'10000em'}}),
+            imgDir1=StorMgr.siteUrl+'/template/mobile/css/images/',
+            imgs1=['f_1.png','f_2.png','f_3.png','f_4.png','f_5.png','list.png','icon-search-black.png','love.png','love-act.png','mood.png','plus.gif','pull-icon@2x.png','photo.png','close.png','comment.png','delete.png','plus.png','yes.png','on-off.png'],
+            imgDir2=StorMgr.siteUrl+'/template/mobile/css/res-apple/',
+            imgs2=['home.png','info.png','menu.png','set.png','shop.png','talk.png','tp-blacklist.png','tp-commnet.png','tp-flower.png','tp-love.png'],
+            loadedNum=0,
+            totleNum=29,
+            startT=Date.now(),
+            inter=setTimeout(function(){
+                finishLoad();
+            },15000),
+            finished=false;
+            
+            progressDom.appendChild(progressInte);
+            BODY.appendChild(loadDom);
+            BODY.appendChild(progressDom);
+
+        function finishLoad(){
+            if(finished)
+                return;
+            clearTimeout(inter);
+            BODY.removeChild(progressDom);
+            BODY.removeChild(loadDom);
+            cb();
+            finished=true;
+        }
+
+        $.each(imgs1,function(imgUrl,idx){
+            var img=new Image();
+            img.src=imgDir1+imgUrl;
+            img.onload=function(){
+                loadedNum++;
+                progressInte.style.width=Math.ceil(loadedNum*100/totleNum)+"%";
+                if(loadedNum>=totleNum){
+                    finishLoad();
+                }
+            }
+            loadDom.appendChild(img);
+        });
+        $.each(imgs2,function(imgUrl,idx){
+            var img=new Image();
+            img.src=imgDir2+imgUrl;
+            img.onload=function(){
+                loadedNum++;
+                progressInte.style.width=Math.ceil(loadedNum*100/totleNum)+"%";
+                if(loadedNum>=totleNum){
+                    finishLoad();
+                }
+            }
+            loadDom.appendChild(img);
+        });
     },
     /*执行ajax请求*/
     sendAction:function(url,data,method,secCb,errCb){

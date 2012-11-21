@@ -459,39 +459,20 @@ input[type=checkbox]:checked+div.che {
 .tp-info{
     background: url(res-apple/info.png) 50% 50% no-repeat;
 }
-.select .tp-info{
-    background-image: url(res-apple/info-act.png);
-}
 .tp-menu{
     background: url(res-apple/menu.png) 50% 50% no-repeat;
-}
-
-.select .tp-menu{
-    background-image: url(res-apple/menu-act.png);
 }
 .tp-home{
     background: url(res-apple/home.png) 50% 50% no-repeat;
 }
-.select .tp-home{
-    background-image: url(res-apple/home-act.png);
-}
 .tp-set{
     background: url(res-apple/set.png) 50% 50% no-repeat;
-}
-.select .tp-set{
-    background-image: url(res-apple/set-act.png);
 }
 .tp-love{
     background: url(res-apple/tp-love.png) 50% 50% no-repeat;
 }
-.select .tp-love{
-    background-image: url(res-apple/tp-love-act.png);
-}
 .tp-commnet{
     background: url(res-apple/tp-commnet.png) 50% 50% no-repeat;
-}
-.select .tp-commnet{
-    background-image: url(res-apple/tp-commnet-act.png);
 }
 .tp-flower{
     background: url(res-apple/tp-flower.png) 50% 50% no-repeat;
@@ -502,20 +483,11 @@ input[type=checkbox]:checked+div.che {
 .tp-blacklist{
     background: url(res-apple/tp-blacklist.png) 50% 50% no-repeat;
 }
-.select .tp-blacklist{
-    background-image: url(res-apple/tp-blacklist-act.png);
-}
 .tp-shop{
     background: url(res-apple/shop.png) 50% 50% no-repeat;
 }
-.select .tp-shop{
-    background-image: url(res-apple/shop-act.png);
-}
 .tp-talk{
     background: url(res-apple/talk.png) 50% 50% no-repeat;
-}
-.select .tp-talk{
-    background-image: url(res-apple/talk-act.png);
 }
 
 /******************************************************
@@ -594,7 +566,7 @@ input[type=checkbox]:checked+div.che {
      transition: all 200ms linear;
 }
 .swi-bg {
-    background-image:url('switch/on-off.png');
+    background-image:url('images/on-off.png');
     background-size:auto 100%;
     background-repeat:no-repeat;
     background-origin:border-box;
