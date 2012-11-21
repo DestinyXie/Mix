@@ -9,7 +9,7 @@
     // DOM.loadJs("http://192.168.40.28:8081/target/target-script.js",function(){alert('weinre test ok!')});
     
     /*取得GPS信息*/
-    Tools.getGpsInfo();
+    UserTools.getGpsInfo();
 
     /*预加载所有图片资源*/
     UserAction.preLoadResource(function(){
@@ -1863,7 +1863,11 @@ function UserMenus(name){
             break;
         case 'photo':
             menuObj.direct="vertical";
-            menuObj.items=["从相册中选择","拍照","取消"];
+            menuObj.title="上传照片";
+            menuObj.items=["从相册中选择","拍照"];
+            menuObj.onCancel=function(){
+                $("#mood").focus();
+            }
             menuObj.onSelect=function(idx){
                 Device.opCode++;
                 var imgurl,
@@ -1950,10 +1954,6 @@ function UserMenus(name){
                         setTimeout(function(){
                             Device.camera(cameraCb);
                         },0);
-                        break;
-                    case 2:
-                        if(!isMyPhoto)
-                            $("#mood").focus();
                         break;
                 }
             };

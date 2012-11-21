@@ -163,8 +163,10 @@ Mix.ui.popLayer={
             var maskOpt={};
             if(that.option.clickMaskHide){
                 maskOpt={maskClickCb:function(ev){
-                    if(ev.target==that.mask.maskDom)
+                    if(ev.target==that.mask.maskDom){
+                        that.option.onCancel&&that.option.onCancel();
                         that.hide();
+                    }
                 }}
             }
             that.mask=new Mix.ui.mask(maskOpt);
