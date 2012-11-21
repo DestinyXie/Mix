@@ -1515,8 +1515,9 @@ var UserAction={
     },
     /*预加载资源图片*/
     preLoadResource:function(cb){
-        var progressDom=DOM.create('div',{style:{'position':'absolute','top':'1em','width':'90%','left':'5%','height':'1em','border':'1px solid #852100','-webkit-box-shadow':'0 0 6px rgba(0,0,0,.6)'}}),
-            progressInte=DOM.create('div',{style:{'position':'absolute','top':'0','left':'o','height':'100%','width':'0','background-color':'#ED3B00','-webkit-transition':'width 100ms linear'}}),
+        var progressDom=DOM.create('div',{style:{'position':'absolute','top':'1em','width':'90%','left':'5%','height':'1em','border':'1px solid rgba(0,0,0,.9)','background-color':'#aaa','-webkit-box-shadow':'0 2px 10px rgba(0,0,0,.8)','-webkit-border-radius':'.6em','-webkit-transition':'opacity 500ms linear','opacity':'1'}}),
+            progressInte=DOM.create('div',{style:{'position':'absolute','top':'0','left':'o','height':'100%','width':'0','background-color':'#24C121','-webkit-transition':'width 100ms linear','-webkit-border-radius':'.6em','text-align':'center','overflow':'hidden','z-index':'1'}}),
+            proTxt=DOM.create('div',{style:{'position':'absolute','left':'48%','color':'#333','height':'100%','line-height':'1em','fontSize':'.8em','text-shadow':'1px 1px 0 #999','z-index':'2'}}),
             loadDom=DOM.create('div',{style:{'position':'absolute','height':'0','left':'10000em'}}),
             imgDir1=StorMgr.siteUrl+'/template/mobile/css/images/',
             imgs1=['f_1.png','f_2.png','f_3.png','f_4.png','f_5.png','list.png','icon-search-black.png','love.png','love-act.png','mood.png','plus.gif','pull-icon@2x.png','photo.png','close.png','comment.png','delete.png','plus.png','yes.png','on-off.png'],
@@ -1527,20 +1528,34 @@ var UserAction={
             startT=Date.now(),
             inter=setTimeout(function(){
                 finishLoad();
-            },15000),
+            },30000),
             finished=false;
             
             progressDom.appendChild(progressInte);
+            progressDom.appendChild(proTxt);
             BODY.appendChild(loadDom);
             BODY.appendChild(progressDom);
 
+        function oneLoad(){
+            loadedNum++;
+            var p=Math.ceil(loadedNum*100/totleNum)+"%";
+            proTxt.innerHTML=p;
+            progressInte.style.width=p;
+            if(loadedNum>=totleNum){
+                progressDom.style.opacity=0;
+                cb();
+                setTimeout(function(){
+                    finishLoad();
+                },500);
+                
+            }
+        }
         function finishLoad(){
             if(finished)
                 return;
             clearTimeout(inter);
             BODY.removeChild(progressDom);
             BODY.removeChild(loadDom);
-            cb();
             finished=true;
         }
 
@@ -1548,11 +1563,7 @@ var UserAction={
             var img=new Image();
             img.src=imgDir1+imgUrl;
             img.onload=function(){
-                loadedNum++;
-                progressInte.style.width=Math.ceil(loadedNum*100/totleNum)+"%";
-                if(loadedNum>=totleNum){
-                    finishLoad();
-                }
+                oneLoad();
             }
             loadDom.appendChild(img);
         });
@@ -1560,11 +1571,7 @@ var UserAction={
             var img=new Image();
             img.src=imgDir2+imgUrl;
             img.onload=function(){
-                loadedNum++;
-                progressInte.style.width=Math.ceil(loadedNum*100/totleNum)+"%";
-                if(loadedNum>=totleNum){
-                    finishLoad();
-                }
+                oneLoad();
             }
             loadDom.appendChild(img);
         });
