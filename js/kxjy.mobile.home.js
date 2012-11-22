@@ -1893,7 +1893,8 @@ function UserMenus(name){
             menuObj.title="上传照片";
             menuObj.items=["从相册中选择","拍照"];
             menuObj.onCancel=function(){
-                $("#mood").focus();
+                if(!/myPhoto/.test(pageEngine.curPage))
+                    $("#mood").focus();
             }
             menuObj.onSelect=function(idx){
                 Device.opCode++;
