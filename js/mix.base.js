@@ -3,12 +3,12 @@
 Mix={};//库名称
 
 /*常量设置*/
-var isTouch = ('ontouchstart' in WIN),
-START_EV = isTouch ? 'touchstart' : 'mousedown',
-MOVE_EV = isTouch ? 'touchmove' : 'mousemove',
-END_EV = isTouch ? 'touchend' : 'mouseup',
-CLICK_EV = isTouch ? 'touchend' : 'click',
-CANCEL_EV = isTouch ? 'touchcancel' : 'mouseup';
+var hasTouch = ('ontouchstart' in WIN),
+START_EV = hasTouch ? 'touchstart' : 'mousedown',
+MOVE_EV = hasTouch ? 'touchmove' : 'mousemove',
+END_EV = hasTouch ? 'touchend' : 'mouseup',
+CLICK_EV = hasTouch ? 'touchend' : 'click',
+CANCEL_EV = hasTouch ? 'touchcancel' : 'mouseup';
 
 /*考虑使用观察者模式 添加相应的响应函数来重绘正在显示的各个组件*/
 // RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';

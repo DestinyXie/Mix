@@ -41,10 +41,10 @@ var m = Math,
     hasTransitionEnd = prefixStyle('transition') in dummyStyle,
 
 	RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize',
-	START_EV = hasTouch ? 'touchstart' : 'mousedown',
-	MOVE_EV = hasTouch ? 'touchmove' : 'mousemove',
-	END_EV = hasTouch ? 'touchend' : 'mouseup',
-	CANCEL_EV = hasTouch ? 'touchcancel' : 'mouseup',
+	// START_EV = hasTouch ? 'touchstart' : 'mousedown',
+	// MOVE_EV = hasTouch ? 'touchmove' : 'mousemove',
+	// END_EV = hasTouch ? 'touchend' : 'mouseup',
+	// CANCEL_EV = hasTouch ? 'touchcancel' : 'mouseup',
 	WHEEL_EV = vendor == 'Moz' ? 'DOMMouseScroll' : 'mousewheel',
 	TRNEND_EV = (function () {
 		if ( vendor === false ) return false;
