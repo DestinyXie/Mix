@@ -95,7 +95,7 @@ Mix.scroll.prototype={
         var that = this;
         switch(e.type) {
             case START_EV:
-                if (!hasTouch && e.button !== 0) return;
+                if (!Mix.hasTouch && e.button !== 0) return;
                 that._start(e);
                 break;
             case MOVE_EV: that._move(e); break;
@@ -111,7 +111,7 @@ Mix.scroll.prototype={
             oe=new Event(e),
             matrix,x,y;
 
-        that.__checkDOMChanges();//add by destiny
+        that._checkDOMChanges();//add by destiny
 
         if(!that.enabled) return;
 
@@ -141,15 +141,15 @@ Mix.scroll.prototype={
             }
 
             if(x!=that.x||y!=that.y){
-                if(that.option.useTransition){
+                if(that.options.useTransition){
                     that._unbind(TRNEND_EV);
                 }else{
                     cancelFrame(that.aniTime);
                 }
                 that.steps=[];
                 that._pos(x,y);
-                if(that.option.onScrollEnd)
-                    that.option.onScrollEnd.call(that);
+                if(that.options.onScrollEnd)
+                    that.options.onScrollEnd.call(that);
             }
         }
 
@@ -159,8 +159,8 @@ Mix.scroll.prototype={
         that.startX=that.x;
         that.startY=that.y;
 
-        that.pointX=oe.PageX;
-        that.pointY=oe.PageY;
+        that.pointX=oe.pageX;
+        that.pointY=oe.pageY;
 
         that.startTime=e.timeStamp||Date.now();
 
@@ -174,9 +174,9 @@ Mix.scroll.prototype={
     },
     _move:function(e){
         var that=this,
-            oe=new Event(e),
-            deltaX=oe.pageX-that.pointX,
-            deltaY=oe.pageY-that.pointY,
+            point = Mix.hasTouch ? e.touches[0] : e,
+            deltaX=point.pageX-that.pointX,
+            deltaY=point.pageY-that.pointY,
             newX=that.x+deltaX,
             newY=that.y+deltaY,
             timestamp=e.timeStamp||Date.now();
@@ -184,8 +184,16 @@ Mix.scroll.prototype={
         if(that.options.onBreforeMove)
             that.options.onBreforeMove.call(that,e);
 
-        that.pointX=oe.pageX;
-        that.pointY=oe.pageY;
+        that.pointX=point.pageX;
+        that.pointY=point.pageY;
+
+        //超界减速
+        if(newX>0||newX<that.maxScrollX){
+            newX=that.options.bounce?that.x+(deltaX/2):newX>=0||that.maxScrollX>=0?0:that.max;
+        }
+        if(newY>that.minScrollY||newY<that.maxScrollY){
+            newY=that.options.bounce?that.y + (deltaY / 2) : newY >= that.minScrollY || that.maxScrollY >= 0 ? that.minScrollY : that.maxScrollY;
+        }
 
         that.distX += deltaX;
         that.distY += deltaY;
@@ -194,14 +202,6 @@ Mix.scroll.prototype={
 
         if (that.absDistX < 6 && that.absDistY < 6) {
             return;
-        }
-
-        //超界减速
-        if(newX>0||newX<that.maxScrollX){
-            newX=that.options.bounce?taht.x+(deltaX/2):newX>=0||that.maxScrollX>=0?0:that.max;
-        }
-        if(newY>that.minScrollY||newY<that.maxScrollY){
-            newY=that.options.bounce?that.y + (deltaY / 2) : newY >= that.minScrollY || that.maxScrollY >= 0 ? that.minScrollY : that.maxScrollY;
         }
 
         // Lock direction
@@ -270,8 +270,8 @@ Mix.scroll.prototype={
             if ((that.y > that.minScrollY && newPosY > that.minScrollY) || (that.y < that.maxScrollY && newPosY < that.maxScrollY)) momentumY = { dist:0, time:0 };
         }
         if (momentumX.dist || momentumY.dist) {
-            newDuration = m.max(m.max(momentumX.time, momentumY.time), 10);
-            that.scrollTo(m.round(newPosX), m.round(newPosY), newDuration);
+            newDuration = Math.max(Math.max(momentumX.time, momentumY.time), 10);
+            that.scrollTo(Math.round(newPosX), Math.round(newPosY), newDuration);
 
             if (that.options.onTouchEnd) that.options.onTouchEnd.call(that, e);
             return;
@@ -279,6 +279,17 @@ Mix.scroll.prototype={
 
         that._resetPos(200);
         if (that.options.onTouchEnd) that.options.onTouchEnd.call(that, e);
+    },
+    _transitionEnd:function(){
+        if(e.target!=that.scroller)
+            return;
+
+        that._unbind(TRNEND_EV);
+        that._startAni();
+    },
+    _resize:function(){
+        var that=this;
+        setTimeout(function(){that.refresh();},Mix.isAndroid?200:0);
     },
     _resetPos:function(time){
         var that = this,
@@ -311,6 +322,31 @@ Mix.scroll.prototype={
         if(this.hScrollbar)this.hScrollbarIndicator.style[transitionDuration]=time;
         if(this.vScrollbar)this.vScrollbarIndicator.style[transitionDuration]=time;
     },
+    _momentum:function(dist,time,maxDistUpper,maxDistLower,size){
+        var deceleration=.0006,
+            speed=Math.abs(dist)/time,
+            newDist=(speed*speed)/(2*deceleration),
+            newTime=0,
+            outsideDist=0;
+
+        //出界减速
+        if(dist>0&&newDist>maxDistUpper){
+            outsideDist = size/(6/(newDist/speed*deceleration));
+            maxDistUpper = maxDistUpper+outsideDist;
+            speed       = speed*maxDistUpper/newDist;
+            newDist     = maxDistUpper;
+        }else{
+            outsideDist  = size/(6/(newDist/speed*deceleration));
+            maxDistLower = maxDistLower+outsideDist;
+            speed        = speed*maxDistLower/newDist;
+            newDist      = maxDistLower;
+        }
+
+        newDist=newDist*(dist<9?-1:1);
+        newTime=speed/deceleration;
+
+        return {dist:newDist,time:Math.round(newTime)};
+    },
     _checkDOMChanges:function(){
         if (this.moved || this.animating ||
             (this.scrollerW == this.scroller.offsetWidth * this.scale && this.scrollerH == this.scroller.offsetHeight * this.scale && this.wrapperH==this.wrapper.clientHeight)) return;
@@ -318,7 +354,7 @@ Mix.scroll.prototype={
         this.refresh();
     },
     _pos:function(x,y){
-        y=this.hScroll?x:0;
+        x=this.hScroll?x:0;
         y=this.vScroll?y:0;
 
         if(this.options.useTransform){
@@ -335,6 +371,62 @@ Mix.scroll.prototype={
 
         this._scrollbarPos('h');
         this._scrollbarPos('v');
+    },
+    _startAni:function(){
+        var that=this,
+            startX=that.x,
+            startY=that.y,
+            startTime=Date.now(),
+            step,
+            easeOut,
+            animate;
+
+        if(that.animating)
+            return;
+
+        if(!that.steps.length){
+            that._resetPos(400);
+            return;
+        }
+
+        step=that.steps.shift();
+
+        if(step.x==startX&&step.y==startY)
+            step.time=0;
+
+        that.animating=true;
+        that.moved=true;//?
+
+        if (that.options.useTransition) {
+            that._transitionTime(step.time);
+            that._pos(step.x, step.y);
+            that.animating = false;
+            if (step.time) that._bind(TRNEND_EV);
+            else that._resetPos(0);
+            return;
+        }
+
+        animate = function () {
+            var now = Date.now(),
+                newX, newY;
+
+            if (now >= startTime + step.time) {
+                that._pos(step.x, step.y);
+                that.animating = false;
+                if (that.options.onAnimationEnd) that.options.onAnimationEnd.call(that);            // Execute custom code on animation end
+                that._startAni();
+                return;
+            }
+
+            now = (now - startTime) / step.time - 1;
+            easeOut = Math.sqrt(1 - now * now);
+            newX = (step.x - startX) * easeOut + startX;
+            newY = (step.y - startY) * easeOut + startY;
+            that._pos(newX, newY);
+            if (that.animating) that.aniTime = nextFrame(animate);
+        };
+
+        animate();
     },
     _scrollbar:function(dir){
         var that=this,
@@ -430,8 +522,7 @@ Mix.scroll.prototype={
 
     /* Public methods */
     refresh:function(){
-        var that=this,
-            offset;
+        var that=this;
 
         that.wrapperW   = that.wrapper.clientWidth||1;
         that.wrapperH   = that.wrapper.clientHeight||1;
@@ -454,19 +545,81 @@ Mix.scroll.prototype={
         that.hScrollbar=that.hScroll&&that.options.hScrollbar;
         that.vScrollbar=that.vScroll&&that.options.vScrollbar&&that.scrollerH>that.wrapperH;
 
-        offset = DOM.offset(that.wrapper);
-
-        that.wrapperOffsetLeft=offset.left;
-        that.wrapperOffsetTop=offset.top;
-
         /*scrollbars*/
         that._scrollbar('h');
         that._scrollbar('v');
+
+        if (!that.zoomed) {
+            that.scroller.style[Mix.transitionDuration] = '0';
+            that._resetPos(400);
+        }
     },
     destroy:function(){
+        var that = this;
 
-    },
-    scrollTo:function(){
+        that.scroller.style[Mix.transform] = '';
+
+        // Remove the scrollbars
+        that.hScrollbar = false;
+        that.vScrollbar = false;
+        that._scrollbar('h');
+        that._scrollbar('v');
+
+        // Remove the event listeners
+        that._unbind('resize', WIN);
+        that._unbind(START_EV);
+        that._unbind(MOVE_EV);
+        that._unbind(END_EV);
+        that._unbind(CANCEL_EV);
         
+        if (that.options.useTransition) that._unbind(TRNEND_EV);
+        
+        if (that.options.checkDOMChanges) clearInterval(that.checkDOMTime);
+        
+        if (that.options.onDestroy) that.options.onDestroy.call(that);
+    },
+    scrollTo:function(x,y,time,relative){
+        var that=this,
+            step=x;
+
+        that.stop();
+        if(!step.length)
+            step=[{x:x,y:y,time:time,relative:relative}];
+
+        for(var i=0,l=step.length;i<l;i++){
+            if(step[i].relative){
+                step[i].x=that.x-step[i].x;
+                step[i].y=that.y-step[i].y;
+            }
+            that.steps.push({x:step[i].x,y:step[i].y,time:step[i].time||0});
+        }
+
+        that._startAni();
+    },
+    disable: function () {
+        this.stop();
+        this._resetPos(0);
+        this.enabled = false;
+
+        this._unbind(MOVE_EV);
+        this._unbind(END_EV);
+        this._unbind(CANCEL_EV);
+    },
+    enable: function () {
+        this.enabled = true;
+    },
+    stop:function(){
+        var that=this;
+        if(that.options.useTransition){
+            that._unbind(TRNEND_EV);
+        }else if(that.aniTime){
+            cancelFrame(that.aniTime);
+        }
+        that.steps=[];
+        that.moved=false;
+        that.animating=false;
+    },
+    isReady: function () {
+        return !this.moved && !this.animating;
     }
 };

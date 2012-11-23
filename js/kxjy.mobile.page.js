@@ -1338,7 +1338,7 @@ PageEngine.prototype={
         switch(that.curPage){
             case "mainPhoto":
             case "mainList":
-                WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
+                WIN['myScroll']=initIScroll($('.pullDown'),'#wrapper');
                 var myInfo=StorMgr.myInfo;
                 if(Feed.mainParams){//mainPhoto,mainList页面取得记录参数
                     feedOption['addParams']=Feed.mainParams;
@@ -1350,7 +1350,7 @@ PageEngine.prototype={
                 Feed.init(feedOption);
                 break;
             case "rank":
-                WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
+                WIN['myScroll']=initIScroll($('.pullDown'),'#wrapper');
                 var userObj,
                     infoCent=StorMgr.infoCenter,
                     addrSpan=$(".rankAddress span");
@@ -1452,7 +1452,7 @@ PageEngine.prototype={
                 Feed.init(feedOption);
                 break;
             case "chat":
-                WIN['myScroll']=initIScroll($('.pullDown'),'wrapper',function(){
+                WIN['myScroll']=initIScroll($('.pullDown'),'#wrapper',function(){
                     ChatFeed.refresh();
                 });
                 feedOption['noDataTxt']="暂无数据,请返回";
@@ -1479,8 +1479,7 @@ PageEngine.prototype={
             case "blackList":
             case "likeMood":
             case "likePerson":
-            case "likePerson":
-                WIN['myScroll']=initIScroll($('.pullDown'),'wrapper');
+                WIN['myScroll']=initIScroll($('.pullDown'),'#wrapper');
                 feedOption['noDataTxt']="暂无数据,请返回";
                 Feed.init(feedOption);
                 break;

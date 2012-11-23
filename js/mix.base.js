@@ -5,7 +5,7 @@ Mix={
     /*Browser capabilities*/
     isAndroid : (/android/gi).test(navigator.appVersion),
     isIDevice : (/iphone|ipad/gi).test(navigator.appVersion)
-};
+},nextFrame,cancelFrame;
 
 (function(){//包裹局部变量
 function prefix (style) {
@@ -53,12 +53,12 @@ Mix.hasTransitionEnd = prefix('transition') in dummyStyle;
 * 浏览器的(prefix)requestAnimationFrame属性能使动画更流畅
 * (prefix)requestAnimationFrame接受一个参数，是一个屏幕重绘前被调用的函数
 */
-Mix.nextFrame = (function() {
+nextFrame = (function() {
     return WIN.requestAnimationFrame ||
         WIN[vender+'RequestAnimationFrame']||
         function(callback) { return setTimeout(callback, 1); };
 })();
-Mix.cancelFrame = (function () {
+cancelFrame = (function () {
     return WIN.cancelRequestAnimationFrame ||
         WIN.webkitCancelAnimationFrame ||
         WIN[vender+'CancelRequestAnimationFrame']||

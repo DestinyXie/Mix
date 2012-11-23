@@ -490,7 +490,7 @@ function initIScroll(pullDownEl,wrapperID,downAction) {
     }
     var pullDownOffset = pullDownEl.offsetHeight;
     
-    var myScroll = new iScroll(wrapperID, {
+    var myScroll = new Mix.scroll(wrapperID, {
         useTransform: false,//使用Transform的时候 在手机上点击地区选择的select应用会卡死
         topOffset: pullDownOffset,
         onRefresh: function () {
@@ -499,7 +499,7 @@ function initIScroll(pullDownEl,wrapperID,downAction) {
                 $('.pullDownLabel',pullDownEl).innerHTML = '下拉刷新页面...';
             }
         },
-        onScrollMove: function () {
+        onMove: function () {
             if (this.y > 5) {
                 $('.pullDownIcon')&&($('.pullDownIcon').style.webkitTransform='rotate(-180deg)');
                 $('.pullDownLabel',pullDownEl).innerHTML = '释放刷新页面...';
@@ -522,7 +522,7 @@ function initIScroll(pullDownEl,wrapperID,downAction) {
         onScrollEnd: function () {
             if ($('.pullDownLabel',pullDownEl).innerHTML == '释放刷新页面...') {
                 DOM.addClass(pullDownEl,'loading');
-                pullDownEl.querySelector('.pullDownLabel').innerHTML = '载入中...';                
+                $('.pullDownLabel',pullDownEl).innerHTML = '载入中...';                
                 if($.isFunc(downAction)){
                     downAction();
                 }else{
