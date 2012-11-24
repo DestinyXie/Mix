@@ -30,7 +30,9 @@
         //public Events
         onRefresh:null,
         onBeforeStart:function(e){
-
+            if(!['INPUT','TEXTAREA'].has(e.target.tagName)){
+                e.preventDefault();
+            }
         },
         onStart:null,
         onBreforeMove:null,
@@ -61,10 +63,10 @@
 
     //cubic-bezier bezier曲线
     if (that.options.useTransition) 
-        that.scroller.style[transitionTimingFunction] = 'cubic-bezier(0.33,0.66,0.66,1)';
+        that.scroller.style[Mix.transitionTimingFunction] = 'cubic-bezier(0.33,0.66,0.66,1)';
 
     if(that.options.useTransform){
-        that.scroller.style[Mix.transform] = '';
+        that.scroller.style[Mix.transform] = 'translate(' + that.x + 'px,' + that.y + 'px)'+Mix.translateZ;
     }else{
         that.scroller.style.cssText+=';position:absolute;top:'+that.y+'px;left:'+that.x+'px';
     }
@@ -108,7 +110,7 @@ Mix.scroll.prototype={
     },
     _start:function(e){
         var that=this,
-            oe=new Event(e),
+            point=Mix.hasTouch ? e.touches[0] : e,
             matrix,x,y;
 
         that._checkDOMChanges();//add by destiny
@@ -159,8 +161,8 @@ Mix.scroll.prototype={
         that.startX=that.x;
         that.startY=that.y;
 
-        that.pointX=oe.pageX;
-        that.pointY=oe.pageY;
+        that.pointX=point.pageX;
+        that.pointY=point.pageY;
 
         that.startTime=e.timeStamp||Date.now();
 
@@ -189,7 +191,7 @@ Mix.scroll.prototype={
 
         //超界减速
         if(newX>0||newX<that.maxScrollX){
-            newX=that.options.bounce?that.x+(deltaX/2):newX>=0||that.maxScrollX>=0?0:that.max;
+            newX=that.options.bounce?that.x+(deltaX/2):newX>=0||that.maxScrollX>=0?0:that.maxScrollX;
         }
         if(newY>that.minScrollY||newY<that.maxScrollY){
             newY=that.options.bounce?that.y + (deltaY / 2) : newY >= that.minScrollY || that.maxScrollY >= 0 ? that.minScrollY : that.maxScrollY;
@@ -234,9 +236,7 @@ Mix.scroll.prototype={
         if(Mix.hasTouch&&e.touches.length!==0)return;
 
         var that=this,
-            oe=new Event(e),
-            target,
-            ev,
+            point = Mix.hasTouch ? e.changedTouches[0] : e,
             momentumX={dist:0,time:0},
             momentumY={dist:0,time:0},
             duration=(e.timeStamp||Date.now())-that.startTime,
