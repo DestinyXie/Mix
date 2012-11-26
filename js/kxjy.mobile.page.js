@@ -1403,7 +1403,7 @@ PageEngine.prototype={
                 break;
             case "myPhoto":
             case "hisPhoto":
-                WIN['myScroll']=new iScroll('wrapper');
+                WIN['myScroll']=new Mix.scroll('wrapper',{useTransform:false});
                 if("myPhoto"==that.curPage){
                     feedOption['lastPos']=1;
                 }
@@ -1416,8 +1416,8 @@ PageEngine.prototype={
                 Feed.init(feedOption);
                 break;
             case "editInfo":
-                WIN['myScroll']=new iScroll('wrapper',{
-                    useTransform: false,
+                WIN['myScroll']=new Mix.scroll('wrapper',{
+                    useTransform: false,//useTransform是个神奇的属性
                     onBeforeScrollStart: function (e) {
                         var target = e.target;
                         while (target.nodeType != 1) target = target.parentNode;
@@ -1433,20 +1433,20 @@ PageEngine.prototype={
                 break;
             case "myDetail":
             case "hisDetail":
-                WIN['myScroll']=new iScroll('wrapper');
+                WIN['myScroll']=new Mix.scroll('wrapper');
                 feedOption['cont']=$('div.comment');
                 Feed.init(feedOption);
                 Comment.init('.enter');
                 break;
             case "chatList":
-                WIN['myScroll']=new iScroll('wrapper');
+                WIN['myScroll']=new Mix.scroll('wrapper');
                 feedOption['cont']=$('.chatList');
                 feedOption['noDataTxt']="暂无数据,请返回";
                 ChatListFeed.init(feedOption);
                 break;
             case "commentMe":
             case "sendComment":
-                WIN['myScroll']=new iScroll('wrapper');
+                WIN['myScroll']=new Mix.scroll('wrapper');
                 feedOption['cont']=$('.chatList');
                 feedOption['noDataTxt']="暂无数据,请返回";
                 Feed.init(feedOption);
@@ -1485,7 +1485,7 @@ PageEngine.prototype={
                 break;
             case "infoCenter":
             case "more":
-                WIN['myScroll']=new iScroll('wrapper');
+                WIN['myScroll']=new Mix.scroll('wrapper');
                 break;
         }
     },

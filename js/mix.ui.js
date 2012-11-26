@@ -71,6 +71,7 @@ Mix.ui.tips={
 /*背景遮罩*/
 Mix.ui.mask=function(opts){
     this.show(opts);
+    return this;
 }
 
 Mix.ui.mask.prototype={
@@ -164,8 +165,8 @@ Mix.ui.popLayer={
             if(that.option.clickMaskHide){
                 maskOpt={maskClickCb:function(ev){
                     if(ev.target==that.mask.maskDom){
-                        that.option.onCancel&&that.option.onCancel();
                         that.hide();
+                        that.option.onCancel&&that.option.onCancel();
                     }
                 }}
             }
@@ -193,15 +194,13 @@ Mix.ui.popLayer={
 
 
         if(that.option.canScroll){
-            that.scroller=new iScroll(that.option.domId,scrollOpt);
+            that.scroller=new Mix.scroll(that.option.domId,scrollOpt);
         }
     },
     hide:function(){
         var that=this;
-
         that.container.removeChild(that.layerDom);
         that.option.useMask&&that.mask.hide();
-
         that.option.hideEnd&&that.option.hideEnd.call(null);
         that.subHide&&that.subHide();//执行子类的hide方法
     }
@@ -481,134 +480,6 @@ Mix.ui.select=extend({},Mix.ui.popLayer,{
         that.option.onCancel&&that.option.onCancel();
     }
 });
-
-
-/*下拉刷新页面*/
-function initIScroll(pullDownEl,wrapperID,downAction) {
-    function pullDownAction () {
-        Feed.refresh();
-    }
-    var pullDownOffset = pullDownEl.offsetHeight;
-    
-    var myScroll = new Mix.scroll(wrapperID, {
-        useTransform: false,//使用Transform的时候 在手机上点击地区选择的select应用会卡死
-        topOffset: pullDownOffset,
-        onRefresh: function () {
-            if (DOM.hasClass(pullDownEl,'loading')) {
-                DOM.removeClass(pullDownEl,'loading');
-                $('.pullDownLabel',pullDownEl).innerHTML = '下拉刷新页面...';
-            }
-        },
-        onMove: function () {
-            if (this.y > 5) {
-                $('.pullDownIcon')&&($('.pullDownIcon').style.webkitTransform='rotate(-180deg)');
-                $('.pullDownLabel',pullDownEl).innerHTML = '释放刷新页面...';
-                this.minScrollY = 0;
-            } else if (this.y < 5) {
-                if($('.pullDownIcon')){
-                    if((this.y>-pullDownOffset/2)&&this.y<=0){
-                        var roVal=-180*(2*this.y/pullDownOffset-1);
-                        $('.pullDownIcon').style.webkitTransform='rotate('+roVal+'deg)';
-                    }else if(this.y<-pullDownOffset/2){
-                        $('.pullDownIcon').style.webkitTransform='rotate(0deg)';
-                    }
-                }
-
-                DOM.removeClass(pullDownEl,'flip');
-                $('.pullDownLabel',pullDownEl).innerHTML = '下拉刷新页面...';
-                this.minScrollY = -pullDownOffset;
-            }
-        },
-        onScrollEnd: function () {
-            if ($('.pullDownLabel',pullDownEl).innerHTML == '释放刷新页面...') {
-                DOM.addClass(pullDownEl,'loading');
-                $('.pullDownLabel',pullDownEl).innerHTML = '载入中...';                
-                if($.isFunc(downAction)){
-                    downAction();
-                }else{
-                    pullDownAction();
-                }
-            }
-        }
-    });
-    setTimeout(function () {$('#wrapper').style.left = '0'; }, 100);
-
-    return myScroll;
-}
-
-/*时间地点部分滚动常驻顶部*/
-function initDockScroll(dockSel,wrapperID,listEl){
-    var wrapper=$("#"+wrapperID);
-        fackDock=DOM.create("div");
-    DOM.addClass(fackDock,"fackDock");
-    wrapper.appendChild(fackDock);
-
-    var dockList,calculTime=0,calculInter,calculing=false;
-
-    function calculPos(){
-        if(calculing)
-            return;
-        calculing=true;
-        if(calculTime>3){
-            clearInterval(calculInter);
-            calculTime=0;
-        }else{
-            dockList=$$(dockSel,$(listEl)),len=dockList.length;
-            var st=myScroll.y;
-            if(len==0)
-                return;
-
-            if((st+dockList[0].offsetTop)>=0){
-                fackDock.style.display="none";
-            }else{
-                fackDock.style.display="block";
-                fackDock.style.width=dockList[0].offsetWidth+"px";
-            }
-            $.each(dockList,function(o,i){
-                var op=o.offsetTop+st,
-                    nt=(i+1<len)?dockList[i+1].offsetTop:1000000,
-                    np=nt+st,
-                    oh=o.offsetHeight;
-                if(op<=0&&np>0){
-                    fackDock.innerHTML="";
-                    fackDock.appendChild(o.cloneNode(true));
-                    fackDock.style.top="0";
-                    if(np<oh){
-                        fackDock.appendChild(dockList[i+1].cloneNode(true));
-                        fackDock.style.top=(st+nt-oh)+"px";
-                    }
-                }
-            });
-            calculTime++;
-        }
-        calculing=false;
-    }
-
-    myScroll = new iScroll(wrapperID, {
-        useTransition: true,
-        onRefresh: function () {
-        },
-        onScrollStart:function(){
-        },
-        onScrollMove: function () {
-            if(myScroll.y>=0){
-                fackDock.style.display="none";
-            }else{
-                fackDock.style.display="block";
-                calculPos();
-                clearInterval(calculInter);
-                calculTime=0;
-                calculInter=setInterval(calculPos,500);
-            }
-        },
-        onScrollEnd: function () {
-        }
-    });
-    
-    setTimeout(function () { wrapper.style.left = '0'; }, 100);
-
-    return myScroll;
-}
 
 /*原生提示信息，默认2,3秒消失*/
 function toast(s,t){

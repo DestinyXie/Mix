@@ -1262,7 +1262,7 @@ var Comment={
         mb.setAttribute('_click','Comment.selectMood(this)');
         this.commBox.appendChild(mb);
         if(needScroll){
-            this.scroller=new iScroll($('.scroller',mb),scrollObj);
+            this.scroller=new Mix.scroll($('.scroller',mb),scrollObj);
         }
         this.moodBox=mb;
     },

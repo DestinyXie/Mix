@@ -1,7 +1,7 @@
-/*简易版iScroll,去掉了zoom和snap,from iScroll v4.2.2(http://cubiq.org)*/
+/*简易版iScroll,去掉了zoom和snap,from iScroll v4.2.2(copyright http://cubiq.org)*/
 ;Mix.scroll=function (sel, options) {
     var that=this;
-    that.wrapper=(sel.nodeType==1)?sel:$(sel);
+    that.wrapper=(sel.nodeType==1)?sel:$(sel)||$('#'+sel);
     that.wrapper.style.overflow='hidden';
     that.scroller=$('.scroller',that.wrapper)||that.wrapper.children[0];
 
@@ -62,7 +62,7 @@
     that.scroller.style[Mix.transformOrigin] = '0 0';
 
     //cubic-bezier bezier曲线
-    if (that.options.useTransition) 
+    if (that.options.useTransition)
         that.scroller.style[Mix.transitionTimingFunction] = 'cubic-bezier(0.33,0.66,0.66,1)';
 
     if(that.options.useTransform){
@@ -134,7 +134,7 @@ Mix.scroll.prototype={
 
         if(that.options.momentum){
             if(that.options.useTransform){
-                matrix=getComputedStyle(that.scroller,null)[transform].replace(/[^0-9\-.,]/g,'').split(',');
+                matrix=getComputedStyle(that.scroller,null)[Mix.transform].replace(/[^0-9\-.,]/g,'').split(',');
                 x=+matrix[4];
                 y=+matrix[5];
             }else{
@@ -146,7 +146,8 @@ Mix.scroll.prototype={
                 if(that.options.useTransition){
                     that._unbind(TRNEND_EV);
                 }else{
-                    cancelFrame(that.aniTime);
+                    Mix.cancelFrame.call(null,that.aniTime);
+                    that.aniTime=null;
                 }
                 that.steps=[];
                 that._pos(x,y);
@@ -171,7 +172,7 @@ Mix.scroll.prototype={
 
         that._bind(MOVE_EV);
         that._bind(END_EV);
-        that._bind(CANCEL_EV);//??
+        that._bind(CANCEL_EV);
 
     },
     _move:function(e){
@@ -280,7 +281,9 @@ Mix.scroll.prototype={
         that._resetPos(200);
         if (that.options.onTouchEnd) that.options.onTouchEnd.call(that, e);
     },
-    _transitionEnd:function(){
+    _transitionEnd:function(e){
+        var that=this;
+
         if(e.target!=that.scroller)
             return;
 
@@ -303,11 +306,11 @@ Mix.scroll.prototype={
             }
 
             if (that.hScrollbar && that.options.hideScrollbar) {
-                if (vendor == 'webkit') that.hScrollbarWrapper.style[transitionDelay] = '300ms';
+                if ('webkit'==Mix.cssVender) that.hScrollbarWrapper.style[Mix.transitionDelay] = '300ms';
                 that.hScrollbarWrapper.style.opacity = '0';
             }
             if (that.vScrollbar && that.options.hideScrollbar) {
-                if (vendor == 'webkit') that.vScrollbarWrapper.style[transitionDelay] = '300ms';
+                if ('webkit'==Mix.cssVender) that.vScrollbarWrapper.style[Mix.transitionDelay] = '300ms';
                 that.vScrollbarWrapper.style.opacity = '0';
             }
 
@@ -318,9 +321,9 @@ Mix.scroll.prototype={
     },
     _transitionTime:function(time){
         time+='ms';
-        this.scroller.style[transitionDuration]=time;
-        if(this.hScrollbar)this.hScrollbarIndicator.style[transitionDuration]=time;
-        if(this.vScrollbar)this.vScrollbarIndicator.style[transitionDuration]=time;
+        this.scroller.style[Mix.transitionDuration]=time;
+        if(this.hScrollbar)this.hScrollbarIndicator.style[Mix.transitionDuration]=time;
+        if(this.vScrollbar)this.vScrollbarIndicator.style[Mix.transitionDuration]=time;
     },
     _momentum:function(dist,time,maxDistUpper,maxDistLower,size){
         var deceleration=.0006,
@@ -358,7 +361,7 @@ Mix.scroll.prototype={
         y=this.vScroll?y:0;
 
         if(this.options.useTransform){
-            this.scroller.style[Mix.transform]='translate('+x+'px,'+y+'px)'+translateZ;
+            this.scroller.style[Mix.transform]='translate('+x+'px,'+y+'px)'+Mix.translateZ;
         }else{
             x=Math.round(x);
             y=Math.round(y);
@@ -423,7 +426,7 @@ Mix.scroll.prototype={
             newX = (step.x - startX) * easeOut + startX;
             newY = (step.y - startY) * easeOut + startY;
             that._pos(newX, newY);
-            if (that.animating) that.aniTime = nextFrame(animate);
+            if (that.animating) that.aniTime = Mix.nextFrame.call(null,animate);
         };
 
         animate();
@@ -460,20 +463,18 @@ Mix.scroll.prototype={
             that.wrapper.appendChild(bar);
         }
 
-        if(dir='h'){
-            if (dir == 'h') {
-                that.hScrollbarSize = that.hScrollbarWrapper.clientWidth;
-                that.hScrollbarIndicatorSize = Math.max(Math.round(that.hScrollbarSize * that.hScrollbarSize / that.scrollerW), 8);
-                that.hScrollbarIndicator.style.width = that.hScrollbarIndicatorSize + 'px';
-                that.hScrollbarMaxScroll = that.hScrollbarSize - that.hScrollbarIndicatorSize;
-                that.hScrollbarProp = that.hScrollbarMaxScroll / that.maxScrollX;
-            } else {
-                that.vScrollbarSize = that.vScrollbarWrapper.clientHeight;
-                that.vScrollbarIndicatorSize = Math.max(Math.round(that.vScrollbarSize * that.vScrollbarSize / that.scrollerH), 8);
-                that.vScrollbarIndicator.style.height = that.vScrollbarIndicatorSize + 'px';
-                that.vScrollbarMaxScroll = that.vScrollbarSize - that.vScrollbarIndicatorSize;
-                that.vScrollbarProp = that.vScrollbarMaxScroll / that.maxScrollY;
-            }
+        if (dir == 'h') {
+            that.hScrollbarSize = that.hScrollbarWrapper.clientWidth;
+            that.hScrollbarIndicatorSize = Math.max(Math.round(that.hScrollbarSize * that.hScrollbarSize / that.scrollerW), 8);
+            that.hScrollbarIndicator.style.width = that.hScrollbarIndicatorSize + 'px';
+            that.hScrollbarMaxScroll = that.hScrollbarSize - that.hScrollbarIndicatorSize;
+            that.hScrollbarProp = that.hScrollbarMaxScroll / that.maxScrollX;
+        } else {
+            that.vScrollbarSize = that.vScrollbarWrapper.clientHeight;
+            that.vScrollbarIndicatorSize = Math.max(Math.round(that.vScrollbarSize * that.vScrollbarSize / that.scrollerH), 8);
+            that.vScrollbarIndicator.style.height = that.vScrollbarIndicatorSize + 'px';
+            that.vScrollbarMaxScroll = that.vScrollbarSize - that.vScrollbarIndicatorSize;
+            that.vScrollbarProp = that.vScrollbarMaxScroll / that.maxScrollY;
         }
 
         //reset position
@@ -487,20 +488,20 @@ Mix.scroll.prototype={
         if(!that[dir+'Scrollbar'])
             return;
 
-        pos=that[dir+'ScrollbarProp']+pos;
+        pos=that[dir+'ScrollbarProp']*pos;
 
         if(pos<0){
             if(!that.options.fixedScrollbar){
                 size=that[dir+'ScrollbarIndicatorSize']+Math.round(pos*3);
                 if(size<8)size=8;
-                that[dir+'ScrollbarIndicator'].style[dir=='h'?'width':'height']=siez+'px';
+                that[dir+'ScrollbarIndicator'].style[dir=='h'?'width':'height']=size+'px';
             }
             pos=0;
         }else if(pos>that[dir+'ScrollbarMaxScroll']){
             if(!that.options.fixedScrollbar){
                 size=that[dir+'ScrollbarIndicatorSize']-Math.round((pos-that[dir+'ScrollbarMaxScroll'])*3);
                 if(size<8)size=8;
-                that[dir+'ScrollbarIndicator'].style[dir=='h'?'width':'height']=siez+'px';
+                that[dir+'ScrollbarIndicator'].style[dir=='h'?'width':'height']=size+'px';
                 pos=that[dir+'ScrollbarMaxScroll']+(that[dir+'ScrollbarIndicatorSize']-size);
             }else{
                 pos=that[dir+'ScrollbarMaxScroll'];
@@ -613,7 +614,8 @@ Mix.scroll.prototype={
         if(that.options.useTransition){
             that._unbind(TRNEND_EV);
         }else if(that.aniTime){
-            cancelFrame(that.aniTime);
+            Mix.cancelFrame.call(null,that.aniTime);
+            that.aniTime=null;
         }
         that.steps=[];
         that.moved=false;
