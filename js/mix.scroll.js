@@ -110,7 +110,7 @@ Mix.scroll.prototype={
     },
     _start:function(e){
         var that=this,
-            point=Mix.hasTouch ? e.touches[0] : e,
+            point=new Event(e),
             matrix,x,y;
 
         that._checkDOMChanges();//add by destiny
@@ -173,17 +173,15 @@ Mix.scroll.prototype={
         that._bind(MOVE_EV);
         that._bind(END_EV);
         that._bind(CANCEL_EV);
-
     },
     _move:function(e){
         var that=this,
-            point = Mix.hasTouch ? e.touches[0] : e,
+            point = new Event(e),
             deltaX=point.pageX-that.pointX,
             deltaY=point.pageY-that.pointY,
             newX=that.x+deltaX,
             newY=that.y+deltaY,
             timestamp=e.timeStamp||Date.now();
-
         if(that.options.onBreforeMove)
             that.options.onBreforeMove.call(that,e);
 
@@ -237,7 +235,6 @@ Mix.scroll.prototype={
         if(Mix.hasTouch&&e.touches.length!==0)return;
 
         var that=this,
-            point = Mix.hasTouch ? e.changedTouches[0] : e,
             momentumX={dist:0,time:0},
             momentumY={dist:0,time:0},
             duration=(e.timeStamp||Date.now())-that.startTime,
@@ -550,10 +547,8 @@ Mix.scroll.prototype={
         that._scrollbar('h');
         that._scrollbar('v');
 
-        if (!that.zoomed) {
-            that.scroller.style[Mix.transitionDuration] = '0';
-            that._resetPos(400);
-        }
+        that.scroller.style[Mix.transitionDuration] = '0';
+        that._resetPos(400);
     },
     destroy:function(){
         var that = this;
