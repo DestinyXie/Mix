@@ -628,7 +628,7 @@ var contentTmpl={
     '<div id="wrapper" class="bg">',
     '<div>',
     '<div class="pullDown">',
-    // '<span class="pullDownIcon"></span>',
+    '<span class="pullDownIcon"></span>',
     '<span class="pullDownLabel">下拉查看更多...</span>',
     '</div>',
     '<div id="chatContent">',

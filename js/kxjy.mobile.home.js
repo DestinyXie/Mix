@@ -1836,7 +1836,7 @@ var UserTools={
 
 /*用到的菜单*/
 function UserMenus(name){
-    var menuObj={
+    var menuOpt={
             pos:"middle",
             onShow:function(UImenu){
                 Device.backFunc.unshift(function(){UImenu.hide();});
@@ -1851,9 +1851,9 @@ function UserMenus(name){
 
     switch(name){
         case 'menuBtn':
-            menuObj.pos="bottom";
-            menuObj.items=['注销用户','退出应用'];
-            menuObj.onSelect=function(idx){
+            menuOpt.pos="bottom";
+            menuOpt.items=['注销用户','退出应用'];
+            menuOpt.onSelect=function(idx){
                 switch(idx*1){
                     case 0:
                         UserAction.logOut();
@@ -1865,10 +1865,10 @@ function UserMenus(name){
             };
             break;
         case 'search':
-            menuObj.direct="vertical";
-            menuObj.title="筛选";
-            menuObj.items=['显示全部','只显示男','只显示女','更换地区'];
-            menuObj.onSelect=function(idx){
+            menuOpt.direct="vertical";
+            menuOpt.title="筛选";
+            menuOpt.items=['显示全部','只显示男','只显示女','更换地区'];
+            menuOpt.onSelect=function(idx){
                 switch(idx*1){
                     case 0:
                         Feed.addParams="sex=2";
@@ -1889,14 +1889,14 @@ function UserMenus(name){
             };
             break;
         case 'photo':
-            menuObj.direct="vertical";
-            menuObj.title="上传照片";
-            menuObj.items=["从相册中选择","拍照"];
-            menuObj.onCancel=function(){
+            menuOpt.direct="vertical";
+            menuOpt.title="上传照片";
+            menuOpt.items=["从相册中选择","拍照"];
+            menuOpt.onCancel=function(){
                 if(!/myPhoto/.test(pageEngine.curPage))
                     $("#mood").focus();
             }
-            menuObj.onSelect=function(idx){
+            menuOpt.onSelect=function(idx){
                 Device.opCode++;
                 var imgurl,
                     uopCode=Device.opCode,
@@ -1987,7 +1987,7 @@ function UserMenus(name){
             };
             break;
     }
-    Mix.ui.menu.show(menuObj);
+    Mix.ui.menu.show(menuOpt);
 }
 
 /*下拉刷新页面*/

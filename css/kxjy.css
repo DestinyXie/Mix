@@ -121,7 +121,8 @@ body {
 	font-weight:bold;
 	font-size:0.9em;
 	color:#888;
-	text-align:center;
+	/*text-align:center;*/
+	padding-left:30%;
 }
 .pullDown .pullDownIcon {
 	vertical-align:middle;
@@ -1102,6 +1103,7 @@ li .comment{
 	top:0;
 	height:100%;
 	width:100%;
+
 	background-color:rgba(0,0,0,0.5);
 	z-index:100;
 }
