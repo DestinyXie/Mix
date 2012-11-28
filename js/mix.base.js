@@ -387,7 +387,7 @@ var DOM = {
 */
 var Delegate = {
     /*初始化函数*/
-    longTapTime:2000,//长按时间设置
+    longTapTime:1500,//长按时间设置
     longTapInter:null,//长按监听
     init: function() {
         DOM.addEvent(DOC, START_EV, Delegate['start']);
@@ -427,6 +427,8 @@ var Delegate = {
             DOM.addEvent(DOC, MOVE_EV, Delegate['move']);
             DOM.addEvent(DOC, END_EV, Delegate['end']);
         }
+
+        oe.stop();//android长按会触发选择
 
         if(Delegate.hasLongTap){//是长按
             Delegate.longTapInter=setTimeout(function(){

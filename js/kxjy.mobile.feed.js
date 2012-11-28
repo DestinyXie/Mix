@@ -146,7 +146,7 @@
         '</div>',
         '<strong class="DynamicMore" _click="ViewMgr.gotoPage(${cb:isselfDetail},\'wid=${parentid}\')">></strong>',
     '</div>'].join(''),
-    blackList:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');"></span></div>',
+    blackList:'<div _click="ViewMgr.gotoPage(\'hisPhoto\',\'user_id=${uid}\')" class="mainList ub-img1" _longTap="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');"><img src="${avatarPicUrlx}" alt="" /><span class="myPhotoClose" _click="UserAction.shieldPerson(\'del\',this.parentNode,\'${uid}\');"></span></div>',
     rank:['<div class="rankList uc-t ub b-gra ub-ac umh4 lis">',
             '<div class="topRank">${index:}</div>',
             '<div class="commentListAvatar" ${cb:isself}>',
