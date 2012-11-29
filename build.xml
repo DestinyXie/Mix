@@ -38,7 +38,7 @@
             <path path="${js.path}/validate.js"/>
             <path path="${js.path}/Mix.base.js"/>
             <path path="${js.path}/Mix.scroll.js"/>
-            <path path="${js.path}/Mix.bridge.js"/>
+            <path path="${js.path}/Mix.bridge.appcan.js"/>
             <path path="${js.path}/Mix.x.js"/>
             <path path="${js.path}/Mix.ui.js"/>
             <path path="${js.path}/kxjy.mobile.page.js"/>
@@ -86,7 +86,7 @@
             <path path="${js.path}/validate.js"/>
             <path path="${js.path}/Mix.base.js"/>
             <path path="${js.path}/Mix.scroll.js"/>
-            <path path="${js.path}/Mix.bridge.js"/>
+            <path path="${js.path}/Mix.bridge.appcan.js"/>
             <path path="${js.path}/Mix.x.js"/>
             <path path="${js.path}/Mix.ui.js"/>
             <path path="${js.path}/kxjy.mobile.page.js"/>

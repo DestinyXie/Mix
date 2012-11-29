@@ -377,6 +377,17 @@ var DOM = {
             HEAD.removeChild(sc);
             cb&&cb();
         }
+    },
+    loadCss:function(src,cb){
+        var css=DOC.createElement("link");
+        css.rel="stylesheet";
+        css.type="text/css";
+        css.href=src;
+        HEAD.appendChild(css);
+        css.onload=function(){
+            cb&&cb();
+            // HEAD.removeChild(css);
+        }
     }
 };
 

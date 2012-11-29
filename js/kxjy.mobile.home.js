@@ -1831,6 +1831,192 @@ var UserTools={
                 Device.getAddress(lat,log,secCb,errCb);
             }
         );
+    },
+    base64:function(str,decode){
+        var base64encodechars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        var base64decodechars = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
+        -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+        -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1];
+        function base64encode(str) {
+            var out, i, len;
+            var c1, c2, c3;
+            len = str.length;
+            i = 0;
+            out = "";
+            while (i < len) {
+                c1 = str.charCodeAt(i++) & 0xff;
+                if (i == len) {
+                    out += base64encodechars.charAt(c1 >> 2);
+                    out += base64encodechars.charAt((c1 & 0x3) << 4);
+                    out += "==";
+                    break;
+                }
+                c2 = str.charCodeAt(i++);
+                if (i == len) {
+                    out += base64encodechars.charAt(c1 >> 2);
+                    out += base64encodechars.charAt(((c1 & 0x3) << 4) | ((c2 & 0xf0) >> 4));
+                    out += base64encodechars.charAt((c2 & 0xf) << 2);
+                    out += "=";
+                    break;
+                }
+                c3 = str.charCodeAt(i++);
+                out += base64encodechars.charAt(c1 >> 2);
+                out += base64encodechars.charAt(((c1 & 0x3) << 4) | ((c2 & 0xf0) >> 4));
+                out += base64encodechars.charAt(((c2 & 0xf) << 2) | ((c3 & 0xc0) >> 6));
+                out += base64encodechars.charAt(c3 & 0x3f);
+            }
+            return out;
+        }
+        function base64decode(str) {
+            var c1, c2, c3, c4;
+            var i, len, out;
+            len = str.length;
+            i = 0;
+            out = "";
+            while (i < len) {
+               
+                do {
+                    c1 = base64decodechars[str.charCodeAt(i++) & 0xff];
+                } while (i < len && c1 == -1);
+                if (c1 == -1)
+                    break;
+               
+                do {
+                    c2 = base64decodechars[str.charCodeAt(i++) & 0xff];
+                } while (i < len && c2 == -1);
+                if (c2 == -1)
+                    break;
+                out += String.fromCharCode((c1 << 2) | ((c2 & 0x30) >> 4));
+               
+                do {
+                    c3 = str.charCodeAt(i++) & 0xff;
+                    if (c3 == 61)
+                        return out;
+                    c3 = base64decodechars[c3];
+                } while (i < len && c3 == -1);
+                if (c3 == -1)
+                    break;
+                out += String.fromCharCode(((c2 & 0xf) << 4) | ((c3 & 0x3c) >> 2));
+               
+                do {
+                    c4 = str.charCodeAt(i++) & 0xff;
+                    if (c4 == 61)
+                        return out;
+                    c4 = base64decodechars[c4];
+                } while (i < len && c4 == -1);
+                if (c4 == -1)
+                    break;
+                out += String.fromCharCode(((c3 & 0x03) << 6) | c4);
+            }
+            return out;
+        }
+
+        return decode?base64decode(str):base64encode(str);
+    },
+    /*两个经纬度间求距离pA:[longitudeA,latitudeA],pB:[longitudB,latitudeB]*/
+    distence:function(pA,pB){
+        var results=[],
+            MAXITERS=20,
+            m = Math,
+            pi = m.PI,
+            lat1 = pA[1]*pi/180,
+            lat2 = pB[1]*pi/180,
+            lon1 = pA[0]*pi/180,
+            lon2 = pB[0]*pi/180,
+            a = 6378137.0, // WGS84 major axis
+            b = 6356752.3142, // WGS84 semi-major axis
+            f = (a - b) / a,
+            aSqMinusBSqOverBSq=(a * a - b * b) / (b * b),
+            L = lon2 - lon1,
+            A = 0.0,
+            U1 = m.atan((1.0-f)*m.tan(lat1)),
+            U2 = m.atan((1.0-f)*m.tan(lat2)),
+
+            cosU1 = m.cos(U1),
+            cosU2 = m.cos(U2),
+            sinU1 = m.sin(U1),
+            sinU2 = m.sin(U2),
+            cosU1cosU2 = cosU1 * cosU2,
+            sinU1sinU2 = sinU1 * sinU2,
+
+            sigma = 0.0,
+            deltaSigma = 0.0,
+            cosSqAlpha = 0.0,
+            cos2SM = 0.0,
+            cosSigma = 0.0,
+            sinSigma = 0.0,
+            cosLambda = 0.0,
+            sinLambda = 0.0,
+
+            lambda = L; // initial guess
+
+            for (var iter = 0; iter < MAXITERS; iter++) {
+                var lambdaOrig = lambda,
+                cosLambda = m.cos(lambda);
+                sinLambda = m.sin(lambda);
+                var t1 = cosU2 * sinLambda,
+                    t2 = cosU1 * sinU2 - sinU1 * cosU2 * cosLambda,
+                    sinSqSigma = t1 * t1 + t2 * t2; // (14)
+                sinSigma = m.sqrt(sinSqSigma);
+                cosSigma = sinU1sinU2 + cosU1cosU2 * cosLambda; // (15)
+                sigma = m.atan2(sinSigma, cosSigma); // (16)
+                var sinAlpha = (sinSigma == 0) ? 0.0 :
+                    cosU1cosU2 * sinLambda / sinSigma; // (17)
+                cosSqAlpha = 1.0 - sinAlpha * sinAlpha;
+                cos2SM = (cosSqAlpha == 0) ? 0.0 :
+                    cosSigma - 2.0 * sinU1sinU2 / cosSqAlpha; // (18)
+
+                var uSquared = cosSqAlpha * aSqMinusBSqOverBSq; // defn
+                A = 1 + (uSquared / 16384.0) * // (3)
+                    (4096.0 + uSquared *
+                     (-768 + uSquared * (320.0 - 175.0 * uSquared)));
+                var B = (uSquared / 1024.0) * // (4)
+                    (256.0 + uSquared *
+                     (-128.0 + uSquared * (74.0 - 47.0 * uSquared)));
+                var C = (f / 16.0) *
+                    cosSqAlpha *
+                    (4.0 + f * (4.0 - 3.0 * cosSqAlpha)); // (10)
+                var cos2SMSq = cos2SM * cos2SM;
+                deltaSigma = B * sinSigma * // (6)
+                    (cos2SM + (B / 4.0) *
+                     (cosSigma * (-1.0 + 2.0 * cos2SMSq) -
+                      (B / 6.0) * cos2SM *
+                      (-3.0 + 4.0 * sinSigma * sinSigma) *
+                      (-3.0 + 4.0 * cos2SMSq)));
+
+                lambda = L +
+                    (1.0 - C) * f * sinAlpha *
+                    (sigma + C * sinSigma *
+                     (cos2SM + C * cosSigma *
+                      (-1.0 + 2.0 * cos2SM * cos2SM))); // (11)
+
+                var delta = (lambda - lambdaOrig) / lambda;
+                if (m.abs(delta) < 1.0e-12) {
+                    break;
+                }
+            }
+
+            var distance = b * A * (sigma - deltaSigma);
+            results[0] = distance;
+            if (results.length > 1) {
+                var initialBearing = m.atan2(cosU2 * sinLambda,
+                    cosU1 * sinU2 - sinU1 * cosU2 * cosLambda);
+                initialBearing *= 180.0 / pi;
+                results[1] = initialBearing;
+                if (results.length > 2) {
+                    var finalBearing = m.atan2(cosU1 * sinLambda,
+                        -sinU1 * cosU2 + cosU1 * sinU2 * cosLambda);
+                    finalBearing *= 180.0 / pi;
+                    results[2] = finalBearing;
+                }
+            }
+            return results;
     }
 }
 
@@ -1863,6 +2049,11 @@ function UserMenus(name){
                         break;
                 }
             };
+            break;
+        case 'map':
+            menuOpt.pos="bottom";
+            menuOpt.items=['定位','附近','全国','范围'];
+            menuOpt.onSelect=mapMenuSelect
             break;
         case 'search':
             menuOpt.direct="vertical";

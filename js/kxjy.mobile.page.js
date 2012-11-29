@@ -761,7 +761,7 @@ var contentTmpl={
             '<div class="ub-f1 ut-s">修改密码</div>',
             '<div class="res8 lis-sw ub-img"></div>',
         '</div>',
-        '<div class="infoList ubb ub b-gra t-bla ub-ac umh4 lis">',
+        '<div _click="ViewMgr.gotoPage(\'mapTest\')" class="infoList ubb ub b-gra t-bla ub-ac umh4 lis">',
             '<div class="ub-f1 ut-s">评分支持</div>',
         '</div>',
         '<div _click="ViewMgr.gotoPage(\'feedBack\')" class="infoList ubb ub b-gra t-bla ub-ac umh4 lis">',
@@ -970,6 +970,20 @@ var contentTmpl={
     '<div class="users" _click="UserAction.userRegist()">注册</div>',
     '<!--列表结束-->',
     '</div>',
+    '<!--content结束-->'].join(''),
+'mapTest':['<!--header开始-->',
+    '<div id="header" class="uh header2">',
+        '<div class="kxjy-hd">',
+            '<div _click="if(Mix.hasTouch){Device.exit();}else{UserMenus(\'map\');}" class="btn btn-l kxjy-btn ub ub-ac ">',
+            '<div class="ulim">退出</div>',
+            '</div>',
+            '<h1 class="ut ulev0 ut-s tx-c">地图</h1>',
+        '</div>',
+    '</div>',
+    '<!--header结束-->',
+    '<!--content开始-->',
+    '<div id="mapCont" class="ub-f1 tx-l t-bla ub-img6 bg">',
+    '</div>',
     '<!--content结束-->'].join('')
 };
 
@@ -1157,6 +1171,236 @@ var pageConfig={
         DOM.removeClass(sibling,'usersActive');
         DOM.addClass(sibling,'btnBg');
         $('#regSex').value=val;
+    }
+}],
+'mapTest':[false,false,false,false,function(){
+    /*baidu地图*/
+    Device.menuFunc=function(){
+        UserMenus('map');
+    }
+    var bM;
+
+    function clickHd(e){
+        var point=new BMap.Point(e.point.lng, e.point.lat),
+            local = new BMap.LocalSearch(point, {  
+            renderOptions:{map: bM}  
+        });
+        addMarker(e.point.lat,e.point.lng,true);
+        toast(UserTools.distence([e.point.lng,e.point.lat],[121.512519,31.21641]));
+        // local.search('是');如何显示标记所在地址??
+    }
+
+    function BmapInit(){
+        bM = new BMap.Map('mapCont');
+        var point=new BMap.Point(121.491, 31.233);//上海
+        bM.curPonit=point;
+        bM.centerAndZoom(point, 11);
+        // bM.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+        bM.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT,type: BMAP_NAVIGATION_CONTROL_ZOOM}));  //右下角，仅包含缩放按钮
+        bM.addEventListener('click', clickHd);
+    }
+
+    if(!WIN['BMap']){
+        DOM.loadCss('http://api.map.baidu.com/res/13/bmap.css');
+        DOM.loadJs('http://api.map.baidu.com/getscript?v=1.3&key=&services=&t=20121108061854',function(){
+            if(WIN['BMap']){
+                BmapInit();
+            }
+        });
+    }else{
+        BmapInit();
+    }
+
+    function addMarker(lati,longi,notRe){
+        var point=new BMap.Point(longi, lati),
+            marker = new BMap.Marker(point);
+        bM.curPonit=point;
+        if(!notRe){
+            bM.centerAndZoom(point, 20);
+        }
+        
+        bM.clearOverlays();
+        bM.addOverlay(marker);
+
+        var gc = new BMap.Geocoder();    
+    
+        gc.getLocation(point, function(rs){
+            var addComp = rs.addressComponents,
+                opts = {
+                    offset:{width:0,height:-25},
+                    width : 250,     // 信息窗口宽度  
+                    height: 100,     // 信息窗口高度
+                    title : "<b>地址<b>"  // 信息窗口标题
+                },
+                addr=addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+            infoWindow = new BMap.InfoWindow(rs.address, opts);// 创建信息窗口对象  
+            var mPoint=marker.point;
+            bM.openInfoWindow(infoWindow, mPoint); 
+        });
+    }
+
+    WIN['mapMenuSelect']=function(idx){
+        function cancel(){
+            if(bM.removedEv){
+                bM.addEventListener('click', clickHd);
+                bM.removedEv=false;
+            }
+        }
+        function searchLocal(val,placeStr){
+            bM.removeEventListener('click', clickHd);
+            bM.removedEv=true;
+            var local = new BMap.LocalSearch(placeStr||bM, {
+              renderOptions:{map: bM}  
+            });
+            bM.clearOverlays();
+            local.search(val);
+        }
+        function searchNation(val){
+            bM.removeEventListener('click', clickHd);
+            bM.removedEv=true;
+            var local = new BMap.LocalSearch("全国",{
+              renderOptions: {
+                map: bM,
+                panel : "r-result",
+                autoViewport: true,
+                selectFirstResult: false
+              },
+              pageCapacity:50,
+              onInfoHtmlSet:function(){
+                console.log('whats the hell of it?');
+              },
+              onResultsHtmlSet:function(){
+                console.log('shit where is it?');
+              },
+              onSearchComplete:function(LocalResult){
+                console.log(LocalResult);
+                var opts=[];
+                $.each(LocalResult._cityList,function(o,idx){
+                    opts.unshift(o.city+"("+o.numResults+")");
+                })
+                Mix.ui.select.show({
+                    options:opts.length==0?['查无结果']:opts,
+                    onConfirm:function(items){
+                        var city=items[0].replace(/\(.*\)/,'');
+                        searchLocal(val,city);
+                    }
+                });
+              }
+            });
+            // bM.clearOverlays();
+            local.search(val);
+        }
+
+        switch(idx*1){
+            case 0://当前定位
+                if(bM.removedEv){
+                    bM.addEventListener('click', clickHd);
+                    bM.removedEv=false;
+                }
+
+                function offset(longi,lati){
+                    var url='http://api.map.baidu.com/ag/coord/convert?callback=?&from=0&to=4&x='+longi+'&y='+lati,
+                        secCb=function(data){
+                            if(!data.error){
+                                var la=UserTools.base64(data.y,true),
+                                    lo=UserTools.base64(data.x,true);
+                                addMarker(la,lo);
+                            }else{
+                                alert(data.error);
+                            }
+                        };
+                    // appcan现在取的baidu的经纬度所以不必纠偏了
+                    // UserAction.sendAction(url,null,'POST',secCb);
+                    alert(lati+"~~"+longi);
+                    addMarker(lati,longi);
+                }
+                // 创建标注
+                if(Device.isMobi()){
+                    Device.getLocation(function(lati,longi){
+                        offset(longi,lati);
+                    });
+                }else{
+                    offset(121.512682,31.216299);
+                }
+                break;
+            case 1://附近搜索
+                Device.prompt('附近搜索',searchLocal,cancel,null,'上海');
+                break;
+            case 2://全国搜索
+                Device.prompt('全国搜索',searchNation,cancel,null,'上海');
+                break;
+            case 3://范围搜索
+                function setLevel(longInt){
+                    longInt=longInt*1;
+                    if(longInt>200000){
+                        return 7;
+                    }else if(longInt>100000){
+                        return 8;
+                    }else if(longInt>70000){
+                        return 9;
+                    }else if(longInt>30000){
+                        return 10;
+                    }else if(longInt>17000){
+                        return 11;
+                    }else if(longInt>9000){
+                        return 12;
+                    }else if(longInt>4000){
+                        return 13;
+                    }else if(longInt>2000){
+                        return 14;
+                    }else if(longInt>1000){
+                        return 15;
+                    }else if(longInt>500){
+                        return 16;
+                    }else{
+                        return 17;
+                    }
+                }
+                function ok3(val){
+                    bM.removeEventListener('click', clickHd);
+                    var value=val.split(','),
+                        longVal=value[1]>500000?500000:value[1],
+                        lev=setLevel(value[1]);
+                        circle = new BMap.Circle(bM.curPonit,longVal||1000,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+
+                    bM.centerAndZoom(bM.curPonit,lev);
+                    bM.clearOverlays();
+                    bM.addOverlay(circle);
+                    var local =  new BMap.LocalSearch(bM, {renderOptions: {map: bM, autoViewport: false}});
+                    var bounds = getSquareBounds(circle.getCenter(),circle.getRadius());
+                    local.searchInBounds(value[0],bounds); 
+                   
+                    /**
+                     * 得到圆的内接正方形bounds
+                     * @param {Point} centerPoi 圆形范围的圆心
+                     * @param {Number} r 圆形范围的半径
+                     * @return 无返回值   
+                     */ 
+                    function getSquareBounds(centerPoi,r){
+                        var a = Math.sqrt(2) * r; //正方形边长
+                      
+                        mPoi = getMecator(centerPoi);
+                        var x0 = mPoi.x, y0 = mPoi.y;
+                     
+                        var x1 = x0 + a / 2 , y1 = y0 + a / 2;//东北点
+                        var x2 = x0 - a / 2 , y2 = y0 - a / 2;//西南点
+                        
+                        var ne = getPoi(new BMap.Pixel(x1, y1)), sw = getPoi(new BMap.Pixel(x2, y2));
+                        return new BMap.Bounds(sw, ne);        
+                        
+                    }
+                    //根据球面坐标获得平面坐标。
+                    function getMecator(poi){
+                        return bM.getMapType().getProjection().lngLatToPoint(poi);
+                    }
+                    //根据平面坐标获得球面坐标。
+                    function getPoi(mecator){
+                        return bM.getMapType().getProjection().pointToLngLat(mecator);
+                    }
+                }
+                Device.prompt('范围搜索 格式:"搜索内容,半径(米,默认1000米,半径过大可能无法搜索到和显示合理的信息)"',ok3,cancel,null,'上海,1000');
+                break;
+        }
     }
 }]
 }
