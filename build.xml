@@ -35,12 +35,12 @@
     <!--合并js-->
     <target name="concat-js">
         <concat destfile="${js.path}/kxjy.source.js" encoding="utf-8" outputencoding="utf-8">
-            <path path="${js.path}/validate.js"/>
-            <path path="${js.path}/Mix.base.js"/>
-            <path path="${js.path}/Mix.scroll.js"/>
-            <path path="${js.path}/Mix.bridge.appcan.js"/>
-            <path path="${js.path}/Mix.x.js"/>
-            <path path="${js.path}/Mix.ui.js"/>
+            <path path="${js.path}/mix.base.js"/>
+            <path path="${js.path}/mix.scroll.js"/>
+            <path path="${js.path}/mix.bridge.appcan.js"/>
+            <path path="${js.path}/mix.x.js"/>
+            <path path="${js.path}/mix.regions.js"/>
+            <path path="${js.path}/mix.ui.js"/>
             <path path="${js.path}/kxjy.mobile.page.js"/>
             <path path="${js.path}/kxjy.mobile.home.js"/>
             <path path="${js.path}/kxjy.mobile.feed.js"/>
@@ -83,12 +83,12 @@
             <mapper type="regexp" from="^(.*)\.source\.css" to="\1-min.css"/>
         </apply>
         <concat destfile="${js.path}/kxjy.source.js" encoding="utf-8" outputencoding="utf-8" fixlastline="no">
-            <path path="${js.path}/validate.js"/>
-            <path path="${js.path}/Mix.base.js"/>
-            <path path="${js.path}/Mix.scroll.js"/>
-            <path path="${js.path}/Mix.bridge.appcan.js"/>
-            <path path="${js.path}/Mix.x.js"/>
-            <path path="${js.path}/Mix.ui.js"/>
+            <path path="${js.path}/mix.base.js"/>
+            <path path="${js.path}/mix.scroll.js"/>
+            <path path="${js.path}/mix.bridge.appcan.js"/>
+            <path path="${js.path}/mix.x.js"/>
+            <path path="${js.path}/mix.regions.js"/>
+            <path path="${js.path}/mix.ui.js"/>
             <path path="${js.path}/kxjy.mobile.page.js"/>
             <path path="${js.path}/kxjy.mobile.home.js"/>
             <path path="${js.path}/kxjy.mobile.feed.js"/>

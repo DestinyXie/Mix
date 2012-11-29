@@ -342,7 +342,7 @@ Mix.ui.region=extend({},Mix.ui.popLayer,{
         }
         Mix.ui.select.show({
             useMask:false,
-            options:provinces,
+            options:Mix.regions.provinces,
             defOptions:[that.option.prov||that.option.provProm],
             onConfirm:checkProv,
             onShow:function(UIselect){
@@ -372,7 +372,7 @@ Mix.ui.region=extend({},Mix.ui.popLayer,{
         }
         Mix.ui.select.show({
             useMask:false,
-            options:show_next_flod(that.option.prov)||[],
+            options:Mix.regions.getCity(that.option.prov)||[],
             defOptions:[that.option.city||that.option.cityProm],
             onConfirm:checkCity,
             onShow:function(UIselect){
