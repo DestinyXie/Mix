@@ -1519,20 +1519,22 @@ PageEngine.prototype={
             wrap.style.left=wrap.offsetWidth+"px";
         }
         that.fireEvent();
-        BODY.style.webkitTransition="-webkit-transform 300ms";
+        BODY.style[Mix.transitionProperty]=Mix.cssPrefix+"transform";
+        BODY.style[Mix.transitionDuration]="300ms";
+
         setTimeout(function(){
             if('right'==diret){
-                BODY.style.webkitTransform="translateX("+wrap.offsetWidth+"px)";
+                BODY.style[Mix.transform]="translateX("+wrap.offsetWidth+"px)";
             }else{
-                BODY.style.webkitTransform="translateX(-"+wrap.offsetWidth+"px)";
+                BODY.style[Mix.transform]="translateX(-"+wrap.offsetWidth+"px)";
             }
         },0);
-        // webkitRequestAnimationFrame(function(){console.log('animating')});
+
         setTimeout(function(){
             wrap.style.left="0";
-            BODY.style.webkitTransition="";
-            BODY.style.webkitTransform="translateX(0)";
-            BODY.removeChild(prePage);
+            BODY.style[Mix.transitionDuration]="0";
+            BODY.style[Mix.transform]="translateX(0)";
+            prePage&&BODY.removeChild(prePage);
             delete prePage;
         },300);
     },

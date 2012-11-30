@@ -102,6 +102,23 @@ Mix.ui.mask.prototype={
     }
 }
 
+/*loading*/
+Mix.ui.loading={
+    show:function(cont){
+        var that=this,
+            cont=cont||BODY;
+        if($('#ui_load')){
+            DOM.remove($('#ui_load'));
+        }
+        that.loadingDom=DOM.create('div',{id:'ui_load',innerHTML:'<div>L</div><div>O</div><div>A</div><div>D</div><div>I</div><div>N</div><div>G</div>'});
+        cont.appendChild(that.loadingDom);
+    },
+    hide:function(){
+        var that=this;
+        DOM.remove(that.loadingDom);
+    }
+}
+
 /*@private所有弹出层的公共类*/
 Mix.ui.popLayer={
     className:'popLayer',//当前UI工具类名

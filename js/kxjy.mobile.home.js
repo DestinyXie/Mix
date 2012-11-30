@@ -810,14 +810,14 @@ var regExpObj={
 var UserAction={
     x:null,
     stop:function(){
-        UserAction.sendingMood=false;
-        UserAction.sendingDelete=false;
-        UserAction.sendingLove=false;
-        UserAction.sendingShield=false;
-        UserAction.sendingLogin=false;
-        UserAction.sendingRegist=false;
-        UserAction.sendingResetPwd=false;
-        UserAction.sendingFeedBack=false;
+        this.sendingMood=false;
+        this.sendingDelete=false;
+        this.sendingLove=false;
+        this.sendingShield=false;
+        this.sendingLogin=false;
+        this.sendingRegist=false;
+        this.sendingResetPwd=false;
+        this.sendingFeedBack=false;
         this.x&&this.x.abort();
     },
     /*秀心情*/
@@ -1562,6 +1562,7 @@ var UserAction={
             progressDom.appendChild(proTxt);
             BODY.appendChild(loadDom);
             BODY.appendChild(progressDom);
+            Mix.ui.loading.show();
 
         function oneLoad(){
             loadedNum++;
@@ -1583,6 +1584,7 @@ var UserAction={
             clearTimeout(inter);
             BODY.removeChild(progressDom);
             BODY.removeChild(loadDom);
+            Mix.ui.loading.hide();
             finished=true;
         }
 

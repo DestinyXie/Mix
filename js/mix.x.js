@@ -20,7 +20,7 @@ Mix.x.prototype = {
 	},
 	ajaxJSONP:function(url,data){
 		var that=this,
-			jsonp = 'Xjsonp' + new Date().getTime(),
+			jsonp = 'Mix_x_jsonp' + new Date().getTime(),
 			script=DOM.create("script");
 		WIN[jsonp] = function(a) {
 			that.response=a;

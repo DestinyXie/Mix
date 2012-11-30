@@ -256,7 +256,7 @@ var DOM = {
         return el;
     },
     /*移除一个DOM对象*/
-    remove: function(el, animated) {
+    remove: function(el) {
         el.parentNode.removeChild(el);
     },
     /*按选择符查找指定DOM对象的父对象*/
@@ -439,7 +439,9 @@ var Delegate = {
             DOM.addEvent(DOC, END_EV, Delegate['end']);
         }
 
-        oe.stop();//android长按会触发选择
+        if(!['INPUT','TEXTAREA'].has(oe.event.target.tagName)){
+            oe.stop();//android长按会触发选择
+        }
 
         if(Delegate.hasLongTap){//是长按
             Delegate.longTapInter=setTimeout(function(){
@@ -502,6 +504,7 @@ var Delegate = {
                 fn.call(target);
             }
         }
+
         DOM.removeEvent(DOC, MOVE_EV, Delegate['move']);//end后注销move
         DOM.removeEvent(DOC, END_EV, Delegate['end']);//end后注销end
         Delegate.isClick    = false;
@@ -509,6 +512,7 @@ var Delegate = {
         Delegate.startPoint = [0, 0];
         Delegate.targets    = [];
         Delegate.startTime  = null;
+        Delegate.hasLongTap = false;
     }
 };
 Delegate.init();
