@@ -110,12 +110,11 @@ Mix.ui.loading={
         if($('#ui_load')){
             DOM.remove($('#ui_load'));
         }
-        that.loadingDom=DOM.create('div',{id:'ui_load',innerHTML:'<div>L</div><div>O</div><div>A</div><div>D</div><div>I</div><div>N</div><div>G</div>'});
-        cont.appendChild(that.loadingDom);
+        var loadingDom=DOM.create('div',{id:'ui_load',innerHTML:'<div>L</div><div>O</div><div>A</div><div>D</div><div>I</div><div>N</div><div>G</div>'});
+        cont.appendChild(loadingDom);
     },
     hide:function(){
-        var that=this;
-        DOM.remove(that.loadingDom);
+        $('#ui_load')&&DOM.remove($('#ui_load'));
     }
 }
 

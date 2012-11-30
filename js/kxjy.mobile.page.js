@@ -984,8 +984,30 @@ var contentTmpl={
     '<!--content开始-->',
     '<div id="mapCont" class="ub-f1 tx-l t-bla ub-img6 bg">',
     '</div>',
+    '<div id="ui_slide">',
+    '<div class="inner" _move="ui_slideMove(this);"></div></div>',
     '<!--content结束-->'].join('')
 };
+
+WIN['ui_slideMove']=function(el){
+    var moveDist=el.moveDist,
+        cL=el.originPos[0],
+        contW=el.parentNode.offsetWidth,
+        moveL=moveDist[0]+cL;
+
+    if(moveL<0){
+        moveL=0;
+    }
+    if(moveL>contW){
+        moveL=contW;
+    }
+
+    el.style.left=moveL+"px";
+
+    var lev=Math.round(17*moveL/contW);
+    Mix_agency_map.centerAndZoom(Mix_agency_map.centerPoint,lev+3);
+    Mix.ui.loading.show($('#mapCont'));
+}
 
 var footerTmple={
 'mainFooter':['<!--footer开始-->',
@@ -1179,7 +1201,7 @@ var pageConfig={
         UserMenus('map');
     }
     var bM;
-
+    
     function clickHd(e){
         var point=new BMap.Point(e.point.lng, e.point.lat),
             local = new BMap.LocalSearch(point, {  
@@ -1190,14 +1212,25 @@ var pageConfig={
         // local.search('是');如何显示标记所在地址??
     }
 
+    function setSlide(){
+        var moveL=Math.round($('#ui_slide').offsetWidth*11/17)+"px";
+        $('#ui_slide .inner').style.left=moveL;
+    }
+
     function BmapInit(){
         bM = new BMap.Map('mapCont');
+
+        WIN["Mix_agency_map"]=bM;
         var point=new BMap.Point(121.491, 31.233);//上海
         bM.curPonit=point;
         bM.centerAndZoom(point, 11);
+        setSlide();
         // bM.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
-        bM.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT,type: BMAP_NAVIGATION_CONTROL_ZOOM}));  //右下角，仅包含缩放按钮
+        // bM.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT,type: BMAP_NAVIGATION_CONTROL_ZOOM}));  //右下角，仅包含缩放按钮
         bM.addEventListener('click', clickHd);
+        bM.addEventListener('tilesloaded',function(){
+            Mix.ui.loading.hide();
+        });
     }
 
     if(!WIN['BMap']){
@@ -1311,7 +1344,6 @@ var pageConfig={
                         };
                     // appcan现在取的baidu的经纬度所以不必纠偏了
                     // UserAction.sendAction(url,null,'POST',secCb);
-                    alert(lati+"~~"+longi);
                     addMarker(lati,longi);
                 }
                 // 创建标注

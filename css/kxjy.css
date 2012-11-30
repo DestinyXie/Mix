@@ -1342,6 +1342,7 @@ li .comment{
   overflow:visible;
   -webkit-user-select:none;
   cursor:default;
+  z-index:90;
 }
 
 #ui_load div {
@@ -1394,4 +1395,34 @@ li .comment{
 		-webkit-transform:rotate(-180deg);
 		opacity:0;
 	}
+}
+
+/*slide*/
+#ui_slide{
+	z-index:99;
+	position:absolute;
+	bottom:3em;
+	width:90%;
+	left:5%;
+	height:3px;
+	background:#f00;
+}
+#ui_slide .inner{
+	position:absolute;
+	left:0;
+	height:1.6em;
+	margin-left:-.8em;
+	margin-top:-.8em;
+	width:1.6em;
+	-webkit-border-radius: .8em;
+	background:#ff0;
+	border:1px solid #000;
+}
+#ui_slide .inner.active{
+	width:2em;
+	height:2em;
+	margin-left:-1em;
+	margin-top:-1em;
+	-webkit-border-radius: 1em;
+	-webkit-box-shadow:1px 1px 8px #333;
 }

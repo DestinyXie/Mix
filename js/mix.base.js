@@ -419,15 +419,22 @@ var Delegate = {
         Delegate.targets    = [];
         Delegate.startTime  = e.timeStamp || Date.now();
         Delegate.hasLongTap = false;
+        Delegate.hasMoveFn = false;
 
         /*给触发点击事件的所有对象加上"active"的className, 模仿mouseover样式 */
         for (var l = targets.length, el; l--;) {
             el = targets[l];
-            if (el.getAttribute('_click') || el.getAttribute('_longTap') || ['A', 'INPUT'].has(el.nodeName) ) {
+            if (el.getAttribute('_click') || el.getAttribute('_longTap') || el.getAttribute('_move') || ['A', 'INPUT'].has(el.nodeName) ) {
                 Delegate.targets.unshift(el);
             }
             if(el.getAttribute('_longTap')){
                 Delegate.hasLongTap=true;
+                el.event=e;
+            }
+            if(el.getAttribute('_move')){
+                Delegate.moveDom=el;
+                Delegate.hasMoveFn=true;
+                el.originPos=[parseInt(getComputedStyle(el).left),parseInt(getComputedStyle(el).top)];
                 el.event=e;
             }
         }
@@ -443,7 +450,7 @@ var Delegate = {
             oe.stop();//android长按会触发选择
         }
 
-        if(Delegate.hasLongTap){//是长按
+        if(!Delegate.hasMoveFn&&Delegate.hasLongTap){//是长按
             Delegate.longTapInter=setTimeout(function(){
                 Delegate.longTap();
             },Delegate.longTapTime);
@@ -457,6 +464,16 @@ var Delegate = {
             sp = Delegate.startPoint,
             cp = [oe.pageX, oe.pageY],
             dis = Mix.base.calculPy(cp[0] - sp[0],cp[1] - sp[1]);
+
+        if(Delegate.hasMoveFn){
+            var fnAttr=Delegate.moveDom.getAttribute('_move'),
+                fn=new Function(fnAttr);
+
+                Delegate.moveDom.moveDist=[cp[0] - sp[0],cp[1] - sp[1]];
+                fn.call(Delegate.moveDom);
+
+            return;
+        }
 
         if (dis > 15) {
             Delegate.isClick = false;
@@ -513,6 +530,7 @@ var Delegate = {
         Delegate.targets    = [];
         Delegate.startTime  = null;
         Delegate.hasLongTap = false;
+        Delegate.hasMoveFn  = false;
     }
 };
 Delegate.init();
