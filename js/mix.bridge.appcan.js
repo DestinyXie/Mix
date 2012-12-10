@@ -50,7 +50,7 @@
         uexWidgetOne.exit();
     },
     alert:function(title,msg,btn){
-        if(!Device.isMobi()){return;}
+        if(!Device.isMobi()){alert(title+":"+msg);return;}
         uexWindow.alert(title,msg,btn);
     },
     toast:function(s,t){
@@ -370,7 +370,16 @@
         };
         uexCamera.open();
     },
-    imageBrowser:function(cb){//浏览照片
+    imageBrowser:function(imgArr){
+        var arr;
+        if($.isArray(imgArr)){
+            arr=imgArr;
+        }else{
+            arr=[imgArr]
+        }
+        uexImageBrowser.open(arr,0,0);
+    },
+    imagePick:function(cb){//浏览照片
         if(!Device.isMobi()){return;}
         uexImageBrowser.cbPick=function (opCode,dataType,data){
             cb(opCode,dataType,data);

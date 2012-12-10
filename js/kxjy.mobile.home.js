@@ -91,6 +91,7 @@ var ViewMgr={
     },
     /*切换页面*/
     setUrl:function(url,params,back){
+        ViewMgr.tmpParams='';
         if(!!params)
             ViewMgr.tmpParams=params;
 

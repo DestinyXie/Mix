@@ -11,6 +11,7 @@
 	return that.reset();
 };
 
+Mix.x.jsonpIdx=0;
 Mix.x.prototype = {
 	reset: function() {
 		clearTimeout(this.timer); 
@@ -20,7 +21,7 @@ Mix.x.prototype = {
 	},
 	ajaxJSONP:function(url,data){
 		var that=this,
-			jsonp = 'Mix_x_jsonp' + new Date().getTime(),
+			jsonp = 'Mix_x_jsonp' + Mix.x.jsonpIdx++,
 			script=DOM.create("script");
 		WIN[jsonp] = function(a) {
 			that.response=a;
@@ -28,7 +29,11 @@ Mix.x.prototype = {
 			that.reset().onLoad();
 			HEAD.removeChild(script);
 		};
-		script.src = url.replace(/=\?/, '='+jsonp);
+		url=url.replace(/=\?/, '='+jsonp)+(!!data?'&'+data:'');
+		script.src = url;
+		script.onerror=function(e){
+			that.onFail();
+		}
 		HEAD.appendChild(script);
 	},
 	send: function(url,data) {
@@ -64,11 +69,16 @@ Mix.x.prototype = {
 		}
 		
 		if (options.method.toLowerCase() == 'get') {
-			if (url.match(/\?.*=/)) {
-				data = '&' + data;
-			} else if (data[0] != '?') {
-				data = '?' + data;
+			if(data){
+				if (url.match(/\?.*=/)) {
+					data = '&' + data;
+				} else if (data[0] != '?') {
+					data = '?' + data;
+				}
+			}else{
+				data="";
 			}
+			
 			url += data;
 			xmlhttp.open('get', url, true);
 			xmlhttp.send();

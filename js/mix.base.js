@@ -393,7 +393,7 @@ var DOM = {
 
 /*实现触屏的点击事件委托
 * 为了提升iscroll的效率 避免iscroll元素和DOC在手指move时同时执行各自方法
-* 该处只给加了_click和_longTap属性的dom节点使用事件委托 
+* 该处只给加了_click,_move和_longTap属性的dom节点使用事件委托 
 * 同时如果在该dom元素上移动距离超过了click的设定值 也移除DOC的move和end监听
 */
 var Delegate = {
@@ -426,16 +426,19 @@ var Delegate = {
             el = targets[l];
             if (el.getAttribute('_click') || el.getAttribute('_longTap') || el.getAttribute('_move') || ['A', 'INPUT'].has(el.nodeName) ) {
                 Delegate.targets.unshift(el);
+            }else{
+                continue;
             }
             if(el.getAttribute('_longTap')){
                 Delegate.hasLongTap=true;
                 el.event=e;
             }
             if(el.getAttribute('_move')){
-                Delegate.moveDom=el;
                 Delegate.hasMoveFn=true;
-                el.originPos=[parseInt(getComputedStyle(el).left),parseInt(getComputedStyle(el).top)];
-                el.event=e;
+                Delegate.moveDom=el;
+                Delegate.moveDom.originPos=[parseInt(getComputedStyle(el).left),parseInt(getComputedStyle(el).top)];
+                Delegate.moveDom.event=e;
+                oe.stop();
             }
         }
 
@@ -446,9 +449,9 @@ var Delegate = {
             DOM.addEvent(DOC, END_EV, Delegate['end']);
         }
 
-        if(!['INPUT','TEXTAREA'].has(oe.event.target.tagName)){
-            oe.stop();//android长按会触发选择
-        }
+        // if(!['INPUT','TEXTAREA'].has(oe.event.target.tagName)){
+        //     // oe.stop();//android长按会触发选择
+        // }
 
         if(!Delegate.hasMoveFn&&Delegate.hasLongTap){//是长按
             Delegate.longTapInter=setTimeout(function(){
@@ -466,11 +469,12 @@ var Delegate = {
             dis = Mix.base.calculPy(cp[0] - sp[0],cp[1] - sp[1]);
 
         if(Delegate.hasMoveFn){
-            var fnAttr=Delegate.moveDom.getAttribute('_move'),
-                fn=new Function(fnAttr);
+            // var fnAttr=Delegate.moveDom.getAttribute('_move');
+            Delegate.moveDom.moveDist=[cp[0] - sp[0],cp[1] - sp[1]];
 
-                Delegate.moveDom.moveDist=[cp[0] - sp[0],cp[1] - sp[1]];
-                fn.call(Delegate.moveDom);
+            // if('map.slide'==fnAttr){
+                Mix.map.slideMove(Delegate.moveDom);//暂时
+            // }
 
             return;
         }
@@ -520,6 +524,13 @@ var Delegate = {
                 var fn = new Function(evt);
                 fn.call(target);
             }
+        }
+
+        if(Delegate.hasMoveFn){
+            // var fnAttr=Delegate.moveDom.getAttribute('_move');
+            // if('map.slide'==fnAttr){
+                Mix.map.slideMoveEnd(Delegate.moveDom);//暂时
+            // }
         }
 
         DOM.removeEvent(DOC, MOVE_EV, Delegate['move']);//end后注销move

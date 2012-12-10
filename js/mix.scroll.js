@@ -29,14 +29,11 @@
 
         //public Events
         onRefresh:null,
-        onBeforeStart:function(e){
-            if(!['INPUT','TEXTAREA'].has(e.target.tagName)){
-                e.preventDefault();
-            }
-        },
+        onBeforeStart:null,
         onStart:null,
         onBreforeMove:null,
         onMove:null,
+        onMoveEnd:null,
         onBeforeEnd:null,
         onScrollEnd:null,
         onTouchEnd:null,
@@ -81,7 +78,7 @@
     that._bind('resize',WIN);
     that._bind(START_EV);
 }
-
+Mix.scroll.stop=false;//静态变量
 Mix.scroll.prototype={
     enabled:true,
     x:0,
@@ -113,9 +110,14 @@ Mix.scroll.prototype={
             point=new Event(e),
             matrix,x,y;
 
+        if(!that.enabled||Mix.scroll.stop) return;
         that._checkDOMChanges();//add by destiny
+        Mix.scroll.stop=true;
 
-        if(!that.enabled) return;
+        if(!['INPUT','TEXTAREA'].has(e.target.tagName)){
+            e.preventDefault();
+            // e.stopPropagation();
+        }
 
         if(that.options.onBeforeStart)
             that.options.onBeforeStart.call(that,e);
@@ -227,11 +229,16 @@ Mix.scroll.prototype={
             that.startY=that.y;
         }
 
-        if(that.options.onMove)
+        if(that.options.onMove){
             that.options.onMove.call(that,e);
+        }
 
+        if(that.options.onMoveEnd){
+            that.options.onMoveEnd.call(that,e);
+        }
     },
     _end:function(e){
+        Mix.scroll.stop=false;
         if(Mix.hasTouch&&e.touches.length!==0)return;
 
         var that=this,
@@ -520,6 +527,7 @@ Mix.scroll.prototype={
 
     /* Public methods */
     refresh:function(){
+        Mix.scroll.stop=false;
         var that=this;
 
         that.wrapperW   = that.wrapper.clientWidth||1;

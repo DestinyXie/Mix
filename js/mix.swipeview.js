@@ -124,51 +124,52 @@ Mix.swipeView.prototype = {
 	},
 
 	goToPage: function (p) {
-		var i;
+		var i,that=this;
 
-		this.masterPages[this.currentMasterPage].className = this.masterPages[this.currentMasterPage].className.replace(/(^|\s)swipeview-active(\s|$)/, '');
+		DOM.removeClass(that.masterPages[that.currentMasterPage],'swipeview-active');
+
 		for (i=0; i<3; i++) {
-			className = this.masterPages[i].className;
-			/(^|\s)swipeview-loading(\s|$)/.test(className) || (this.masterPages[i].className = !className ? 'swipeview-loading' : className + ' swipeview-loading');
+			className = that.masterPages[i].className;
+			/(^|\s)swipeview-loading(\s|$)/.test(className) || (that.masterPages[i].className = !className ? 'swipeview-loading' : className + ' swipeview-loading');
 		}
 
-		p = p < 0 ? 0 : p > this.options.numberOfPages-1 ? this.options.numberOfPages-1 : p;
-		this.page = p;
-		this.pageIndex = p;
-		this.slider.style[Mix.transitionDuration] = '0s';
-		this.__pos(-p * this.pageWidth);
+		p = p < 0 ? 0 : p > that.options.numberOfPages-1 ? that.options.numberOfPages-1 : p;
+		that.page = p;
+		that.pageIndex = p;
+		that.slider.style[Mix.transitionDuration] = '0s';
+		that.__pos(-p * that.pageWidth);
 
-		this.currentMasterPage = (this.page + 1) - Math.floor((this.page + 1) / 3) * 3;
+		that.currentMasterPage = (that.page + 1) - Math.floor((that.page + 1) / 3) * 3;
 
-		this.masterPages[this.currentMasterPage].className = this.masterPages[this.currentMasterPage].className + ' swipeview-active';
+		that.masterPages[that.currentMasterPage].className = that.masterPages[that.currentMasterPage].className + ' swipeview-active';
 
-		if (this.currentMasterPage === 0) {
-			this.masterPages[2].style.left = this.page * 100 - 100 + '%';
-			this.masterPages[0].style.left = this.page * 100 + '%';
-			this.masterPages[1].style.left = this.page * 100 + 100 + '%';
+		if (that.currentMasterPage === 0) {
+			that.masterPages[2].style.left = that.page * 100 - 100 + '%';
+			that.masterPages[0].style.left = that.page * 100 + '%';
+			that.masterPages[1].style.left = that.page * 100 + 100 + '%';
 
-			this.masterPages[2].dataset.upcomingPageIndex = this.page === 0 ? this.options.numberOfPages-1 : this.page - 1;
-			this.masterPages[0].dataset.upcomingPageIndex = this.page;
-			this.masterPages[1].dataset.upcomingPageIndex = this.page == this.options.numberOfPages-1 ? 0 : this.page + 1;
-		} else if (this.currentMasterPage == 1) {
-			this.masterPages[0].style.left = this.page * 100 - 100 + '%';
-			this.masterPages[1].style.left = this.page * 100 + '%';
-			this.masterPages[2].style.left = this.page * 100 + 100 + '%';
+			that.masterPages[2].dataset.upcomingPageIndex = that.page === 0 ? that.options.numberOfPages-1 : that.page - 1;
+			that.masterPages[0].dataset.upcomingPageIndex = that.page;
+			that.masterPages[1].dataset.upcomingPageIndex = that.page == that.options.numberOfPages-1 ? 0 : that.page + 1;
+		} else if (that.currentMasterPage == 1) {
+			that.masterPages[0].style.left = that.page * 100 - 100 + '%';
+			that.masterPages[1].style.left = that.page * 100 + '%';
+			that.masterPages[2].style.left = that.page * 100 + 100 + '%';
 
-			this.masterPages[0].dataset.upcomingPageIndex = this.page === 0 ? this.options.numberOfPages-1 : this.page - 1;
-			this.masterPages[1].dataset.upcomingPageIndex = this.page;
-			this.masterPages[2].dataset.upcomingPageIndex = this.page == this.options.numberOfPages-1 ? 0 : this.page + 1;
+			that.masterPages[0].dataset.upcomingPageIndex = that.page === 0 ? that.options.numberOfPages-1 : that.page - 1;
+			that.masterPages[1].dataset.upcomingPageIndex = that.page;
+			that.masterPages[2].dataset.upcomingPageIndex = that.page == that.options.numberOfPages-1 ? 0 : that.page + 1;
 		} else {
-			this.masterPages[1].style.left = this.page * 100 - 100 + '%';
-			this.masterPages[2].style.left = this.page * 100 + '%';
-			this.masterPages[0].style.left = this.page * 100 + 100 + '%';
+			that.masterPages[1].style.left = that.page * 100 - 100 + '%';
+			that.masterPages[2].style.left = that.page * 100 + '%';
+			that.masterPages[0].style.left = that.page * 100 + 100 + '%';
 
-			this.masterPages[1].dataset.upcomingPageIndex = this.page === 0 ? this.options.numberOfPages-1 : this.page - 1;
-			this.masterPages[2].dataset.upcomingPageIndex = this.page;
-			this.masterPages[0].dataset.upcomingPageIndex = this.page == this.options.numberOfPages-1 ? 0 : this.page + 1;
+			that.masterPages[1].dataset.upcomingPageIndex = that.page === 0 ? that.options.numberOfPages-1 : that.page - 1;
+			that.masterPages[2].dataset.upcomingPageIndex = that.page;
+			that.masterPages[0].dataset.upcomingPageIndex = that.page == that.options.numberOfPages-1 ? 0 : that.page + 1;
 		}
 
-		this.__flip();
+		that.__flip();
 	},
 
 	next: function () {
@@ -227,7 +228,8 @@ Mix.swipeView.prototype = {
 	},
 
 	__start: function (e) {
-		//e.preventDefault();
+		Mix.scroll.stop=true;
+		e.preventDefault();
 
 		if (this.initiated) return;
 
@@ -305,6 +307,7 @@ Mix.swipeView.prototype = {
 	},
 
 	__end: function (e) {
+		Mix.scroll.stop=false;
 		if (!this.initiated) return;
 
 		var point = Mix.hasTouch ? e.changedTouches[0] : e,
@@ -330,60 +333,59 @@ Mix.swipeView.prototype = {
 	},
 
 	__checkPosition: function () {
-		var pageFlip,
+		var that=this,
+			pageFlip,
 			pageFlipIndex,
 			className;
 
-		this.masterPages[this.currentMasterPage].className = this.masterPages[this.currentMasterPage].className.replace(/(^|\s)swipeview-active(\s|$)/, '');
+		DOM.removeClass(that.masterPages[that.currentMasterPage],'swipeview-active');
 
 		// Flip the page
-		if (this.directionX > 0) {
-			this.page = -Math.ceil(this.x / this.pageWidth);
-			this.currentMasterPage = (this.page + 1) - Math.floor((this.page + 1) / 3) * 3;
-			this.pageIndex = this.pageIndex === 0 ? this.options.numberOfPages - 1 : this.pageIndex - 1;
+		if (that.directionX > 0) {
+			that.page = -Math.ceil(that.x / that.pageWidth);
+			that.currentMasterPage = (that.page + 1) - Math.floor((that.page + 1) / 3) * 3;
+			that.pageIndex = that.pageIndex === 0 ? that.options.numberOfPages - 1 : that.pageIndex - 1;
 
-			pageFlip = this.currentMasterPage - 1;
+			pageFlip = that.currentMasterPage - 1;
 			pageFlip = pageFlip < 0 ? 2 : pageFlip;
-			this.masterPages[pageFlip].style.left = this.page * 100 - 100 + '%';
+			that.masterPages[pageFlip].style.left = that.page * 100 - 100 + '%';
 
-			pageFlipIndex = this.page - 1;
+			pageFlipIndex = that.page - 1;
 		} else {
-			this.page = -Math.floor(this.x / this.pageWidth);
-			this.currentMasterPage = (this.page + 1) - Math.floor((this.page + 1) / 3) * 3;
-			this.pageIndex = this.pageIndex == this.options.numberOfPages - 1 ? 0 : this.pageIndex + 1;
+			that.page = -Math.floor(that.x / that.pageWidth);
+			that.currentMasterPage = (that.page + 1) - Math.floor((that.page + 1) / 3) * 3;
+			that.pageIndex = that.pageIndex == that.options.numberOfPages - 1 ? 0 : that.pageIndex + 1;
 
-			pageFlip = this.currentMasterPage + 1;
+			pageFlip = that.currentMasterPage + 1;
 			pageFlip = pageFlip > 2 ? 0 : pageFlip;
-			this.masterPages[pageFlip].style.left = this.page * 100 + 100 + '%';
+			that.masterPages[pageFlip].style.left = that.page * 100 + 100 + '%';
 
-			pageFlipIndex = this.page + 1;
+			pageFlipIndex = that.page + 1;
 		}
 
 		// Add active class to current page
-		className = this.masterPages[this.currentMasterPage].className;
-		/(^|\s)swipeview-active(\s|$)/.test(className) || (this.masterPages[this.currentMasterPage].className = !className ? 'swipeview-active' : className + ' swipeview-active');
+		DOM.addClass(that.masterPages[that.currentMasterPage],' swipeview-active');
 
 		// Add loading class to flipped page
-		className = this.masterPages[pageFlip].className;
-		/(^|\s)swipeview-loading(\s|$)/.test(className) || (this.masterPages[pageFlip].className = !className ? 'swipeview-loading' : className + ' swipeview-loading');
+		DOM.addClass(that.masterPages[pageFlip],'swipeview-loading');
 
-		pageFlipIndex = pageFlipIndex - Math.floor(pageFlipIndex / this.options.numberOfPages) * this.options.numberOfPages;
-		this.masterPages[pageFlip].dataset.upcomingPageIndex = pageFlipIndex;		// Index to be loaded in the newly flipped page
+		pageFlipIndex = pageFlipIndex - Math.floor(pageFlipIndex / that.options.numberOfPages) * that.options.numberOfPages;
+		that.masterPages[pageFlip].dataset.upcomingPageIndex = pageFlipIndex;		// Index to be loaded in the newly flipped page
 
-		newX = -this.page * this.pageWidth;
+		newX = -that.page * that.pageWidth;
 
-		this.slider.style[Mix.transitionDuration] = Math.floor(500 * Math.abs(this.x - newX) / this.pageWidth) + 'ms';
+		that.slider.style[Mix.transitionDuration] = Math.floor(500 * Math.abs(that.x - newX) / that.pageWidth) + 'ms';
 
 		// Hide the next page if we decided to disable looping
-		if (!this.options.loop) {
-			this.masterPages[pageFlip].style.visibility = newX === 0 || newX == this.maxX ? 'hidden' : '';
+		if (!that.options.loop) {
+			that.masterPages[pageFlip].style.visibility = newX === 0 || newX == that.maxX ? 'hidden' : '';
 		}
 
-		if (this.x == newX) {
-			this.__flip();		// If we swiped all the way long to the next page (extremely rare but still)
+		if (that.x == newX) {
+			that.__flip();		// If we swiped all the way long to the next page (extremely rare but still)
 		} else {
-			this.__pos(newX);
-			if (this.options.hastyPageFlip) this.__flip();
+			that.__pos(newX);
+			if (that.options.hastyPageFlip) that.__flip();
 		}
 	},
 
@@ -391,13 +393,13 @@ Mix.swipeView.prototype = {
 		this.__event('flip');
 
 		for (var i=0; i<3; i++) {
-			this.masterPages[i].className = this.masterPages[i].className.replace(/(^|\s)swipeview-loading(\s|$)/, '');		// Remove the loading class
+			DOM.removeClass(this.masterPages[i],'swipeview-loading');
 			this.masterPages[i].dataset.pageIndex = this.masterPages[i].dataset.upcomingPageIndex;
 		}
 	},
 
 	__event: function (type) {
-		var ev = document.createEvent("Event");
+		var ev = DOC.createEvent("Event");
 
 		ev.initEvent('swipeview-' + type, true, true);
 

@@ -47,7 +47,7 @@ Mix.ui.tips={
         that.tipDom.style.display="block";
         that.option.tipH=that.tipDom.offsetHeight;//intresting set
         
-        setTimeout(function(){that.tipDom.style.bottom="0px";},0);
+        setTimeout(function(){that.tipDom&&(that.tipDom.style.bottom="0px");},0);
         if (that.option.hideT) {
             that.timer=setTimeout(function(){that.hide();},that.option.hideT);
         }
