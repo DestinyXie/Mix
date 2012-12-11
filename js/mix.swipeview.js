@@ -48,7 +48,7 @@ Mix.swipeView = function (el, options) {
 	className = this.masterPages[1].className;
 	this.masterPages[1].className = !className ? 'swipeview-active' : className + ' swipeview-active';
 
-	window.addEventListener('resize', this, false);
+	// window.addEventListener('resize', this, false);
 	this.wrapper.addEventListener(START_EV, this, false);
 	this.wrapper.addEventListener(MOVE_EV, this, false);
 	this.wrapper.addEventListener(END_EV, this, false);
@@ -95,7 +95,7 @@ Mix.swipeView.prototype = {
 		}
 
 		// Remove the event listeners
-		window.removeEventListener('resize', this, false);
+		// window.removeEventListener('resize', this, false);
 		this.wrapper.removeEventListener(START_EV, this, false);
 		this.wrapper.removeEventListener(MOVE_EV, this, false);
 		this.wrapper.removeEventListener(END_EV, this, false);

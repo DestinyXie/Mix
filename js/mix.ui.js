@@ -104,19 +104,40 @@ Mix.ui.mask.prototype={
 
 /*loading*/
 Mix.ui.loading={
-    show:function(cont){
+    show:function(cont,timeoutFn,timeoutTime,type){
         var that=this,
-            cont=cont||BODY;
+            cont=cont||BODY,
+            loadingDom;
+            
+
+        if(timeoutFn){
+            timeoutTime=timeoutTime||15;
+            if(that.outInter){
+                clearTimeout(that.outInter);
+            }
+            that.outInter=setTimeout(timeoutFn,timeoutTime*1000);
+        }
+
         if($('#ui_load')){
             DOM.remove($('#ui_load'));
         }
-        var loadingDom=DOM.create('div',{id:'ui_load',innerHTML:'<div>L</div><div>O</div><div>A</div><div>D</div><div>I</div><div>N</div><div>G</div>'});
+        if(type&&'word'==type){
+            loadingDom=DOM.create('div',{id:'ui_load',innerHTML:'<div>L</div><div>O</div><div>A</div><div>D</div><div>I</div><div>N</div><div>G</div>'});
+        }else{
+            loadingDom=DOM.create('div',{id:'ui_load',className:'ui_load_circle'});
+        }
         cont.appendChild(loadingDom);
     },
     hide:function(){
+        var that=this;
         $('#ui_load')&&DOM.remove($('#ui_load'));
+        if(that.outInter){
+            clearTimeout(that.outInter);
+        }
     }
 }
+
+Mix.ui.loading.show($('#pageWraper'));
 
 /*@private所有弹出层的公共类*/
 Mix.ui.popLayer={

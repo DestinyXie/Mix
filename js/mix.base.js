@@ -77,7 +77,7 @@ CLICK_EV = Mix.hasTouch ? 'touchend' : 'click',
 CANCEL_EV = Mix.hasTouch ? 'touchcancel' : 'mouseup',
 WHEEL_EV = Mix.cssVender == 'Moz' ? 'DOMMouseScroll' : 'mousewheel',
 /*考虑使用观察者模式 添加相应的响应函数来重绘正在显示的各个组件*/
-// RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';
 TRNEND_EV = (function () {
     if ( Mix.cssVender === false ) return false;
 
@@ -173,6 +173,9 @@ $ = DOC.querySelector? function(selector, root) {
     var toStr=Object.prototype.toString;
     extend($,{
         each:function(obj, callback) {
+            if(!obj||!callback){
+                return;
+            }
             if (obj.nodeType)
                 obj = [obj];
             for (var i = obj.length; i--;) {
