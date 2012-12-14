@@ -75,7 +75,7 @@
     that.scroller.style.display = 'block';
     that.refresh();
 
-    that._bind('resize',WIN);
+    // that._bind('resize',WIN);
     that._bind(START_EV);
 }
 Mix.scroll.stop=false;//静态变量
@@ -100,7 +100,7 @@ Mix.scroll.prototype={
             case MOVE_EV: that._move(e); break;
             case END_EV:
             case CANCEL_EV: that._end(e); break;
-            case 'resize': that._resize(); break;
+            // case 'resize': that._resize(); break;
             case WHEEL_EV: that._wheel(e); break;
             case TRNEND_EV: that._transitionEnd(e); break;
         }
@@ -570,7 +570,7 @@ Mix.scroll.prototype={
         that._scrollbar('v');
 
         // Remove the event listeners
-        that._unbind('resize', WIN);
+        // that._unbind('resize', WIN);
         that._unbind(START_EV);
         that._unbind(MOVE_EV);
         that._unbind(END_EV);

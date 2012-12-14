@@ -45,6 +45,19 @@
         /*关闭toast*/
         uexWindow.closeToast();
     },
+    /*清空缓存*/
+    clearCache:function(){
+        if(!Device.isMobi()){return;}
+        function clean(opId,dataType,data){
+            if(dataType==2&&data==0){
+        　　　　alert("清除成功");
+        　　}else if(dataType==2&&data==1){
+        　　　　alert("清除失败");
+        　　}
+        }
+        uexWidgetOne.cbCleanCache =clean;
+        uexWidgetOne.cleanCache()
+    },
     exit:function(){//退出应用
         if(!Device.isMobi()){return;}
         uexWidgetOne.exit();
@@ -126,12 +139,14 @@
         }
     },
     actionSheet:function(ao){//不再用它
+        if(!Device.isMobi()){return;}
         uexWindow.cbActionSheet=ao[3];
         uexWindow.actionSheet(ao[0],ao[1],ao[2]);
     },
     backFunc:[],
     menuFunc:null,
     setKeyPress:function(){
+        if(!Device.isMobi()){return;}
         uexWindow.onKeyPressed=function(code){
             if(0===code*1){
                 if(Device.backFunc.length>0){
@@ -218,6 +233,7 @@
     },
     /*取得手机操作平台ios or android*/
     getPlatForm:function(cb){
+        if(!Device.isMobi()){return;}
         function platformSuccess(opId,dataType,data){
           var platstr="";//终端标识
           if(dataType==2 && data == 0){platstr="ios";}
@@ -255,14 +271,17 @@
     },
     /*启动一个第三方应用*/
     loadApp:function(addr){
+        if(!Device.isMobi()){return;}
         uexWidget.loadApp(addr);
     },
     /*安装应用*/
     installApp:function(addr){
+        if(!Device.isMobi()){return;}
         uexWidget.installApp(addr);
     },
     /*下载*/
     download:function(url,downUrl,cb){
+        if(!Device.isMobi()){return;}
         Device.opCode++;
         var inOpCode=Device.opCode;
         uexDownloaderMgr.onStatus = function(opCode,fileSize,percent,status){
@@ -304,6 +323,7 @@
             secCb 请求成功回调
             failCb 请求失败回调
             */
+            if(!Device.isMobi()){return;}
             if(!customObj['src']){
                 Device.toast('缺少xmlHttp请求地址。');
                 return;
@@ -371,6 +391,7 @@
         uexCamera.open();
     },
     imageBrowser:function(imgArr){
+        if(!Device.isMobi()){return;}
         var arr;
         if($.isArray(imgArr)){
             arr=imgArr;

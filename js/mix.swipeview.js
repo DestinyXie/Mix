@@ -22,8 +22,7 @@ Mix.swipeView = function (el, options) {
 
 	this.masterPages = [];
 
-	div = DOM.create('div');
-	div.id = 'swipeview-slider';
+	div = DOM.create('div',{id:'swipeview-slider'});
 	div.style.cssText = 'position:relative;top:0;height:100%;width:100%;' + Mix.cssPrefix + 'transition-duration:0;' + Mix.cssPrefix + 'transform:translateZ(0);' + Mix.cssPrefix + 'transition-timing-function:ease-out';
 	this.wrapper.appendChild(div);
 	this.slider = div;
@@ -45,8 +44,7 @@ Mix.swipeView = function (el, options) {
 		this.masterPages.push(div);
 	}
 
-	className = this.masterPages[1].className;
-	this.masterPages[1].className = !className ? 'swipeview-active' : className + ' swipeview-active';
+	DOM.addClass(this.masterPages[1],'swipeview-active');
 
 	// window.addEventListener('resize', this, false);
 	this.wrapper.addEventListener(START_EV, this, false);
@@ -67,27 +65,22 @@ Mix.swipeView.prototype = {
 	page: 0,
 	pageIndex: 0,
 	customEvents: [],
-
 	onFlip: function (fn) {
 		this.wrapper.addEventListener('swipeview-flip', fn, false);
 		this.customEvents.push(['flip', fn]);
 	},
-
 	onMoveOut: function (fn) {
 		this.wrapper.addEventListener('swipeview-moveout', fn, false);
 		this.customEvents.push(['moveout', fn]);
 	},
-
 	onMoveIn: function (fn) {
 		this.wrapper.addEventListener('swipeview-movein', fn, false);
 		this.customEvents.push(['movein', fn]);
 	},
-
 	onTouchStart: function (fn) {
 		this.wrapper.addEventListener('swipeview-touchstart', fn, false);
 		this.customEvents.push(['touchstart', fn]);
 	},
-
 	destroy: function () {
 		while ( this.customEvents.length ) {
 			this.wrapper.removeEventListener('swipeview-' + this.customEvents[0][0], this.customEvents[0][1], false);
@@ -105,7 +98,6 @@ Mix.swipeView.prototype = {
 			this.wrapper.removeEventListener('mouseout', this, false);
 		}*/
 	},
-
 	refreshSize: function () {
 		this.wrapperWidth = this.wrapper.clientWidth;
 		this.wrapperHeight = this.wrapper.clientHeight;
@@ -117,12 +109,10 @@ Mix.swipeView.prototype = {
 				Math.round(this.pageWidth * this.options.snapThreshold.replace('%', '') / 100) :
 				this.options.snapThreshold;
 	},
-
 	updatePageCount: function (n) {
 		this.options.numberOfPages = n;
 		this.maxX = -this.options.numberOfPages * this.pageWidth + this.wrapperWidth;
 	},
-
 	goToPage: function (p) {
 		var i,that=this;
 
@@ -171,7 +161,6 @@ Mix.swipeView.prototype = {
 
 		that.__flip();
 	},
-
 	next: function () {
 		if (!this.options.loop && this.x == this.maxX) return;
 
@@ -179,7 +168,6 @@ Mix.swipeView.prototype = {
 		this.x -= 1;
 		this.__checkPosition();
 	},
-
 	prev: function () {
 		if (!this.options.loop && this.x === 0) return;
 
@@ -187,7 +175,6 @@ Mix.swipeView.prototype = {
 		this.x += 1;
 		this.__checkPosition();
 	},
-
 	handleEvent: function (e) {
 		switch (e.type) {
 			case START_EV:
@@ -209,8 +196,6 @@ Mix.swipeView.prototype = {
 				break;
 		}
 	},
-
-
 	/**
 	*
 	* Pseudo private methods
@@ -220,13 +205,11 @@ Mix.swipeView.prototype = {
 		this.x = x;
 		this.slider.style[Mix.transform] = 'translate(' + x + 'px,0)' + Mix.translateZ;
 	},
-
 	__resize: function () {
 		this.refreshSize();
 		this.slider.style[Mix.transitionDuration] = '0s';
 		this.__pos(-this.page * this.pageWidth);
 	},
-
 	__start: function (e) {
 		Mix.scroll.stop=true;
 		e.preventDefault();
@@ -254,7 +237,6 @@ Mix.swipeView.prototype = {
 
 		this.__event('touchstart');
 	},
-
 	__move: function (e) {
 		if (!this.initiated) return;
 
@@ -305,7 +287,6 @@ Mix.swipeView.prototype = {
 
 		this.__pos(newX);
 	},
-
 	__end: function (e) {
 		Mix.scroll.stop=false;
 		if (!this.initiated) return;
@@ -331,7 +312,6 @@ Mix.swipeView.prototype = {
 
 		this.__checkPosition();
 	},
-
 	__checkPosition: function () {
 		var that=this,
 			pageFlip,
@@ -388,7 +368,6 @@ Mix.swipeView.prototype = {
 			if (that.options.hastyPageFlip) that.__flip();
 		}
 	},
-
 	__flip: function () {
 		this.__event('flip');
 
@@ -397,7 +376,6 @@ Mix.swipeView.prototype = {
 			this.masterPages[i].dataset.pageIndex = this.masterPages[i].dataset.upcomingPageIndex;
 		}
 	},
-
 	__event: function (type) {
 		var ev = DOC.createEvent("Event");
 
