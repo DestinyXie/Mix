@@ -515,7 +515,6 @@ var Delegate = {
         if(Delegate.hasLongTap){
             clearTimeout(Delegate.longTapInter);
         }
-        e.stopPropagation();
         Delegate.removeHover();
 
         var targets = Delegate.targets;

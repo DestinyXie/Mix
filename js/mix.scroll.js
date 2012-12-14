@@ -112,7 +112,7 @@ Mix.scroll.prototype={
 
         if(!that.enabled||Mix.scroll.stop) return;
         that._checkDOMChanges();//add by destiny
-        Mix.scroll.stop=true;
+        Mix.scroll.stop=true;//阻止双滚动对象同时滚动
 
         if(!['INPUT','TEXTAREA'].has(e.target.tagName)){
             e.preventDefault();
@@ -184,6 +184,11 @@ Mix.scroll.prototype={
             newX=that.x+deltaX,
             newY=that.y+deltaY,
             timestamp=e.timeStamp||Date.now();
+
+        if(Mix.scroll.outStop){//外部阻止滚动
+            that._end(e);
+            return;
+        }
         if(that.options.onBreforeMove)
             that.options.onBreforeMove.call(that,e);
 

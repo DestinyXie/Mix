@@ -44,19 +44,12 @@ Mix.swipeView = function (el, options) {
 		this.masterPages.push(div);
 	}
 
-	DOM.addClass(this.masterPages[1],'swipeview-active');
-
-	// window.addEventListener('resize', this, false);
-	this.wrapper.addEventListener(START_EV, this, false);
-	this.wrapper.addEventListener(MOVE_EV, this, false);
-	this.wrapper.addEventListener(END_EV, this, false);
-	this.slider.addEventListener(TRNEND_EV, this, false);
+	DOM.addEvent(this.wrapper,START_EV, this);
+	DOM.addEvent(this.slider,TRNEND_EV, this);
 	// in Opera >= 12 the transitionend event is lowercase so we register both events
-	if ( Mix.cssVender == 'O' ) this.slider.addEventListener(TRNEND_EV.toLowerCase(), this, false);
-
-	/*if (!Mix.hasTouch) {
-		this.wrapper.addEventListener('mouseout', this, false);
-	}*/
+	if ( Mix.cssVender == 'O' ) {
+		DOM.addEvent(this.slider,TRNEND_EV.toLowerCase(), this);
+	}
 };
 
 Mix.swipeView.prototype = {
@@ -66,37 +59,32 @@ Mix.swipeView.prototype = {
 	pageIndex: 0,
 	customEvents: [],
 	onFlip: function (fn) {
-		this.wrapper.addEventListener('swipeview-flip', fn, false);
+		DOM.addEvent(this.wrapper,'swipeview-flip', fn);
 		this.customEvents.push(['flip', fn]);
 	},
 	onMoveOut: function (fn) {
-		this.wrapper.addEventListener('swipeview-moveout', fn, false);
+		DOM.addEvent(this.wrapper,'swipeview-moveout', fn);
 		this.customEvents.push(['moveout', fn]);
 	},
 	onMoveIn: function (fn) {
-		this.wrapper.addEventListener('swipeview-movein', fn, false);
+		DOM.addEvent(this.wrapper,'swipeview-movein', fn);
 		this.customEvents.push(['movein', fn]);
 	},
 	onTouchStart: function (fn) {
-		this.wrapper.addEventListener('swipeview-touchstart', fn, false);
+		DOM.addEvent(this.wrapper,'swipeview-touchstart', fn);
 		this.customEvents.push(['touchstart', fn]);
 	},
 	destroy: function () {
 		while ( this.customEvents.length ) {
-			this.wrapper.removeEventListener('swipeview-' + this.customEvents[0][0], this.customEvents[0][1], false);
+			DOM.removeEvent(this.wrapper,'swipeview-' + this.customEvents[0][0],this.customEvents[0][1]);
 			this.customEvents.shift();
 		}
 
 		// Remove the event listeners
-		// window.removeEventListener('resize', this, false);
-		this.wrapper.removeEventListener(START_EV, this, false);
-		this.wrapper.removeEventListener(MOVE_EV, this, false);
-		this.wrapper.removeEventListener(END_EV, this, false);
-		this.slider.removeEventListener(TRNEND_EV, this, false);
-
-/*			if (!Mix.hasTouch) {
-			this.wrapper.removeEventListener('mouseout', this, false);
-		}*/
+		DOM.removeEvent(this.wrapper,START_EV,this);
+		DOM.removeEvent(this.wrapper,MOVE_EV,this);
+		DOM.removeEvent(this.wrapper,END_EV,this);
+		DOM.removeEvent(this.slider,TRNEND_EV,this);
 	},
 	refreshSize: function () {
 		this.wrapperWidth = this.wrapper.clientWidth;
@@ -108,58 +96,6 @@ Mix.swipeView.prototype = {
 			/%/.test(this.options.snapThreshold) ?
 				Math.round(this.pageWidth * this.options.snapThreshold.replace('%', '') / 100) :
 				this.options.snapThreshold;
-	},
-	updatePageCount: function (n) {
-		this.options.numberOfPages = n;
-		this.maxX = -this.options.numberOfPages * this.pageWidth + this.wrapperWidth;
-	},
-	goToPage: function (p) {
-		var i,that=this;
-
-		DOM.removeClass(that.masterPages[that.currentMasterPage],'swipeview-active');
-
-		for (i=0; i<3; i++) {
-			className = that.masterPages[i].className;
-			/(^|\s)swipeview-loading(\s|$)/.test(className) || (that.masterPages[i].className = !className ? 'swipeview-loading' : className + ' swipeview-loading');
-		}
-
-		p = p < 0 ? 0 : p > that.options.numberOfPages-1 ? that.options.numberOfPages-1 : p;
-		that.page = p;
-		that.pageIndex = p;
-		that.slider.style[Mix.transitionDuration] = '0s';
-		that.__pos(-p * that.pageWidth);
-
-		that.currentMasterPage = (that.page + 1) - Math.floor((that.page + 1) / 3) * 3;
-
-		that.masterPages[that.currentMasterPage].className = that.masterPages[that.currentMasterPage].className + ' swipeview-active';
-
-		if (that.currentMasterPage === 0) {
-			that.masterPages[2].style.left = that.page * 100 - 100 + '%';
-			that.masterPages[0].style.left = that.page * 100 + '%';
-			that.masterPages[1].style.left = that.page * 100 + 100 + '%';
-
-			that.masterPages[2].dataset.upcomingPageIndex = that.page === 0 ? that.options.numberOfPages-1 : that.page - 1;
-			that.masterPages[0].dataset.upcomingPageIndex = that.page;
-			that.masterPages[1].dataset.upcomingPageIndex = that.page == that.options.numberOfPages-1 ? 0 : that.page + 1;
-		} else if (that.currentMasterPage == 1) {
-			that.masterPages[0].style.left = that.page * 100 - 100 + '%';
-			that.masterPages[1].style.left = that.page * 100 + '%';
-			that.masterPages[2].style.left = that.page * 100 + 100 + '%';
-
-			that.masterPages[0].dataset.upcomingPageIndex = that.page === 0 ? that.options.numberOfPages-1 : that.page - 1;
-			that.masterPages[1].dataset.upcomingPageIndex = that.page;
-			that.masterPages[2].dataset.upcomingPageIndex = that.page == that.options.numberOfPages-1 ? 0 : that.page + 1;
-		} else {
-			that.masterPages[1].style.left = that.page * 100 - 100 + '%';
-			that.masterPages[2].style.left = that.page * 100 + '%';
-			that.masterPages[0].style.left = that.page * 100 + 100 + '%';
-
-			that.masterPages[1].dataset.upcomingPageIndex = that.page === 0 ? that.options.numberOfPages-1 : that.page - 1;
-			that.masterPages[2].dataset.upcomingPageIndex = that.page;
-			that.masterPages[0].dataset.upcomingPageIndex = that.page == that.options.numberOfPages-1 ? 0 : that.page + 1;
-		}
-
-		that.__flip();
 	},
 	next: function () {
 		if (!this.options.loop && this.x == this.maxX) return;
@@ -197,9 +133,7 @@ Mix.swipeView.prototype = {
 		}
 	},
 	/**
-	*
 	* Pseudo private methods
-	*
 	*/
 	__pos: function (x) {
 		this.x = x;
@@ -211,13 +145,9 @@ Mix.swipeView.prototype = {
 		this.__pos(-this.page * this.pageWidth);
 	},
 	__start: function (e) {
-		Mix.scroll.stop=true;
 		e.preventDefault();
-
 		if (this.initiated) return;
-
 		var point = Mix.hasTouch ? e.touches[0] : e;
-
 		this.initiated = true;
 		this.moved = false;
 		this.thresholdExceeded = false;
@@ -230,11 +160,10 @@ Mix.swipeView.prototype = {
 		this.directionX = 0;
 		this.directionLocked = false;
 
-/*			var matrix = getComputedStyle(this.slider, null).webkitTransform.replace(/[^0-9-.,]/g, '').split(',');
-		this.x = matrix[4] * 1;*/
-
 		this.slider.style[Mix.transitionDuration] = '0s';
 
+		DOM.addEvent(this.wrapper,MOVE_EV, this);
+		DOM.addEvent(this.wrapper,END_EV, this);
 		this.__event('touchstart');
 	},
 	__move: function (e) {
@@ -246,6 +175,7 @@ Mix.swipeView.prototype = {
 			newX = this.x + deltaX,
 			dist = Math.abs(point.pageX - this.startX);
 
+		this.oriDist=point.pageX - this.startX;
 		this.moved = true;
 		this.pointX = point.pageX;
 		this.pointY = point.pageY;
@@ -260,13 +190,14 @@ Mix.swipeView.prototype = {
 		}
 
 		// We are scrolling vertically, so skip SwipeView and give the control back to the browser
-		if (!this.directionLocked && this.stepsY > this.stepsX) {
+		if (!this.directionLocked && this.stepsY > this.stepsX) {//-->
 			this.initiated = false;
+			Mix.scroll.outStop=false;
 			return;
 		}
-
 		e.preventDefault();
 
+		Mix.scroll.outStop=true;
 		this.directionLocked = true;
 
 		if (!this.options.loop && (newX > 0 || newX < this.maxX)) {
@@ -281,20 +212,23 @@ Mix.swipeView.prototype = {
 			this.__event('movein');
 		}
 
-/*			if (newX > 0 || newX < this.maxX) {
+		/*if (newX > 0 || newX < this.maxX) {
 			newX = this.x + (deltaX / 2);
 		}*/
 
 		this.__pos(newX);
 	},
 	__end: function (e) {
-		Mix.scroll.stop=false;
+		Mix.scroll.outStop=false;
 		if (!this.initiated) return;
 
 		var point = Mix.hasTouch ? e.changedTouches[0] : e,
 			dist = Math.abs(point.pageX - this.startX);
 
 		this.initiated = false;
+
+		DOM.removeEvent(this.wrapper,MOVE_EV,this);
+		DOM.removeEvent(this.wrapper,END_EV,this);
 
 		if (!this.moved) return;
 
@@ -316,15 +250,15 @@ Mix.swipeView.prototype = {
 		var that=this,
 			pageFlip,
 			pageFlipIndex,
-			className;
-
-		DOM.removeClass(that.masterPages[that.currentMasterPage],'swipeview-active');
+			className,
+			newX,
+			pageNum=that.options.numberOfPages;
 
 		// Flip the page
 		if (that.directionX > 0) {
 			that.page = -Math.ceil(that.x / that.pageWidth);
 			that.currentMasterPage = (that.page + 1) - Math.floor((that.page + 1) / 3) * 3;
-			that.pageIndex = that.pageIndex === 0 ? that.options.numberOfPages - 1 : that.pageIndex - 1;
+			that.pageIndex = (that.page%pageNum+pageNum)%pageNum;
 
 			pageFlip = that.currentMasterPage - 1;
 			pageFlip = pageFlip < 0 ? 2 : pageFlip;
@@ -334,7 +268,7 @@ Mix.swipeView.prototype = {
 		} else {
 			that.page = -Math.floor(that.x / that.pageWidth);
 			that.currentMasterPage = (that.page + 1) - Math.floor((that.page + 1) / 3) * 3;
-			that.pageIndex = that.pageIndex == that.options.numberOfPages - 1 ? 0 : that.pageIndex + 1;
+			that.pageIndex = (that.page%pageNum+pageNum)%pageNum;
 
 			pageFlip = that.currentMasterPage + 1;
 			pageFlip = pageFlip > 2 ? 0 : pageFlip;
@@ -342,12 +276,6 @@ Mix.swipeView.prototype = {
 
 			pageFlipIndex = that.page + 1;
 		}
-
-		// Add active class to current page
-		DOM.addClass(that.masterPages[that.currentMasterPage],' swipeview-active');
-
-		// Add loading class to flipped page
-		DOM.addClass(that.masterPages[pageFlip],'swipeview-loading');
 
 		pageFlipIndex = pageFlipIndex - Math.floor(pageFlipIndex / that.options.numberOfPages) * that.options.numberOfPages;
 		that.masterPages[pageFlip].dataset.upcomingPageIndex = pageFlipIndex;		// Index to be loaded in the newly flipped page
@@ -370,17 +298,13 @@ Mix.swipeView.prototype = {
 	},
 	__flip: function () {
 		this.__event('flip');
-
 		for (var i=0; i<3; i++) {
-			DOM.removeClass(this.masterPages[i],'swipeview-loading');
 			this.masterPages[i].dataset.pageIndex = this.masterPages[i].dataset.upcomingPageIndex;
 		}
 	},
 	__event: function (type) {
 		var ev = DOC.createEvent("Event");
-
 		ev.initEvent('swipeview-' + type, true, true);
-
 		this.wrapper.dispatchEvent(ev);
 	}
 };
