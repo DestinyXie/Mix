@@ -365,7 +365,10 @@ Mix.ui.region=extend({},Mix.ui.popLayer,{
         that.citySel.innerHTML=that.option.city||that.option.cityProm;
     },
     chooseProv:function() {
-        var that=this;
+        var that=this,
+            provs=Mix.regions.provinces.clone();
+
+        provs=provs.remove('台湾').remove('海外');//暂时
         function checkProv(selOpts){
             that.provSel.innerHTML=selOpts[0];
             that.citySel.innerHTML=that.option.cityProm;
@@ -379,7 +382,7 @@ Mix.ui.region=extend({},Mix.ui.popLayer,{
         }
         Mix.ui.select.show({
             useMask:false,
-            options:Mix.regions.provinces,
+            options:provs,
             defOptions:[that.option.prov||that.option.provProm],
             onConfirm:checkProv,
             onShow:function(UIselect){

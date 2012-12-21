@@ -126,7 +126,7 @@ extend(Array.prototype,{
     /*去掉某个数组元素*/
     remove : function (value) {
         if(!this.has(value))
-            return false;
+            return this;
         var idx=this.indexOf(value);
         this.splice(idx,1);
         return this;
@@ -288,7 +288,7 @@ var DOM = {
             value;
         for (var name in styles) {
             value = styles[name];
-            if (value !== '' && !isNaN(value) && name!=='zoom') {
+            if (value !== '' && !isNaN(value) && name!=='zoom' && name!=='z-index') {
                 value += 'px';
             }
             styleStr+=(name+":"+value+";");

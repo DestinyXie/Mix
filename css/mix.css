@@ -399,10 +399,10 @@ body {
 	line-height:2.5em;
 	font-weight:bold;
 	font-size:0.9em;
-	color:#ccc;
+	color:#bbb;
 	/*text-align:center;*/
 	padding-left:30%;
-	text-shadow:1px 1px 0 #666;
+	text-shadow:1px 1px 0 #444;
 }
 .pullDown .pullDownIcon {
 	vertical-align:middle;

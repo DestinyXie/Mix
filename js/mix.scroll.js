@@ -11,7 +11,7 @@
         vScroll:true,
         x:0,//滚动位值
         y:0,
-        bounce:true,//Slow down if outside of the boundaries
+        bounce:false,//Slow down if outside of the boundaries
         bounceLock:false,
         momentum:true,
         lockDirect:true,

@@ -396,7 +396,7 @@
         if($.isArray(imgArr)){
             arr=imgArr;
         }else{
-            arr=[imgArr]
+            arr=[imgArr];
         }
         uexImageBrowser.open(arr,0,0);
     },
@@ -406,5 +406,15 @@
             cb(opCode,dataType,data);
         };
         uexImageBrowser.pick();
+    },
+    call:function(num){
+        if(!Device.isMobi()){return;}
+        var numStr='phone'.replace(/phone/,num);
+        uexCall.call(numStr);
+    },
+    dial:function(num){
+        if(!Device.isMobi()){return;}
+        var numStr='phone'.replace(/phone/,num);
+        uexCall.dial(numStr);
     }
 }

@@ -84,6 +84,7 @@ Mix.swipeView.prototype = {
 		DOM.removeEvent(this.wrapper,START_EV,this);
 		DOM.removeEvent(this.wrapper,MOVE_EV,this);
 		DOM.removeEvent(this.wrapper,END_EV,this);
+		DOM.removeEvent(this.wrapper,CANCEL_EV,this);
 		DOM.removeEvent(this.slider,TRNEND_EV,this);
 	},
 	refreshSize: function () {
@@ -164,6 +165,7 @@ Mix.swipeView.prototype = {
 
 		DOM.addEvent(this.wrapper,MOVE_EV, this);
 		DOM.addEvent(this.wrapper,END_EV, this);
+		DOM.addEvent(this.wrapper,CANCEL_EV, this);
 		this.__event('touchstart');
 	},
 	__move: function (e) {
@@ -229,6 +231,7 @@ Mix.swipeView.prototype = {
 
 		DOM.removeEvent(this.wrapper,MOVE_EV,this);
 		DOM.removeEvent(this.wrapper,END_EV,this);
+		DOM.removeEvent(this.wrapper,CANCEL_EV,this);
 
 		if (!this.moved) return;
 
