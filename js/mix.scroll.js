@@ -76,6 +76,12 @@
     that.refresh();
 
     // that._bind('resize',WIN);
+
+    /*订阅窗口resize*/
+    Mix.obs.subscribe('resize',function(){
+        that._resize();
+    });
+
     that._bind(START_EV);
 }
 Mix.scroll.stop=false;//静态变量

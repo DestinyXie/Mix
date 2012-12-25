@@ -76,7 +76,7 @@ END_EV = Mix.hasTouch ? 'touchend' : 'mouseup',
 CLICK_EV = Mix.hasTouch ? 'touchend' : 'click',
 CANCEL_EV = Mix.hasTouch ? 'touchcancel' : 'mouseup',
 WHEEL_EV = Mix.cssVender == 'Moz' ? 'DOMMouseScroll' : 'mousewheel',
-/*考虑使用观察者模式 添加相应的响应函数来重绘正在显示的各个组件*/
+/*考虑使用观察者模式 添加相应的响应函数来重绘正在显示的各个组件 done(Mix.obs)*/
 RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';
 TRNEND_EV = (function () {
     if ( Mix.cssVender === false ) return false;
@@ -547,6 +547,77 @@ var Delegate = {
     }
 };
 Delegate.init();
+
+/*观察者工具*/
+Mix.obs={};
+(function(o){
+    var topics={},
+        uid=-1;
+
+    function _throwE(e){
+        return function(){
+            throw e;
+        };
+    }
+
+    function _notify(topic,data){
+        var subscibers=topics[topic];
+
+        for(var i=0,j=subscibers.length;i<j;i++){
+            try{
+                subscibers[i].func(topic,data);
+                // alert('notify');
+            }catch(e){
+                setTimeout(_throwE(e),Mix.isAndroid?200:0);
+            }
+        }
+    }
+
+    function _publish(topic,data){
+        if(!topics.hasOwnProperty(topic)){
+            return false;
+        }
+        setTimeout(function(){_notify(topic,data)},0);
+        return true;
+    }
+
+    o.publish=function(topic,data){
+        return _publish(topic,data);
+    };
+
+    o.subscribe=function(topic,func){
+        if(!topics.hasOwnProperty(topic)){
+            topics[topic]=[];
+        }
+
+        var token=(++uid).toString();
+        topics[topic].push({token:token,func:func});
+        return token;
+    };
+
+    o.unsubscribe=function(token){
+        for(var m in topics){
+            if(topics.hasOwnProperty(m)){
+                for(var i=0,j=topics[m].length;i<j;i++){
+                    if(topics[m][i].token===token){
+                        topics[m].splice(i,1);
+                        return token;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    /*设定观察的topic就清除该topic的订阅，否则清除全部topic的所有订阅*/
+    o.clear=function(name){
+        if(name){
+            topics[name]=[];
+        }else{
+            topics={};
+            uid=-1;
+        }
+    }
+})(Mix.obs);
 
 /*基本的一些工具类*/
 Mix.base={

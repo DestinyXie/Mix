@@ -1,75 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--@author:destinyxie <xber1986@gmail.com>-->
-<project name="webAppForKXJY" default="doall">
+<project name="webAppForAdidas" default="doall">
     <description>使用yuicompressor压缩css 使用closure压缩js(doall同时合并压缩css和js)</description>
     <!--当前文件目录路径-->
     <dirname property="current.dir" file="${ant.file}"/>
     <!--css路径js路径和js路径-->
-    <property name="css.path" location="${current.dir}/css/"/>
-    <property name="js.path" location="${current.dir}/js/"/>
+    <property name="css.path" location="F:/AppCanWorkDirectory/easy-mobile/android_iphone/css/"/>
+    <property name="js.path" location="F:/AppCanWorkDirectory/easy-mobile/android_iphone/js/"/>
     <!--yuicompressor和closure程序路径-->
     <property name="yuicompressor.path" location="${current.dir}/yuicompressor.jar"/>
     <property name="closure.path" location="${current.dir}/compiler.jar"/>
 
-    <!--合并css-->
-    <target name="concat-css">
-        <concat destfile="${css.path}/kxjy.source.css" encoding="utf-8" outputencoding="utf-8">
-            <path path="${css.path}/zy-ui.css"/>
-            <path path="${css.path}/kxjy.css"/>
-        </concat>
-    </target>
-    <!--压缩css-->
-    <target name="minify-css">
-        <apply executable="java" verbose="true" dest="${css.path}/"  failonerror="true" parallel="false">
-            <fileset dir="${css.path}" includes="*.source.css"/>
-            <arg line="-jar"/>
-            <arg path="${yuicompressor.path}"/>
-            <arg line="--charset utf-8"/>
-            <arg value="--type"/>
-            <arg value="css"/>
-            <arg value="-o"/>
-            <targetfile/>
-            <mapper type="regexp" from="^(.*)\.source\.css" to="\1-min.css"/>
-        </apply>
-    </target>
-    <!--合并js-->
-    <target name="concat-js">
-        <concat destfile="${js.path}/kxjy.source.js" encoding="utf-8" outputencoding="utf-8">
-            <path path="${js.path}/mix.base.js"/>
-            <path path="${js.path}/mix.scroll.js"/>
-            <path path="${js.path}/mix.bridge.appcan.js"/>
-            <path path="${js.path}/mix.x.js"/>
-            <path path="${js.path}/mix.regions.js"/>
-            <path path="${js.path}/mix.ui.js"/>
-            <path path="${js.path}/kxjy.mobile.page.js"/>
-            <path path="${js.path}/kxjy.mobile.home.js"/>
-            <path path="${js.path}/kxjy.mobile.feed.js"/>
-        </concat>
-    </target>
-    <!--压缩js(closure)-->
-    <target name="minify-js">
-        <apply executable="java" verbose="true" dest="${js.path}/" failonerror="true" parallel="false">
-            <fileset dir="${js.path}/" includes="*.js"/>
-            <arg line="-jar"/>
-            <arg path="${closure.path}"/>
-            <arg line="--charset utf-8"/>
-            <arg value="--warning_level"/>
-            <arg value="QUIET"/>
-            <arg value="--compilation_level"/>
-            <arg value="SIMPLE_OPTIMIZATIONS"/>
-            <arg value="--js"/>
-            <srcfile/>
-            <arg value="--js_output_file"/>
-            <targetfile/>
-            <mapper type="regexp" from="^(.*)\.source\.js$" to="\1-min.js"/>
-        </apply>
-    </target>
-
     <!--合并并压缩css和js-->
     <target name="doall">
-        <concat destfile="${css.path}/kxjy.source.css" encoding="utf-8" outputencoding="utf-8">
-            <path path="${css.path}/zy-ui.css"/>
-            <path path="${css.path}/kxjy.css"/>
+        <concat destfile="${css.path}/adidas.source.css" encoding="utf-8" outputencoding="utf-8">
+            <path path="${css.path}/ui-base.css"/>
+            <path path="${css.path}/ui-box.css"/>
+            <path path="${css.path}/style.css"/>
+            <path path="${css.path}/mix.css"/>
         </concat>
         <apply executable="java" verbose="true" dest="${css.path}/"   failonerror="true" parallel="false">
             <fileset dir="${css.path}" includes="*.source.css"/>
@@ -82,16 +30,17 @@
             <targetfile/>
             <mapper type="regexp" from="^(.*)\.source\.css" to="\1-min.css"/>
         </apply>
-        <concat destfile="${js.path}/kxjy.source.js" encoding="utf-8" outputencoding="utf-8" fixlastline="no">
+        <concat destfile="${js.path}/adidas.source.js" encoding="utf-8" outputencoding="utf-8" fixlastline="no">
             <path path="${js.path}/mix.base.js"/>
             <path path="${js.path}/mix.scroll.js"/>
+            <path path="${js.path}/mix.swipeview.js"/>
             <path path="${js.path}/mix.bridge.appcan.js"/>
             <path path="${js.path}/mix.x.js"/>
             <path path="${js.path}/mix.regions.js"/>
             <path path="${js.path}/mix.ui.js"/>
-            <path path="${js.path}/kxjy.mobile.page.js"/>
-            <path path="${js.path}/kxjy.mobile.home.js"/>
-            <path path="${js.path}/kxjy.mobile.feed.js"/>
+            <path path="${js.path}/adidas.page.js"/>
+            <path path="${js.path}/adidas.home.js"/>
+            <path path="${js.path}/adidas.feed.js"/>
         </concat>
         <apply executable="java" verbose="true" dest="${js.path}/" failonerror="true" parallel="false">
             <fileset dir="${js.path}/" includes="*.source.js"/>
@@ -110,7 +59,7 @@
             <mapper type="regexp" from="^(.*)\.source\.js$" to="\1-min.js"/>
         </apply>
         <!--得到压缩文件后删除合并的css和js文件-->
-        <delete file="${css.path}/kxjy.source.css"/>
-        <delete file="${js.path}/kxjy.source.js"/>
+        <delete file="${css.path}/adidas.source.css"/>
+        <delete file="${js.path}/adidas.source.js"/>
     </target>
 </project>
