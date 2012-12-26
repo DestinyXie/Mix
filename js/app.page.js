@@ -1,31 +1,27 @@
 /*单页面模式*/
 ;(function(){
 //公共tmpl,减少代码量
-var headerBack=['<!--header开始-->',
-    '<header id="header">',
-        '<div _click="ViewMgr.back()"><img src="image/return.png" alt="返回"/></div>'].join('');
+var headerBack=['<header>',
+        '<div _click="ViewMgr.back()" class="btn_back"><img src="image/return.png" alt="返回"/></div>'].join('');
 
 var contentTmpl={
 'login':['${headerBack}',
-        '<h1>welcome</h1>',
+        '<h3>welcome</h3>',
     '</header>',
-    '<!--header结束-->',
-    '<!--content开始-->',
     '<div id="content">',
         '<div>',
-        '<h3 class="welcome">welcome,here is mixJS.</h3>',
+        '<h3 class="welcome">Hi,here is MixJS.</h3>',
         '</div>',
-    '</div>',
-    '<!--content结束-->'].join('')
+    '</div>'].join('')
 };
 
 
 var footerTmple={
 'main':['<footer id="footer">',
-    '<i _click=\'ViewMgr.gotoPage("i1");\' class="${1}">i1</i>',
-    '<i _click=\'ViewMgr.gotoPage("i2");\' class="${2}">i2</i>',
-    '<i _click=\'ViewMgr.gotoPage("i3");\' class="${3}">i3</i>',
-    '<i _click=\'ViewMgr.gotoPage("i4");\' class="${4}">i4</i>',
+    '<i _click=\'ViewMgr.gotoPage("login");\' class="${1}">i1</i>',
+    '<i _click=\'ViewMgr.gotoPage("login");\' class="${2}">i2</i>',
+    '<i _click=\'ViewMgr.gotoPage("login");\' class="${3}">i3</i>',
+    '<i _click=\'ViewMgr.gotoPage("login");\' class="${4}">i4</i>',
     '</footer>'].join('')
 };
 

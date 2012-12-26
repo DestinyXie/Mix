@@ -6,13 +6,16 @@
 	-webkit-tap-highlight-color:rgba(0, 0, 0, 0);
 	outline: none;
 }
-body {
+body,h3 {
 	margin:0;
 	padding:0;
 	-webkit-user-select:none;
 	-webkit-text-size-adjust:none;
 }
-
+i,b{
+	display: block;
+	font-style: normal;
+}
 /***UI Tools***/
 /*mask 注意被遮罩元素z-index不能大于100*/
 .pageMask{
