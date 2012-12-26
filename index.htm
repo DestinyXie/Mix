@@ -1,46 +1,30 @@
 <!DOCTYPE html>
 <html class="um">
 <head>
-<title>开心交友 - 手机版</title>
+<title>mixJs</title>
 <meta charset="utf-8">
 <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!--{if $debug}-->
-<link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/kxjy-min.css','static');}-->"/>
-<!--{else}-->
-<link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/zy-ui.css','static');}-->"/>
-<link rel="stylesheet" href="<!--{eval echo createDomain('/template/mobile/css/kxjy.css','static');}-->"/>
-<!--{/if}-->
+
+<link rel="stylesheet" href="css/app.css"/>
+<link rel="stylesheet" href="css/mix.css"/>
+<!--<link rel="stylesheet" href="css/mix-min.css"/>-->
 
 </head>
-<body class="um-vp bg">
-<div id="pageWraper" class="up ub ub-ver" >
+<body>
+<div id="pageWraper">
 </div>
-
-<!--{if $debug}-->
-<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy-min.js','static');}-->"></script>
-<!--{else}-->
-<script src="<!--{eval echo createDomain('/template/mobile/js/mix.base.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/mix.scroll.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/mix.swipeview.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/mix.bridge.appcan.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/mix.x.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/mix.regions.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/mix.ui.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.page.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.home.js','static');}-->"></script>
-<script src="<!--{eval echo createDomain('/template/mobile/js/kxjy.mobile.feed.js','static');}-->"></script>
-<script src="http://api.map.baidu.com/api?v=1.3" type="text/javascript"></script>
-<!--{/if}-->
-
-<script type="text/javascript">
-    StorMgr.sid="$sid";
-    StorMgr.siteUrl="$_SC['siteurl']";
-    StorMgr.chatPath="$_SC['chat_system_url']";/*Chat服务器*/
-    StorMgr.siteHost="$_SERVER['HTTP_HOST']";
-    StorMgr.filesAllowed =$_SC['max_file_num']-$user_info['picnum'];/*还能上传照片的数量*/
-</script>
-
+<script src="js/mix.base.js"></script>
+<script src="js/mix.scroll.js"></script>
+<script src="js/mix.swipeview.js"></script>
+<script src="js/mix.bridge.appcan.js"></script>
+<script src="js/mix.x.js"></script>
+<script src="js/mix.regions.js"></script>
+<script src="js/mix.ui.js"></script>
+<script src="js/app.page.js"></script>
+<script src="js/app.home.js"></script>
+<script src="js/app.feed.js"></script>
+<!--<script src="app.feed.js"></script>-->
 </body>
 </html>

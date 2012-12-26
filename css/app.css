@@ -1,0 +1,21 @@
+/*customer stylesheet*/
+body{
+	background: #333;
+}
+header{
+	color: white;
+	height: 2.750em;
+	background: -webkit-linear-gradient(top,#4E9CD9,#3A78C3);
+	background: -webkit-gradient(linear,center top,center bottom,from(#4E9CD9),to(#3A78C3));
+	text-shadow: -1px -1px 1px #235487;
+}
+footer{
+	background: -webkit-gradient(linear,center top,center bottom,from(#2C2C2C),to(#111));
+}
+.welcome{
+	text-align: center;
+	color:#ddd;
+	padding: 1em;
+	font-size: 1.5em;
+	-webkit-text-shadow:0 0 .5em #999 inset;
+}

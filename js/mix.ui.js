@@ -539,7 +539,7 @@ function toast(s,t){
     }else{
         Mix.ui.tips.show({
             msg:s,
-            contSel:"#content",
+            // contSel:"#content",
             hideT:t*1000||3000
         });
     }

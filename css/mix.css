@@ -1,6 +1,5 @@
 /*common*/
-.pop_layer,.pop_layer *,.pop_layer *:before,.pop_layer *:after {
-	-moz-box-sizing: border-box;
+*,*:before,*:after {
 	-webkit-box-sizing: border-box;
 }
 *,*:focus,*:active {
@@ -284,7 +283,7 @@ body {
 	width:6em;
 	height:6em;
 	margin-left:-3em;
-	background:#999 url(images/loading.gif) no-repeat 1.5em 1.5em;
+	background:#999 url(../image/loading.gif) no-repeat 1.5em 1.5em;
 	background-size: 3em 3em;
 	-webkit-border-radius:.5em;
 	opacity:.6;
@@ -409,7 +408,7 @@ body {
 	display:inline-block;
 	width:2em;
 	height:2em;
-	background:url(images/pull-icon@2x.png) 0 0 no-repeat;
+	background:url(../image/pull-icon@2x.png) 0 0 no-repeat;
 	-webkit-background-size:2em 4em;
 }
 .pullDown .pullDownLabel{

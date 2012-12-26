@@ -5,18 +5,16 @@
     <!--当前文件目录路径-->
     <dirname property="current.dir" file="${ant.file}"/>
     <!--css路径js路径和js路径-->
-    <property name="css.path" location="F:/AppCanWorkDirectory/easy-mobile/android_iphone/css/"/>
-    <property name="js.path" location="F:/AppCanWorkDirectory/easy-mobile/android_iphone/js/"/>
+    <property name="css.path" location="${current.dir}/css/"/>
+    <property name="js.path" location="${current.dir}/js/"/>
     <!--yuicompressor和closure程序路径-->
-    <property name="yuicompressor.path" location="${current.dir}/yuicompressor.jar"/>
-    <property name="closure.path" location="${current.dir}/compiler.jar"/>
+    <property name="yuicompressor.path" location="F:/devTools/yuicompressor.jar"/>
+    <property name="closure.path" location="F:/devTools/compiler.jar"/>
 
     <!--合并并压缩css和js-->
     <target name="doall">
-        <concat destfile="${css.path}/adidas.source.css" encoding="utf-8" outputencoding="utf-8">
-            <path path="${css.path}/ui-base.css"/>
-            <path path="${css.path}/ui-box.css"/>
-            <path path="${css.path}/style.css"/>
+        <concat destfile="${css.path}/app.source.css" encoding="utf-8" outputencoding="utf-8">
+            <path path="${css.path}/app.css"/>
             <path path="${css.path}/mix.css"/>
         </concat>
         <apply executable="java" verbose="true" dest="${css.path}/"   failonerror="true" parallel="false">
@@ -30,7 +28,7 @@
             <targetfile/>
             <mapper type="regexp" from="^(.*)\.source\.css" to="\1-min.css"/>
         </apply>
-        <concat destfile="${js.path}/adidas.source.js" encoding="utf-8" outputencoding="utf-8" fixlastline="no">
+        <concat destfile="${js.path}/app.source.js" encoding="utf-8" outputencoding="utf-8" fixlastline="no">
             <path path="${js.path}/mix.base.js"/>
             <path path="${js.path}/mix.scroll.js"/>
             <path path="${js.path}/mix.swipeview.js"/>
@@ -38,9 +36,9 @@
             <path path="${js.path}/mix.x.js"/>
             <path path="${js.path}/mix.regions.js"/>
             <path path="${js.path}/mix.ui.js"/>
-            <path path="${js.path}/adidas.page.js"/>
-            <path path="${js.path}/adidas.home.js"/>
-            <path path="${js.path}/adidas.feed.js"/>
+            <path path="${js.path}/app.page.js"/>
+            <path path="${js.path}/app.home.js"/>
+            <path path="${js.path}/app.feed.js"/>
         </concat>
         <apply executable="java" verbose="true" dest="${js.path}/" failonerror="true" parallel="false">
             <fileset dir="${js.path}/" includes="*.source.js"/>
@@ -59,7 +57,7 @@
             <mapper type="regexp" from="^(.*)\.source\.js$" to="\1-min.js"/>
         </apply>
         <!--得到压缩文件后删除合并的css和js文件-->
-        <delete file="${css.path}/adidas.source.css"/>
-        <delete file="${js.path}/adidas.source.js"/>
+        <delete file="${css.path}/app.source.css"/>
+        <delete file="${js.path}/app.source.js"/>
     </target>
 </project>
