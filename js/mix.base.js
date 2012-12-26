@@ -76,8 +76,8 @@ END_EV = Mix.hasTouch ? 'touchend' : 'mouseup',
 CLICK_EV = Mix.hasTouch ? 'touchend' : 'click',
 CANCEL_EV = Mix.hasTouch ? 'touchcancel' : 'mouseup',
 WHEEL_EV = Mix.cssVender == 'Moz' ? 'DOMMouseScroll' : 'mousewheel',
-/*考虑使用观察者模式 添加相应的响应函数来重绘正在显示的各个组件 done(Mix.obs)*/
-RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+//对webapp来说直接使用window的resize比onorientationchange效果更好
+RESIZE_EV = 'resize';
 TRNEND_EV = (function () {
     if ( Mix.cssVender === false ) return false;
 
@@ -92,10 +92,8 @@ TRNEND_EV = (function () {
     return transitionEnd[Mix.cssVender];
 })();
 
-// Helpers ?? 3d更高效么?
+// Helpers 3d更高效么?
 Mix.translateZ = Mix.has3d ? ' translateZ(0)' : '';
-
-
 
 /*扩展一个Object对象(s或o为实例化的对象时不能使用该方法)*/
 function extend(d, s ,o) {
@@ -389,7 +387,6 @@ var DOM = {
         HEAD.appendChild(css);
         css.onload=function(){
             cb&&cb();
-            // HEAD.removeChild(css);
         }
     }
 };
@@ -439,13 +436,14 @@ var Delegate = {
             if(el.getAttribute('_move')){
                 Delegate.hasMoveFn=true;
                 Delegate.moveDom=el;
+                Delegate.moveDom.moveName=Delegate.moveDom.getAttribute('_move');
                 Delegate.moveDom.originPos=[parseInt(getComputedStyle(el).left),parseInt(getComputedStyle(el).top)];
                 Delegate.moveDom.event=e;
                 oe.stop();
             }
         }
 
-        if(Delegate.targets.length>0){//有需要触发点击事件的元素
+        if(Delegate.targets.length>0){//有需要触发事件的元素
             DOM.addClass(Delegate.targets[0], 'active');
 
             DOM.addEvent(DOC, MOVE_EV, Delegate['move']);
@@ -472,13 +470,8 @@ var Delegate = {
             dis = Mix.base.calculPy(cp[0] - sp[0],cp[1] - sp[1]);
 
         if(Delegate.hasMoveFn){
-            // var fnAttr=Delegate.moveDom.getAttribute('_move');
             Delegate.moveDom.moveDist=[cp[0] - sp[0],cp[1] - sp[1]];
-
-            // if('map.slide'==fnAttr){
-                Mix.map.slideMove(Delegate.moveDom);//暂时
-            // }
-
+            Mix.obs.publish(Delegate.moveDom.moveName,Delegate.moveDom);
             return;
         }
 
@@ -529,14 +522,11 @@ var Delegate = {
         }
 
         if(Delegate.hasMoveFn){
-            // var fnAttr=Delegate.moveDom.getAttribute('_move');
-            // if('map.slide'==fnAttr){
-                Mix.map.slideMoveEnd(Delegate.moveDom);//暂时
-            // }
+            Mix.obs.publish(Delegate.moveDom.moveName+'_end',Delegate.moveDom);
         }
 
-        DOM.removeEvent(DOC, MOVE_EV, Delegate['move']);//end后注销move
-        DOM.removeEvent(DOC, END_EV, Delegate['end']);//end后注销end
+        DOM.removeEvent(DOC, MOVE_EV, Delegate['move']);
+        DOM.removeEvent(DOC, END_EV, Delegate['end']);
         Delegate.isClick    = false;
         Delegate.startEvent = null;
         Delegate.startPoint = [0, 0];
@@ -566,7 +556,6 @@ Mix.obs={};
         for(var i=0,j=subscibers.length;i<j;i++){
             try{
                 subscibers[i].func(topic,data);
-                // alert('notify');
             }catch(e){
                 setTimeout(_throwE(e),Mix.isAndroid?200:0);
             }
@@ -793,7 +782,7 @@ Mix.base={
         if(useAlert){
             alert(logStr);
         }else{
-            console.log(logStr);
+            // console.log(logStr);
         }
     }
 };

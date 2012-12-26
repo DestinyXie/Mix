@@ -133,11 +133,10 @@ Mix.ui.loading={
         $('#ui_load')&&DOM.remove($('#ui_load'));
         if(that.outInter){
             clearTimeout(that.outInter);
+            that.outInter=null;
         }
     }
 }
-
-Mix.ui.loading.show($('#pageWraper'));
 
 /*@private所有弹出层的公共类*/
 Mix.ui.popLayer={
@@ -164,6 +163,12 @@ Mix.ui.popLayer={
             that.scroller.destroy();
             delete that.scroller;
         }
+
+        if(that.token){
+            Mix.obs.unsubscribe(that.token);
+            that.token=null;
+        }
+
         that.subReset&&that.subReset();//执行子类的reset方法
     },
     show:function(cusOpt){
@@ -232,6 +237,12 @@ Mix.ui.popLayer={
 
         if(that.option.canScroll){
             that.scroller=new Mix.scroll(that.option.domId,scrollOpt);
+        }
+
+        if(that.setSizePos){
+            that.token=Mix.obs.subscribe('resize',function(){
+                that.setSizePos();
+            });
         }
     },
     hide:function(){
