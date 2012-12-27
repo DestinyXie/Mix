@@ -1,4 +1,4 @@
-/*手机接口调用*/
+/*桥接appCan接口*/
 ;var Device={
     /*手机初始化*/
     isMobi:function(){
@@ -45,30 +45,17 @@
         /*关闭toast*/
         uexWindow.closeToast();
     },
-    /*清空缓存*/
-    clearCache:function(){
-        if(!Device.isMobi()){return;}
-        function clean(opId,dataType,data){
-            if(dataType==2&&data==0){
-        　　　　alert("清除成功");
-        　　}else if(dataType==2&&data==1){
-        　　　　alert("清除失败");
-        　　}
-        }
-        uexWidgetOne.cbCleanCache =clean;
-        uexWidgetOne.cleanCache()
-    },
     exit:function(){//退出应用
         if(!Device.isMobi()){return;}
         uexWidgetOne.exit();
     },
-    alert:function(title,msg,btn){
-        if(!Device.isMobi()){alert(title+":"+msg);return;}
-        uexWindow.alert(title,msg,btn);
-    },
     toast:function(s,t){
         if(!Device.isMobi()){return;}
         uexWindow.toast(0,5,s,t*1000||2000);
+    },
+    alert:function(title,msg,btn){
+        if(!Device.isMobi()){alert(title+":"+msg);return;}
+        uexWindow.alert(title,msg,btn);
     },
     /*uexWindow接口*/
     confirm:function(msg,ok,cancel,labs,title){
@@ -90,6 +77,146 @@
         }else{
             window.confirm(msg)?ok&&ok():cancel&&cancel();
         }
+    },
+    backFunc:[],
+    menuFunc:null,
+    setKeyPress:function(){
+        if(!Device.isMobi()){return;}
+        uexWindow.onKeyPressed=function(code){
+            if(0===code*1){
+                if(Device.backFunc.length>0){
+                    Device.backFunc[0].call(null);
+                }
+            }else if(1===code*1){
+                if($.isFunc(Device.menuFunc)){
+                    Device.menuFunc.call(null);
+                }
+            }
+        }
+    },
+    setBackBtn:function(fn){//设置返回按钮android symbian
+        if(!Device.isMobi()){return;}
+        Device.setKeyPress();
+        uexWindow.setReportKey('0', '1');
+    },
+    disetBackBtn:function(){//取消设置返回按钮android symbian
+        if(!Device.isMobi()){return;}
+        uexWindow.setReportKey('0', '0');
+    },
+    setMenuBtn:function(fn){//设置menu键
+        if(!Device.isMobi()){return;}
+        Device.setKeyPress();
+        uexWindow.setReportKey('1', '1');
+    },
+    disetMenuBtn:function(){//取消设置menu键
+        if(!Device.isMobi()){return;}
+        uexWindow.setReportKey('1', '0');
+    },
+    /*GPS功能*/
+    getLocation:function(cb){//获取经纬度 cb(latitude,longitude)
+        if(!Device.isMobi()){return;}
+        function locationCallback(lat,log){
+            uexLocation.closeLocation();
+            cb(lat,log);
+        }
+        uexLocation.onChange = locationCallback;
+        // check
+        // uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
+        //     toast("未能取得经纬度 errorCode:" + errorCode + "\nerrorInfo:" + errorInfo);
+        // }
+        uexLocation.openLocation();
+    },
+    imageBrowser:function(imgArr){
+        if(!Device.isMobi()){return;}
+        var arr;
+        if($.isArray(imgArr)){
+            arr=imgArr;
+        }else{
+            arr=[imgArr];
+        }
+        uexImageBrowser.open(arr,0,0);
+    },
+    dial:function(num){
+        if(!Device.isMobi()){return;}
+        var numStr='phone'.replace(/phone/,num);
+        uexCall.dial(numStr);
+    },
+    /*===========以下方法在adiCub项目中未使用,但以后会用===========*/
+    /*取得手机操作平台ios or android*/
+    getPlatForm:function(cb){
+        if(!Device.isMobi()){return;}
+        function platformSuccess(opId,dataType,data){
+          var platstr="";//终端标识
+          if(dataType==2 && data == 0){platstr="ios";}
+          if(dataType==2 && data == 1){platstr="android";}
+          if(dataType==2 && data == 4){platstr="wp";}
+          if(cb){cb(platstr);}
+          Device.platStr=platstr;
+        }
+        if(!Device.platstr){
+            uexWidgetOne.getPlatform();
+            uexWidgetOne.cbGetPlatform = platformSuccess;
+        }else{
+            if(cb){
+                cb(Device.platStr);
+            }
+        }
+    },
+    /*启动一个第三方应用*/
+    loadApp:function(addr){
+        if(!Device.isMobi()){return;}
+        uexWidget.loadApp(addr);
+    },
+    /*安装应用*/
+    installApp:function(addr){
+        if(!Device.isMobi()){return;}
+        uexWidget.installApp(addr);
+    },
+    /*下载*/
+    download:function(url,downUrl,cb){
+        if(!Device.isMobi()){return;}
+        Device.opCode++;
+        var inOpCode=Device.opCode;
+        uexDownloaderMgr.onStatus = function(opCode,fileSize,percent,status){
+            switch(status){
+            case 0: uexWindow.toast('1','5','当前下载的进度：'+percent+ '%','');
+                    break;
+            case 1: uexWindow.alert("温馨提示","下载完成，请进行安装！","我知道了");
+                    uexDownloaderMgr.closeDownloader(opCode);
+                    uexWindow.closeToast();
+                    cb();
+                    break;
+            case 2: uexWindow.alert("温馨提示","下载失败，请联系管理员！","我知道了");
+                    uexDownloaderMgr.closeDownloader(opCode);
+                    break;
+            }
+        }
+        uexDownloaderMgr.cbCreateDownloader = function(opCode,dataType,data){
+            if(data == 0){
+                uexDownloaderMgr.download(inOpCode,url,downUrl,'0');
+            }else{
+                uexWindow.alert("温馨提示","创建下载资源失败，请确认你手机中装有SD存储卡。","我知道了");
+            }
+        }
+        // check
+        // uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
+        //     toast(errorInfo,3);
+        // }
+        uexDownloaderMgr.createDownloader(inOpCode);
+    },
+    /*===========以下方法在adiCub项目中未使用===========*/
+    /*清空缓存*/
+    clearCache:function(){
+        if(!Device.isMobi()){return;}
+        function clean(opId,dataType,data){
+            if(dataType==2&&data==0){
+        　　　　alert("清除成功");
+        　　}else if(dataType==2&&data==1){
+        　　　　alert("清除失败");
+        　　}
+        }
+        uexWidgetOne.cbCleanCache =clean;
+        uexWidgetOne.cleanCache()
     },
     actionThree:function(title,msg,labArr,first,second,third){
         if(Device.isMobi()){
@@ -143,40 +270,6 @@
         uexWindow.cbActionSheet=ao[3];
         uexWindow.actionSheet(ao[0],ao[1],ao[2]);
     },
-    backFunc:[],
-    menuFunc:null,
-    setKeyPress:function(){
-        if(!Device.isMobi()){return;}
-        uexWindow.onKeyPressed=function(code){
-            if(0===code*1){
-                if(Device.backFunc.length>0){
-                    Device.backFunc[0].call(null);
-                }
-            }else if(1===code*1){
-                if($.isFunc(Device.menuFunc)){
-                    Device.menuFunc.call(null);
-                }
-            }
-        }
-    },
-    setBackBtn:function(fn){//设置返回按钮android symbian
-        if(!Device.isMobi()){return;}
-        Device.setKeyPress();
-        uexWindow.setReportKey('0', '1');
-    },
-    disetBackBtn:function(){//取消设置返回按钮android symbian
-        if(!Device.isMobi()){return;}
-        uexWindow.setReportKey('0', '0');
-    },
-    setMenuBtn:function(fn){//设置menu键
-        if(!Device.isMobi()){return;}
-        Device.setKeyPress();
-        uexWindow.setReportKey('1', '1');
-    },
-    disetMenuBtn:function(){//取消设置menu键
-        if(!Device.isMobi()){return;}
-        uexWindow.setReportKey('1', '0');
-    },
     datePicker:function(node,okCb,errCb){//日期选择
         if(!Device.isMobi()){return;}
         uexControl.cbOpenDatePicker=function(opCode,dataType,data){
@@ -200,20 +293,6 @@
 
         uexControl.openDatePicker (defData[0],defData[1],defData[2]);
     },
-    /*GPS功能*/
-    getLocation:function(cb){//获取经纬度 cb(latitude,longitude)
-        if(!Device.isMobi()){return;}
-        function locationCallback(lat,log){
-            uexLocation.closeLocation();
-            cb(lat,log);
-        }
-        uexLocation.onChange = locationCallback;
-        // check
-        // uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
-        //     toast("未能取得经纬度 errorCode:" + errorCode + "\nerrorInfo:" + errorInfo);
-        // }
-        uexLocation.openLocation();
-    },
     /*根据经纬度获取地址 cb(addr);*/
     getAddress:function(lat,log,cb,errCb){
         if(!Device.isMobi()){return;}
@@ -230,26 +309,6 @@
         }
         uexLocation.cbGetAddress = LocationSuccess;
         uexLocation.getAddress(lat,log);
-    },
-    /*取得手机操作平台ios or android*/
-    getPlatForm:function(cb){
-        if(!Device.isMobi()){return;}
-        function platformSuccess(opId,dataType,data){
-          var platstr="";//终端标识
-          if(dataType==2 && data == 0){platstr="ios";}
-          if(dataType==2 && data == 1){platstr="android";}
-          if(dataType==2 && data == 4){platstr="wp";}
-          if(cb){cb(platstr);}
-          Device.platStr=platstr;
-        }
-        if(!Device.platstr){
-            uexWidgetOne.getPlatform();
-            uexWidgetOne.cbGetPlatform = platformSuccess;
-        }else{
-            if(cb){
-                cb(Device.platStr);
-            }
-        }
     },
     getAppVersion:function(cb){
         if(!Device.isMobi()){Device.toast('你不是手机，请自便。');return;}
@@ -268,48 +327,6 @@
         }else{
             if(cb){cb(Device.appVersion);}
         }
-    },
-    /*启动一个第三方应用*/
-    loadApp:function(addr){
-        if(!Device.isMobi()){return;}
-        uexWidget.loadApp(addr);
-    },
-    /*安装应用*/
-    installApp:function(addr){
-        if(!Device.isMobi()){return;}
-        uexWidget.installApp(addr);
-    },
-    /*下载*/
-    download:function(url,downUrl,cb){
-        if(!Device.isMobi()){return;}
-        Device.opCode++;
-        var inOpCode=Device.opCode;
-        uexDownloaderMgr.onStatus = function(opCode,fileSize,percent,status){
-            switch(status){
-            case 0: uexWindow.toast('1','5','当前下载的进度：'+percent+ '%','');
-                    break;
-            case 1: uexWindow.alert("温馨提示","下载完成，请进行安装！","我知道了");
-                    uexDownloaderMgr.closeDownloader(opCode);
-                    uexWindow.closeToast();
-                    cb();
-                    break;
-            case 2: uexWindow.alert("温馨提示","下载失败，请联系管理员！","我知道了");
-                    uexDownloaderMgr.closeDownloader(opCode);
-                    break;
-            }
-        }
-        uexDownloaderMgr.cbCreateDownloader = function(opCode,dataType,data){
-            if(data == 0){
-                uexDownloaderMgr.download(inOpCode,url,downUrl,'0');
-            }else{
-                uexWindow.alert("温馨提示","创建下载资源失败，请确认你手机中装有SD存储卡。","我知道了");
-            }
-        }
-        // check
-        // uexWidgetOne.cbError = function(opCode,errorCode,errorInfo){
-        //     toast(errorInfo,3);
-        // }
-        uexDownloaderMgr.createDownloader(inOpCode);
     },
     xmlHttp:{
         isSending:false,
@@ -390,16 +407,6 @@
         };
         uexCamera.open();
     },
-    imageBrowser:function(imgArr){
-        if(!Device.isMobi()){return;}
-        var arr;
-        if($.isArray(imgArr)){
-            arr=imgArr;
-        }else{
-            arr=[imgArr];
-        }
-        uexImageBrowser.open(arr,0,0);
-    },
     imagePick:function(cb){//浏览照片
         if(!Device.isMobi()){return;}
         uexImageBrowser.cbPick=function (opCode,dataType,data){
@@ -411,10 +418,5 @@
         if(!Device.isMobi()){return;}
         var numStr='phone'.replace(/phone/,num);
         uexCall.call(numStr);
-    },
-    dial:function(num){
-        if(!Device.isMobi()){return;}
-        var numStr='phone'.replace(/phone/,num);
-        uexCall.dial(numStr);
     }
 }
