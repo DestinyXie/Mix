@@ -13,7 +13,6 @@
     /*设备初始化完毕，只调用一次*/
     onLoad:function(loadFn){
         function load(){
-        	alert(device.name);
             if(Device.hasLoaded){
                 return;
             }
@@ -22,8 +21,8 @@
         }
 
         function PCload(){
-            /*appCan对象初始化比window.onload慢
-            * 等待1秒如果appCan的onload还没启动再执行DOMContentLoaded的监听方法
+            /*cordova对象初始化比window.onload慢
+            * 等待1秒如果deviceready还没执行再执行DOMContentLoaded的监听方法
             */
             setTimeout(function(){
                 if(!WIN["device"]){
@@ -32,90 +31,111 @@
                 }
             },1000);
         }
-        alert(1);
+        DOM.addEvent(DOC,"deviceready",load);
         DOM.addEvent(DOC,'DOMContentLoaded',PCload);
-		DOM.addEvent(DOC,"deviceready",load);
-		setTimeout(function(){
-			alert(2);
-			if(!WIN["device"]){
-                //PC test
-                alert(3);
-                load();
-                setTimeout(function(){
-                	alert(WIN["device"]);
-                },100000);
-            }else{
-            	alert(4);
-            	load();
-            }
-		},10000);
     },
     destroy:function(){//关掉一些东西，比如上传
         if(!Device.isMobi()){return;}
     },
     exit:function(){//退出应用
         if(!Device.isMobi()){return;}
+        device.exitApp();
     },
-    toast:function(s,t){
-        if(!Device.isMobi()){return;}
+    toast:function(s,t){//暂无
+        return false;
     },
-    alert:function(title,msg,btn){
-        if(!Device.isMobi()){alert(title+":"+msg);return;}
+    alert:function(title,msg,btn,cb){
+        if(!Device.isMobi()){
+            alert(title+":"+msg);return;
+        }else{
+            navigator.notification.alert(msg,function(){
+                cb&&cb();
+            },title,btn)
+        }
     },
     confirm:function(msg,ok,cancel,labs,title){
         if(Device.isMobi()){
+            navigator.notification.confirm(msg,function(idx){
+                if(1==idx*1){
+                    ok&&ok();
+                }else if(2==idx*1){
+                    cancel&&cancel();
+                }
+            },title,labs);
         }else{
             window.confirm(msg)?ok&&ok():cancel&&cancel();
         }
     },
     backFunc:[],
     menuFunc:null,
-    setKeyPress:function(){
-        if(!Device.isMobi()){return;}
+    settedBack:false,
+    setBackBtn:function(){//设置返回按钮android symbian
+        if(!Device.isMobi()||Device.settedBack){return;}
+        Device.settedBack=true;
+        DOM.addEvent(DOC,'backbutton',Device.fireBack);
     },
-    setBackBtn:function(fn){//设置返回按钮android symbian
-        if(!Device.isMobi()){return;}
+    fireBack:function(){
+        if(Device.backFunc.length>0){
+            Device.backFunc[0].call(null);
+        }
     },
     disetBackBtn:function(){//取消设置返回按钮android symbian
         if(!Device.isMobi()){return;}
+        Device.settedBack=false;
+        DOM.removeEvent(DOC,'backKeyDown',Device.fireBack);
     },
-    setMenuBtn:function(fn){//设置menu键
+    setMenuBtn:function(){//设置menu键
         if(!Device.isMobi()){return;}
+        DOM.addEvent(DOC,'menubutton',Device.menuFunc);
     },
     disetMenuBtn:function(){//取消设置menu键
         if(!Device.isMobi()){return;}
+        DOM.removeEvent(DOC,'menubutton',Device.fireBack);
     },
 	/*GPS功能*/
     getLocation:function(cb){//获取经纬度 cb(latitude,longitude)
-    	alert('in-get');
         if(!Device.isMobi()){return;}
-        alert('in-get-in');
-        var options = { timeout: 30000 },
-        	watchID;
-        function clear(){
-        	if(watchID!=null){
-        		navigator.geolocation.clearWatch(watchID);
-        		watchID=null;
-        	}
-        }
-
         function onSuccess(pos){
-        	alert('pos-1');
         	var lat=pos.coords.latitude,
         		lng=pos.coords.longitude;
-        	alert(lat+"~~"+lng);
         	cb&&cb(lat,lng);
-        	clear();
         }
         function onError(error){
         	alert('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
-        	clear();
         }
-        watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+        function watchonSuccess(position) {
+            var element = document.getElementById('geolocation');
+            element.innerHTML = 'Latitude: '  + position.coords.latitude      + '<br />' +
+                                'Longitude: ' + position.coords.longitude     + '<br />' +
+                                '<hr />'      + element.innerHTML;
+        }
+
+        // onError Callback receives a PositionError object
+        //
+        function watchonError(error) {
+            alert('code: '    + error.code    + '\n' +
+                  'message: ' + error.message + '\n');
+            if (watchID != null) {
+                navigator.geolocation.clearWatch(watchID);
+                watchID = null;
+            }
+        }
+
+        // Options: throw an error if no update is received every 30 seconds.
+        //
+        var watchID = navigator.geolocation.watchPosition(watchonSuccess, watchonError, { timeout: 20000,enableHighAccuracy: false });
     },
     imageBrowser:function(imgArr){
         if(!Device.isMobi()){return;}
+        var arr;
+        if($.isArray(imgArr)){
+            arr=imgArr;
+        }else{
+            arr=[imgArr];
+        }
+
     },
     dial:function(num){
         if(!Device.isMobi()){return;}

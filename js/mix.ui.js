@@ -19,6 +19,7 @@ Mix.ui.tips={
         that.option={
             msg:'',
             contSel:'body',
+            pos:'bottom',
             tipH:0,
             hideT:5000
         };
@@ -41,13 +42,29 @@ Mix.ui.tips={
             that.container=$(that.option.contSel)||BODY;
             that.container.appendChild(that.tipDom);
             that.hasTip=true;
-            DOM.addEvent(that.tipDom,CLICK_EV,function(){that.hide();});
+            DOM.addEvent(that.tipDom,CLICK_EV,function(){
+                if('middle'!=that.option.pos){
+                    that.hide();
+                }
+            });
         }
+
+        if('middle'==that.option.pos){
+            DOM.addClass(that.tipDom,'middle');
+        }else{
+            DOM.removeClass(that.tipDom,'middle');
+        }
+
         that.tipDom.innerHTML=that.option.msg;
         that.tipDom.style.display="block";
         that.option.tipH=that.tipDom.offsetHeight;//intresting set
         
-        setTimeout(function(){that.tipDom&&(that.tipDom.style.bottom="0px");},0);
+        if('middle'!=that.option.pos){
+            setTimeout(function(){that.tipDom&&(that.tipDom.style.bottom="0px");},0);
+        }else{
+            that.tipDom.style.bottom="auto";
+        }
+        
         if (that.option.hideT) {
             that.timer=setTimeout(function(){that.hide();},that.option.hideT);
         }
@@ -55,7 +72,9 @@ Mix.ui.tips={
     hide:function(){
         var that=this;
         try{
-            that.tipDom.style.bottom="-"+that.option.tipH+"px";
+            if('middle'!=that.option.pos){
+                that.tipDom.style.bottom="-"+that.option.tipH+"px";
+            }
             that.reset();
             that.timer=setTimeout(function(){
                 delete that.timer;
@@ -535,11 +554,18 @@ Mix.ui.select=extend({},Mix.ui.popLayer,{
 /*原生提示信息，默认2,3秒消失*/
 function toast(s,t){
     if(Device.isMobi()){
-        Device.toast(s,t);
+        if(!Device.toast(s,t)){
+            Mix.ui.tips.show({
+                msg:s,
+                pos:'middle',
+                contSel:"#content",
+                hideT:t*1000||3000
+            });
+        }
     }else{
         Mix.ui.tips.show({
             msg:s,
-            // contSel:"#content",
+            contSel:"#content",
             hideT:t*1000||3000
         });
     }

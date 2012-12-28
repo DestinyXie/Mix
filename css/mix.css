@@ -34,14 +34,24 @@ i,b{
 	position:absolute;
 	bottom:0;
 	line-height:1.4em;
-	font-size:0.85em;
+	font-size:1em;
 	padding:.4em .5em;
 	color:#fff;
-	background-color:rgba(0, 0, 0, 0.5);
+	background-color:rgba(0, 0, 0, 0.8);
 	width:100%;
 	text-indent:.5em;
-	z-index:1;
+	z-index:102;
 	-webkit-transition:bottom 500ms linear;
+}
+.tipsShow.middle{
+	bottom: auto;
+	top: 50%;
+	margin-top:-.7em;
+	margin-left:-6em;
+	width:12em !important;
+	text-align: center;
+	left:50%;
+	border-radius:5px;
 }
 
 /*popLayer弹出层公用组件*/
@@ -51,7 +61,7 @@ i,b{
 	width:90%;
 	max-height:90%;
 	left:5%;
-	top:2em;
+	top:5%;
 	padding:.5em 3%;
 	background-color:#fff;
 	-webkit-box-shadow:0 0 10px #000;
@@ -437,3 +447,30 @@ to {
 }
 
 /*swipeview*/
+
+/*横屏*/
+@media all and (orientation:landscape) {
+	
+}
+
+/*像素分辨率*/
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+body{
+font-size: 32px;
+}
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 0.75) {
+body{
+font-size: 12px;
+}
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 1) {
+body{
+font-size: 16px;
+}
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5) {
+body{
+font-size: 24px;
+}
+}

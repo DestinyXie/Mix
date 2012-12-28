@@ -29,10 +29,11 @@
             <mapper type="regexp" from="^(.*)\.source\.css" to="\1-min.css"/>
         </apply>
         <concat destfile="${js.path}/app.source.js" encoding="utf-8" outputencoding="utf-8" fixlastline="no">
+            <path path="${js.path}/cordova-2.2.0.js"/>
             <path path="${js.path}/mix.base.js"/>
             <path path="${js.path}/mix.scroll.js"/>
             <path path="${js.path}/mix.swipeview.js"/>
-            <path path="${js.path}/mix.bridge.appcan.js"/>
+            <path path="${js.path}/mix.bridge.cordova.js"/>
             <path path="${js.path}/mix.x.js"/>
             <path path="${js.path}/mix.regions.js"/>
             <path path="${js.path}/mix.ui.js"/>

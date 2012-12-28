@@ -1,6 +1,7 @@
 /*页面初始化*/
 ;var App={
     init:function(){
+        Mix.ui.loading.show($('#pageWraper'));
         /*全局变量赋值*/
         HEAD = $('head');
         BODY = DOC.body;
@@ -10,7 +11,7 @@
         // DOM.loadJs("http://192.168.40.28:8081/target/target-script.js",function(){alert('weinre test ok!')});
 
         /*取得GPS信息*/
-        // UserTools.getGpsInfo();
+        UserTools.getGpsInfo();
 
         StorMgr.siteUrl='http://desmix.com';
 
@@ -34,7 +35,6 @@
     }
 }
 
-Mix.ui.loading.show($('#pageWraper'));
 Device.onLoad(App.init);
 
 /*页面历史管理类,控制历史记录,页面跳转*/
