@@ -1,4 +1,15 @@
-Little js lib for web-app.
+Js framework for web app development,its characteristic is small and fast.
 Author:DestinyXie.
 Start from Jun 2012.
-It calls mobile features by AppCan,a tool like PhoneGap/Cordova.
+It can call mobile features by AppCan and Cordova(PhoneGap).
+Last update time:17:45 December 28,2012.
+
+===========
+HOW TO USE:
+For AppCan:
+Should remove js/mix.bridge.cordova.js and js/cordova-xx.js
+More development guide use AppCan is at http://doc.appcan.cn/dev_api_document.html
+
+For Cordova:
+Should remove js/mix.bridge.appcan.js
+More development guide use Cordova is at http://docs.phonegap.com/en/2.2.0/index.html
