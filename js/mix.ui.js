@@ -38,7 +38,7 @@ Mix.ui.tips={
         }
 
         if(!that.hasTip){
-            that.tipDom=DOM.create('div',{className:'tipsShow'});
+            that.tipDom=DOM.create('b',{className:'tipsShow'});
             that.container=$(that.option.contSel)||BODY;
             that.container.appendChild(that.tipDom);
             that.hasTip=true;
@@ -106,7 +106,7 @@ Mix.ui.mask.prototype={
         }
 
         that.container=$(option.cont),
-        that.maskDom=DOM.create('div',{className:'pageMask'});
+        that.maskDom=DOM.create('b',{className:'pageMask'});
         that.container.appendChild(that.maskDom);
 
         if(option.maskClickCb){
@@ -143,7 +143,7 @@ Mix.ui.loading={
         if(type&&'word'==type){
             loadingDom=DOM.create('div',{id:'ui_load',innerHTML:'<div>L</div><div>O</div><div>A</div><div>D</div><div>I</div><div>N</div><div>G</div>'});
         }else{
-            loadingDom=DOM.create('div',{id:'ui_load',className:'ui_load_circle'});
+            loadingDom=DOM.create('b',{id:'ui_load',className:'ui_load_circle'});
         }
         cont.appendChild(loadingDom);
     },
@@ -160,8 +160,8 @@ Mix.ui.loading={
 /*@private所有弹出层的公共类*/
 Mix.ui.popLayer={
     className:'popLayer',//当前UI工具类名
-    domStr:['<div class="">',
-            '</div>'],
+    domStr:['<b class="">',
+            '</b>'],
     reset:function(){
         var that=this;
         that.option={
@@ -210,14 +210,14 @@ Mix.ui.popLayer={
             '</h3>');
         }
         if('popLayer'!=that.className&&that.option.hasConfirm){
-            domStrArr.push('<div class="pop_confirm clearfix">',
+            domStrArr.push('<b class="pop_confirm clearfix">',
                 '<a class="confirm" _click="Mix.ui.'+that.className+'.confirm()">确认</a>',
                 '<a class="cancel" _click="Mix.ui.'+that.className+'.cancel()">取消</a>',
-            '</div>');
+            '</b>');
         }
 
         that.option.onShow&&that.option.onShow.call(null,that);
-        that.layerDom=DOM.create('div',{id:that.option.domId,className:that.option.domCls});
+        that.layerDom=DOM.create('b',{id:that.option.domId,className:that.option.domCls});
         DOM.addClass(that.layerDom,'pop_layer');//公用类
         that.layerDom.innerHTML=domStrArr.join('');
 
@@ -276,8 +276,8 @@ Mix.ui.popLayer={
 /*菜单类*/
 Mix.ui.menu=extend({},Mix.ui.popLayer,{
     className:'menu',
-    domStr:['<div class="">',
-            '</div>'],
+    domStr:['<b class="">',
+            '</b>'],
     subReset:function(){
         var that=this,
             option={
@@ -307,7 +307,7 @@ Mix.ui.menu=extend({},Mix.ui.popLayer,{
         $.each(that.option.items,function(item,idx){
             itemsStr.unshift('<i _click="Mix.ui.menu.select(this,'+idx+')">'+item+'</i>');
         });
-        $('div',that.layerDom).innerHTML=itemsStr.join('');
+        $('b',that.layerDom).innerHTML=itemsStr.join('');
 
         that.setSizePos();
     },
@@ -359,12 +359,12 @@ Mix.ui.menu=extend({},Mix.ui.popLayer,{
 /*地区选择(extend Mix.ui.popLayer)*/
 Mix.ui.region=extend({},Mix.ui.popLayer,{
     className:'region',
-    domStr:['<div class="selectWrap clearfix">',
-            '<label class="provSel" _click="Mix.ui.region.chooseProv()">',
-            '</label>',
-            '<label class="citySel" _click="Mix.ui.region.chooseCity()">',
-            '</label>',
-            '</div>'],
+    domStr:['<b class="selectWrap clearfix">',
+            '<i class="provSel" _click="Mix.ui.region.chooseProv()">',
+            '</i>',
+            '<i class="citySel" _click="Mix.ui.region.chooseCity()">',
+            '</i>',
+            '</b>'],
     subReset:function(){//重置地区选择对象和option值
         var that=this,
             option={
@@ -471,7 +471,7 @@ Mix.ui.region=extend({},Mix.ui.popLayer,{
 /*单选、多选框(extend Mix.ui.popLayer)*/
 Mix.ui.select=extend({},Mix.ui.popLayer,{
     className:'select',
-    domStr:['<div><ul class="optWrap"></ul></div>'],
+    domStr:['<b class="scroller"><b class="optWrap"></b></b>'],
     subReset:function(){
         var that=this,
             option={
@@ -509,13 +509,13 @@ Mix.ui.select=extend({},Mix.ui.popLayer,{
             if(that.option.defOptions&&that.option.defOptions.has(opt)){
                 clsStr=' class="selected"';
             }
-            optStr.unshift('<li'+clsStr+' _click="Mix.ui.select.select(this,'+idx+')">'+opt+'</li>');
+            optStr.unshift('<i'+clsStr+' _click="Mix.ui.select.select(this,'+idx+')">'+opt+'</i>');
         });
         $('.optWrap',that.layerDom).innerHTML=optStr.join('');
 
         that.layerDom.style.display='block';
 
-        if(that.layerDom.offsetHeight-BODYFS*.5>=$('ul',that.layerDom).offsetHeight){
+        if(that.layerDom.offsetHeight-BODYFS*.5>=$('.optWrap',that.layerDom).offsetHeight){
             that.option.canScroll=false;
         }
 
@@ -525,7 +525,7 @@ Mix.ui.select=extend({},Mix.ui.popLayer,{
             selVal=that.option.options[idx];
 
         if(!that.option.multi){
-            DOM.removeClass($$('.optWrap li',that.layerDom),'selected');
+            DOM.removeClass($$('.optWrap i',that.layerDom),'selected');
             this.option.selOptions=[selVal];
             that.confirm();
         }else{
@@ -558,14 +558,14 @@ function toast(s,t){
             Mix.ui.tips.show({
                 msg:s,
                 pos:'middle',
-                contSel:"#content",
+                contSel:"#page",
                 hideT:t*1000||3000
             });
         }
     }else{
         Mix.ui.tips.show({
             msg:s,
-            contSel:"#content",
+            contSel:"#page",
             hideT:t*1000||3000
         });
     }

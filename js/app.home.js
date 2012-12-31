@@ -1,7 +1,7 @@
 /*页面初始化*/
 ;var App={
     init:function(){
-        Mix.ui.loading.show($('#pageWraper'));
+        Mix.ui.loading.show($('#page'));
         /*全局变量赋值*/
         HEAD = $('head');
         BODY = DOC.body;
@@ -42,19 +42,21 @@ var ViewMgr={
     tmpParams:"",//临时记录参数值
     recordLen:10,//记录历史页面最大长度
     pageParams:{},//记录进入页面时所带的参数(如果有的话),便于回退时使用
+    firstPage:'index',
     init:function(){//取得历史页面
-        delete WIN['pageEngine'];
-        Device.disetBackBtn();
-        WIN['pageEngine']=new PageEngine();
-        ViewMgr.views=['login'];
-
-        var storEmail=Mix.base.storage.get('app_my_nick'),
+        var that=this,
+            storEmail=Mix.base.storage.get('app_my_nick'),
             storPwd=Mix.base.storage.get('app_my_pwd'),
             ok=null,
             fail=function(){
-                pageEngine.initPage('login');
+                pageEngine.initPage(that.firstPage);
                 Mix.base.storage.remove("app_view_history","session");
             };
+
+        delete WIN['pageEngine'];
+        Device.disetBackBtn();
+        WIN['pageEngine']=new PageEngine();
+        ViewMgr.views=[that.firstPage];
         if(storEmail&&storPwd){
             UserAction.sendLogin(storEmail,storPwd,null,ok,fail);
         }else{
@@ -326,7 +328,7 @@ var UserAction={
     addLoading:function(){
         UserAction.LoadingCount=UserAction.LoadingCount||0;
         UserAction.LoadingCount++;
-        Mix.ui.loading.show($('#content'),function(){
+        Mix.ui.loading.show($('#cont'),function(){
             UserAction.LoadingCount=0;
             Mix.ui.loading.hide();
             toast('请求服务器超时。请检查网络或稍后再试。',5);
@@ -383,13 +385,13 @@ var UserTools={
             defProv=StorMgr.gpsInfo.prov;
             defCity=StorMgr.gpsInfo.city;
         }
-        if(Mix.map.searchProv){
-            defProv=Mix.map.searchProv;
-            defCity="";
-        }
-        if(Mix.map.searchCity){
-            defCity=Mix.map.searchCity;
-        }
+        // if(Mix.map.searchProv){
+        //     defProv=Mix.map.searchProv;
+        //     defCity="";
+        // }
+        // if(Mix.map.searchCity){
+        //     defCity=Mix.map.searchCity;
+        // }
         function done(prov,city) {
             if(!prov){
                 toast('未选择地区',2);
@@ -624,6 +626,6 @@ function refreshIScroll(pullDownEl,wrapperID,downAction) {
             }
         }
     });
-    setTimeout(function () {$('#content').style.left = '0'; }, 100);
+    setTimeout(function () {$('#cont').style.left = '0'; }, 100);
     return myScroll;
 }

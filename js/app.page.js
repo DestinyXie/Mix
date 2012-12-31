@@ -1,28 +1,51 @@
 /*单页面模式*/
 ;(function(){
 //公共tmpl,减少代码量
-var headerBack=['<header>',
-        '<div _click="ViewMgr.back()" class="btn_back"><img src="image/return.png" alt="返回"/></div>'].join('');
+var headerBack=['<b id="head">',
+        '<b _click="ViewMgr.back()" class="btn_back"><img src="image/return.png" alt="返回"/></b>'].join('');
 
-var contentTmpl={
-'login':['${headerBack}',
-        '<h3>welcome</h3>',
-    '</header>',
-    '<div id="content">',
-        '<div>',
+var contTmpl={
+'index':['<b id="head">',
+        '<h3>Mix JS</h3>',
+    '</b>',
+    '<b id="cont">',
+        '<b class="con_item">',
         '<h3 class="welcome">Hi,here is MixJS.</h3>',
-        '</div>',
-    '</div>'].join('')
+        '<i _click=\'ViewMgr.gotoPage("devTool");\'>设备功能</i>',
+        '<i _click=\'ViewMgr.gotoPage("mixTool");\'>MixJS ui工具</i>',
+        '</b>',
+    '</b>'].join(''),
+'devTool':['${headerBack}',
+        '<h3>Mix JS</h3>',
+    '</b>',
+    '<b id="cont">',
+        '<b class="con_item">',
+        '<i _click=\'toast("加速计功能,需要真机");\'>加速计</i>',
+        '<i _click=\'toast("照相机功能,需要真机");\'>照相机</i>',
+        '<i _click=\'toast("未完待续");\'>等等</i>',
+        '</b>',
+    '</b>'].join(''),
+'mixTool':['${headerBack}',
+        '<h3>Mix JS</h3>',
+    '</b>',
+    '<b id="cont">',
+        '<b class="con_item">',
+        '<i _click=\'UserMenus("menuBtn");\'>菜单</i>',
+        '<i _click=\'UserTools.initArea(function(prov,city){toast("你选择了:"+prov+city)});\'>地区选择</i>',
+        '<i _click=\'Mix.ui.loading.show(null,function(){Mix.ui.loading.hide()},3)\'>加载中</i>',
+        '<i _click=\'toast("未完待续");\'>等等</i>',
+        '</b>',
+    '</b>'].join('')
 };
 
 
 var footerTmple={
-'main':['<footer id="footer">',
-    '<i _click=\'ViewMgr.gotoPage("login");\' class="${1}">i1</i>',
-    '<i _click=\'ViewMgr.gotoPage("login");\' class="${2}">i2</i>',
-    '<i _click=\'ViewMgr.gotoPage("login");\' class="${3}">i3</i>',
-    '<i _click=\'ViewMgr.gotoPage("login");\' class="${4}">i4</i>',
-    '</footer>'].join('')
+'main':['<b id="foot">',
+    '<i _click=\'ViewMgr.gotoPage("index");\' class="${1}">i1</i>',
+    '<i _click=\'ViewMgr.gotoPage("index");\' class="${2}">i2</i>',
+    '<i _click=\'ViewMgr.gotoPage("index");\' class="${3}">i3</i>',
+    '<i _click=\'ViewMgr.gotoPage("index");\' class="${4}">i4</i>',
+    '</b>'].join('')
 };
 
 /*各个页面相关配置*/
@@ -30,7 +53,9 @@ var footerTmple={
 // footerFocusIdx{number,boolean},
 // initEvent{function}],
 var pageConfig={
-'login':['main',1,function(){}]
+'index':[null,null,function(){}],
+'devTool':[null,null,function(){}],
+'mixTool':[null,null,function(){}]
 }
 
 var PageEngine=function(options){
@@ -38,7 +63,7 @@ var PageEngine=function(options){
     
     that.destroy();
     that.options={
-        pageWrap:$('#pageWraper'),
+        pageWrap:$('#page'),
         animate:false//是否动画切换
     }
 
@@ -67,7 +92,7 @@ PageEngine.prototype={
             pcofig=pageConfig[page],
             ftTmpl=(pcofig[0])?footerTmple[pcofig[0]]:false,
             ftFocus=pcofig[1],
-            htmlStr=contentTmpl[page],
+            htmlStr=contTmpl[page],
             ftStr=ftTmpl?ftTmpl:"";
 
         //替换公共tmpl
@@ -125,7 +150,7 @@ PageEngine.prototype={
         that.prePage=that.curPage;
         that.curPage=page;
 
-        that.initUser();
+        // that.initUser();
         var tmplStr=that.compileTmpl(),
             wrap=that.options.pageWrap;
 
@@ -194,7 +219,7 @@ PageEngine.prototype={
                 cont:$('.test_box'),
                 threeWrap:false,
                 onAppend:function(feed){
-                    that.checkContent();
+                    that.checkcont();
                 },
                 cb:function(){
                     if(WIN['myScroll']){
@@ -209,7 +234,7 @@ PageEngine.prototype={
         switch(that.curPage){
             case 'test':
                 feedOption.autoLoad=true;
-                WIN['myScroll']=refreshIScroll($('.pullDown'),'#content');
+                WIN['myScroll']=refreshIScroll($('.pullDown'),'#cont');
                 Feed.init(feedOption);
                 that.scrollCb();
                 break;
@@ -227,23 +252,23 @@ PageEngine.prototype={
 
         if(feedOption.autoLoad&&!WIN['myScroll']){
             that.checkHeight=setTimeout(function(){//android画面残影
-                WIN['myScroll']=new Mix.scroll('#content');
+                WIN['myScroll']=new Mix.scroll('#cont');
                 that.scrollCb();
             },200);
         }else{
-            that.checkContent();
+            that.checkcont();
             if(!['map'].has(that.curPage)){
-                DOM.addEvent($('#content'),START_EV,function(){
-                    that.checkContent();
+                DOM.addEvent($('#cont'),START_EV,function(){
+                    that.checkcont();
                 });
             }
         }
     },
-    checkContent:function(){
+    checkcont:function(){
         var that=this;
         if(!WIN['myScroll']){
             that.checkHeight=setTimeout(function(){
-                UserTools.checkScroll('#content',that.scrollCb);
+                UserTools.checkScroll('#cont',that.scrollCb);
             },200);
         }
     },
@@ -261,7 +286,8 @@ PageEngine.prototype={
     display:function(dirc){},
     destroy:function(){
         var that=this;
-        that.curPage='login';
+        // that.curPage='login';
+        that.curPage='index';
         that.prePage=null;
         that.hasUser=false;
     }

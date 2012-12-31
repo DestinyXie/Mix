@@ -1,5 +1,7 @@
 /*common*/
 *,*:before,*:after {
+	margin: 0;
+	padding: 0;
 	-webkit-box-sizing: border-box;
 }
 *,*:focus,*:active {
@@ -7,6 +9,7 @@
 	outline: none;
 }
 body,h3 {
+	font-family: Arial,Helvetica,Georgia, sans-serif;
 	margin:0;
 	padding:0;
 	-webkit-user-select:none;
@@ -15,6 +18,11 @@ body,h3 {
 i,b{
 	display: block;
 	font-style: normal;
+	font-weight: normal;
+}
+i *,b *{
+	font-style: normal;
+	font-weight: normal;
 }
 /***UI Tools***/
 /*mask 注意被遮罩元素z-index不能大于100*/
@@ -170,7 +178,7 @@ i,b{
 	width:100%;
 	padding-bottom:1em;
 }
-.regionLayer .selectWrap label{
+.regionLayer .selectWrap i{
 	position: relative;
 	height:2.5em;
 	line-height:2.3em;
@@ -181,11 +189,11 @@ i,b{
 	text-indent: .5em;
 	border:1px solid rgba(0,0,0,.2);
 }
-.regionLayer .selectWrap label.active{
+.regionLayer .selectWrap i.active{
 	background-color: rgba(0,0,0,.3);
 	-webkit-box-shadow:0 0 5px rgba(0,0,0,.5) inset;
 }
-.regionLayer .selectWrap label:after{
+.regionLayer .selectWrap i:after{
 	position: absolute;
 	content:"◢";
 	font-size:1em;
@@ -205,21 +213,21 @@ i,b{
 .selectLayer .optWrap{
 	padding-bottom: 1em;
 }
-.selectLayer .optWrap li{
+.selectLayer .optWrap i{
 	position: relative;
 	padding: .5em 2em .5em .5em;
 	line-height: 1.8em;
 	border-bottom: 1px solid #ddd;
 }
-.selectLayer .optWrap li.active{
+.selectLayer .optWrap i.active{
 	-webkit-box-shadow:0 0 10px rgba(0,0,0,.5) inset;
 	background: -webkit-linear-gradient(top, #ddd, #ccc);
 	background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ccc))
 }
-.selectLayer .optWrap li:last-child,.selectLayer .optWrap li.active:last-child{
+.selectLayer .optWrap i:last-child,.selectLayer .optWrap i.active:last-child{
 	border-bottom-width: 0;
 }
-.selectLayer .optWrap li:after{
+.selectLayer .optWrap i:after{
 	position: absolute;
 	content: "";
 	height: 1em;
@@ -228,13 +236,13 @@ i,b{
 	right: .5em;
 	border-radius: .5em;
 }
-.selectLayer.multiSelect .optWrap li:after{
+.selectLayer.multiSelect .optWrap i:after{
 	border-radius: 0;
 }
-.selectLayer .optWrap li.selected{
+.selectLayer .optWrap i.selected{
 	background-color: #eee;
 }
-.selectLayer .optWrap li.selected:after{
+.selectLayer .optWrap i.selected:after{
 	background-color: #666;
 }
 /*progress*/
@@ -289,7 +297,7 @@ i,b{
   overflow:visible;
   -webkit-user-select:none;
   cursor:default;
-  z-index:90;
+  z-index:102;
 }
 
 #ui_load.ui_load_circle{
@@ -299,7 +307,8 @@ i,b{
 	background:#999 url(../image/loading.gif) no-repeat 1.5em 1.5em;
 	background-size: 3em 3em;
 	-webkit-border-radius:.5em;
-	opacity:.6;
+	-webkit-box-shadow: 1px 1px 0 rgba(0, 0, 0, .5);
+	opacity:.8;
 }
 
 #ui_load div {

@@ -1,33 +1,29 @@
 /*customer stylesheet*/
-html{
-	margin: 0;
-	padding: 0;
-	height: 100%;
-}
-body{
+html,body{
 	color: #fff;
 	height: 100%;
 	background: #444;
 }
-header{
+#head{
 	height: 2.5em;
 	background: -webkit-linear-gradient(top,#111,#000);
 	background: -webkit-gradient(linear,center top,center bottom,from(#111),to(#000));
 	text-shadow: -1px -1px 0 #000;
 }
-header .btn_back{
+#head .btn_back{
 	position: absolute;
 	height: 2.5em;
 	left: .5em;
+	padding: 0 .5em;
 }
-header .btn_back.active{
+#head .btn_back.active{
 	background: -webkit-linear-gradient(top,#222,#111);
 	background: -webkit-gradient(linear,center top,center bottom,from(#222),to(#111));
 }
-header .btn_back img{
+#head .btn_back img{
 	height: 2.5em;
 }
-header h3{
+#head h3{
 	height: 100%;
 	line-height: 2em;
 	font-size: 1.2em;
@@ -36,33 +32,55 @@ header h3{
 	white-space: nowrap;
 	text-align: center;
 }
-footer{
+#foot{
 	height: 2.5em;
 	display: -webkit-box;
 	background: -webkit-linear-gradient(top,#111,#000);
 	background: -webkit-gradient(linear,center top,center bottom,from(#000),to(#111));
 }
-footer i{
+#foot i{
 	-webkit-box-flex: 1;
 	text-align: center;
 	line-height: 2.5em;
 }
-footer i.active{
+#foot i.active{
 	background: -webkit-linear-gradient(top,#111,#222);
 	background: -webkit-gradient(linear,center top,center bottom,from(#111),to(#222));
 }
-#pageWraper{
+#page{
+	position: relative;
+	overflow: hidden;
 	height: 100%;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 }
-#content{
+#cont{
 	-webkit-box-flex: 1;
 }
+
+/*page-index*/
 .welcome{
 	text-align: center;
 	color: #eee;
-	padding: 1em;
+	padding-bottom: .5em;
 	font-size: 1.5em;
 	text-shadow:-1px -1px 1px #333;
+}
+.con_item{
+	padding: .5em 1em;
+}
+.con_item i{
+	padding: .5em 0;
+	text-align: center;
+	margin-bottom: .5em;
+	border: 1px solid #222;
+	background: #2e2e2e;
+	-webkit-box-shadow: 1px 1px 0 #3f3f3f;
+}
+.con_item i.active{
+	color:#aaa;
+	border: 1px solid #1f1f1f;
+	background: #222;
+	text-shadow: 0 0 1px #aaa;
+	-webkit-box-shadow: 1px 1px 0 #666;
 }
