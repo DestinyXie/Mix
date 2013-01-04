@@ -9,7 +9,7 @@
 	outline: none;
 }
 body,h3 {
-	font-family: Arial,Helvetica,Georgia, sans-serif;
+	font-family:Microsoft YaHei,Helvetica,Arial,Georgia,sans-serif;
 	margin:0;
 	padding:0;
 	-webkit-user-select:none;
@@ -24,6 +24,16 @@ i *,b *{
 	font-style: normal;
 	font-weight: normal;
 }
+.clear:before, .clear:after {
+	content:"";
+	display:table;
+}
+.clear:after,.clear:before {
+	clear:both;
+}
+.clear {
+	zoom:1; /* IE < 8 */
+}
 /***UI Tools***/
 /*mask 注意被遮罩元素z-index不能大于100*/
 .pageMask{
@@ -32,7 +42,6 @@ i *,b *{
 	top:0;
 	height:100%;
 	width:100%;
-
 	background-color:rgba(0,0,0,0.5);
 	z-index:100;
 }
@@ -60,6 +69,7 @@ i *,b *{
 	text-align: center;
 	left:50%;
 	border-radius:5px;
+	-webkit-box-shadow:2px 2px 8px #333;
 }
 
 /*popLayer弹出层公用组件*/
@@ -73,7 +83,7 @@ i *,b *{
 	padding:.5em 3%;
 	background-color:#fff;
 	-webkit-box-shadow:0 0 10px #000;
-	-webkit-border-radius:6px;
+	-webkit-border-radius:3px;
 	color:#333;
 }
 .pop_title{
@@ -95,22 +105,21 @@ i *,b *{
 
 .pop_confirm{
 	position: absolute;
-	background: #fff;
 	width: 100%;
-	padding: .5em;
+	padding: .5em 3.6%;
 	left: 0;
 	bottom: 0;
-	-webkit-box-shadow: 0 -1px 5px rgba(0,0,0,.3);
-	background-color: #eee;
-	border-bottom-left-radius: .45em;
-	border-bottom-right-radius: .45em;
+	border-top: 1px solid #aaa;
+	background-color: #ccc;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
 }
 .pop_confirm a{
 	float:left;
 	margin-right:1em;
 	padding:.5em .8em;
-	-webkit-border-radius:6px;
-	-webkit-box-shadow:1px 1px 5px #999;
+	-webkit-border-radius:3px;
+	-webkit-box-shadow:1px 1px 6px #888;
 	background:#fff;
 }
 .pop_confirm a.active{
@@ -119,6 +128,20 @@ i *,b *{
 	background:-webkit-linear-gradient(top, #999, #666);
 	background:-webkit-gradient(linear, left top, left bottom, from(#999), to(#666));
 	-webkit-box-shadow:1px 1px 5px #666 inset;
+}
+.pop_scr_top,.pop_scr_btm{
+	position: absolute;
+	left: 0;
+	top: -10px;
+	width: 100%;
+	height: 10px;
+	background-color: #666;
+	-webkit-box-shadow:0 0 10px #333;
+	-webkit-transition:-webkit-box-shadow 500ms linear;
+}
+.pop_scr_btm{
+	top: auto;
+	bottom: -10px;
 }
 
 /*menuLayer菜单*/
@@ -171,23 +194,19 @@ i *,b *{
 }
 
 /*regionLayer地区选择*/
-.regionLayer{
-	height:7em;
-}
 .regionLayer .selectWrap{
 	width:100%;
-	padding-bottom:1em;
+	padding-bottom:3.5em;
 }
 .regionLayer .selectWrap i{
 	position: relative;
-	height:2.5em;
-	line-height:2.3em;
 	float:left;
-	width:45%;
-	margin-right:5%;
-	padding:2px 1em 2px 0;
-	text-indent: .5em;
+	width:48%;
+	padding:.5em 1em .5em .5em;
 	border:1px solid rgba(0,0,0,.2);
+}
+.regionLayer .selectWrap i:first-child{
+	margin-right:4%;
 }
 .regionLayer .selectWrap i.active{
 	background-color: rgba(0,0,0,.3);
@@ -209,6 +228,12 @@ i *,b *{
 /*select单选、多选框*/
 .selectLayer.multiSelect .optWrap{
 	padding-bottom:4.5em;
+}
+.selectLayer.multiSelect .pop_scr_btm{
+	display: none;
+}
+.selectLayer.multiSelect .pop_confirm{
+	-webkit-box-shadow:0 0 10px #666;
 }
 .selectLayer .optWrap{
 	padding-bottom: 1em;
@@ -306,7 +331,7 @@ i *,b *{
 	margin-left:-3em;
 	background:#999 url(../image/loading.gif) no-repeat 1.5em 1.5em;
 	background-size: 3em 3em;
-	-webkit-border-radius:.5em;
+	-webkit-border-radius: 5px;
 	-webkit-box-shadow: 1px 1px 0 rgba(0, 0, 0, .5);
 	opacity:.8;
 }

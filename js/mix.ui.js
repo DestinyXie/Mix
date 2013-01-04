@@ -210,7 +210,7 @@ Mix.ui.popLayer={
             '</h3>');
         }
         if('popLayer'!=that.className&&that.option.hasConfirm){
-            domStrArr.push('<b class="pop_confirm clearfix">',
+            domStrArr.push('<b class="pop_confirm clear">',
                 '<a class="confirm" _click="Mix.ui.'+that.className+'.confirm()">确认</a>',
                 '<a class="cancel" _click="Mix.ui.'+that.className+'.cancel()">取消</a>',
             '</b>');
@@ -256,6 +256,10 @@ Mix.ui.popLayer={
 
         if(that.option.canScroll){
             that.scroller=new Mix.scroll(that.option.domId,scrollOpt);
+            var scrT=DOM.create('b',{className:'pop_scr_top'}),
+                scrB=DOM.create('b',{className:'pop_scr_btm'});
+            that.layerDom.appendChild(scrT);
+            that.layerDom.appendChild(scrB);
         }
 
         if(that.setSizePos){
@@ -359,7 +363,7 @@ Mix.ui.menu=extend({},Mix.ui.popLayer,{
 /*地区选择(extend Mix.ui.popLayer)*/
 Mix.ui.region=extend({},Mix.ui.popLayer,{
     className:'region',
-    domStr:['<b class="selectWrap clearfix">',
+    domStr:['<b class="selectWrap clear">',
             '<i class="provSel" _click="Mix.ui.region.chooseProv()">',
             '</i>',
             '<i class="citySel" _click="Mix.ui.region.chooseCity()">',

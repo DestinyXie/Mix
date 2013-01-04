@@ -464,13 +464,13 @@ Mix.scroll.prototype={
         }
 
         if(!scrollWrap){//创建Scrollbar
-            bar=DOM.create('div');
+            bar=DOM.create('b');
             var prex=Mix.cssPrefix;
             bar.style.cssText='position:absolute;z-index:100;'+(dir=='h'?'height:7px;bottom:1px;left:2px;right:'+(that.vScrollbar?'7':'2')+'px':'width:7px;bottom:'+(that.hScrollbar?'7':'2')+'px;top:2px;right:1px;')+'pointer-events:none;'+prex+'transition-property:opacity;'+prex+'transition-duration:' + (that.options.fadeScrollbar ? '350ms' : '0') + ';overflow:hidden;opacity:' + (that.options.hideScrollbar ? '0' : '1');
 
             that[dir+'ScrollbarWrapper']=bar;
 
-            barInti=DOM.create('div');
+            barInti=DOM.create('b');
             barInti.style.cssText='position:absolute;z-index:100;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.9);' + prex + 'background-clip:padding-box;' + prex + 'box-sizing:border-box;' + (dir == 'h' ? 'height:100%' : 'width:100%') + ';' + prex + 'border-radius:3px;border-radius:3px;pointer-events:none;' + prex + 'transition-property:' +prex + 'transform;' + prex + 'transition-timing-function:cubic-bezier(0.33,0.66,0.66,1);' + prex + 'transition-duration:0;' + prex + 'transform: translate(0,0)' + Mix.translateZ;
 
             that[dir+'ScrollbarWrapper'].appendChild(barInti);
