@@ -431,14 +431,6 @@ i *,b *{
 	width:100%;
 	padding-bottom:0.5em;
 }
-#wrapper.fixWrapperLeft {
-	left:0;
-}
-#myFrame {
-	position:absolute;
-	top:0;
-	left:0;
-}
 /*Pull down styles*/
 .pullDown {
 	height:2.5em;

@@ -348,11 +348,13 @@ Mix.scroll.prototype={
             outsideDist=0;
 
         //出界减速
-        if(dist>0&&newDist>maxDistUpper){
-            outsideDist = size/(6/(newDist/speed*deceleration));
-            maxDistUpper = maxDistUpper+outsideDist;
-            speed       = speed*maxDistUpper/newDist;
-            newDist     = maxDistUpper;
+        if(dist>0){
+            if(newDist>maxDistUpper){
+                outsideDist = size/(6/(newDist/speed*deceleration));
+                maxDistUpper = maxDistUpper+outsideDist;
+                speed       = speed*maxDistUpper/newDist;
+                newDist     = maxDistUpper;
+            }
         }else{
             outsideDist  = size/(6/(newDist/speed*deceleration));
             maxDistLower = maxDistLower+outsideDist;
@@ -413,7 +415,7 @@ Mix.scroll.prototype={
             step.time=0;
 
         that.animating=true;
-        that.moved=true;//?
+        that.moved=true;
 
         if (that.options.useTransition) {
             that._transitionTime(step.time);
