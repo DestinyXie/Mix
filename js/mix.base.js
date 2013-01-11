@@ -769,7 +769,16 @@ Mix.base={
             if(c.match(/cb:/) && cb){
                 return cb(data,c.match(/cb:(.*)/));
             }
-            return data[c]||"";
+            
+            var arr=c.split('.'),
+                ret=data;
+            for(var i=0,len=arr.length;i<len;i++){
+                ret=ret[arr[i]];
+            }
+            if(0==ret*1)
+                return 0;
+            
+            return ret||"";
         });
     },
     /*错误log*/
