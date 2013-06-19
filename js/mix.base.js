@@ -397,9 +397,9 @@ var DOM = {
 * 同时如果在该dom元素上移动距离超过了click的设定值 也移除DOC的move和end监听
 */
 var Delegate = {
-    /*初始化函数*/
     longTapTime:1500,//长按时间设置
     longTapInter:null,//长按监听
+    /*初始化函数*/
     init: function() {
         DOM.addEvent(DOC, START_EV, Delegate['start']);
     },
