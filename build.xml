@@ -8,8 +8,8 @@
     <property name="css.path" location="${current.dir}/css/"/>
     <property name="js.path" location="${current.dir}/js/"/>
     <!--yuicompressor和closure程序路径-->
-    <property name="yuicompressor.path" location="F:/devTools/yuicompressor.jar"/>
-    <property name="closure.path" location="F:/devTools/compiler.jar"/>
+    <property name="yuicompressor.path" location="D:/devTools/yuicompressor.jar"/>
+    <property name="closure.path" location="D:/devTools/compiler.jar"/>
 
     <!--合并并压缩css和js-->
     <target name="doall">

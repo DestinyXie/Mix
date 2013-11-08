@@ -1,5 +1,5 @@
-/*from SwipeView v1.0 ~ Copyright (c) 2012 Matteo Spinelli, http://cubiq.org*/
-Mix.swipeView = function (el, options) {
+/*from SwipeView v1.0 ~ Copyright (c) 2012 Matteo Spinelli, http://cubiq.org*/ ;
+Mix.swipeView = function(el, options) {
 	var i,
 		div,
 		className,
@@ -22,17 +22,19 @@ Mix.swipeView = function (el, options) {
 
 	this.masterPages = [];
 
-	div = DOM.create('div',{id:'swipeview-slider'});
+	div = DOM.create('div', {
+		id: 'swipeview-slider'
+	});
 	div.style.cssText = 'position:relative;top:0;height:100%;width:100%;' + Mix.cssPrefix + 'transition-duration:0;' + Mix.cssPrefix + 'transform:translateZ(0);' + Mix.cssPrefix + 'transition-timing-function:ease-out';
 	this.wrapper.appendChild(div);
 	this.slider = div;
 
 	this.refreshSize();
 
-	for (i=-1; i<2; i++) {
+	for (i = -1; i < 2; i++) {
 		div = DOM.create('div');
-		div.id = 'swipeview-masterpage-' + (i+1);
-		div.style.cssText = Mix.cssPrefix + 'transform:translateZ(0);position:absolute;top:0;height:100%;width:100%;left:' + i*100 + '%';
+		div.id = 'swipeview-masterpage-' + (i + 1);
+		div.style.cssText = Mix.cssPrefix + 'transform:translateZ(0);position:absolute;top:0;height:100%;width:100%;left:' + i * 100 + '%';
 		if (!div.dataset) div.dataset = {};
 		pageIndex = i == -1 ? this.options.numberOfPages - 1 : i;
 		div.dataset.pageIndex = pageIndex;
@@ -44,11 +46,11 @@ Mix.swipeView = function (el, options) {
 		this.masterPages.push(div);
 	}
 
-	DOM.addEvent(this.wrapper,START_EV, this);
-	DOM.addEvent(this.slider,TRNEND_EV, this);
+	DOM.addEvent(this.wrapper, START_EV, this);
+	DOM.addEvent(this.slider, TRNEND_EV, this);
 	// in Opera >= 12 the transitionend event is lowercase so we register both events
-	if ( Mix.cssVender == 'O' ) {
-		DOM.addEvent(this.slider,TRNEND_EV.toLowerCase(), this);
+	if (Mix.cssVender == 'O') {
+		DOM.addEvent(this.slider, TRNEND_EV.toLowerCase(), this);
 	}
 };
 
@@ -58,36 +60,36 @@ Mix.swipeView.prototype = {
 	page: 0,
 	pageIndex: 0,
 	customEvents: [],
-	onFlip: function (fn) {
-		DOM.addEvent(this.wrapper,'swipeview-flip', fn);
+	onFlip: function(fn) {
+		DOM.addEvent(this.wrapper, 'swipeview-flip', fn);
 		this.customEvents.push(['flip', fn]);
 	},
-	onMoveOut: function (fn) {
-		DOM.addEvent(this.wrapper,'swipeview-moveout', fn);
+	onMoveOut: function(fn) {
+		DOM.addEvent(this.wrapper, 'swipeview-moveout', fn);
 		this.customEvents.push(['moveout', fn]);
 	},
-	onMoveIn: function (fn) {
-		DOM.addEvent(this.wrapper,'swipeview-movein', fn);
+	onMoveIn: function(fn) {
+		DOM.addEvent(this.wrapper, 'swipeview-movein', fn);
 		this.customEvents.push(['movein', fn]);
 	},
-	onTouchStart: function (fn) {
-		DOM.addEvent(this.wrapper,'swipeview-touchstart', fn);
+	onTouchStart: function(fn) {
+		DOM.addEvent(this.wrapper, 'swipeview-touchstart', fn);
 		this.customEvents.push(['touchstart', fn]);
 	},
-	destroy: function () {
-		while ( this.customEvents.length ) {
-			DOM.removeEvent(this.wrapper,'swipeview-' + this.customEvents[0][0],this.customEvents[0][1]);
+	destroy: function() {
+		while (this.customEvents.length) {
+			DOM.removeEvent(this.wrapper, 'swipeview-' + this.customEvents[0][0], this.customEvents[0][1]);
 			this.customEvents.shift();
 		}
 
 		// Remove the event listeners
-		DOM.removeEvent(this.wrapper,START_EV,this);
-		DOM.removeEvent(this.wrapper,MOVE_EV,this);
-		DOM.removeEvent(this.wrapper,END_EV,this);
-		DOM.removeEvent(this.wrapper,CANCEL_EV,this);
-		DOM.removeEvent(this.slider,TRNEND_EV,this);
+		DOM.removeEvent(this.wrapper, START_EV, this);
+		DOM.removeEvent(this.wrapper, MOVE_EV, this);
+		DOM.removeEvent(this.wrapper, END_EV, this);
+		DOM.removeEvent(this.wrapper, CANCEL_EV, this);
+		DOM.removeEvent(this.slider, TRNEND_EV, this);
 	},
-	refreshSize: function () {
+	refreshSize: function() {
 		this.wrapperWidth = this.wrapper.clientWidth;
 		this.wrapperHeight = this.wrapper.clientHeight;
 		this.pageWidth = this.wrapperWidth;
@@ -95,24 +97,24 @@ Mix.swipeView.prototype = {
 		this.snapThreshold = this.options.snapThreshold === null ?
 			Math.round(this.pageWidth * 0.15) :
 			/%/.test(this.options.snapThreshold) ?
-				Math.round(this.pageWidth * this.options.snapThreshold.replace('%', '') / 100) :
-				this.options.snapThreshold;
+			Math.round(this.pageWidth * this.options.snapThreshold.replace('%', '') / 100) :
+			this.options.snapThreshold;
 	},
-	next: function () {
+	next: function() {
 		if (!this.options.loop && this.x == this.maxX) return;
 
 		this.directionX = -1;
 		this.x -= 1;
 		this.__checkPosition();
 	},
-	prev: function () {
+	prev: function() {
 		if (!this.options.loop && this.x === 0) return;
 
 		this.directionX = 1;
 		this.x += 1;
 		this.__checkPosition();
 	},
-	handleEvent: function (e) {
+	handleEvent: function(e) {
 		switch (e.type) {
 			case START_EV:
 				this.__start(e);
@@ -134,18 +136,18 @@ Mix.swipeView.prototype = {
 		}
 	},
 	/**
-	* Pseudo private methods
-	*/
-	__pos: function (x) {
+	 * Pseudo private methods
+	 */
+	__pos: function(x) {
 		this.x = x;
 		this.slider.style[Mix.transform] = 'translate(' + x + 'px,0)' + Mix.translateZ;
 	},
-	__resize: function () {
+	__resize: function() {
 		this.refreshSize();
 		this.slider.style[Mix.transitionDuration] = '0s';
 		this.__pos(-this.page * this.pageWidth);
 	},
-	__start: function (e) {
+	__start: function(e) {
 		e.preventDefault();
 		if (this.initiated) return;
 		var point = Mix.hasTouch ? e.touches[0] : e;
@@ -163,12 +165,12 @@ Mix.swipeView.prototype = {
 
 		this.slider.style[Mix.transitionDuration] = '0s';
 
-		DOM.addEvent(this.wrapper,MOVE_EV, this);
-		DOM.addEvent(this.wrapper,END_EV, this);
-		DOM.addEvent(this.wrapper,CANCEL_EV, this);
+		DOM.addEvent(this.wrapper, MOVE_EV, this);
+		DOM.addEvent(this.wrapper, END_EV, this);
+		DOM.addEvent(this.wrapper, CANCEL_EV, this);
 		this.__event('touchstart');
 	},
-	__move: function (e) {
+	__move: function(e) {
 		if (!this.initiated) return;
 
 		var point = Mix.hasTouch ? e.touches[0] : e,
@@ -177,7 +179,7 @@ Mix.swipeView.prototype = {
 			newX = this.x + deltaX,
 			dist = Math.abs(point.pageX - this.startX);
 
-		this.oriDist=point.pageX - this.startX;
+		this.oriDist = point.pageX - this.startX;
 		this.moved = true;
 		this.pointX = point.pageX;
 		this.pointY = point.pageY;
@@ -187,19 +189,19 @@ Mix.swipeView.prototype = {
 
 		// We take a 10px buffer to figure out the direction of the swipe
 		if (this.stepsX < 10 && this.stepsY < 10) {
-//				e.preventDefault();
+			//				e.preventDefault();
 			return;
 		}
 
 		// We are scrolling vertically, so skip SwipeView and give the control back to the browser
-		if (!this.directionLocked && this.stepsY > this.stepsX) {//-->
+		if (!this.directionLocked && this.stepsY > this.stepsX) { //-->
 			this.initiated = false;
-			Mix.scroll.outStop=false;
+			Mix.scroll.outStop = false;
 			return;
 		}
 		e.preventDefault();
 
-		Mix.scroll.outStop=true;
+		Mix.scroll.outStop = true;
 		this.directionLocked = true;
 
 		if (!this.options.loop && (newX > 0 || newX < this.maxX)) {
@@ -220,8 +222,8 @@ Mix.swipeView.prototype = {
 
 		this.__pos(newX);
 	},
-	__end: function (e) {
-		Mix.scroll.outStop=false;
+	__end: function(e) {
+		Mix.scroll.outStop = false;
 		if (!this.initiated) return;
 
 		var point = Mix.hasTouch ? e.changedTouches[0] : e,
@@ -229,9 +231,9 @@ Mix.swipeView.prototype = {
 
 		this.initiated = false;
 
-		DOM.removeEvent(this.wrapper,MOVE_EV,this);
-		DOM.removeEvent(this.wrapper,END_EV,this);
-		DOM.removeEvent(this.wrapper,CANCEL_EV,this);
+		DOM.removeEvent(this.wrapper, MOVE_EV, this);
+		DOM.removeEvent(this.wrapper, END_EV, this);
+		DOM.removeEvent(this.wrapper, CANCEL_EV, this);
 
 		if (!this.moved) return;
 
@@ -249,19 +251,19 @@ Mix.swipeView.prototype = {
 
 		this.__checkPosition();
 	},
-	__checkPosition: function () {
-		var that=this,
+	__checkPosition: function() {
+		var that = this,
 			pageFlip,
 			pageFlipIndex,
 			className,
 			newX,
-			pageNum=that.options.numberOfPages;
+			pageNum = that.options.numberOfPages;
 
 		// Flip the page
 		if (that.directionX > 0) {
 			that.page = -Math.ceil(that.x / that.pageWidth);
 			that.currentMasterPage = (that.page + 1) - Math.floor((that.page + 1) / 3) * 3;
-			that.pageIndex = (that.page%pageNum+pageNum)%pageNum;
+			that.pageIndex = (that.page % pageNum + pageNum) % pageNum;
 
 			pageFlip = that.currentMasterPage - 1;
 			pageFlip = pageFlip < 0 ? 2 : pageFlip;
@@ -271,7 +273,7 @@ Mix.swipeView.prototype = {
 		} else {
 			that.page = -Math.floor(that.x / that.pageWidth);
 			that.currentMasterPage = (that.page + 1) - Math.floor((that.page + 1) / 3) * 3;
-			that.pageIndex = (that.page%pageNum+pageNum)%pageNum;
+			that.pageIndex = (that.page % pageNum + pageNum) % pageNum;
 
 			pageFlip = that.currentMasterPage + 1;
 			pageFlip = pageFlip > 2 ? 0 : pageFlip;
@@ -281,7 +283,7 @@ Mix.swipeView.prototype = {
 		}
 
 		pageFlipIndex = pageFlipIndex - Math.floor(pageFlipIndex / that.options.numberOfPages) * that.options.numberOfPages;
-		that.masterPages[pageFlip].dataset.upcomingPageIndex = pageFlipIndex;		// Index to be loaded in the newly flipped page
+		that.masterPages[pageFlip].dataset.upcomingPageIndex = pageFlipIndex; // Index to be loaded in the newly flipped page
 
 		newX = -that.page * that.pageWidth;
 
@@ -293,19 +295,19 @@ Mix.swipeView.prototype = {
 		}
 
 		if (that.x == newX) {
-			that.__flip();		// If we swiped all the way long to the next page (extremely rare but still)
+			that.__flip(); // If we swiped all the way long to the next page (extremely rare but still)
 		} else {
 			that.__pos(newX);
 			if (that.options.hastyPageFlip) that.__flip();
 		}
 	},
-	__flip: function () {
+	__flip: function() {
 		this.__event('flip');
-		for (var i=0; i<3; i++) {
+		for (var i = 0; i < 3; i++) {
 			this.masterPages[i].dataset.pageIndex = this.masterPages[i].dataset.upcomingPageIndex;
 		}
 	},
-	__event: function (type) {
+	__event: function(type) {
 		var ev = DOC.createEvent("Event");
 		ev.initEvent('swipeview-' + type, true, true);
 		this.wrapper.dispatchEvent(ev);

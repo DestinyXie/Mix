@@ -1,3 +1,2 @@
-/*map plugin*/
-Mix.map=function(){
-}
+/*map plugin*/ ;
+Mix.map = function() {}
