@@ -151,9 +151,8 @@ Mix.sina = {
     },
     onOAuth: function(winNam, url) {
         var that = Mix.sina;
-        alert(winNam + "~~" + url);
         if (winNam == that.oauthWindow && url.indexOf(that.backUrl) == 0) {
-            //fix：SINA会回调2次，设置1S内只
+            //fix：SINA会回调2次，设置1S内只响应一次
             if (that.lastCall && new Date() - that.lastCall < 1000) return;
             var par = url.split('?|#')[1],
                 par = par.split('&');

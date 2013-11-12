@@ -13,3 +13,9 @@ More development guide use AppCan is at http://doc.appcan.cn/dev_api_document.ht
 For Cordova:
 Should remove js/mix.bridge.appcan.js
 More development guide use Cordova is at http://docs.phonegap.com/en/2.2.0/index.html
+
+
+===========
+USE REQUIREJS
+* npm install -g requirejs
+* r.js -o js/build.js

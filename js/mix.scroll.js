@@ -9,7 +9,7 @@ Mix.scroll = function(sel, options) {
     that.options = {
         hScroll: true, //设定滚动方向
         vScroll: true,
-        x: 0, //滚动位值
+        x: 0, //滚动位置
         y: 0,
         bounce: false, //Slow down if outside of the boundaries
         bounceLock: false,

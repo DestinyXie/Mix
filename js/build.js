@@ -1,9 +1,9 @@
 ({
     baseUrl: "./js",
-    appDir: "./",
-    dir: "./dist",
+    appDir: "../",
+    dir: "../dist",
     modules: [{
-        name: "mix.base"
+        name: "app.home"
     }],
     fileExclusionRegExp: /^(r|build)\.js$/,
     optimizeCss: "standard"

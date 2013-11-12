@@ -89,14 +89,14 @@ Mix.ui.tips = {
             Mix.base.logErr(e, 'Mix.ui.tips.hide');
         }
     }
-}
+};
 
 
 /*背景遮罩*/
 Mix.ui.mask = function(opts) {
     this.show(opts);
     return this;
-}
+};
 
 Mix.ui.mask.prototype = {
     /*option{cont}*/
@@ -126,7 +126,7 @@ Mix.ui.mask.prototype = {
         delete that.maskDom;
         delete that.container;
     }
-}
+};
 
 /*loading*/
 Mix.ui.loading = {
@@ -168,7 +168,7 @@ Mix.ui.loading = {
             that.outInter = null;
         }
     }
-}
+};
 
 /*@private所有弹出层的公共类*/
 Mix.ui.popLayer = {
