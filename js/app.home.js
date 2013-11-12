@@ -33,7 +33,7 @@ var App = {
             Mix.obs.publish('resize');
         });
     }
-}
+};
 
 Device.onLoad(App.init);
 
@@ -64,6 +64,7 @@ var ViewMgr = {
         }
 
         Device.backFunc = [
+
             function() {
                 ViewMgr.back();
             }
@@ -126,7 +127,7 @@ var ViewMgr = {
             doBack();
         }
     }
-}
+};
 
 /*缓存资料管理*/
 var StorMgr = {
@@ -362,7 +363,7 @@ var UserAction = {
             Mix.ui.loading.hide();
         }
     }
-}
+};
 
 /*涉及到应用的一些工具类*/
 var UserTools = {
@@ -435,6 +436,7 @@ var UserTools = {
                 Device.backFunc.shift(0);
                 if (Device.backFunc.length <= 0) {
                     Device.backFunc = [
+
                         function() {
                             ViewMgr.back();
                         }
@@ -583,99 +585,100 @@ var UserTools = {
             loadDom.appendChild(img);
         });
     }
-}
+};
 
 /*用到的菜单*/
-    function UserMenus(name) {
-        var menuOpt = {
-            pos: "middle",
-            onShow: function(UImenu) {
-                Device.backFunc.unshift(function() {
-                    UImenu.hide();
-                });
-            },
-            hideEnd: function(UImenu) {
-                Device.backFunc.shift(0);
-                if (Device.backFunc.length <= 0) {
-                    Device.backFunc = [
-                        function() {
-                            ViewMgr.back();
-                        }
-                    ];
+function UserMenus(name) {
+    var menuOpt = {
+        pos: "middle",
+        onShow: function(UImenu) {
+            Device.backFunc.unshift(function() {
+                UImenu.hide();
+            });
+        },
+        hideEnd: function(UImenu) {
+            Device.backFunc.shift(0);
+            if (Device.backFunc.length <= 0) {
+                Device.backFunc = [
+
+                    function() {
+                        ViewMgr.back();
+                    }
+                ];
+            }
+        }
+    };
+
+    switch (name) {
+        case 'menuBtn':
+            menuOpt.pos = "bottom";
+            menuOpt.items = ['注销用户', '退出应用'];
+            menuOpt.onSelect = function(idx) {
+                switch (idx * 1) {
+                    case 0:
+                        UserAction.logOut();
+                        break;
+                    case 1:
+                        Device.exit();
+                        break;
+                }
+            };
+            break;
+    }
+    Mix.ui.menu.show(menuOpt);
+}
+
+/*下拉刷新页面*/
+function refreshIScroll(pullDownEl, wrapperID, downAction) {
+    function pullDownAction() {
+        Feed.refresh();
+    }
+    var pullDownOffset = pullDownEl.offsetHeight;
+
+    var myScroll = new Mix.scroll(wrapperID, {
+        bounce: true,
+        useTransform: false, //使用Transform的时候 在手机上点击地区选择的取消无效
+        topOffset: pullDownOffset,
+        onRefresh: function() {
+            if (DOM.hasClass(pullDownEl, 'loading')) {
+                DOM.removeClass(pullDownEl, 'loading');
+                $('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
+            }
+        },
+        onMove: function() {
+            if (this.y > 5) {
+                $('.pullDownIcon') && ($('.pullDownIcon').style.webkitTransform = 'rotate(-180deg)');
+                $('.pullDownLabel', pullDownEl).innerHTML = '释放刷新页面...';
+                this.minScrollY = 0;
+            } else if (this.y < 5) {
+                if ($('.pullDownIcon')) {
+                    if ((this.y > -pullDownOffset / 2) && this.y <= 0) {
+                        var roVal = -180 * (2 * this.y / pullDownOffset - 1);
+                        $('.pullDownIcon').style.webkitTransform = 'rotate(' + roVal + 'deg)';
+                    } else if (this.y < -pullDownOffset / 2) {
+                        $('.pullDownIcon').style.webkitTransform = 'rotate(0deg)';
+                    }
+                }
+
+                DOM.removeClass(pullDownEl, 'flip');
+                $('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
+                this.minScrollY = -pullDownOffset;
+            }
+        },
+        onScrollEnd: function() {
+            if ($('.pullDownLabel', pullDownEl).innerHTML == '释放刷新页面...') {
+                DOM.addClass(pullDownEl, 'loading');
+                $('.pullDownLabel', pullDownEl).innerHTML = '载入中...';
+                if ($.isFunc(downAction)) {
+                    downAction();
+                } else {
+                    pullDownAction();
                 }
             }
-        };
-
-        switch (name) {
-            case 'menuBtn':
-                menuOpt.pos = "bottom";
-                menuOpt.items = ['注销用户', '退出应用'];
-                menuOpt.onSelect = function(idx) {
-                    switch (idx * 1) {
-                        case 0:
-                            UserAction.logOut();
-                            break;
-                        case 1:
-                            Device.exit();
-                            break;
-                    }
-                };
-                break;
         }
-        Mix.ui.menu.show(menuOpt);
-    }
-
-    /*下拉刷新页面*/
-    function refreshIScroll(pullDownEl, wrapperID, downAction) {
-        function pullDownAction() {
-            Feed.refresh();
-        }
-        var pullDownOffset = pullDownEl.offsetHeight;
-
-        var myScroll = new Mix.scroll(wrapperID, {
-            bounce: true,
-            useTransform: false, //使用Transform的时候 在手机上点击地区选择的取消无效
-            topOffset: pullDownOffset,
-            onRefresh: function() {
-                if (DOM.hasClass(pullDownEl, 'loading')) {
-                    DOM.removeClass(pullDownEl, 'loading');
-                    $('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
-                }
-            },
-            onMove: function() {
-                if (this.y > 5) {
-                    $('.pullDownIcon') && ($('.pullDownIcon').style.webkitTransform = 'rotate(-180deg)');
-                    $('.pullDownLabel', pullDownEl).innerHTML = '释放刷新页面...';
-                    this.minScrollY = 0;
-                } else if (this.y < 5) {
-                    if ($('.pullDownIcon')) {
-                        if ((this.y > -pullDownOffset / 2) && this.y <= 0) {
-                            var roVal = -180 * (2 * this.y / pullDownOffset - 1);
-                            $('.pullDownIcon').style.webkitTransform = 'rotate(' + roVal + 'deg)';
-                        } else if (this.y < -pullDownOffset / 2) {
-                            $('.pullDownIcon').style.webkitTransform = 'rotate(0deg)';
-                        }
-                    }
-
-                    DOM.removeClass(pullDownEl, 'flip');
-                    $('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
-                    this.minScrollY = -pullDownOffset;
-                }
-            },
-            onScrollEnd: function() {
-                if ($('.pullDownLabel', pullDownEl).innerHTML == '释放刷新页面...') {
-                    DOM.addClass(pullDownEl, 'loading');
-                    $('.pullDownLabel', pullDownEl).innerHTML = '载入中...';
-                    if ($.isFunc(downAction)) {
-                        downAction();
-                    } else {
-                        pullDownAction();
-                    }
-                }
-            }
-        });
-        setTimeout(function() {
-            $('#cont').style.left = '0';
-        }, 100);
-        return myScroll;
-    }
+    });
+    setTimeout(function() {
+        $('#cont').style.left = '0';
+    }, 100);
+    return myScroll;
+}

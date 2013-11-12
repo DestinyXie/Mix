@@ -31,8 +31,6 @@ var Device = {
                 }
             }, 1000);
         }
-
-
         window.uexOnload = load;
         DOM.addEvent(DOC, 'DOMContentLoaded', PCload);
     },
@@ -258,10 +256,10 @@ var Device = {
         }
 
         function clean(opId, dataType, data) {
-            if (dataType == 2 && data == 0) {　　　　
-                alert("清除成功");　　
-            } else if (dataType == 2 && data == 1) {　　　　
-                alert("清除失败");　　
+            if (dataType == 2 && data == 0) {
+                alert("清除成功");
+            } else if (dataType == 2 && data == 1) {
+                alert("清除失败");
             }
         }
         uexWidgetOne.cbCleanCache = clean;
@@ -325,8 +323,8 @@ var Device = {
         if (!Device.isMobi()) {
             return;
         }
-        uexControl.cbOpenDatePicker = function(opCode, dataType, data) {　　　　　　　　
-            if (dataType == 1) {　　　　　　　　　　
+        uexControl.cbOpenDatePicker = function(opCode, dataType, data) {
+            if (dataType == 1) {
                 var obj = eval('(' + data + ')'),
                     dataStr = obj.year + "-" + obj.month + "-" + obj.day,
                     today = new Date().getTime();
@@ -334,10 +332,10 @@ var Device = {
                     alert('日期超过今天无效');
                     return;
                 }
-                okCb ? okCb(dataStr) : Device.toast(dataStr);　　　　　　　　
+                okCb ? okCb(dataStr) : Device.toast(dataStr);
             } else {
                 errCb ? errCb() : Device.toast('日期没有选择成功');
-            }　　　　
+            }
         }
         var defData = node.getAttribute('default').split("-");
         if (0 == defData[0] || 0 == defData[1] || 0 == defData[2]) {

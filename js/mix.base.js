@@ -58,7 +58,7 @@ var HEAD, BODY, BODYFS, DOC = document,
         return WIN.requestAnimationFrame ||
             WIN[vender + 'RequestAnimationFrame'] ||
             function(callback) {
-                return setTimeout(callback, 1000/60);
+                return setTimeout(callback, 1000 / 60);
         };
     })();
     Mix.cancelFrame = (function() {
