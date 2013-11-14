@@ -1,26 +1,3 @@
-requirejs.config({
-    baseUrl: './js',
-    paths: {
-        cordova: 'cordova-2.2.0',
-        base: 'mix.base',
-        scroll: 'mix.scroll',
-        swipeview: 'mix.swipeview',
-        cordovaBridge: 'mix.bridge.cordova',
-        ajax: 'mix.x',
-        region: 'mix.regions',
-        ui: 'mix.ui',
-        page: 'app.page',
-        feed: 'app.feed'
-    }
-});
-
-requirejs(['cordova', 'base', 'scroll', 'swipeview', 'cordovaBridge', 'ajax',
-    'region', 'ui', 'page', 'feed'
-], function() {
-    // Device.onLoad(App.init);
-    App.init();
-});
-
 /*页面初始化*/
 var App = {
     init: function() {

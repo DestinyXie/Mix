@@ -1,11 +1,9 @@
 ({
-    baseUrl: "./js",
-    appDir: "../",
-    dir: "../dist",
-    modules: [{
-        name: "main"
-    }],
+    baseUrl: ".",
+    out: "../dist/js/main.built.js",
+    name: "main",
     paths: {
+        requireLib: 'require',
         base: 'mix.base',
         scroll: 'mix.scroll',
         swipeview: 'mix.swipeview',
@@ -17,6 +15,5 @@
         page: 'app.page',
         feed: 'app.feed'
     },
-    fileExclusionRegExp: /^(r|build|main\.build)\.js|build\.sh|.gitignore|README$/,
-    optimizeCss: "standard"
+    include: "requireLib"
 })

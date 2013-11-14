@@ -18,4 +18,4 @@ More development guide use Cordova is at http://docs.phonegap.com/en/2.2.0/index
 ===========
 USE REQUIREJS
 * npm install -g requirejs
-* r.js -o js/build.js
+* ./build.sh
