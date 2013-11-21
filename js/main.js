@@ -13,15 +13,19 @@ require.config({
         feed: 'app.feed'
     },
     shim: {
-        'cordova-2.2.0': {
+        'cordova': {
             exports: 'cordova'
+        }
+    },
+    map: {
+        '*': {
+            'cordova': 'cordova-2.2.0'
         }
     }
 });
 
-require(['cordova-2.2.0', 'base', 'scroll', 'swipeview', 'cordovaBridge', 'ajax',
+require(['cordova', 'base', 'scroll', 'swipeview', 'cordovaBridge', 'ajax',
     'region', 'ui', 'home', 'page', 'feed'
 ], function() {
     App.init();
-    console.log(cordova);
 });

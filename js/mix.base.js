@@ -157,7 +157,10 @@ $$ = DOC.querySelectorAll ? function(selector, root) {
     root = root || DOC;
     return root.querySelectorAll(selector, root);
 } : function(selector, root) {
-    alert('querySelectorAll not implemented');
+    Mix.base.logErr({
+        name: 'loss of function',
+        message: 'querySelectorAll not implemented.'
+    }, 'querySelectorAll', true);
 };
 
 /*返回指定选择符的单个DOM对象(如果选择符匹配多个DOM对象，则只返回第一个)*/
@@ -722,7 +725,7 @@ Mix.base = {
                 }
                 for (var i = items.length - 1; i >= 0; i--) {
                     name = items[i].split('=')[0];
-                    Tools.cookieStor.removeItem(name);
+                    Mix.base.cookieStor.removeItem(name);
                 }
             }
         }
@@ -731,8 +734,8 @@ Mix.base = {
     storage: (function() {
         function getStorScope(scope) {
             if (scope && (scope == "session"))
-                return sessionStorage || Tools.cookieStor;
-            return localStorage || Tools.cookieStor;
+                return sessionStorage || Mix.base.cookieStor;
+            return localStorage || Mix.base.cookieStor;
         }
         return {
             get: function(key, scope) {
@@ -772,7 +775,7 @@ Mix.base = {
     htmlEncodeObj: function(obj) {
         for (key in obj) {
             if (obj.hasOwnProperty(key) && (typeof obj[key] == "string")) {
-                obj[key] = Mix.base.htmlEncode(obj[key]); //转换js中的HTML特殊字符串
+                obj[key] = Mix.base.htmlEncode(obj[key]);
             }
         }
         return obj;
@@ -804,12 +807,13 @@ Mix.base = {
         var useAlert = !! useAlert,
             errType = err.name || 'undefined',
             errMsg = err.message || 'undefined',
-            logStr = "error_type:" + errType + "|  error_message:" + errMsg + "| error_function:" + fnName;
+            logStr = "error_type: " + errType + "\nerror_message: " + errMsg +
+                     "\nerror_function: " + fnName;
 
         if (useAlert) {
             alert(logStr);
         } else {
-            // console.log(logStr);
+            console.log(logStr);
         }
     }
 };

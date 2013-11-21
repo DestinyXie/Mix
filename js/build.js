@@ -17,6 +17,11 @@
         page: 'app.page',
         feed: 'app.feed'
     },
+    map: {
+        '*': {
+            'cordova': 'cordova-2.2.0'
+        }
+    },
     fileExclusionRegExp: /^(r|build|main\.build)\.js|build\.sh|.gitignore|README$/,
     optimizeCss: "standard"
 })

@@ -15,5 +15,10 @@
         page: 'app.page',
         feed: 'app.feed'
     },
+    map: {
+        '*': {
+            'cordova': 'cordova-2.2.0'
+        }
+    },
     include: "requireLib"
 })
