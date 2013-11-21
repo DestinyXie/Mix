@@ -5,9 +5,13 @@ require.config({
         scroll: 'mix.scroll',
         swipeview: 'mix.swipeview',
         cordovaBridge: 'mix.bridge.cordova',
-        ajax: 'mix.x',
+        X: 'mix.x',
         region: 'mix.regions',
         ui: 'mix.ui',
+        action: 'app.action',
+        tool: 'app.tool',
+        stor: 'app.stor',
+        view: 'app.view',
         home: 'app.home',
         page: 'app.page',
         feed: 'app.feed'
@@ -24,8 +28,9 @@ require.config({
     }
 });
 
-require(['cordova', 'base', 'scroll', 'swipeview', 'cordovaBridge', 'ajax',
+require(['cordova', 'base', 'scroll', 'swipeview', 'cordovaBridge',
     'region', 'ui', 'home', 'page', 'feed'
 ], function() {
+    var App = require('home');
     App.init();
 });

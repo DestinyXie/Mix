@@ -1,5 +1,5 @@
 /*单页面模式*/ ;
-(function() {
+define(['action', 'tool'], function(UserAction, UserTools) {
     //公共tmpl,减少代码量
     var headerBack = ['<b id="head">',
         '<b _click="ViewMgr.back()" class="btn_back"><img src="image/return.png" alt="返回"/></b>'
@@ -303,4 +303,4 @@
         }
     }
     window['PageEngine'] = PageEngine;
-})();
+});
