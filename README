@@ -1,21 +1,15 @@
-Js framework for web app development,its characteristic is small and fast.
-Author:DestinyXie.
+Js framework for web app development.
+Author: DestinyXie.
 Start from Jun 2012.
-It can call mobile features by AppCan and Cordova(PhoneGap).
+It calls mobile features by AppCan and Cordova(PhoneGap's open source project).
 Version 0.0.1
 
 ===========
-HOW TO USE:
-For AppCan:
-Should remove js/mix.bridge.cordova.js and js/cordova-xx.js
-More development guide use AppCan is at http://doc.appcan.cn/#!/api
+REFERENCE:
+AppCan:
+http://doc.appcan.cn/#!/api
+(Should remove js/mix.bridge.cordova.js and js/cordova-xx.js)
 
-For Cordova:
-Should remove js/mix.bridge.appcan.js
-More development guide use Cordova is at http://docs.phonegap.com/en/edge/index.html
-
-
-===========
-USE REQUIREJS
-* npm install -g requirejs
-* ./build.sh
+Cordova:
+http://cordova.apache.org/docs/en/edge/index.html
+(Should remove js/mix.bridge.appcan.js)

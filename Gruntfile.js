@@ -1,4 +1,27 @@
 module.exports = function(grunt) {
+  var paths = {
+    requireLab: 'require',
+    base: 'mix.base',
+    scroll: 'mix.scroll',
+    swipeview: 'mix.swipeview',
+    cordovaBridge: 'mix.bridge.cordova',
+    X: 'mix.x',
+    region: 'mix.regions',
+    ui: 'mix.ui',
+    action: 'app.action',
+    tool: 'app.tool',
+    stor: 'app.stor',
+    view: 'app.view',
+    home: 'app.home',
+    page: 'app.page',
+    feed: 'app.feed'
+  };
+  var pathMap = {
+      '*': {
+          'cordova': 'cordova-2.2.0'
+      }
+  };
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -29,79 +52,40 @@ module.exports = function(grunt) {
           console: true,
           module: true
         },
-        ignores: ['js/r.js', 'build.js', 'main.build.js', 'cordova-2.2.0.js', 'require.js']
+        ignores: ['cordova-2.2.0.js', 'require.js']
       },
       uses_defaults: ['js/*.js']
     },
     qunit: {
-      files: ['*.htm']
+      files: ['test/*.htm']
     },
     watch: {
       files: ['<%= jshint.files%>'],
       tasks: ['jshint']
     },
     requirejs: {
-      compile: {
+      compile: { //just copy files exclude css & js
         options: {
-          baseUrl: "js",
-          appDir: "./",
-          dir: "./dist",
-          modules: [{
-              name: "main"
-          }],
-          paths: {
-              base: 'mix.base',
-              scroll: 'mix.scroll',
-              swipeview: 'mix.swipeview',
-              cordovaBridge: 'mix.bridge.cordova',
-              X: 'mix.x',
-              region: 'mix.regions',
-              ui: 'mix.ui',
-              action: 'app.action',
-              tool: 'app.tool',
-              stor: 'app.stor',
-              view: 'app.view',
-              home: 'app.home',
-              page: 'app.page',
-              feed: 'app.feed'
-          },
-          map: {
-              '*': {
-                  'cordova': 'cordova-2.2.0'
-              }
-          },
-          fileExclusionRegExp: /^(r|build|main\.build|Gruntfile)\.js|build\.sh|.gitignore|README|node_modules$/,
-          optimizeCss: "standard"
+          appDir: './',
+          dir: './dist',
+          fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css$/
         }
       },
-      compile1: {
+      compileCSS: {
         options: {
-          baseUrl: "js",
-          out: "./dist/js/main.built.js",
-          name: "main",
-          paths: {
-              requireLib: 'require',
-              base: 'mix.base',
-              scroll: 'mix.scroll',
-              swipeview: 'mix.swipeview',
-              cordovaBridge: 'mix.bridge.cordova',
-              X: 'mix.x',
-              region: 'mix.regions',
-              ui: 'mix.ui',
-              action: 'app.action',
-              tool: 'app.tool',
-              stor: 'app.stor',
-              view: 'app.view',
-              home: 'app.home',
-              page: 'app.page',
-              feed: 'app.feed'
-          },
-          map: {
-              '*': {
-                  'cordova': 'cordova-2.2.0'
-              }
-          },
-          include: "requireLib"
+          cssIn: 'css/main.css',
+          out: './dist/css/main.css',
+          optimizeCss: 'standard'
+        }
+      },
+      compileJS: {
+        options: {
+          baseUrl: 'js',
+          out: './dist/js/main.built.js',
+          name: 'main',
+          paths: paths,
+          map: pathMap,
+          include: 'requireLab'
         }
       }
     }
@@ -110,12 +94,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  // grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
 
-  grunt.registerTask('default', ['concat', 'uglify']);
+  // grunt.registerTask('default', ['concat', 'uglify']);
+  grunt.registerTask('t', ['qunit']);
   grunt.registerTask('r', ['requirejs:compile']);
-  grunt.registerTask('r1', ['requirejs:compile1']);
-  grunt.registerTask('ra', ['requirejs:compile', 'requirejs:compile1']);
+  grunt.registerTask('rc', ['requirejs:compileCSS']);
+  grunt.registerTask('rj', ['requirejs:compileJS']);
+  grunt.registerTask('ra', ['r', 'rc', 'rj']);
 }
