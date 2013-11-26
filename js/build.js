@@ -10,9 +10,13 @@
         scroll: 'mix.scroll',
         swipeview: 'mix.swipeview',
         cordovaBridge: 'mix.bridge.cordova',
-        ajax: 'mix.x',
+        X: 'mix.x',
         region: 'mix.regions',
         ui: 'mix.ui',
+        action: 'app.action',
+        tool: 'app.tool',
+        stor: 'app.stor',
+        view: 'app.view',
         home: 'app.home',
         page: 'app.page',
         feed: 'app.feed'
@@ -22,6 +26,6 @@
             'cordova': 'cordova-2.2.0'
         }
     },
-    fileExclusionRegExp: /^(r|build|main\.build)\.js|build\.sh|.gitignore|README$/,
+    fileExclusionRegExp: /^(r|build|main\.build|Gruntfile)\.js|build\.sh|.gitignore|README|node_modules$/,
     optimizeCss: "standard"
 })
