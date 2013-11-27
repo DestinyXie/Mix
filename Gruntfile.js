@@ -57,7 +57,21 @@ module.exports = function(grunt) {
       uses_defaults: ['js/*.js']
     },
     qunit: {
-      files: ['test/*.htm']
+      all: {
+        options: {
+          urls: [
+            'http://localhost:8000/test/test1.html'
+          ]
+        }
+      }
+    },
+    connect: {
+      server: {
+        options: {
+          port: 8000,
+          base: '.'
+        }
+      }
     },
     watch: {
       files: ['<%= jshint.files%>'],
@@ -68,7 +82,7 @@ module.exports = function(grunt) {
         options: {
           appDir: './',
           dir: './dist',
-          fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css$/
+          fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css|test$/
         }
       },
       compileCSS: {
@@ -94,12 +108,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
 
   // grunt.registerTask('default', ['concat', 'uglify']);
-  grunt.registerTask('t', ['qunit']);
+  grunt.registerTask('t', ['connect', 'qunit']);
   grunt.registerTask('r', ['requirejs:compile']);
   grunt.registerTask('rc', ['requirejs:compileCSS']);
   grunt.registerTask('rj', ['requirejs:compileJS']);
