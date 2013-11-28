@@ -2,8 +2,26 @@
 <html>
 <head>
     <title>test1</title>
+    <!-- Load local QUnit. -->
+    <link rel="stylesheet" href="libs/qunit.css" media="screen">
+    <script src="libs/qunit.js"></script>
+    <script type="text/javascript">
+        test('basic test', function() {
+          equal(2, 2);
+          ok(true, 'this had better work.');
+        });
+
+        test('can access the DOM', function() {
+          expect(1);
+          var fixture = document.getElementById('qunit-fixture');
+          equal(fixture.innerText, 'this had better work.', 'should be able to access the DOM.');
+        });
+
+    </script>
 </head>
 <body>
 <h2>hi test</h2>
+<div id="qunit"></div>
+<div id="qunit-fixture">this had better work.</div>
 </body>
 </html>

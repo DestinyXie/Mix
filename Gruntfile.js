@@ -60,7 +60,7 @@ module.exports = function(grunt) {
       all: {
         options: {
           urls: [
-            'http://localhost:8000/test/test1.html'
+            'http://127.0.0.1:8000/test/test1.html'
           ]
         }
       }
@@ -73,6 +73,30 @@ module.exports = function(grunt) {
         }
       }
     },
+    jasmine: {
+      xTask: {
+        src: 'js/app.home.js',
+        options: {
+          host : 'http://127.0.0.1:8000/',
+          specs: 'spec/*.spec.js',
+          keepRunner: false,
+          template: require('grunt-template-jasmine-requirejs'),
+          templateOptions: {
+            requireConfigFile: 'js/main.js'
+          }
+        }
+      },
+      xlTask: {//local filesystem test
+        src: 'js/app.home.js',
+        options: {
+          specs: 'spec/*.spec.js',
+          template: require('grunt-template-jasmine-requirejs'),
+          templateOptions: {
+            requireConfigFile: 'js/main.js'
+          }
+        }
+      }
+    },
     watch: {
       files: ['<%= jshint.files%>'],
       tasks: ['jshint']
@@ -82,7 +106,7 @@ module.exports = function(grunt) {
         options: {
           appDir: './',
           dir: './dist',
-          fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css|test$/
+          fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css|test|spec$/
         }
       },
       compileCSS: {
@@ -112,9 +136,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
 
   // grunt.registerTask('default', ['concat', 'uglify']);
   grunt.registerTask('t', ['connect', 'qunit']);
+  grunt.registerTask('jt', ['connect', 'jasmine:xTask']);
+  grunt.registerTask('jlt', ['jasmine:xlTask']);
   grunt.registerTask('r', ['requirejs:compile']);
   grunt.registerTask('rc', ['requirejs:compileCSS']);
   grunt.registerTask('rj', ['requirejs:compileJS']);
