@@ -12,7 +12,7 @@ describe('app.home', function() {
     });
 
     describe('test App', function() {
-        it('App should be a function', function() {
+        it('App should be a object', function() {
             expect(isObj(App));
         });
     });

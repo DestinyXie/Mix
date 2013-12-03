@@ -1,41 +1,5 @@
 /*页面初始化*/
-define(['tool', 'stor', 'view'], function(UserTools, StorMgr, ViewMgr) {
-    var App = {
-        init: function() {
-            Mix.ui.loading.show($('#page'));
-            /*全局变量赋值*/
-            HEAD = $('head');
-            BODY = DOC.body;
-            BODYFS = parseInt(getComputedStyle(BODY).fontSize);
-
-            /*加载weinre debug工具*/
-            // DOM.loadJs("http://192.168.40.28:8081/target/target-script.js",function(){alert('weinre test ok!')});
-
-            /*取得GPS信息*/
-            UserTools.getGpsInfo();
-
-            StorMgr.siteUrl = 'http://desmix.com';
-
-            /*页面历史管理初始化*/
-            ViewMgr.init();
-
-            /*设置menu键*/
-            Device.menuFunc = function() {
-                UserMenus('menuBtn');
-            }
-
-            var resizeT; //resize事件会执行2次
-            DOM.addEvent(WIN, RESIZE_EV, function() {
-                if (Date.now() - resizeT < 50) {
-                    return;
-                }
-                resizeT = Date.now();
-                /*通知订阅者窗口resize*/
-                Mix.obs.publish('resize');
-            });
-        }
-    };
-
+define(['tool', 'stor', 'view', 'ui', 'dom'], function(UserTools, StorMgr, ViewMgr, ui, dom) {
     /*记录常用正则*/
     var regExpObj = {
         email: /^.+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/,
@@ -98,34 +62,34 @@ define(['tool', 'stor', 'view'], function(UserTools, StorMgr, ViewMgr) {
             onRefresh: function() {
                 if (DOM.hasClass(pullDownEl, 'loading')) {
                     DOM.removeClass(pullDownEl, 'loading');
-                    $('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
+                    dom.$('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
                 }
             },
             onMove: function() {
                 if (this.y > 5) {
-                    $('.pullDownIcon') && ($('.pullDownIcon').style.webkitTransform = 'rotate(-180deg)');
-                    $('.pullDownLabel', pullDownEl).innerHTML = '释放刷新页面...';
+                    dom.$('.pullDownIcon') && (dom.$('.pullDownIcon').style.webkitTransform = 'rotate(-180deg)');
+                    dom.$('.pullDownLabel', pullDownEl).innerHTML = '释放刷新页面...';
                     this.minScrollY = 0;
                 } else if (this.y < 5) {
-                    if ($('.pullDownIcon')) {
+                    if (dom.$('.pullDownIcon')) {
                         if ((this.y > -pullDownOffset / 2) && this.y <= 0) {
                             var roVal = -180 * (2 * this.y / pullDownOffset - 1);
-                            $('.pullDownIcon').style.webkitTransform = 'rotate(' + roVal + 'deg)';
+                            dom.$('.pullDownIcon').style.webkitTransform = 'rotate(' + roVal + 'deg)';
                         } else if (this.y < -pullDownOffset / 2) {
-                            $('.pullDownIcon').style.webkitTransform = 'rotate(0deg)';
+                            dom.$('.pullDownIcon').style.webkitTransform = 'rotate(0deg)';
                         }
                     }
 
                     DOM.removeClass(pullDownEl, 'flip');
-                    $('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
+                    dom.$('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
                     this.minScrollY = -pullDownOffset;
                 }
             },
             onScrollEnd: function() {
-                if ($('.pullDownLabel', pullDownEl).innerHTML == '释放刷新页面...') {
+                if (dom.$('.pullDownLabel', pullDownEl).innerHTML == '释放刷新页面...') {
                     DOM.addClass(pullDownEl, 'loading');
-                    $('.pullDownLabel', pullDownEl).innerHTML = '载入中...';
-                    if ($.isFunc(downAction)) {
+                    dom.$('.pullDownLabel', pullDownEl).innerHTML = '载入中...';
+                    if (dom.$.isFunc(downAction)) {
                         downAction();
                     } else {
                         pullDownAction();
@@ -134,7 +98,7 @@ define(['tool', 'stor', 'view'], function(UserTools, StorMgr, ViewMgr) {
             }
         });
         setTimeout(function() {
-            $('#cont').style.left = '0';
+            dom.$('#cont').style.left = '0';
         }, 100);
         return myScroll;
     }
@@ -142,6 +106,4 @@ define(['tool', 'stor', 'view'], function(UserTools, StorMgr, ViewMgr) {
     window['regExpObj'] = regExpObj;
     window['UserMenus'] = UserMenus;
     window['refreshIScroll'] = refreshIScroll;
-
-    return App;
 });

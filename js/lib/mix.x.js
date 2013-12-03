@@ -1,6 +1,6 @@
 /* Ajax */
-define(function() {
-    X = function(options) {
+define('dom', function(dom) {
+    var X = function(options) {
         var that = this;
         that.options = {
             varsEncode: false,
@@ -23,19 +23,19 @@ define(function() {
         ajaxJSONP: function(url, data) {
             var that = this,
                 jsonp = 'Mix_x_jsonp' + X.jsonpIdx++,
-                script = DOM.create("script");
+                script = dom.create("script");
             WIN[jsonp] = function(a) {
                 that.response = a;
                 delete WIN[jsonp];
                 that.reset().onLoad();
-                HEAD.removeChild(script);
+                dom.HEAD.removeChild(script);
             };
             url = url.replace(/=\?/, '=' + jsonp) + ( !! data ? '&' + data : '');
             script.src = url;
             script.onerror = function(e) {
                 that.onFail();
             }
-            HEAD.appendChild(script);
+            dom.HEAD.appendChild(script);
         },
         send: function(url, data) {
             var that = this;

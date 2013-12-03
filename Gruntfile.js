@@ -1,13 +1,13 @@
 module.exports = function(grunt) {
   var paths = {
     requireLab: 'require',
-    base: 'mix.base',
-    scroll: 'mix.scroll',
-    swipeview: 'mix.swipeview',
-    cordovaBridge: 'mix.bridge.cordova',
-    X: 'mix.x',
-    region: 'mix.regions',
-    ui: 'mix.ui',
+    base: 'lib/mix.base',
+    scroll: 'lib/mix.scroll',
+    swipeview: 'lib/mix.swipeview',
+    cordovaBridge: 'lib/mix.bridge.cordova',
+    X: 'lib/mix.x',
+    region: 'lib/mix.regions',
+    ui: 'lib/mix.ui',
     action: 'app.action',
     tool: 'app.tool',
     stor: 'app.stor',
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
         separator: ';',
       },
       dist: {
-        src: ['js/app.*.js', 'js/mix.*.js', 'js/main.js', 'cordova-2.2.0.js'],
+        src: ['js/app.*.js', 'js/lib/mix.*.js', 'js/main.js', 'cordova-2.2.0.js'],
         dest: 'dist/js/<%= pkg.name %>.js'
       }
     },
@@ -138,12 +138,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
 
-  // grunt.registerTask('default', ['concat', 'uglify']);
+  //test tasks
+  grunt.registerTask('test', ['concat', 'uglify']);
   grunt.registerTask('t', ['connect', 'qunit']);
-  grunt.registerTask('jt', ['connect', 'jasmine:xTask']);
+  grunt.registerTask('h', ['jshint']);
   grunt.registerTask('jlt', ['jasmine:xlTask']);
+
+  //useful tasks
   grunt.registerTask('r', ['requirejs:compile']);
   grunt.registerTask('rc', ['requirejs:compileCSS']);
   grunt.registerTask('rj', ['requirejs:compileJS']);
-  grunt.registerTask('ra', ['r', 'rc', 'rj']);
+  grunt.registerTask('default', ['r', 'rc', 'rj']);
+  grunt.registerTask('jt', ['connect', 'jasmine:xTask']);
 }
