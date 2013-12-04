@@ -1,4 +1,4 @@
-define(['stor'], function(StorMgr) {
+define(['stor', 'device', 'dom'], function(StorMgr, device, dom) {
     /*涉及到应用的一些工具类*/
     var UserTools = {
         /*清除缓存和一些记录的变量值,用户退出时需要*/
@@ -25,7 +25,7 @@ define(['stor'], function(StorMgr) {
                 params = ViewMgr.tmpParams.split('&');
 
             if (0 != params.length) {
-                $.each(params, function(pa) {
+                Mix.base.each(params, function(pa) {
                     var rg = new RegExp(paramKey + "=(.*)");
                     if (rg.test(pa)) {
                         value = rg.exec(pa)[1];
@@ -62,14 +62,14 @@ define(['stor'], function(StorMgr) {
                     done(prov, city);
                 },
                 onShow: function(regSel) {
-                    Device.backFunc.unshift(function() {
+                    device.backFunc.unshift(function() {
                         regSel.hide();
                     });
                 },
                 hideEnd: function(regSel) {
-                    Device.backFunc.shift(0);
-                    if (Device.backFunc.length <= 0) {
-                        Device.backFunc = [
+                    device.backFunc.shift(0);
+                    if (device.backFunc.length <= 0) {
+                        device.backFunc = [
 
                             function() {
                                 ViewMgr.back();
@@ -96,7 +96,7 @@ define(['stor'], function(StorMgr) {
             // StorMgr.gpsInfo.lng=121.491;
             // StorMgr.gpsInfo.prov='上海';
             // StorMgr.gpsInfo.city='上海';
-            Device.getLocation(
+            device.getLocation(
                 function(lat, lng) {
                     var gpsInfo = {
                         lat: lat,
@@ -107,7 +107,7 @@ define(['stor'], function(StorMgr) {
 
                     Mix.map.getProvCity(lng, lat, StorMgr.gpsInfo);
 
-                    if ($.isFunc(cb)) {
+                    if (Mix.base.isFunc(cb)) {
                         cb();
                     }
                 }
@@ -115,10 +115,10 @@ define(['stor'], function(StorMgr) {
         },
         /*检查容器是否应该滚动*/
         checkScroll: function(contSel, cb) {
-            if (!$(contSel) || WIN['myScroll'] || !$(contSel + '>div')) {
+            if (!dom.$(contSel) || window['myScroll'] || !dom.$(contSel + '>div')) {
                 return;
             }
-            if ($(contSel + '>div').offsetHeight > $(contSel).offsetHeight) {
+            if (dom.$(contSel + '>div').offsetHeight > dom.$(contSel).offsetHeight) {
                 if (['login'].has(pageEngine.curPage)) {
                     WIN['myScroll'] = new Mix.scroll(contSel, {
                         useTransform: false
@@ -141,7 +141,7 @@ define(['stor'], function(StorMgr) {
                 return;
             }
 
-            var loadDom = DOM.create('div', {
+            var loadDom = dom.create('div', {
                 style: {
                     'position': 'absolute',
                     'height': '0',
@@ -161,13 +161,13 @@ define(['stor'], function(StorMgr) {
             UserAction.addLoading();
 
             if (hasProgress) {
-                var progressDom = DOM.create('div', {
+                var progressDom = dom.create('div', {
                     className: 'ui_progress'
                 }),
-                    progressInte = DOM.create('div', {
+                    progressInte = dom.create('div', {
                         className: 'inner'
                     }),
-                    proTxt = DOM.create('div', {
+                    proTxt = dom.create('div', {
                         className: 'text'
                     });
 
@@ -206,7 +206,7 @@ define(['stor'], function(StorMgr) {
                 finished = true;
             }
 
-            $.each(imgs, function(imgUrl, idx) {
+            Mix.base.each(imgs, function(imgUrl, idx) {
                 var img = new Image();
                 img.src = imgUrl;
                 img.onload = function() {

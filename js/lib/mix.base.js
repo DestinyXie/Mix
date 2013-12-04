@@ -1,4 +1,4 @@
-﻿define(function() {
+﻿define(['dom'], function(dom) {
     /*库名称,抛出的唯一全局变量*/
     var Mix = {
         /*Browser capabilities*/
@@ -16,7 +16,7 @@
         return vender + style;
     }
 
-    var dummyStyle = document.createElement('div').style,
+    var dummyStyle = dom.create('div').style,
         vender = (function() {
             var vendors = 't,webkitT,MozT,msT,OT'.split(','),
                 t,
@@ -71,16 +71,18 @@
     dummyStyle = null;
     vender = null;
 
-    /*常量设置*/
-    var START_EV = Mix.hasTouch ? 'touchstart' : 'mousedown',
-        MOVE_EV = Mix.hasTouch ? 'touchmove' : 'mousemove',
-        END_EV = Mix.hasTouch ? 'touchend' : 'mouseup',
-        CLICK_EV = Mix.hasTouch ? 'touchend' : 'click',
-        CANCEL_EV = Mix.hasTouch ? 'touchcancel' : 'mouseup',
-        WHEEL_EV = Mix.cssVender == 'Moz' ? 'DOMMouseScroll' : 'mousewheel',
+    /*事件对象*/
+    Mix.event = {
+        START_EV: Mix.hasTouch ? 'touchstart' : 'mousedown',
+        MOVE_EV: Mix.hasTouch ? 'touchmove' : 'mousemove',
+        END_EV: Mix.hasTouch ? 'touchend' : 'mouseup',
+        CLICK_EV: Mix.hasTouch ? 'touchend' : 'click',
+        CANCEL_EV: Mix.hasTouch ? 'touchcancel' : 'mouseup',
+        WHEEL_EV: Mix.cssVender == 'Moz' ? 'DOMMouseScroll' : 'mousewheel',
         //对webapp来说直接使用window的resize比onorientationchange效果更好
-        RESIZE_EV = 'resize';
-    var TRNEND_EV = (function() {
+        RESIZE_EV: 'resize'
+    };
+    Mix.event.TRNEND_EV = (function() {
         if (Mix.cssVender === false) return false;
 
         var transitionEnd = {
@@ -271,7 +273,7 @@
                     return (/^(\{|\[).*(\}|\])$/).test(value) ? JSON.parse(value) : value;
                 },
                 set: function(key, value, scope) {
-                    var serializable = $.isArray(value) || $.isPlainObject(value),
+                    var serializable = Mix.base.isArray(value) || Mix.base.isPlainObject(value),
                         storeValue = serializable ? JSON.stringify(value) : value;
                     getStorScope(scope).setItem(key, storeValue);
                 },
@@ -380,7 +382,7 @@
     }
 
     /*扩展事件中的默认Event对象*/
-    var Event = function(e) {
+    Mix.event.Event = function(e) {
         if (!e)
             return null;
 
@@ -394,7 +396,7 @@
             this[att[l]] = ee[att[l]];
         }
     };
-    Event.prototype = {
+    Mix.event.Event.prototype = {
         /*阻止事件传递*/
         stop: function() {
             if (e = this.event) {
@@ -406,15 +408,15 @@
         getTargets: function(selector) {
             var els = [],
                 target = this.target;
-            if (![DOC, BODY].has(target)) {
-                els = DOM.findParent(target, selector);
+            if (![dom.DOC, dom.BODY].has(target)) {
+                els = dom.findParent(target, selector);
                 if (1 == target.nodeType) {
                     els.unshift(target);
                 }
             }
             return els;
         }
-    }
+    };
 
     /*实现触屏的点击事件委托
      * 为了提升iscroll的效率 避免iscroll元素和DOC在手指move时同时执行各自方法
@@ -426,7 +428,7 @@
         longTapInter: null, //长按监听
         /*初始化函数*/
         init: function() {
-            DOM.addEvent(DOC, START_EV, Delegate['start']);
+            dom.addEvent(DOC, Mix.event.START_EV, Delegate['start']);
         },
         /*@private触摸事件开始*/
         start: function(e) {
@@ -435,7 +437,7 @@
                 Delegate.end(e);
             }
 
-            var oe = new Event(e),
+            var oe = new Mix.event.Event(e),
                 targets = oe.getTargets();
 
             Delegate.startEvent = e;
@@ -469,10 +471,10 @@
             }
 
             if (Delegate.targets.length > 0) { //有需要触发事件的元素
-                DOM.addClass(Delegate.targets[0], 'active');
+                dom.addClass(Delegate.targets[0], 'active');
 
-                DOM.addEvent(DOC, MOVE_EV, Delegate['move']);
-                DOM.addEvent(DOC, END_EV, Delegate['end']);
+                dom.addEvent(DOC, Mix.event.MOVE_EV, Delegate['move']);
+                dom.addEvent(DOC, Mix.event.END_EV, Delegate['end']);
             }
 
             // if(!['INPUT','TEXTAREA'].has(oe.event.target.tagName)){
@@ -489,7 +491,7 @@
         move: function(e) {
             if (!Delegate.startEvent)
                 return;
-            var oe = new Event(e),
+            var oe = new Mix.event.Event(e),
                 sp = Delegate.startPoint,
                 cp = [oe.pageX, oe.pageY],
                 dis = Mix.base.calculPy(cp[0] - sp[0], cp[1] - sp[1]);
@@ -511,7 +513,7 @@
         removeHover: function() {
             var targets = Delegate.targets;
             targets.forEach(function(el) {
-                DOM.removeClass(el, 'active');
+                dom.removeClass(el, 'active');
             });
         },
         /*@private 长按按钮处理*/
@@ -550,8 +552,8 @@
                 Mix.obs.publish(Delegate.moveDom.moveName + '_end', Delegate.moveDom);
             }
 
-            DOM.removeEvent(DOC, MOVE_EV, Delegate['move']);
-            DOM.removeEvent(DOC, END_EV, Delegate['end']);
+            dom.removeEvent(DOC, Mix.event.MOVE_EV, Delegate['move']);
+            dom.removeEvent(DOC, Mix.event.END_EV, Delegate['end']);
             Delegate.isClick = false;
             Delegate.startEvent = null;
             Delegate.startPoint = [0, 0];

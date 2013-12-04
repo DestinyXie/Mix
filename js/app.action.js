@@ -1,4 +1,4 @@
-define(['X'], function(X) {
+define(['X', 'device'], function(X, device) {
     /*用户执行的一些服务器请求*/
     var UserAction = {
         x: null,
@@ -42,7 +42,7 @@ define(['X'], function(X) {
                     if ($.isFunc(ok)) {
                         ok();
                     }
-                    Device.setMenuBtn();
+                    device.setMenuBtn();
                     UserAction.sendingLogin = false;
                 },
                 errCb = function(e) {
@@ -146,12 +146,12 @@ define(['X'], function(X) {
         },
         /*用户退出*/
         logOut: function() {
-            Device.confirm('确定注销用户？', function() {
+            device.confirm('确定注销用户？', function() {
                 UserTools.refresh();
                 Mix.base.storage.clear('session');
                 Mix.base.storage.clear();
                 ViewMgr.init();
-                Device.disetMenuBtn();
+                device.disetMenuBtn();
             }, null, null, '注销提示');
         },
         /*执行ajax请求*/

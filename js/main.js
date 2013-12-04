@@ -5,7 +5,7 @@ require({
             dom: 'lib/mix.dom',
             scroll: 'lib/mix.scroll',
             swipeview: 'lib/mix.swipeview',
-            cordovaBridge: 'lib/mix.bridge.cordova',
+            device: 'lib/mix.bridge.cordova',
             X: 'lib/mix.x',
             region: 'lib/mix.regions',
             ui: 'lib/mix.ui',
@@ -28,9 +28,9 @@ require({
             }
         }
     },
-    ['cordova', 'dom' ,'base', 'scroll', 'swipeview', 'cordovaBridge',
-    'region', 'ui', 'home', 'page', 'feed'],
-    function(cordova, dom, base, scroll, swipeview, cordovaBridge, region, ui, home, page, feed) {
+    ['cordova', 'dom' ,'base', 'scroll', 'swipeview', 'device',
+    'region', 'ui', 'home', 'page', 'feed', 'stor'],
+    function(cordova, dom, base, scroll, swipeview, device, region, ui, home, page, feed, StorMgr) {
         ui.loading.show(dom.$('#page'));
         /*全局变量赋值*/
         dom.init();
@@ -47,12 +47,12 @@ require({
         ViewMgr.init();
 
         /*设置menu键*/
-        Device.menuFunc = function() {
+        device.menuFunc = function() {
             UserMenus('menuBtn');
         }
 
         var resizeT; //resize事件会执行2次
-        dom.addEvent(WIN, RESIZE_EV, function() {
+        dom.addEvent(window, Mix.event.RESIZE_EV, function() {
             if (Date.now() - resizeT < 50) {
                 return;
             }

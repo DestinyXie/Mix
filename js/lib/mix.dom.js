@@ -15,7 +15,7 @@ define(function() {
                     this.setStyles(el, attributes.style);
                     delete attributes.style;
                 }
-                extend(el, attributes);
+                Mix.base.extend(el, attributes);
             }
             return el;
         },
@@ -179,4 +179,4 @@ define(function() {
     };
 
     return DOM;
-})
+});

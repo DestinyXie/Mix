@@ -1,5 +1,5 @@
 /* Ajax */
-define('dom', function(dom) {
+define(['dom'], function(dom) {
     var X = function(options) {
         var that = this;
         that.options = {

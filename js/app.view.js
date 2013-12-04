@@ -1,4 +1,4 @@
-define(function() {
+define(['device'], function(device) {
     /*页面历史管理类,控制历史记录,页面跳转*/
     var ViewMgr = {
         tmpParams: "", //临时记录参数值
@@ -15,9 +15,9 @@ define(function() {
                     Mix.base.storage.remove("app_view_history", "session");
                 };
 
-            delete WIN['pageEngine'];
-            Device.disetBackBtn();
-            WIN['pageEngine'] = new PageEngine();
+            delete window['pageEngine'];
+            device.disetBackBtn();
+            window['pageEngine'] = new PageEngine();
             ViewMgr.views = [that.firstPage];
             if (storEmail && storPwd) {
                 UserAction.sendLogin(storEmail, storPwd, null, ok, fail);
@@ -25,7 +25,7 @@ define(function() {
                 fail();
             }
 
-            Device.backFunc = [
+            device.backFunc = [
 
                 function() {
                     ViewMgr.back();
@@ -49,9 +49,9 @@ define(function() {
 
             try {
                 if (1 == that.views.length) { //设置返回按钮为历史回退
-                    Device.disetBackBtn();
+                    device.disetBackBtn();
                 } else {
-                    Device.setBackBtn();
+                    device.setBackBtn();
                 }
             } catch (e) {}
 

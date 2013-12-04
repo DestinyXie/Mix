@@ -1,5 +1,5 @@
 /*页面初始化*/
-define(['tool', 'stor', 'view', 'ui', 'dom'], function(UserTools, StorMgr, ViewMgr, ui, dom) {
+define(['view', 'dom', 'device', 'action'], function(ViewMgr, dom, device, action) {
     /*记录常用正则*/
     var regExpObj = {
         email: /^.+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/,
@@ -12,14 +12,14 @@ define(['tool', 'stor', 'view', 'ui', 'dom'], function(UserTools, StorMgr, ViewM
         var menuOpt = {
             pos: "middle",
             onShow: function(UImenu) {
-                Device.backFunc.unshift(function() {
+                device.backFunc.unshift(function() {
                     UImenu.hide();
                 });
             },
             hideEnd: function(UImenu) {
-                Device.backFunc.shift(0);
-                if (Device.backFunc.length <= 0) {
-                    Device.backFunc = [
+                device.backFunc.shift(0);
+                if (device.backFunc.length <= 0) {
+                    device.backFunc = [
 
                         function() {
                             ViewMgr.back();
@@ -36,10 +36,10 @@ define(['tool', 'stor', 'view', 'ui', 'dom'], function(UserTools, StorMgr, ViewM
                 menuOpt.onSelect = function(idx) {
                     switch (idx * 1) {
                         case 0:
-                            UserAction.logOut();
+                            action.logOut();
                             break;
                         case 1:
-                            Device.exit();
+                            device.exit();
                             break;
                     }
                 };
@@ -60,8 +60,8 @@ define(['tool', 'stor', 'view', 'ui', 'dom'], function(UserTools, StorMgr, ViewM
             useTransform: false, //使用Transform的时候 在手机上点击地区选择的取消无效
             topOffset: pullDownOffset,
             onRefresh: function() {
-                if (DOM.hasClass(pullDownEl, 'loading')) {
-                    DOM.removeClass(pullDownEl, 'loading');
+                if (dom.hasClass(pullDownEl, 'loading')) {
+                    dom.removeClass(pullDownEl, 'loading');
                     dom.$('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
                 }
             },
@@ -80,14 +80,14 @@ define(['tool', 'stor', 'view', 'ui', 'dom'], function(UserTools, StorMgr, ViewM
                         }
                     }
 
-                    DOM.removeClass(pullDownEl, 'flip');
+                    dom.removeClass(pullDownEl, 'flip');
                     dom.$('.pullDownLabel', pullDownEl).innerHTML = '下拉刷新页面...';
                     this.minScrollY = -pullDownOffset;
                 }
             },
             onScrollEnd: function() {
                 if (dom.$('.pullDownLabel', pullDownEl).innerHTML == '释放刷新页面...') {
-                    DOM.addClass(pullDownEl, 'loading');
+                    dom.addClass(pullDownEl, 'loading');
                     dom.$('.pullDownLabel', pullDownEl).innerHTML = '载入中...';
                     if (dom.$.isFunc(downAction)) {
                         downAction();

@@ -1,5 +1,4 @@
-define(function() {
-    var dom = require('dom');
+define(['dom', 'device'], function(dom, device) {
     /**UI工具类**/
     UI = {};
 
@@ -42,10 +41,10 @@ define(function() {
                 that.tipDom = dom.create('b', {
                     className: 'tipsShow'
                 });
-                that.container = dom.$(that.option.contSel) || BODY;
+                that.container = dom.$(that.option.contSel) || dom.BODY;
                 that.container.appendChild(that.tipDom);
                 that.hasTip = true;
-                dom.addEvent(that.tipDom, CLICK_EV, function() {
+                dom.addEvent(that.tipDom, Mix.event.CLICK_EV, function() {
                     if ('middle' != that.option.pos) {
                         that.hide();
                     }
@@ -119,7 +118,7 @@ define(function() {
             that.container.appendChild(that.maskDom);
 
             if (option.maskClickCb) {
-                dom.addEvent(that.maskDom, CLICK_EV, option.maskClickCb);
+                dom.addEvent(that.maskDom, Mix.event.CLICK_EV, option.maskClickCb);
             }
         },
         hide: function() {
@@ -134,7 +133,7 @@ define(function() {
     UI.loading = {
         show: function(cont, timeoutFn, timeoutTime, type) {
             var that = this,
-                cont = cont || BODY,
+                cont = cont || dom.BODY,
                 loadingDom;
 
 
@@ -281,10 +280,10 @@ define(function() {
                 that.scroller = new Mix.scroll(that.option.domId, scrollOpt);
                 var scrT = dom.create('b', {
                     className: 'pop_scr_top'
-                }),
-                    scrB = dom.create('b', {
-                        className: 'pop_scr_btm'
-                    });
+                });
+                var scrB = dom.create('b', {
+                    className: 'pop_scr_btm'
+                });
                 that.layerDom.appendChild(scrT);
                 that.layerDom.appendChild(scrB);
             }
@@ -337,7 +336,7 @@ define(function() {
                 return;
             }
 
-            dom.$.each(that.option.items, function(item, idx) {
+            Mix.base.each(that.option.items, function(item, idx) {
                 itemsStr.unshift('<i _click="UI.menu.select(this,' + idx + ')">' + item + '</i>');
             });
             dom.$('b', that.layerDom).innerHTML = itemsStr.join('');
@@ -353,7 +352,7 @@ define(function() {
                     contW = dom.getSize(that.container)[0],
                     contH = dom.getSize(that.container)[1],
                     layerDom = that.layerDom,
-                    itemsDom = dom.$dom.$('i', that.layerDom),
+                    itemsDom = dom.$$('i', that.layerDom),
                     itemLen = opts.items.length,
                     //相对中间的那个选项在宽度无法均分时设置其宽度相对最大
                     midItemIdx = Math.ceil(itemLen / 2),
@@ -366,7 +365,7 @@ define(function() {
 
                 if (!vertiDire) {
                     perItemW = Math.floor(contW / itemLen);
-                    dom.$.each(itemsDom, function(item, idx) {
+                    Mix.base.each(itemsDom, function(item, idx) {
                         item.style.width = perItemW + "px";
                     });
                     itemsDom[midItemIdx].style.width = (contW - perItemW * (itemLen - 1)) + "px";
@@ -374,7 +373,7 @@ define(function() {
 
                 layerDom.style.display = "block";
 
-                if (dom.$('div', layerDom).offsetHeight > layerDom.offsetHeight) {
+                if (dom.$('i', layerDom).offsetHeight > layerDom.offsetHeight) {
                     layerDom.style.height = contH + "px";
                     that.option.canScroll = true;
                 }
@@ -450,14 +449,14 @@ define(function() {
                 defOptions: [that.option.prov || that.option.provProm],
                 onConfirm: checkProv,
                 onShow: function(UIselect) {
-                    Device.backFunc.unshift(function() {
+                    device.backFunc.unshift(function() {
                         UIselect.hide();
                     });
                 },
                 hideEnd: function(UIselect) {
-                    Device.backFunc.shift(0);
-                    if (Device.backFunc.length <= 0) {
-                        Device.backFunc = [
+                    device.backFunc.shift(0);
+                    if (device.backFunc.length <= 0) {
+                        device.backFunc = [
                             function() {
                                 ViewMgr.back();
                             }
@@ -487,14 +486,14 @@ define(function() {
                 defOptions: [that.option.city || that.option.cityProm],
                 onConfirm: checkCity,
                 onShow: function(UIselect) {
-                    Device.backFunc.unshift(function() {
+                    device.backFunc.unshift(function() {
                         UIselect.hide();
                     });
                 },
                 hideEnd: function(UIselect) {
-                    Device.backFunc.shift(0);
-                    if (Device.backFunc.length <= 0) {
-                        Device.backFunc = [
+                    device.backFunc.shift(0);
+                    if (device.backFunc.length <= 0) {
+                        device.backFunc = [
                             function() {
                                 ViewMgr.back();
                             }
@@ -551,7 +550,7 @@ define(function() {
             if (that.option.defOptions) {
                 that.option.selOptions = that.option.defOptions;
             }
-            dom.$.each(that.option.options, function(opt, idx) {
+            Mix.base.each(that.option.options, function(opt, idx) {
                 var clsStr = '';
                 if (that.option.defOptions && that.option.defOptions.has(opt)) {
                     clsStr = ' class="selected"';
@@ -562,7 +561,7 @@ define(function() {
 
             that.layerDom.style.display = 'block';
 
-            if (that.layerDom.offsetHeight - BODYFS * .5 >= dom.$('.optWrap', that.layerDom).offsetHeight) {
+            if (that.layerDom.offsetHeight - dom.BODYFS * .5 >= dom.$('.optWrap', that.layerDom).offsetHeight) {
                 that.option.canScroll = false;
             }
 
@@ -572,7 +571,7 @@ define(function() {
                 selVal = that.option.options[idx];
 
             if (!that.option.multi) {
-                dom.removeClass(dom.$dom.$('.optWrap i', that.layerDom), 'selected');
+                dom.removeClass(dom.$$('.optWrap i', that.layerDom), 'selected');
                 this.option.selOptions = [selVal];
                 that.confirm();
             } else {
@@ -599,9 +598,9 @@ define(function() {
     });
 
     /*原生提示信息，默认2,3秒消失*/
-    function toast(s, t) {
-        if (Device.isMobi()) {
-            if (!Device.toast(s, t)) {
+    UI.toast = function(s, t) {
+        if (device.isMobi()) {
+            if (!device.toast(s, t)) {
                 UI.tips.show({
                     msg: s,
                     pos: 'middle',

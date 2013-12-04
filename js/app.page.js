@@ -1,5 +1,5 @@
 /*单页面模式*/ ;
-define(['action', 'tool'], function(UserAction, UserTools) {
+define(['action', 'tool', 'dom', 'device'], function(UserAction, UserTools, dom, device) {
     //公共tmpl,减少代码量
     var headerBack = ['<b id="head">',
         '<b _click="ViewMgr.back()" class="btn_back"><img src="image/return.png" alt="返回"/></b>'
@@ -22,9 +22,9 @@ define(['action', 'tool'], function(UserAction, UserTools) {
             '</b>',
             '<b id="cont">',
             '<b class="con_item">',
-            '<i _click=\'toast("加速计功能,需要真机");\'>加速计</i>',
-            '<i _click=\'toast("照相机功能,需要真机");\'>照相机</i>',
-            '<i _click=\'toast("未完待续");\'>等等</i>',
+            '<i _click=\'Mix.ui.toast("加速计功能,需要真机");\'>加速计</i>',
+            '<i _click=\'Mix.ui.toast("照相机功能,需要真机");\'>照相机</i>',
+            '<i _click=\'Mix.ui.toast("未完待续");\'>等等</i>',
             '</b>',
             '</b>'
         ].join(''),
@@ -34,9 +34,9 @@ define(['action', 'tool'], function(UserAction, UserTools) {
             '<b id="cont">',
             '<b class="con_item">',
             '<i _click=\'UserMenus("menuBtn");\'>菜单</i>',
-            '<i _click=\'UserTools.initArea(function(prov,city){toast("你选择了:"+prov+city)});\'>地区选择</i>',
+            '<i _click=\'UserTools.initArea(function(prov,city){Mix.ui.toast("你选择了:"+prov+city)});\'>地区选择</i>',
             '<i _click=\'Mix.ui.loading.show(null,function(){Mix.ui.loading.hide()},3)\'>加载中</i>',
-            '<i _click=\'toast("未完待续");\'>等等</i>',
+            '<i _click=\'Mix.ui.toast("未完待续");\'>等等</i>',
             '</b>',
             '</b>'
         ].join('')
@@ -45,10 +45,10 @@ define(['action', 'tool'], function(UserAction, UserTools) {
 
     var footerTmple = {
         'main': ['<b id="foot">',
-            '<i _click=\'ViewMgr.gotoPage("index");\' class="${1}">i1</i>',
-            '<i _click=\'ViewMgr.gotoPage("index");\' class="${2}">i2</i>',
-            '<i _click=\'ViewMgr.gotoPage("index");\' class="${3}">i3</i>',
-            '<i _click=\'ViewMgr.gotoPage("index");\' class="${4}">i4</i>',
+            '<i _click=\'ViewMgr.gotoPage("index");\' class="dom.${1}">i1</i>',
+            '<i _click=\'ViewMgr.gotoPage("index");\' class="dom.${2}">i2</i>',
+            '<i _click=\'ViewMgr.gotoPage("index");\' class="dom.${3}">i3</i>',
+            '<i _click=\'ViewMgr.gotoPage("index");\' class="dom.${4}">i4</i>',
             '</b>'
         ].join('')
     };
@@ -74,11 +74,11 @@ define(['action', 'tool'], function(UserAction, UserTools) {
 
         that.destroy();
         that.options = {
-            pageWrap: $('#page'),
+            pageWrap: dom.$('#page'),
             animate: false //是否动画切换
         }
 
-        extend(that.options, options);
+        Mix.base.extend(that.options, options);
     }
 
     PageEngine.prototype = {
@@ -110,8 +110,8 @@ define(['action', 'tool'], function(UserAction, UserTools) {
             htmlStr = this.replacePubTmpl(htmlStr);
 
             if (ftFocus) {
-                var fReg = new RegExp('\\$\\{' + ftFocus + '\\}', 'g'),
-                    aReg = new RegExp('\\$\\{\\d+\\}', 'g');
+                var fReg = new RegExp('\\dom.$\\{' + ftFocus + '\\}', 'g'),
+                    aReg = new RegExp('\\dom.$\\{\\d+\\}', 'g');
                 ftStr = ftStr.replace(fReg, 'select');
                 ftStr = ftStr.replace(aReg, '');
             }
@@ -137,7 +137,7 @@ define(['action', 'tool'], function(UserAction, UserTools) {
 
             UserAction.stop(); //撤销用户动作
             Mix.ui.tips.destroy(); //Tips
-            Device.destroy(); //撤销如上传等手机正在执行的动作
+            device.destroy(); //撤销如上传等手机正在执行的动作
             Mix.obs.clear(); //取消对resize等的观察
 
             return delay;
@@ -174,13 +174,13 @@ define(['action', 'tool'], function(UserAction, UserTools) {
             }
         },
         animate: function(diret, tmplStr) { //动画切换，暂不使用
-            if ($('#fackWrap')) {
-                BODY.removeChild($('#fackWrap'));
+            if (dom.$('#fackWrap')) {
+                dom.BODY.removeChild(dom.$('#fackWrap'));
             }
             var that = this,
                 wrap = that.options.pageWrap,
                 prePage = wrap.cloneNode(true);
-            BODY.appendChild(prePage);
+            dom.BODY.appendChild(prePage);
 
             prePage.id = "fackWrap";
             wrap.innerHTML = tmplStr;
@@ -190,22 +190,22 @@ define(['action', 'tool'], function(UserAction, UserTools) {
                 wrap.style.left = wrap.offsetWidth + "px";
             }
             that.fireEvent();
-            BODY.style[Mix.transitionProperty] = Mix.cssPrefix + "transform";
-            BODY.style[Mix.transitionDuration] = "300ms";
+            dom.BODY.style[Mix.transitionProperty] = Mix.cssPrefix + "transform";
+            dom.BODY.style[Mix.transitionDuration] = "300ms";
 
             setTimeout(function() {
                 if ('right' == diret) {
-                    BODY.style[Mix.transform] = "translateX(" + wrap.offsetWidth + "px)";
+                    dom.BODY.style[Mix.transform] = "translateX(" + wrap.offsetWidth + "px)";
                 } else {
-                    BODY.style[Mix.transform] = "translateX(-" + wrap.offsetWidth + "px)";
+                    dom.BODY.style[Mix.transform] = "translateX(-" + wrap.offsetWidth + "px)";
                 }
             }, 0);
 
             setTimeout(function() {
                 wrap.style.left = "0";
-                BODY.style[Mix.transitionDuration] = "0";
-                BODY.style[Mix.transform] = "translateX(0)";
-                prePage && BODY.removeChild(prePage);
+                dom.BODY.style[Mix.transitionDuration] = "0";
+                dom.BODY.style[Mix.transform] = "translateX(0)";
+                prePage && dom.BODY.removeChild(prePage);
                 delete prePage;
             }, 300);
         },
@@ -216,7 +216,7 @@ define(['action', 'tool'], function(UserAction, UserTools) {
                 initFn = pageConfig[that.curPage][2];
 
             /*执行页面配置项中页面初始化代码*/
-            if ($.isFunc(initFn)) {
+            if (Mix.base.isFunc(initFn)) {
                 initFn.call(null);
             }
 
@@ -227,32 +227,32 @@ define(['action', 'tool'], function(UserAction, UserTools) {
             var that = this,
                 feedOption = {
                     page: that.curPage,
-                    cont: $('.test_box'),
+                    cont: dom.$('.test_box'),
                     threeWrap: false,
                     onAppend: function(feed) {
                         that.checkcont();
                     },
                     cb: function() {
-                        if (WIN['myScroll']) {
+                        if (window['myScroll']) {
                             myScroll.refresh();
                         }
                     }
                 }
-            if (WIN['myScroll']) {
+            if (window['myScroll']) {
                 myScroll.destroy();
                 myScroll = null;
             }
             switch (that.curPage) {
                 case 'test':
                     feedOption.autoLoad = true;
-                    WIN['myScroll'] = refreshIScroll($('.pullDown'), '#cont');
+                    window['myScroll'] = refreshIScroll(dom.$('.pullDown'), '#cont');
                     Feed.init(feedOption);
                     that.scrollCb();
                     break;
                 case 'test1':
                     feedOption.cb = function() {
-                        if ($('.test1')) {}
-                        if (WIN['myScroll']) {
+                        if (dom.$('.test1')) {}
+                        if (window['myScroll']) {
                             myScroll.refresh();
                         }
                     };
@@ -260,15 +260,15 @@ define(['action', 'tool'], function(UserAction, UserTools) {
                     break;
             }
 
-            if (feedOption.autoLoad && !WIN['myScroll']) {
+            if (feedOption.autoLoad && !window['myScroll']) {
                 that.checkHeight = setTimeout(function() { //android画面残影
-                    WIN['myScroll'] = new Mix.scroll('#cont');
+                    window['myScroll'] = new Mix.scroll('#cont');
                     that.scrollCb();
                 }, 200);
             } else {
                 that.checkcont();
                 if (!['map'].has(that.curPage)) {
-                    DOM.addEvent($('#cont'), START_EV, function() {
+                    dom.addEvent(dom.$('#cont'), Mix.event.START_EV, function() {
                         that.checkcont();
                     });
                 }
@@ -276,7 +276,7 @@ define(['action', 'tool'], function(UserAction, UserTools) {
         },
         checkcont: function() {
             var that = this;
-            if (!WIN['myScroll']) {
+            if (!window['myScroll']) {
                 that.checkHeight = setTimeout(function() {
                     UserTools.checkScroll('#cont', that.scrollCb);
                 }, 200);

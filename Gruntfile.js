@@ -2,9 +2,10 @@ module.exports = function(grunt) {
   var paths = {
     requireLab: 'require',
     base: 'lib/mix.base',
+    dom: 'lib/mix.dom',
     scroll: 'lib/mix.scroll',
     swipeview: 'lib/mix.swipeview',
-    cordovaBridge: 'lib/mix.bridge.cordova',
+    device: 'lib/mix.bridge.cordova',
     X: 'lib/mix.x',
     region: 'lib/mix.regions',
     ui: 'lib/mix.ui',
@@ -106,7 +107,7 @@ module.exports = function(grunt) {
         options: {
           appDir: './',
           dir: './dist',
-          fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css|test|spec$/
+          fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css|test|spec|index\.htm$/
         }
       },
       compileCSS: {
@@ -123,6 +124,10 @@ module.exports = function(grunt) {
           name: 'main',
           paths: paths,
           map: pathMap,
+          uglify: {
+            beautify: false,
+            ascii_only: true
+          },
           include: 'requireLab'
         }
       }

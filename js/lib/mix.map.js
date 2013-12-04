@@ -1,2 +1,4 @@
-/*map plugin*/ ;
-Mix.map = function() {}
+/*map plugin*/
+define(function() {
+    Mix.map = function() {};
+});
