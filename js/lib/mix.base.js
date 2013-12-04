@@ -1,4 +1,4 @@
-﻿define('dom', function(dom) {
+﻿define(function() {
     /*库名称,抛出的唯一全局变量*/
     var Mix = {
         /*Browser capabilities*/
@@ -16,7 +16,7 @@
         return vender + style;
     }
 
-    var dummyStyle = dom.create('div').style,
+    var dummyStyle = document.createElement('div').style,
         vender = (function() {
             var vendors = 't,webkitT,MozT,msT,OT'.split(','),
                 t,

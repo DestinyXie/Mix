@@ -1,4 +1,5 @@
-define('dom', function(dom) {
+define(function() {
+    var dom = require('dom');
     /**UI工具类**/
     UI = {};
 
