@@ -358,11 +358,11 @@
             return arr.indexOf(value) !== -1;
         },
         /*去掉数组中的元素*/
-        remove: function(arr, value) {
+        remove: function(arr) {
             var removeItems = [].slice.call(arguments, 1);
             Mix.base.each(removeItems, function(item) {
                 if (Mix.array.has(arr, item)) {
-                    var idx = arr.indexOf(value);
+                    var idx = arr.indexOf(item);
                     arr.splice(idx, 1);
                 }
             });
