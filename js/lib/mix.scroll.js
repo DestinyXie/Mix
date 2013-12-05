@@ -1,6 +1,6 @@
 /*简易版iScroll,去掉了zoom和snap,from iScroll v4.2.2(copyright http://cubiq.org)*/
 define(['dom'], function(dom) {
-    Mix.scroll = function(sel, options) {
+    function Scroll(sel, options) {
         var that = this;
         that.wrapper = (sel.nodeType == 1) ? sel : dom.$(sel) || dom.$('#' + sel);
         that.wrapper.style.overflow = 'hidden';
@@ -85,8 +85,8 @@ define(['dom'], function(dom) {
 
         that._bind(Mix.event.START_EV);
     }
-    Mix.scroll.stop = false; //静态变量
-    Mix.scroll.prototype = {
+    Scroll.stop = false; //静态变量
+    Scroll.prototype = {
         enabled: true,
         x: 0,
         y: 0,
@@ -125,9 +125,9 @@ define(['dom'], function(dom) {
                 point = new Mix.event.Event(e),
                 matrix, x, y;
 
-            if (!that.enabled || Mix.scroll.stop) return;
+            if (!that.enabled || Scroll.stop) return;
             that._checkDOMChanges(); //add by destiny
-            Mix.scroll.stop = true; //阻止双滚动对象同时滚动
+            Scroll.stop = true; //阻止双滚动对象同时滚动
 
             if (!['INPUT', 'TEXTAREA'].has(e.target.tagName)) {
                 e.preventDefault();
@@ -200,7 +200,7 @@ define(['dom'], function(dom) {
                 newY = that.y + deltaY,
                 timestamp = e.timeStamp || Date.now();
 
-            if (Mix.scroll.outStop) { //外部阻止滚动
+            if (Scroll.outStop) { //外部阻止滚动
                 that._end(e);
                 return;
             }
@@ -259,7 +259,7 @@ define(['dom'], function(dom) {
             }
         },
         _end: function(e) {
-            Mix.scroll.stop = false;
+            Scroll.stop = false;
             if (Mix.hasTouch && e.touches.length !== 0) return;
 
             var that = this,
@@ -567,7 +567,7 @@ define(['dom'], function(dom) {
 
         /* Public methods */
         refresh: function() {
-            Mix.scroll.stop = false;
+            Scroll.stop = false;
             var that = this;
 
             that.wrapperW = that.wrapper.clientWidth || 1;
@@ -677,4 +677,16 @@ define(['dom'], function(dom) {
             return !this.moved && !this.animating;
         }
     };
+
+    function injectToMix() {
+        if(window['Mix']) {
+            Mix.scroll = Scroll;
+        } else {
+            setTimeout(injectToMix, 500);
+        }
+    }
+
+    injectToMix();
+
+    return Scroll;
 });

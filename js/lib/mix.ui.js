@@ -149,9 +149,9 @@ define(['dom', 'device'], function(dom, device) {
                 dom.remove(dom.$('#ui_load'));
             }
             if (type && 'word' == type) {
-                loadingDom = dom.create('div', {
+                loadingDom = dom.create('b', {
                     id: 'ui_load',
-                    innerHTML: '<div>L</div><div>O</div><div>A</div><div>D</div><div>I</div><div>N</div><div>G</div>'
+                    innerHTML: '<b>L</b><b>O</b><b>A</b><b>D</b><b>I</b><b>N</b><b>G</b>'
                 });
             } else {
                 loadingDom = dom.create('b', {
@@ -272,7 +272,7 @@ define(['dom', 'device'], function(dom, device) {
             if (that.option.title) {
                 var offsetTop = dom.$('.pop_title', that.layerDom).offsetHeight;
                 scrollOpt.topOffset = -offsetTop;
-                dom.$('div', that.layerDom).style.paddingTop = offsetTop + "px";
+                dom.$('b', that.layerDom).style.paddingTop = offsetTop + "px";
             }
 
 

@@ -1,6 +1,6 @@
 /*from SwipeView v1.0 ~ Copyright (c) 2012 Matteo Spinelli, http://cubiq.org*/
 define(['dom'], function(dom) {
-    Mix.swipeView = function(el, options) {
+    function SwipeView(el, options) {
         var i,
             div,
             className,
@@ -23,7 +23,7 @@ define(['dom'], function(dom) {
 
         this.masterPages = [];
 
-        div = dom.create('div', {
+        div = dom.create('b', {
             id: 'swipeview-slider'
         });
         div.style.cssText = 'position:relative;top:0;height:100%;width:100%;' + Mix.cssPrefix + 'transition-duration:0;' + Mix.cssPrefix + 'transform:translateZ(0);' + Mix.cssPrefix + 'transition-timing-function:ease-out';
@@ -33,7 +33,7 @@ define(['dom'], function(dom) {
         this.refreshSize();
 
         for (i = -1; i < 2; i++) {
-            div = dom.create('div');
+            div = dom.create('b');
             div.id = 'swipeview-masterpage-' + (i + 1);
             div.style.cssText = Mix.cssPrefix + 'transform:translateZ(0);position:absolute;top:0;height:100%;width:100%;left:' + i * 100 + '%';
             if (!div.dataset) div.dataset = {};
@@ -55,7 +55,7 @@ define(['dom'], function(dom) {
         }
     };
 
-    Mix.swipeView.prototype = {
+    SwipeView.prototype = {
         currentMasterPage: 1,
         x: 0,
         page: 0,
@@ -314,4 +314,16 @@ define(['dom'], function(dom) {
             this.wrapper.dispatchEvent(ev);
         }
     };
+
+    function injectToMix() {
+        if(window['Mix']) {
+            Mix.swipeView = SwipeView;
+        } else {
+            setTimeout(injectToMix, 500);
+        }
+    }
+
+    injectToMix();
+
+    return SwipeView;
 });

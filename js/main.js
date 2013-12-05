@@ -28,9 +28,10 @@ require({
             }
         }
     },
-    ['cordova', 'dom' ,'base', 'scroll', 'swipeview', 'device',
-    'region', 'ui', 'home', 'page', 'feed', 'stor'],
-    function(cordova, dom, base, scroll, swipeview, device, region, ui, home, page, feed, StorMgr) {
+    ['cordova', 'dom' ,'base', 'scroll', 'swipeview', 'device', 'region', 'ui', 
+    'home', 'page', 'feed', 'stor'],
+    function(cordova, dom, base, scroll, swipeview, device, region, ui, home, 
+        page, feed, StorMgr) {
         ui.loading.show(dom.$('#page'));
         /*全局变量赋值*/
         dom.init();
