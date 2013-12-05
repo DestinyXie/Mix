@@ -34,9 +34,9 @@ define(function() {
                 }
             }
             while (el = el.parentNode) {
-                if ([document, this.BODY].has(el))
+                if (Mix.array.has([document, this.BODY], el))
                     break;
-                if (1 == el.nodeType && (!selector || (doms && doms.has(el)))) {
+                if (1 == el.nodeType && (!selector || (doms && Mix.array.has(doms, el)))) {
                     if (onlyFirst)
                         return el;
                     els.push(el);
@@ -86,14 +86,14 @@ define(function() {
         },
         /*判断DOM对象是否包含某个class名称*/
         hasClass: function(el, className) {
-            return el.className.split(/\s+/).has(className);
+            return Mix.array.has(el.className.split(/\s+/), className);
         },
         /*给DOM对象添加一个class名称*/
         addClass: function(el, className) {
             Mix.base.each(el, function(_el) {
                 var cls = _el.className;
                 if (!DOM.hasClass(el, className)) {
-                    //if (!cls.split(/\s+/).has(className)) {
+                    //if (!Mix.array.has(cls.split(/\s+/), className)) {
                     _el.className += (cls ? ' ' : '') + className;
                 }
             });
@@ -102,7 +102,7 @@ define(function() {
         removeClass: function(el, className) {
             Mix.base.each(el, function(_el) {
                 var classes = _el.className.split(/\s+/);
-                if (className && classes.has(className)) {
+                if (className && Mix.array.has(classes, className)) {
                     classes.splice(classes.indexOf(className), 1);
                 }
                 _el.className = classes.join(' ');

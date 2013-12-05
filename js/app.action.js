@@ -122,7 +122,7 @@ define(['X', 'device'], function(X, device) {
                         msg: '昵称中不得使用空格'
                     };
                 }
-                if (0 == password.trim().length) {
+                if (0 == Mix.string.trim(password).length) {
                     throw {
                         msg: '请输入您的密码'
                     };

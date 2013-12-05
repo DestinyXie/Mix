@@ -206,8 +206,8 @@ define(['dom', 'device'], function(dom, device) {
             that.subReset && that.subReset(); //执行子类的reset方法
         },
         show: function(cusOpt) {
-            var that = this,
-                domStrArr = that.domStr.clone();
+            var that = this;
+            var domStrArr = Mix.array.clone(that.domStr);
             that.reset();
 
             !! cusOpt && Mix.base.extend(that.option, cusOpt);
@@ -428,10 +428,10 @@ define(['dom', 'device'], function(dom, device) {
             that.citySel.innerHTML = that.option.city || that.option.cityProm;
         },
         chooseProv: function() {
-            var that = this,
-                provs = Mix.regions.provinces.clone();
+            var that = this;
+            var provs = Mix.array.clone(Mix.regions.provinces);
 
-            provs = provs.remove('台湾').remove('海外'); //暂时
+            provs = Mix.array.remove(provs, '台湾', '海外'); //暂时
             function checkProv(selOpts) {
                 that.provSel.innerHTML = selOpts[0];
                 that.citySel.innerHTML = that.option.cityProm;
@@ -477,7 +477,7 @@ define(['dom', 'device'], function(dom, device) {
                 }
             }
             if (!that.option.prov) {
-                toast("需先选择省份");
+                UI.toast("需先选择省份");
                 return;
             }
             UI.select.show({
@@ -541,7 +541,7 @@ define(['dom', 'device'], function(dom, device) {
             var that = this,
                 optStr = [];
             if (that.option.options.length === 0) {
-                toast('没有可供选择的项目');
+                UI.toast('没有可供选择的项目');
                 return;
             }
             if (that.option.multi) {
@@ -552,7 +552,7 @@ define(['dom', 'device'], function(dom, device) {
             }
             Mix.base.each(that.option.options, function(opt, idx) {
                 var clsStr = '';
-                if (that.option.defOptions && that.option.defOptions.has(opt)) {
+                if (that.option.defOptions && Mix.array.has(that.option.defOptions, opt)) {
                     clsStr = ' class="selected"';
                 }
                 optStr.unshift('<i' + clsStr + ' _click="UI.select.select(this,' + idx + ')">' + opt + '</i>');
@@ -575,12 +575,12 @@ define(['dom', 'device'], function(dom, device) {
                 this.option.selOptions = [selVal];
                 that.confirm();
             } else {
-                if (!this.option.selOptions.has(selVal)) {
+                if (!Mix.array.has(this.option.selOptions, selVal)) {
                     dom.addClass(item, 'selected');
                     this.option.selOptions.push(selVal);
                 } else {
                     dom.removeClass(item, 'selected');
-                    this.option.selOptions.remove(selVal);
+                    Mix.array.remove(this.option.selOptions, selVal);
                 }
             }
         },

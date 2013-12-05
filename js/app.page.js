@@ -120,7 +120,7 @@ define(['action', 'tool', 'dom', 'device'], function(UserAction, UserTools, dom,
         cancelPrePage: function() { //撤销前一个页面相关
             var that = this,
                 delay = false;
-            if (['test'].has(that.curPage)) {
+            if (Mix.array.has(['test'], that.curPage)) {
                 UserTools.fixHighlight();
                 delay = true; //android input残影
             }
@@ -267,7 +267,7 @@ define(['action', 'tool', 'dom', 'device'], function(UserAction, UserTools, dom,
                 }, 200);
             } else {
                 that.checkcont();
-                if (!['map'].has(that.curPage)) {
+                if (!Mix.array.has(['map'], that.curPage)) {
                     dom.addEvent(dom.$('#cont'), Mix.event.START_EV, function() {
                         that.checkcont();
                     });

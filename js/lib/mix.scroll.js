@@ -129,7 +129,7 @@ define(['dom'], function(dom) {
             that._checkDOMChanges(); //add by destiny
             Scroll.stop = true; //阻止双滚动对象同时滚动
 
-            if (!['INPUT', 'TEXTAREA'].has(e.target.tagName)) {
+            if (!Mix.array.has(['INPUT', 'TEXTAREA'], e.target.tagName)) {
                 e.preventDefault();
                 // e.stopPropagation();
             }

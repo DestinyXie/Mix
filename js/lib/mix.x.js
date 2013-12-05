@@ -8,7 +8,7 @@ define(['dom'], function(dom) {
             dataType: 'json',
             timeOut: 15 /* timeout in seconds;*/
         };
-        extend(that.options, options || {});
+        Mix.base.extend(that.options, options || {});
         return that.reset();
     };
 

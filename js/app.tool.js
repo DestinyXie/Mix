@@ -119,7 +119,7 @@ define(['stor', 'device', 'dom'], function(StorMgr, device, dom) {
                 return;
             }
             if (dom.$(contSel + '>div').offsetHeight > dom.$(contSel).offsetHeight) {
-                if (['login'].has(pageEngine.curPage)) {
+                if (Mix.array.has(['login'], pageEngine.curPage)) {
                     WIN['myScroll'] = new Mix.scroll(contSel, {
                         useTransform: false
                     });
