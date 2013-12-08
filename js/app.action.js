@@ -1,4 +1,4 @@
-define(['X', 'device', 'ui'], function(X, device, ui) {
+define(['base', 'X', 'device', 'ui'], function(Mix, X, device, ui) {
     /*用户执行的一些服务器请求*/
     var UserAction = {
         x: null,

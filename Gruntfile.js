@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     X: 'lib/mix.x',
     region: 'lib/mix.regions',
     ui: 'lib/mix.ui',
-    action: 'app.action',
+    request: 'app.request',
     tool: 'app.tool',
     stor: 'app.stor',
     view: 'app.view',
@@ -67,7 +67,7 @@ module.exports = function(grunt) {
     },
     jasmine: {
       xTask: {
-        src: 'js/app.home.js',
+        src: 'js/app.*.js',
         options: {
           host : 'http://127.0.0.1:8000/',
           specs: 'spec/*.spec.js',
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
         }
       },
       xlTask: {//local filesystem test
-        src: 'js/app.home.js',
+        src: 'js/app.request.js',
         options: {
           specs: 'spec/*.spec.js',
           template: require('grunt-template-jasmine-requirejs'),
@@ -98,7 +98,7 @@ module.exports = function(grunt) {
         options: {
           appDir: './',
           dir: './dist',
-          fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css|test|spec|index\.htm$/
+          fileExclusionRegExp: /^.gitignore|README|node_modules|package.json|js|css|spec|index.htm$/
         }
       },
       compileJS: {
@@ -121,8 +121,10 @@ module.exports = function(grunt) {
     },
     less: {
       compile: {
-        src: 'css/app.less',
-        dest: 'dist/css/app.css'
+        files: {
+          'dist/css/app.css': 'css/app.less',
+          'css/app.css': 'css/app.less'
+        }
       },
       compress: {
         options: {

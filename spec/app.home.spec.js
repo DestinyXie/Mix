@@ -1,5 +1,4 @@
 describe('app.home', function() {
-    var App = require('app.home');
     var isFun = function(obj) {
         return (typeof obj === 'function');
     };
@@ -7,13 +6,13 @@ describe('app.home', function() {
         return (typeof obj === 'object');
     };
 
-    it('App.init should be a function', function() {
-        expect(isFun(App.init));
+    it('UserMenus should be a function', function() {
+        expect(isFun(UserMenus));
     });
 
     describe('test App', function() {
-        it('App should be a object', function() {
-            expect(isObj(App));
+        it('regExpObj should be a object', function() {
+            expect(isObj(regExpObj));
         });
     });
 
