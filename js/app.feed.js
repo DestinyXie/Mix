@@ -1,4 +1,4 @@
-define(function() {
+define(['action', 'ui'], function(action, ui) {
     /*列表模板*/
     var feedTemplate = {
         'test': '<div>${content}</div>'
@@ -110,7 +110,7 @@ define(function() {
 
             if (0 !== a.errCode * 1) {
                 that.reset();
-                toast(a.errStr);
+                ui.toast(a.errStr);
                 return;
             }
 
@@ -169,7 +169,7 @@ define(function() {
                     that.reset();
                 };
 
-            that.loadXhr = UserAction.sendAction(dataUrl, params, "get", secCb, errCb);
+            that.loadXhr = action.sendAction(dataUrl, params, "get", secCb, errCb);
         },
         getUrl: function() {
             var url = pageFeedUrl[this.page];

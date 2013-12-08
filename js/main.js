@@ -52,7 +52,7 @@ require({
             UserMenus('menuBtn');
         }
 
-        var resizeT; //resize事件会执行2次
+        var resizeT = 0; //resize事件会执行2次
         dom.addEvent(window, Mix.event.RESIZE_EV, function() {
             if (Date.now() - resizeT < 50) {
                 return;

@@ -1,4 +1,4 @@
-define(['device'], function(device) {
+define(['device', 'action'], function(device, action) {
     /*页面历史管理类,控制历史记录,页面跳转*/
     var ViewMgr = {
         tmpParams: "", //临时记录参数值
@@ -20,7 +20,7 @@ define(['device'], function(device) {
             window['pageEngine'] = new PageEngine();
             ViewMgr.views = [that.firstPage];
             if (storEmail && storPwd) {
-                UserAction.sendLogin(storEmail, storPwd, null, ok, fail);
+                action.sendLogin(storEmail, storPwd, null, ok, fail);
             } else {
                 fail();
             }

@@ -1,5 +1,5 @@
 /*腾讯微博授权*/
-define(['X'], function(X) {
+define(['X', 'action'], function(X, action) {
     Mix.auth.qq = {
         type: 'qq',
         oauthWindow: 'weiboLoginWin',
@@ -16,10 +16,10 @@ define(['X'], function(X) {
                     });
                 },
                 failCb = function(msg) {
-                    UserAction._userRegist(email, nickname, password, password);
+                    action._userRegist(email, nickname, password, password);
                 };
 
-            UserAction.sendLogin(nickname, password, null, okCb, failCb);
+            action.sendLogin(nickname, password, null, okCb, failCb);
         },
         getLoginInfo: function(type) {
             var t = (type || this.type);
@@ -88,7 +88,7 @@ define(['X'], function(X) {
 
             if (code) {
                 qqUrl2 = qqUrl2 + code + "&callback=?";
-                UserAction.sendAction(qqUrl2, null, null, function(a) {
+                action.sendAction(qqUrl2, null, null, function(a) {
                     that.access_token = UserTools.getUrlVal(a, 'access_token');
                     that.openid = UserTools.getUrlVal(a, 'openid');
                     that.getInfo(function() {
@@ -101,7 +101,7 @@ define(['X'], function(X) {
             var that = this,
                 url = 'https://open.t.qq.com/api/user/info?format=?&oauth_consumer_key=' + that.appKey + '&access_token=' + that.access_token + '&openid=' + that.openid + '&clientip=' + that.clientIp + '&oauth_version=2.a&scope=all';
 
-            UserAction.sendAction(url, null, null, function(a) {
+            action.sendAction(url, null, null, function(a) {
                 if (a.errcode * 1 == 0) {
                     that.info = a.data;
                     cb && cb();
@@ -129,10 +129,10 @@ define(['X'], function(X) {
                     });
                 },
                 failCb = function(msg) {
-                    UserAction._userRegist(email, nickname, password, password);
+                    action._userRegist(email, nickname, password, password);
                 };
 
-            UserAction.sendLogin(nickname, password, null, okCb, failCb);
+            action.sendLogin(nickname, password, null, okCb, failCb);
         },
         getLoginInfo: function(type) {
             var t = (type || this.type);
@@ -191,7 +191,7 @@ define(['X'], function(X) {
             alert(code);
             if (code) {
                 sinaUrl2 = sinaUrl2 + code + "&callback=?";
-                UserAction.sendAction(sinaUrl2, null, null, function(a) {
+                action.sendAction(sinaUrl2, null, null, function(a) {
                     that.access_token = UserTools.getUrlVal(a, 'access_token');
                     that.openid = UserTools.getUrlVal(a, 'openid');
                     that.getInfo(function() {
@@ -204,7 +204,7 @@ define(['X'], function(X) {
             var that = this,
                 url = 'https://api.weibo.com/2/users/show.json?access_token=' + that.access_token;
 
-            UserAction.sendAction(url, null, null, function(a) {
+            action.sendAction(url, null, null, function(a) {
                 if (a.errcode * 1 == 0) {
                     that.info = a.data;
                     cb && cb();
@@ -233,10 +233,10 @@ define(['X'], function(X) {
                     });
                 },
                 failCb = function(msg) {
-                    UserAction._userRegist(email, nickname, password, password);
+                    action._userRegist(email, nickname, password, password);
                 };
 
-            UserAction.sendLogin(nickname, password, null, okCb, failCb);
+            action.sendLogin(nickname, password, null, okCb, failCb);
         },
         getLoginInfo: function(type) {
             var t = (type || this.type);
@@ -312,7 +312,7 @@ define(['X'], function(X) {
                 }
                 alert(renrenUrl2);
                 nx.ajaxJSONP(renrenUrl2);
-                // UserAction.sendAction(renrenUrl2,null,null,function(a){
+                // action.sendAction(renrenUrl2,null,null,function(a){
                 //     alert(a);
                 //     that.access_token=UserTools.getUrlVal(a,'access_token');
                 //     that.openid=UserTools.getUrlVal(a,'openid');

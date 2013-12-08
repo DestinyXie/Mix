@@ -1,5 +1,5 @@
 /*单页面模式*/ ;
-define(['action', 'tool', 'dom', 'device'], function(UserAction, UserTools, dom, device) {
+define(['action', 'tool', 'dom', 'device'], function(action, UserTools, dom, device) {
     //公共tmpl,减少代码量
     var headerBack = ['<b id="head">',
         '<b _click="ViewMgr.back()" class="btn_back"><img src="image/return.png" alt="返回"/></b>'
@@ -135,7 +135,7 @@ define(['action', 'tool', 'dom', 'device'], function(UserAction, UserTools, dom,
                 that.delayInter = null;
             }
 
-            UserAction.stop(); //撤销用户动作
+            action.stop(); //撤销用户动作
             Mix.ui.tips.destroy(); //Tips
             device.destroy(); //撤销如上传等手机正在执行的动作
             Mix.obs.clear(); //取消对resize等的观察

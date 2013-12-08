@@ -497,4 +497,5 @@ define(['dom'], function(dom) {
             uexCall.call(numStr);
         }
     };
+    return Device;
 });

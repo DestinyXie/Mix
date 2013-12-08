@@ -1,4 +1,4 @@
-define(['X', 'device'], function(X, device) {
+define(['X', 'device', 'ui'], function(X, device, ui) {
     /*用户执行的一些服务器请求*/
     var UserAction = {
         x: null,
@@ -11,15 +11,15 @@ define(['X', 'device'], function(X, device) {
         },
         /*登陆验证*/
         checkLogin: function(nSel, pSel, node) {
-            var nickVal = $(nSel).value,
-                passVal = $(pSel).value;
+            var nickVal = $(nSel).value;
+            var passVal = $(pSel).value;
 
             if (nickVal.length == 0) {
-                toast("请输入您的昵称！", 2);
+                ui.toast("请输入您的昵称！", 2);
                 return;
             }
             if (passVal.length == 0) {
-                toast("请输入您的密码！", 2);
+                ui.toast("请输入您的密码！", 2);
                 return;
             }
 
@@ -49,7 +49,7 @@ define(['X', 'device'], function(X, device) {
                     if ($.isFunc(fail)) {
                         fail(e.errStr);
                     } else {
-                        toast(e.errStr);
+                        ui.toast(e.errStr);
                     }
                     UserAction.sendingLogin = false;
                 };
@@ -74,18 +74,18 @@ define(['X', 'device'], function(X, device) {
             var url = StorMgr.siteUrl + "/register?ajax=1&callback=?",
                 secCb = function(a) {
                     if (0 != a.errCode * 1) {
-                        toast(a.errStr);
+                        ui.toast(a.errStr);
                         UserAction.sendingRegist = false;
                         return;
                     }
-                    toast('注册成功。', 0.6);
+                    ui.toast('注册成功。', 0.6);
                     setTimeout(function() {
                         UserAction.sendingRegist = false;
                         UserAction.sendLogin(nickname, password);
                     }, 500);
                 }, errCb = function(a) {
                     if (0 != a.errCode * 1) {
-                        toast(a.errStr);
+                        ui.toast(a.errStr);
                         UserAction.sendingRegist = false;
                         return;
                     }
@@ -141,7 +141,7 @@ define(['X', 'device'], function(X, device) {
                 UserAction.sendingRegist = true;
                 UserAction.sendAction(url, "", "get", secCb, errCb);
             } catch (e) {
-                toast(e.msg);
+                ui.toast(e.msg);
             }
         },
         /*用户退出*/
@@ -166,7 +166,7 @@ define(['X', 'device'], function(X, device) {
                 that.removeLoading();
                 var resp = x.response;
                 if (resp.errCode && resp.errCode * 1 != 0) {
-                    errCb ? errCb(resp) : toast(resp.errStr);
+                    errCb ? errCb(resp) : ui.toast(resp.errStr);
                     return;
                 }
                 try {
@@ -191,7 +191,7 @@ define(['X', 'device'], function(X, device) {
             Mix.ui.loading.show($('#cont'), function() {
                 UserAction.LoadingCount = 0;
                 Mix.ui.loading.hide();
-                toast('请求服务器超时。请检查网络或稍后再试。', 5);
+                ui.toast('请求服务器超时。请检查网络或稍后再试。', 5);
             }, 10);
         },
         removeLoading: function(all) {

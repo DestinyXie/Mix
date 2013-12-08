@@ -1,4 +1,4 @@
-define(['action'], function(UserAction) {
+define(['action'], function(action) {
     /*缓存资料管理*/
     var StorMgr = {
         myInfo: null,
@@ -20,7 +20,7 @@ define(['action'], function(UserAction) {
                 that.myInfo = data;
                 cb && cb(data);
             }
-            UserAction.sendAction(url, null, null, load);
+            action.sendAction(url, null, null, load);
         }
     };
     return StorMgr;

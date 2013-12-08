@@ -57,15 +57,6 @@ module.exports = function(grunt) {
       },
       uses_defaults: ['js/*.js']
     },
-    qunit: {
-      all: {
-        options: {
-          urls: [
-            'http://127.0.0.1:8000/test/test1.html'
-          ]
-        }
-      }
-    },
     connect: {
       server: {
         options: {
@@ -110,13 +101,6 @@ module.exports = function(grunt) {
           fileExclusionRegExp: /^Gruntfile\.js|.gitignore|README|node_modules|package\.json|js|css|test|spec|index\.htm$/
         }
       },
-      compileCSS: {
-        options: {
-          cssIn: 'css/main.css',
-          out: './dist/css/main.css',
-          optimizeCss: 'standard'
-        }
-      },
       compileJS: {
         options: {
           baseUrl: 'js',
@@ -124,12 +108,31 @@ module.exports = function(grunt) {
           name: 'main',
           paths: paths,
           map: pathMap,
+          optimize: "uglify2",
+          generateSourceMaps: true,
+          preserveLicenseComments: false,
           uglify: {
             beautify: false,
             ascii_only: true
           },
           include: 'requireLab'
         }
+      }
+    },
+    less: {
+      compile: {
+        src: 'css/app.less',
+        dest: 'dist/css/app.css'
+      },
+      compress: {
+        options: {
+          compress: true,
+          sourceMap: true,
+          sourceMapFilename: 'dist/css/main.css.map',
+          sourceMapBasepath: 'dist/css'
+        },
+        src: 'dist/css/app.css',
+        dest: 'dist/css/main.css',
       }
     }
   });
@@ -138,21 +141,20 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-contrib-less');
 
+  grunt.registerTask('c', ['connect']);
   //test tasks
-  grunt.registerTask('test', ['concat', 'uglify']);
-  grunt.registerTask('t', ['connect', 'qunit']);
+  grunt.registerTask('test', ['c', 'uglify']);
   grunt.registerTask('h', ['jshint']);
   grunt.registerTask('jlt', ['jasmine:xlTask']);
-
   //useful tasks
   grunt.registerTask('r', ['requirejs:compile']);
-  grunt.registerTask('rc', ['requirejs:compileCSS']);
+  grunt.registerTask('l', ['less:compile', 'less:compress']);
   grunt.registerTask('rj', ['requirejs:compileJS']);
-  grunt.registerTask('default', ['r', 'rc', 'rj']);
-  grunt.registerTask('jt', ['connect', 'jasmine:xTask']);
+  grunt.registerTask('default', ['r', 'l', 'rj']);
+  grunt.registerTask('jt', ['c', 'jasmine:xTask']);
 }

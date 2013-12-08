@@ -1,4 +1,4 @@
-define(['stor', 'device', 'dom'], function(StorMgr, device, dom) {
+define(['stor', 'device', 'dom', 'action', 'ui'], function(StorMgr, device, dom, action, ui) {
     /*涉及到应用的一些工具类*/
     var UserTools = {
         /*清除缓存和一些记录的变量值,用户退出时需要*/
@@ -50,7 +50,7 @@ define(['stor', 'device', 'dom'], function(StorMgr, device, dom) {
             // }
             function done(prov, city) {
                 if (!prov) {
-                    toast('未选择地区', 2);
+                    ui.toast('未选择地区', 2);
                     return;
                 }
 
@@ -157,8 +157,8 @@ define(['stor', 'device', 'dom'], function(StorMgr, device, dom) {
                 finishLoad();
             }, 10000);
 
-            BODY.appendChild(loadDom);
-            UserAction.addLoading();
+            dom.BODY.appendChild(loadDom);
+            action.addLoading();
 
             if (hasProgress) {
                 var progressDom = dom.create('div', {
@@ -173,7 +173,7 @@ define(['stor', 'device', 'dom'], function(StorMgr, device, dom) {
 
                 progressDom.appendChild(progressInte);
                 progressDom.appendChild(proTxt);
-                BODY.appendChild(progressDom);
+                dom.BODY.appendChild(progressDom);
             }
 
             function oneLoad() {
@@ -199,10 +199,10 @@ define(['stor', 'device', 'dom'], function(StorMgr, device, dom) {
                     return;
                 clearTimeout(UserTools.preLoadInter);
                 if (hasProgress) {
-                    BODY.removeChild(progressDom);
+                    dom.BODY.removeChild(progressDom);
                 }
-                BODY.removeChild(loadDom);
-                UserAction.removeLoading();
+                dom.BODY.removeChild(loadDom);
+                action.removeLoading();
                 finished = true;
             }
 
