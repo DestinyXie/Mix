@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     X: 'lib/mix.x',
     region: 'lib/mix.regions',
     ui: 'lib/mix.ui',
-    request: 'app.request',
+    action: 'app.action',
     tool: 'app.tool',
     stor: 'app.stor',
     view: 'app.view',
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
         }
       },
       xlTask: {//local filesystem test
-        src: 'js/app.request.js',
+        src: 'js/app.*.js',
         options: {
           specs: 'spec/*.spec.js',
           template: require('grunt-template-jasmine-requirejs'),
