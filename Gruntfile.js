@@ -18,9 +18,9 @@ module.exports = function(grunt) {
     feed: 'app.feed'
   };
   var pathMap = {
-      '*': {
-          'cordova': 'cordova-2.2.0'
-      }
+    '*': {
+      'cordova': 'cordova-2.2.0'
+    }
   };
 
   // Project configuration.
@@ -67,10 +67,10 @@ module.exports = function(grunt) {
     },
     jasmine: {
       xTask: {
-        src: 'js/app.*.js',
+        src: 'js/app.action.js',
         options: {
-          host : 'http://127.0.0.1:8000/',
-          specs: 'spec/*.spec.js',
+          host: 'http://127.0.0.1:8000/',
+          specs: 'spec/app.action.spec.js',
           keepRunner: false,
           template: require('grunt-template-jasmine-requirejs'),
           templateOptions: {
@@ -78,7 +78,7 @@ module.exports = function(grunt) {
           }
         }
       },
-      xlTask: {//local filesystem test
+      xlTask: { //local filesystem test
         src: 'js/app.*.js',
         options: {
           specs: 'spec/*.spec.js',

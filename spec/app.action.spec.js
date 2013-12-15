@@ -7,12 +7,11 @@ describe('app test', function() {
         return (typeof obj === 'object');
     };
     describe('test app.action', function() {
-        
         it('Action.init should be a function', function() {
-            expect(isFun(Action.sendAction));
+            expect(isFun(Action.sendAction)).toBe(true);
         });
         it('Action should be a object', function() {
-            expect(isObj(Action));
+            expect(isObj(Action)).toBe(true);
         });
     });
 

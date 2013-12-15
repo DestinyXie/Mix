@@ -46,8 +46,8 @@ define(function() {
         },
         /*给DOM对象设置样式*/
         setStyles: function(el, styles) {
-            var styleStr = "",
-                value;
+            var styleStr = "";
+            var value;
             for (var name in styles) {
                 value = styles[name];
                 if (value !== '' && !isNaN(value) && name !== 'zoom' && name !== 'z-index') {

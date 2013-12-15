@@ -95,6 +95,45 @@
 
         return transitionEnd[Mix.cssVender];
     })();
+    
+    /*扩展事件中的默认Event对象*/
+    Mix.event.Event = function(e) {
+        if (!e) {
+            return null;
+        }
+
+        if (e.stop) {
+            return e;
+        }
+
+        this.event = e;
+        var changedTouches = e.changedTouches;
+        var ee = (changedTouches && changedTouches.length > 0) ? changedTouches[0] : e;
+        for (var att = ['pageX', 'pageY', 'target'], l = att.length; l--;) {
+            this[att[l]] = ee[att[l]];
+        }
+    };
+    Mix.event.Event.prototype = {
+        /*阻止事件传递*/
+        stop: function() {
+            if (e = this.event) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        },
+        /*返回当前事件的DOM对象集合*/
+        getTargets: function(selector) {
+            var els = [],
+                target = this.target;
+            if (!Mix.array.has([dom.DOC, dom.BODY], target)) {
+                els = dom.findParent(target, selector);
+                if (1 == target.nodeType) {
+                    els.unshift(target);
+                }
+            }
+            return els;
+        }
+    };
 
     // Helpers 3d更高效么?
     Mix.translateZ = Mix.has3d ? ' translateZ(0)' : '';
@@ -124,7 +163,7 @@
             return toStr.call(obj) === "[object Array]";
         },
         isPlainObject: function(obj) {
-            if (!obj || toStr.call(obj) !== "[object Object]" || 
+            if (!obj || toStr.call(obj) !== "[object Object]" ||
                 obj.nodeType || obj.setInterval) {
                 return false;
             }
@@ -324,13 +363,14 @@
                     return cb(data, c.match(/cb:(.*)/));
                 }
 
-                var arr = c.split('.'),
-                    ret = data;
+                var arr = c.split('.');
+                var ret = data;
                 for (var i = 0, len = arr.length; i < len; i++) {
                     ret = ret[arr[i]];
                 }
-                if (0 == ret * 1)
+                if (0 == ret * 1) {
                     return 0;
+                }
 
                 return ret || "";
             });
@@ -386,45 +426,6 @@
                 len += str.charAt(i).charCodeAt() > 255 ? 1 : 0.5;
             }
             return Math.abs(Math.ceil(len));
-        }
-    };
-
-    /*扩展事件中的默认Event对象*/
-    Mix.event.Event = function(e) {
-        if (!e) {
-            return null;
-        }
-
-        if (e.stop) {
-            return e;
-        }
-
-        this.event = e;
-        var changedTouches = e.changedTouches;
-        var ee = (changedTouches && changedTouches.length > 0) ? changedTouches[0] : e;
-        for (var att = ['pageX', 'pageY', 'target'], l = att.length; l--;) {
-            this[att[l]] = ee[att[l]];
-        }
-    };
-    Mix.event.Event.prototype = {
-        /*阻止事件传递*/
-        stop: function() {
-            if (e = this.event) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        },
-        /*返回当前事件的DOM对象集合*/
-        getTargets: function(selector) {
-            var els = [],
-                target = this.target;
-            if (!Mix.array.has([dom.DOC, dom.BODY], target)) {
-                els = dom.findParent(target, selector);
-                if (1 == target.nodeType) {
-                    els.unshift(target);
-                }
-            }
-            return els;
         }
     };
 

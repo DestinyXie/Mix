@@ -27,10 +27,10 @@ require({
                 'cordova': 'cordova-2.2.0'
             }
         }
-    },
-    ['cordova', 'dom' ,'base', 'scroll', 'swipeview', 'device', 'region', 'ui', 
-    'home', 'page', 'feed', 'stor'],
-    function(cordova, dom, base, scroll, swipeview, device, region, ui, home, 
+    }, ['cordova', 'dom', 'base', 'scroll', 'swipeview', 'device', 'region', 'ui',
+        'home', 'page', 'feed', 'stor'
+    ],
+    function(cordova, dom, base, scroll, swipeview, device, region, ui, home,
         page, feed, StorMgr) {
         ui.loading.show(dom.$('#page'));
         /*全局变量赋值*/
@@ -63,4 +63,3 @@ require({
         });
     }
 );
-
