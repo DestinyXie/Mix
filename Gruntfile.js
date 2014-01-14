@@ -1,4 +1,13 @@
+'use strict';
+
 module.exports = function(grunt) {
+
+  // Load grunt tasks automatically
+  require('load-grunt-tasks')(grunt, {pattern: ['grunt-*', '!grunt-template-jasmine-requirejs']});
+
+  // Time how long tasks take. Can help when optimizing build times
+  require('time-grunt')(grunt);
+
   var paths = {
     requireLab: 'require',
     base: 'lib/mix.base',
@@ -26,23 +35,6 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    concat: {
-      options: {
-        separator: ';',
-      },
-      dist: {
-        src: ['js/app.*.js', 'js/lib/mix.*.js', 'js/main.js', 'cordova-2.2.0.js'],
-        dest: 'dist/js/<%= pkg.name %>.js'
-      }
-    },
-    uglify: {
-      options: {},
-      dist: {
-        files: {
-          'dist/js/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
-        }
-      }
-    },
     jshint: {
       options: {
         curly: true,
@@ -79,9 +71,9 @@ module.exports = function(grunt) {
         }
       },
       xlTask: { //local filesystem test
-        src: 'js/app.*.js',
+        src: 'js/app.home.js',
         options: {
-          specs: 'spec/*.spec.js',
+          specs: 'spec/app.home.spec.js',
           template: require('grunt-template-jasmine-requirejs'),
           templateOptions: {
             requireConfigFile: 'js/main.js'
@@ -93,14 +85,45 @@ module.exports = function(grunt) {
       files: ['<%= jshint.files%>'],
       tasks: ['jshint']
     },
+    // Empties folders to start fresh
+    clean: {
+      dist: {
+        files: [{
+          dot: true,
+          src: [
+            'dist/*'
+          ]
+        }]
+      }
+    },
+    copy: {
+      dist: {
+        files: [{
+        expand: true,
+        dot: true,
+        cwd: '.',
+        dest: './dist',
+        src: [
+          'image/',
+          'app.htm',
+          'css/',
+          'js/'
+        ]
+        }]
+      }
+    },
+    // The following *-min tasks produce minified files in the dist folder
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: 'image',
+          src: '{,*/}*.{gif,jpeg,jpg,png}',
+          dest: 'dist/image'
+        }]
+      }
+    },
     requirejs: {
-      compile: { //just copy files exclude css & js
-        options: {
-          appDir: './',
-          dir: './dist',
-          fileExclusionRegExp: /^.gitignore|README|node_modules|package.json|js|css|spec|index.htm$/
-        }
-      },
       compileJS: {
         options: {
           baseUrl: 'js',
@@ -122,7 +145,6 @@ module.exports = function(grunt) {
     less: {
       compile: {
         files: {
-          'dist/css/app.css': 'css/app.less',
           'css/app.css': 'css/app.less'
         }
       },
@@ -131,32 +153,54 @@ module.exports = function(grunt) {
           compress: true,
           sourceMap: true,
           sourceMapFilename: 'dist/css/main.css.map',
-          sourceMapBasepath: 'dist/css'
+          sourceMapBasepath: 'dist/css',
+          outputSourceFiles: true
         },
-        src: 'dist/css/app.css',
+        src: 'css/app.css',
         dest: 'dist/css/main.css',
       }
+    },
+    // Renames files for browser caching purposes
+    rev: {
+      dist: {
+        files: {
+          src: [
+            'dist/js/{,*/}*.js',
+            'dist/css/{,*/}*.css',
+            //'dist/image/{,*/}*.{gif,jpeg,jpg,png,webp}',//[TODO css中图片地址没有更新]
+            'dist/css/fonts/{,*/}*.*'
+          ]
+        }
+      }
+    },
+    // Reads HTML for usemin blocks to enable smart builds that automatically
+    // concat, minify and revision files. Creates configurations in memory so
+    // additional tasks can operate on them
+    useminPrepare: {
+      options: {
+        dest: 'dist'
+      },
+      html: 'app.htm'
+    },
+    // Performs rewrites based on rev and the useminPrepare configuration
+    usemin: {
+      options: {
+        assetsDirs: ['dist']
+      },
+      html: ['dist/{,*/}*.htm'],
+      css: ['dist/css/{,*/}*.css']
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
-  grunt.loadNpmTasks('grunt-contrib-less');
-
   grunt.registerTask('c', ['connect']);
+  grunt.registerTask('cl', ['clean']);
+  grunt.registerTask('cp', ['copy:dist']);
   //test tasks
-  grunt.registerTask('test', ['c', 'uglify']);
   grunt.registerTask('h', ['jshint']);
   grunt.registerTask('jlt', ['jasmine:xlTask']);
   //useful tasks
-  grunt.registerTask('r', ['requirejs:compile']);
   grunt.registerTask('l', ['less:compile', 'less:compress']);
-  grunt.registerTask('rj', ['requirejs:compileJS']);
-  grunt.registerTask('default', ['r', 'l', 'rj']);
+  grunt.registerTask('r', ['requirejs:compileJS']);
+  grunt.registerTask('default', ['cl', 'useminPrepare', 'cp', 'imagemin', 'l', 'r', 'rev', 'usemin']);
   grunt.registerTask('jt', ['c', 'jasmine:xTask']);
 }
