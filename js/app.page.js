@@ -2,7 +2,7 @@
 define(['action', 'tool', 'dom', 'device'], function(action, UserTools, dom, device) {
     //公共tmpl,减少代码量
     var headerBack = ['<b id="head">',
-        '<b _click="ViewMgr.back()" class="btn_back"><img src="image/return.png" alt="返回"/></b>'
+        '<b _click="ViewMgr.back()" class="btn_back"><i></i></b>'
     ].join('');
 
     var contTmpl = {

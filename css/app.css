@@ -515,8 +515,11 @@ body {
   background: -webkit-linear-gradient(top, #222222, #111111);
   background: -webkit-gradient(linear, center top, center bottom, from(#222222), to(#111111));
 }
-#head .btn_back img {
+#head .btn_back i {
+  width: 2.3em;
   height: 2.5em;
+  background: url(../image/return.png) no-repeat;
+  background-size: 2.3em 2.5em;
 }
 #head h3 {
   height: 100%;

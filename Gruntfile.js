@@ -55,6 +55,13 @@ module.exports = function(grunt) {
           port: 8000,
           base: '.'
         }
+      },
+      dist: {
+        options: {
+          open: "http://127.0.0.1:8001/app.htm",
+          port: 8001,
+          base: './dist'
+        }
       }
     },
     jasmine: {
@@ -167,7 +174,7 @@ module.exports = function(grunt) {
           src: [
             'dist/js/{,*/}*.js',
             'dist/css/{,*/}*.css',
-            //'dist/image/{,*/}*.{gif,jpeg,jpg,png,webp}',//[TODO css中图片地址没有更新]
+            'dist/image/{,*/}*.{gif,jpeg,jpg,png,webp}',
             'dist/css/fonts/{,*/}*.*'
           ]
         }
@@ -185,7 +192,7 @@ module.exports = function(grunt) {
     // Performs rewrites based on rev and the useminPrepare configuration
     usemin: {
       options: {
-        assetsDirs: ['dist']
+        basedir: ['dist']
       },
       html: ['dist/{,*/}*.htm'],
       css: ['dist/css/{,*/}*.css']
@@ -193,6 +200,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('c', ['connect']);
+  grunt.registerTask('cc', ['connect:dist:keepalive']);
   grunt.registerTask('cl', ['clean']);
   grunt.registerTask('cp', ['copy:dist']);
   //test tasks
