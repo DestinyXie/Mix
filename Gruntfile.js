@@ -3,7 +3,7 @@
 module.exports = function(grunt) {
 
   // Load grunt tasks automatically
-  require('load-grunt-tasks')(grunt, {pattern: ['grunt-*', '!grunt-template-jasmine-requirejs']});
+  require('load-grunt-tasks')(grunt);
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
@@ -61,30 +61,6 @@ module.exports = function(grunt) {
           open: "http://127.0.0.1:8001/app.htm",
           port: 8001,
           base: './dist'
-        }
-      }
-    },
-    jasmine: {
-      xTask: {
-        src: 'js/app.action.js',
-        options: {
-          host: 'http://127.0.0.1:8000/',
-          specs: 'spec/app.action.spec.js',
-          keepRunner: false,
-          template: require('grunt-template-jasmine-requirejs'),
-          templateOptions: {
-            requireConfigFile: 'js/main.js'
-          }
-        }
-      },
-      xlTask: { //local filesystem test
-        src: 'js/app.home.js',
-        options: {
-          specs: 'spec/app.home.spec.js',
-          template: require('grunt-template-jasmine-requirejs'),
-          templateOptions: {
-            requireConfigFile: 'js/main.js'
-          }
         }
       }
     },
@@ -196,6 +172,11 @@ module.exports = function(grunt) {
       },
       html: ['dist/{,*/}*.htm'],
       css: ['dist/css/{,*/}*.css']
+    },
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js'
+      }
     }
   });
 
@@ -211,4 +192,5 @@ module.exports = function(grunt) {
   grunt.registerTask('r', ['requirejs:compileJS']);
   grunt.registerTask('default', ['cl', 'useminPrepare', 'cp', 'imagemin', 'l', 'r', 'rev', 'usemin']);
   grunt.registerTask('jt', ['c', 'jasmine:xTask']);
+  grunt.registerTask('k', ['karma']);
 }
