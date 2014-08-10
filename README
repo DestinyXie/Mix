@@ -8,8 +8,8 @@ Version 0.0.1
 REFERENCE:
 AppCan:
 http://doc.appcan.cn/#!/api
-(Should remove js/mix.bridge.cordova.js and js/cordova-xx.js)
+(Should remove js/lib/mix.bridge.cordova.js and js/cordova-xx.js)
 
 Cordova:
 http://cordova.apache.org/docs/en/edge/index.html
-(Should remove js/mix.bridge.appcan.js)
+(Should remove js/lib/mix.bridge.appcan.js)

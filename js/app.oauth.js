@@ -1,5 +1,5 @@
-/*腾讯微博授权*/
 define(['X', 'action'], function(X, action) {
+    /*腾讯微博授权*/
     Mix.auth.qq = {
         type: 'qq',
         oauthWindow: 'weiboLoginWin',

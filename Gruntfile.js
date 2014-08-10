@@ -186,11 +186,9 @@ module.exports = function(grunt) {
   grunt.registerTask('cp', ['copy:dist']);
   //test tasks
   grunt.registerTask('h', ['jshint']);
-  grunt.registerTask('jlt', ['jasmine:xlTask']);
   //useful tasks
   grunt.registerTask('l', ['less:compile', 'less:compress']);
   grunt.registerTask('r', ['requirejs:compileJS']);
   grunt.registerTask('default', ['cl', 'useminPrepare', 'cp', 'imagemin', 'l', 'r', 'rev', 'usemin']);
-  grunt.registerTask('jt', ['c', 'jasmine:xTask']);
   grunt.registerTask('k', ['karma']);
 }

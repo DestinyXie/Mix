@@ -66,7 +66,7 @@ define(['dom'], function(dom) {
         if (that.options.useTransform) {
             that.scroller.style[Mix.transform] = 'translate(' + that.x + 'px,' + that.y + 'px)' + Mix.translateZ;
         } else {
-            that.scroller.style.cssText += ';position:absolute;top:' + that.y + 'px;left:' + that.x + 'px';
+            that.scroller.style.cssText += ';position:relative;top:' + that.y + 'px;left:' + that.x + 'px';
         }
 
         if (that.options.useTransition) { //??
