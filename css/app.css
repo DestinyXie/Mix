@@ -233,7 +233,7 @@ b * {
 }
 /*select单选、多选框*/
 .selectLayer {
-  height: 90%;
+  height: auto;
   width: 90%;
 }
 .selectLayer.multiSelect .optWrap {
